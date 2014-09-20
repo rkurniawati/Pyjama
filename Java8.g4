@@ -764,6 +764,7 @@ statementWithoutTrailingSubstatement
 	|	synchronizedStatement
 	|	throwStatement
 	|	tryStatement
+	|	openmpStatement
 	;
 
 emptyStatement
@@ -948,6 +949,129 @@ resource
 	:	variableModifier* unannType variableDeclaratorId '=' expression
 	;
 
+//§§ OpenMP Expasion for Java 8
+openmpStatement
+	:	OPENMP_PRAGMA openmpDirective
+	;
+
+openmpDirective
+	: 	ompParallelDirective
+	| 	ompParallelForDirective
+	|	ompParallelSectionsDirective
+	|	ompForDirective
+	|	ompSectionsDirective
+	|	ompFreeguiDirective
+	|	ompSectionDirective
+	| 	ompGuiDirective
+	|	ompSingleDirective
+	|	ompMasterDirective
+	|	ompCriticalDirective
+	|	ompAtomicDirective
+	|	ompBarrierDirective
+	|	ompFlushDirective
+	|	ompOrderedDirective
+	;
+
+ompParallelDirective
+	: 	PARALLEL
+		(	IF '(' expression ')'
+		|	NUMTHREADS '(' expression ')'
+		|	ompDataClause
+		)*
+		block
+	;
+	
+ompParallelForDirective
+	:	PARALLEL_FOR
+		(	IF '(' expression ')'
+		|	NUMTHREADS '(' expression ')'
+		|	ompDataClause
+		)*
+		block
+	;
+	
+ompParallelSectionsDirective
+	:	PARALLEL_SECTIONS
+		(	IF '(' expression ')'
+		|	NUMTHREADS '(' expression ')'
+		|	ompDataClause
+		)*
+		block
+	;
+	
+ompForDirective
+	:	PARALLEL_FOR
+		(	IF '(' expression ')'
+		|	NUMTHREADS '(' expression ')'
+		|	ompDataClause
+		)*
+		block
+	;
+	
+ompSectionsDirective
+	:	FOR
+		(	IF '(' expression ')'
+		|	NUMTHREADS '(' expression ')'
+		|	ompDataClause
+		)*
+		block
+	;
+	
+ompFreeguiDirective
+	:	FREEGUI	(PARALLEL)*
+		(	IF '(' expression ')'
+		| 	NUMTHREADS '(' expression ')'
+		|	ompDataClause
+		)
+		block
+	;
+		
+ompSectionDirective
+	:	SECTIONS
+		(	IF '(' expression ')'
+		|	NUMTHREADS '(' expression ')'
+		|	ompDataClause
+		)*
+		block
+	;
+	
+
+
+ompGuiDirective
+	:	GUI
+		block
+	;
+ompSingleDirective
+	:	SINGLE
+		block
+	;
+ompMasterDirective
+	:	MASTER
+		block
+	;
+ompCriticalDirective
+	:	CRITICAL
+		block
+	;
+ompAtomicDirective
+	:	ATOMIC
+		block
+	;
+ompBarrierDirective
+	:	BARRIER
+	;
+ompFlushDirective
+	:	FLUSH
+	;
+ompOrderedDirective
+	:	ORDERED
+		block
+	;
+	
+///////////////////////
+ompDataClause
+	:	DD
+	;
 /*
  * Productions from §15 (Expressions)
  */
@@ -1395,6 +1519,34 @@ TRY : 'try';
 VOID : 'void';
 VOLATILE : 'volatile';
 WHILE : 'while';
+
+//§§ OpenMP Keywords Xing Fan added at 2014.9.20
+OPENMP_PRAGMA: '//#omp';
+PARALLEL: 'parallel';
+PARALLEL_FOR: 'parallel for';
+PARALLEL_SECTIONS: 'parallel sections';
+FIRST_PRIVATE: 'firstprivate';
+LAST_PRIVATE: 'lastprivate';
+SHARED: 'shared';
+NONE: 'none';
+REDUCTION: 'reduction';
+FREEGUI: 'freeguithread';
+GUI: 'gui';
+SCHEDULE: 'schedule';
+DYNAMIC: 'dynamic';
+GUIDED: 'guided';
+ORDERED: 'ordered';
+SECTIONS: 'sections';
+SECTION: 'section';
+SINGLE: 'single';
+MASTER: 'master';
+CRITICAL: 'critical';
+ATOMIC: 'atomic';
+FLUSH: 'flush';
+BARRIER: 'barrier';
+NOWAIT: 'nowait';
+NUMTHREADS: 'num_threads';
+CPOYPRIVATE: 'copyprivate';
 
 // §3.10.1 Integer Literals
 

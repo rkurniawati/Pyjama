@@ -562,6 +562,19 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOmpGuiDirective(@NotNull Java8Parser.OmpGuiDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpGuiDirective(@NotNull Java8Parser.OmpGuiDirectiveContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCatches(@NotNull Java8Parser.CatchesContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -738,6 +751,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEnhancedForStatementNoShortIf(@NotNull Java8Parser.EnhancedForStatementNoShortIfContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpFlushDirective(@NotNull Java8Parser.OmpFlushDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpFlushDirective(@NotNull Java8Parser.OmpFlushDirectiveContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -978,6 +1004,19 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOmpForDirective(@NotNull Java8Parser.OmpForDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpForDirective(@NotNull Java8Parser.OmpForDirectiveContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCatchType(@NotNull Java8Parser.CatchTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1056,6 +1095,19 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOmpParallelDirective(@NotNull Java8Parser.OmpParallelDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpParallelDirective(@NotNull Java8Parser.OmpParallelDirectiveContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterSwitchLabels(@NotNull Java8Parser.SwitchLabelsContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1115,6 +1167,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLocalVariableDeclaration(@NotNull Java8Parser.LocalVariableDeclarationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpDataClause(@NotNull Java8Parser.OmpDataClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpDataClause(@NotNull Java8Parser.OmpDataClauseContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1186,19 +1251,6 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSingleTypeImportDeclaration(@NotNull Java8Parser.SingleTypeImportDeclarationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSingleTypeImportDeclaration(@NotNull Java8Parser.SingleTypeImportDeclarationContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterTypeArgumentsOrDiamond(@NotNull Java8Parser.TypeArgumentsOrDiamondContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1206,6 +1258,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTypeArgumentsOrDiamond(@NotNull Java8Parser.TypeArgumentsOrDiamondContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterSingleTypeImportDeclaration(@NotNull Java8Parser.SingleTypeImportDeclarationContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSingleTypeImportDeclaration(@NotNull Java8Parser.SingleTypeImportDeclarationContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1232,6 +1297,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAnnotationTypeBody(@NotNull Java8Parser.AnnotationTypeBodyContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOpenmpStatement(@NotNull Java8Parser.OpenmpStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOpenmpStatement(@NotNull Java8Parser.OpenmpStatementContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1576,6 +1654,19 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOmpAtomicDirective(@NotNull Java8Parser.OmpAtomicDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpAtomicDirective(@NotNull Java8Parser.OmpAtomicDirectiveContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterConstructorModifier(@NotNull Java8Parser.ConstructorModifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1622,6 +1713,32 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitUnannClassOrInterfaceType(@NotNull Java8Parser.UnannClassOrInterfaceTypeContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpBarrierDirective(@NotNull Java8Parser.OmpBarrierDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpBarrierDirective(@NotNull Java8Parser.OmpBarrierDirectiveContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpParallelForDirective(@NotNull Java8Parser.OmpParallelForDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpParallelForDirective(@NotNull Java8Parser.OmpParallelForDirectiveContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1680,6 +1797,19 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOmpSectionsDirective(@NotNull Java8Parser.OmpSectionsDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpSectionsDirective(@NotNull Java8Parser.OmpSectionsDirectiveContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpressionStatement(@NotNull Java8Parser.ExpressionStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1700,6 +1830,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitForUpdate(@NotNull Java8Parser.ForUpdateContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpOrderedDirective(@NotNull Java8Parser.OmpOrderedDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpOrderedDirective(@NotNull Java8Parser.OmpOrderedDirectiveContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -1817,6 +1960,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitImportDeclaration(@NotNull Java8Parser.ImportDeclarationContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpMasterDirective(@NotNull Java8Parser.OmpMasterDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpMasterDirective(@NotNull Java8Parser.OmpMasterDirectiveContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -2018,19 +2174,6 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterElementValueList(@NotNull Java8Parser.ElementValueListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitElementValueList(@NotNull Java8Parser.ElementValueListContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterPrimaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary(@NotNull Java8Parser.PrimaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -2038,6 +2181,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPrimaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary(@NotNull Java8Parser.PrimaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primaryContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterElementValueList(@NotNull Java8Parser.ElementValueListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitElementValueList(@NotNull Java8Parser.ElementValueListContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -2161,6 +2317,19 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOmpFreeguiDirective(@NotNull Java8Parser.OmpFreeguiDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpFreeguiDirective(@NotNull Java8Parser.OmpFreeguiDirectiveContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterArrayAccess_lfno_primary(@NotNull Java8Parser.ArrayAccess_lfno_primaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -2272,6 +2441,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitInferredFormalParameterList(@NotNull Java8Parser.InferredFormalParameterListContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpParallelSectionsDirective(@NotNull Java8Parser.OmpParallelSectionsDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpParallelSectionsDirective(@NotNull Java8Parser.OmpParallelSectionsDirectiveContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -2506,6 +2688,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitInterfaceModifier(@NotNull Java8Parser.InterfaceModifierContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpSectionDirective(@NotNull Java8Parser.OmpSectionDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpSectionDirective(@NotNull Java8Parser.OmpSectionDirectiveContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -2824,6 +3019,19 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOmpSingleDirective(@NotNull Java8Parser.OmpSingleDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpSingleDirective(@NotNull Java8Parser.OmpSingleDirectiveContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterConditionalOrExpression(@NotNull Java8Parser.ConditionalOrExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -2889,6 +3097,19 @@ public class Java8BaseListener implements Java8Listener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterOmpCriticalDirective(@NotNull Java8Parser.OmpCriticalDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpCriticalDirective(@NotNull Java8Parser.OmpCriticalDirectiveContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterConstructorDeclaration(@NotNull Java8Parser.ConstructorDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -2948,6 +3169,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitResource(@NotNull Java8Parser.ResourceContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOpenmpDirective(@NotNull Java8Parser.OpenmpDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOpenmpDirective(@NotNull Java8Parser.OpenmpDirectiveContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
