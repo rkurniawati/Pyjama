@@ -752,7 +752,8 @@ statementNoShortIf
 	;
 
 statementWithoutTrailingSubstatement
-	:	block
+	:	openmpStatement
+	|	block
 	|	emptyStatement
 	|	expressionStatement
 	|	assertStatement
@@ -763,8 +764,7 @@ statementWithoutTrailingSubstatement
 	|	returnStatement
 	|	synchronizedStatement
 	|	throwStatement
-	|	tryStatement
-	|	openmpStatement
+	|	tryStatement	
 	;
 
 emptyStatement
@@ -951,111 +951,124 @@ resource
 
 //§§ OpenMP Expasion for Java 8
 openmpStatement
-	:	OPENMP_PRAGMA openmpDirective
+	:	OPENMP_PRAGMA openmpConstruct
 	;
 
-openmpDirective
-	: 	ompParallelDirective
-	| 	ompParallelForDirective
-	|	ompParallelSectionsDirective
-	|	ompForDirective
-	|	ompSectionsDirective
-	|	ompFreeguiDirective
-	|	ompSectionDirective
-	| 	ompGuiDirective
-	|	ompSingleDirective
-	|	ompMasterDirective
-	|	ompCriticalDirective
-	|	ompAtomicDirective
+openmpConstruct
+	: 	ompParallelConstruct
+	| 	ompParallelForConstruct
+	|	ompParallelSectionsConstruct
+	|	ompForConstruct
+	|	ompSectionsConstruct
+	|	ompFreeguiConstruct
+	|	ompSectionConstruct
+	| 	ompGuiConstruct
+	|	ompSingleConstruct
+	|	ompMasterConstruct
+	|	ompCriticalConstruct
+	|	ompAtomicConstruct
 	|	ompBarrierDirective
 	|	ompFlushDirective
-	|	ompOrderedDirective
+	|	ompOrderedConstruct
 	;
 
-ompParallelDirective
+ompParallelConstruct
 	: 	PARALLEL
 		(	IF '(' expression ')'
 		|	NUMTHREADS '(' expression ')'
 		|	ompDataClause
 		)*
-		block
+		statement
 	;
 	
-ompParallelForDirective
+ompParallelForConstruct
 	:	PARALLEL_FOR
 		(	IF '(' expression ')'
 		|	NUMTHREADS '(' expression ')'
+		|	ORDERED
 		|	ompDataClause
+		| 	ompScheduleClause
 		)*
-		block
+		forStatement
 	;
 	
-ompParallelSectionsDirective
+ompParallelSectionsConstruct
 	:	PARALLEL_SECTIONS
 		(	IF '(' expression ')'
 		|	NUMTHREADS '(' expression ')'
 		|	ompDataClause
 		)*
-		block
+		statement
 	;
 	
-ompForDirective
-	:	PARALLEL_FOR
-		(	IF '(' expression ')'
-		|	NUMTHREADS '(' expression ')'
-		|	ompDataClause
-		)*
-		block
-	;
-	
-ompSectionsDirective
+ompForConstruct
 	:	FOR
 		(	IF '(' expression ')'
 		|	NUMTHREADS '(' expression ')'
+		| 	NOWAIT
+		|	ORDERED
 		|	ompDataClause
+		|	ompScheduleClause
 		)*
-		block
+		forStatement
 	;
 	
-ompFreeguiDirective
+ompSectionsConstruct
+	:	SECTIONS
+		(	IF '(' expression ')'
+		|	NUMTHREADS '(' expression ')'
+		| 	NOWAIT
+		|	ompDataClause
+		)*
+		statement
+	;
+	
+ompFreeguiConstruct
 	:	FREEGUI	(PARALLEL)*
 		(	IF '(' expression ')'
 		| 	NUMTHREADS '(' expression ')'
 		|	ompDataClause
 		)
-		block
+		statement
 	;
 		
-ompSectionDirective
-	:	SECTIONS
+ompSectionConstruct
+	:	SECTION
 		(	IF '(' expression ')'
 		|	NUMTHREADS '(' expression ')'
 		|	ompDataClause
 		)*
-		block
+		statement
 	;
 	
-
-
-ompGuiDirective
+ompGuiConstruct
 	:	GUI
-		block
+		statement
 	;
-ompSingleDirective
+	
+ompSingleConstruct
 	:	SINGLE
-		block
+		(	NOWAIT
+		|	ompDataClause
+		)
+		statement
 	;
-ompMasterDirective
+	
+ompMasterConstruct
 	:	MASTER
-		block
+		statement
 	;
-ompCriticalDirective
+ompCriticalConstruct
 	:	CRITICAL
-		block
+		(	'('
+			Identifier
+			')'
+		)?
+		statement
 	;
-ompAtomicDirective
+ompAtomicConstruct
 	:	ATOMIC
-		block
+		statement
 	;
 ompBarrierDirective
 	:	BARRIER
@@ -1063,15 +1076,70 @@ ompBarrierDirective
 ompFlushDirective
 	:	FLUSH
 	;
-ompOrderedDirective
+ompOrderedConstruct
 	:	ORDERED
-		block
+		statement
 	;
 	
 ///////////////////////
-ompDataClause
-	:	DD
+ompScheduleClause
+	:	SCHEDULE '(' 
+ 	(	STATIC
+ 	|	DYNAMIC
+ 	|	GUIDED	
+ 	|	'runtime'
+ 	| 	'auto'
+ 	)
+ 	(	','  expression	)? 
+		')'
 	;
+	
+ompDataClause
+	:	ompPrivateClause
+	|	ompSharedDataClause
+	| 	ompLastprivateDataClause
+	|	ompReductionDataClause
+	|	ompCopyprivateDataClause
+	|	ompDefaultDataClause
+	;
+	
+ompPrivateClause
+	:	 PRIVATE
+		'('ompDataClauseArgumentList')'
+	;
+ompSharedDataClause
+	:	SHARED
+		'('ompDataClauseArgumentList')'
+	;
+ompLastprivateDataClause
+	:	LASTPRIVATE
+		'('ompDataClauseArgumentList')'
+	;
+ompReductionDataClause
+	:	REDUCTION
+		'('ompDataClauseReductionArgumentList')'
+	;
+ompCopyprivateDataClause
+	:	COPYPRIVATE
+		'('ompDataClauseArgumentList')'
+	;
+ompDefaultDataClause
+	:	DEFAULT '('
+	(	SHARED
+	|	NONE
+	) 	')'
+	;
+
+ompDataClauseArgumentList
+	: Identifier 
+	( ',' Identifier )*
+	;
+	
+ompDataClauseReductionArgumentList
+	: expression Identifier 
+	( ',' expression Identifier )*
+	;
+	
 /*
  * Productions from §15 (Expressions)
  */
@@ -1525,8 +1593,8 @@ OPENMP_PRAGMA: '//#omp';
 PARALLEL: 'parallel';
 PARALLEL_FOR: 'parallel for';
 PARALLEL_SECTIONS: 'parallel sections';
-FIRST_PRIVATE: 'firstprivate';
-LAST_PRIVATE: 'lastprivate';
+FIRSTPRIVATE: 'firstprivate';
+LASTPRIVATE: 'lastprivate';
 SHARED: 'shared';
 NONE: 'none';
 REDUCTION: 'reduction';
@@ -1546,7 +1614,7 @@ FLUSH: 'flush';
 BARRIER: 'barrier';
 NOWAIT: 'nowait';
 NUMTHREADS: 'num_threads';
-CPOYPRIVATE: 'copyprivate';
+COPYPRIVATE: 'copyprivate';
 
 // §3.10.1 Integer Literals
 
@@ -1925,7 +1993,8 @@ WS  :  [ \t\r\n\u000C]+ -> skip
 COMMENT
     :   '/*' .*? '*/' -> skip
     ;
-
+/*
 LINE_COMMENT
-    :   '//' ~[\r\n]* -> skip
-    ;
+  	 :   '//' ~[\r\n]* 
+	 ;
+*/

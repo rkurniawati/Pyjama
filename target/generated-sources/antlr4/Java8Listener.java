@@ -85,6 +85,17 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitInterfaceMethodModifier(@NotNull Java8Parser.InterfaceMethodModifierContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#openmpConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOpenmpConstruct(@NotNull Java8Parser.OpenmpConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#openmpConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOpenmpConstruct(@NotNull Java8Parser.OpenmpConstructContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#throws_}.
 	 * @param ctx the parse tree
 	 */
@@ -184,6 +195,17 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitInterfaceTypeList(@NotNull Java8Parser.InterfaceTypeListContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompForConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpForConstruct(@NotNull Java8Parser.OmpForConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompForConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpForConstruct(@NotNull Java8Parser.OmpForConstructContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#classModifier}.
 	 * @param ctx the parse tree
 	 */
@@ -270,6 +292,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEnumBody(@NotNull Java8Parser.EnumBodyContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompParallelSectionsConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpParallelSectionsConstruct(@NotNull Java8Parser.OmpParallelSectionsConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompParallelSectionsConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpParallelSectionsConstruct(@NotNull Java8Parser.OmpParallelSectionsConstructContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#explicitConstructorInvocation}.
@@ -470,17 +503,6 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitFormalParameterList(@NotNull Java8Parser.FormalParameterListContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompGuiDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpGuiDirective(@NotNull Java8Parser.OmpGuiDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompGuiDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpGuiDirective(@NotNull Java8Parser.OmpGuiDirectiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Java8Parser#catches}.
 	 * @param ctx the parse tree
 	 */
@@ -523,6 +545,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPostIncrementExpression(@NotNull Java8Parser.PostIncrementExpressionContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompOrderedConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpOrderedConstruct(@NotNull Java8Parser.OmpOrderedConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompOrderedConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpOrderedConstruct(@NotNull Java8Parser.OmpOrderedConstructContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#assignment}.
@@ -844,17 +877,6 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitExceptionType(@NotNull Java8Parser.ExceptionTypeContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompForDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpForDirective(@NotNull Java8Parser.OmpForDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompForDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpForDirective(@NotNull Java8Parser.OmpForDirectiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Java8Parser#catchType}.
 	 * @param ctx the parse tree
 	 */
@@ -921,17 +943,6 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitEmptyStatement(@NotNull Java8Parser.EmptyStatementContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompParallelDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpParallelDirective(@NotNull Java8Parser.OmpParallelDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompParallelDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpParallelDirective(@NotNull Java8Parser.OmpParallelDirectiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Java8Parser#switchLabels}.
 	 * @param ctx the parse tree
 	 */
@@ -963,6 +974,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitClassType_lf_classOrInterfaceType(@NotNull Java8Parser.ClassType_lf_classOrInterfaceTypeContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompDataClauseArgumentList}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpDataClauseArgumentList(@NotNull Java8Parser.OmpDataClauseArgumentListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompDataClauseArgumentList}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpDataClauseArgumentList(@NotNull Java8Parser.OmpDataClauseArgumentListContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#lastFormalParameter}.
@@ -1240,6 +1262,17 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitResourceSpecification(@NotNull Java8Parser.ResourceSpecificationContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompMasterConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpMasterConstruct(@NotNull Java8Parser.OmpMasterConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompMasterConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpMasterConstruct(@NotNull Java8Parser.OmpMasterConstructContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#leftHandSide}.
 	 * @param ctx the parse tree
 	 */
@@ -1262,6 +1295,17 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitPrimaryNoNewArray_lfno_arrayAccess(@NotNull Java8Parser.PrimaryNoNewArray_lfno_arrayAccessContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompReductionDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpReductionDataClause(@NotNull Java8Parser.OmpReductionDataClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompReductionDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpReductionDataClause(@NotNull Java8Parser.OmpReductionDataClauseContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#labeledStatementNoShortIf}.
 	 * @param ctx the parse tree
 	 */
@@ -1271,6 +1315,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLabeledStatementNoShortIf(@NotNull Java8Parser.LabeledStatementNoShortIfContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompGuiConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpGuiConstruct(@NotNull Java8Parser.OmpGuiConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompGuiConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpGuiConstruct(@NotNull Java8Parser.OmpGuiConstructContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#dims}.
@@ -1394,17 +1449,6 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitWhileStatement(@NotNull Java8Parser.WhileStatementContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompAtomicDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpAtomicDirective(@NotNull Java8Parser.OmpAtomicDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompAtomicDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpAtomicDirective(@NotNull Java8Parser.OmpAtomicDirectiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Java8Parser#constructorModifier}.
 	 * @param ctx the parse tree
 	 */
@@ -1460,17 +1504,6 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitOmpBarrierDirective(@NotNull Java8Parser.OmpBarrierDirectiveContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompParallelForDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpParallelForDirective(@NotNull Java8Parser.OmpParallelForDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompParallelForDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpParallelForDirective(@NotNull Java8Parser.OmpParallelForDirectiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Java8Parser#finally_}.
 	 * @param ctx the parse tree
 	 */
@@ -1491,6 +1524,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDimExpr(@NotNull Java8Parser.DimExprContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompSharedDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpSharedDataClause(@NotNull Java8Parser.OmpSharedDataClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompSharedDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpSharedDataClause(@NotNull Java8Parser.OmpSharedDataClauseContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#arrayType}.
@@ -1515,17 +1559,6 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitPackageName(@NotNull Java8Parser.PackageNameContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompSectionsDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpSectionsDirective(@NotNull Java8Parser.OmpSectionsDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompSectionsDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpSectionsDirective(@NotNull Java8Parser.OmpSectionsDirectiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Java8Parser#expressionStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -1537,6 +1570,28 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitExpressionStatement(@NotNull Java8Parser.ExpressionStatementContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompPrivateClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpPrivateClause(@NotNull Java8Parser.OmpPrivateClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompPrivateClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpPrivateClause(@NotNull Java8Parser.OmpPrivateClauseContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompSectionConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpSectionConstruct(@NotNull Java8Parser.OmpSectionConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompSectionConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpSectionConstruct(@NotNull Java8Parser.OmpSectionConstructContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#forUpdate}.
 	 * @param ctx the parse tree
 	 */
@@ -1546,17 +1601,6 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForUpdate(@NotNull Java8Parser.ForUpdateContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompOrderedDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpOrderedDirective(@NotNull Java8Parser.OmpOrderedDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompOrderedDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpOrderedDirective(@NotNull Java8Parser.OmpOrderedDirectiveContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#integralType}.
@@ -1625,6 +1669,17 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitConstantDeclaration(@NotNull Java8Parser.ConstantDeclarationContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompAtomicConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpAtomicConstruct(@NotNull Java8Parser.OmpAtomicConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompAtomicConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpAtomicConstruct(@NotNull Java8Parser.OmpAtomicConstructContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#annotationTypeMemberDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -1656,17 +1711,6 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitImportDeclaration(@NotNull Java8Parser.ImportDeclarationContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompMasterDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpMasterDirective(@NotNull Java8Parser.OmpMasterDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompMasterDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpMasterDirective(@NotNull Java8Parser.OmpMasterDirectiveContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#instanceInitializer}.
@@ -1724,6 +1768,28 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitExclusiveOrExpression(@NotNull Java8Parser.ExclusiveOrExpressionContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompDataClauseReductionArgumentList}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpDataClauseReductionArgumentList(@NotNull Java8Parser.OmpDataClauseReductionArgumentListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompDataClauseReductionArgumentList}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpDataClauseReductionArgumentList(@NotNull Java8Parser.OmpDataClauseReductionArgumentListContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompSectionsConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpSectionsConstruct(@NotNull Java8Parser.OmpSectionsConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompSectionsConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpSectionsConstruct(@NotNull Java8Parser.OmpSectionsConstructContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#enumDeclaration}.
 	 * @param ctx the parse tree
 	 */
@@ -1744,6 +1810,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBreakStatement(@NotNull Java8Parser.BreakStatementContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompScheduleClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpScheduleClause(@NotNull Java8Parser.OmpScheduleClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompScheduleClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpScheduleClause(@NotNull Java8Parser.OmpScheduleClauseContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#typeParameter}.
@@ -1821,6 +1898,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMethodInvocation_lfno_primary(@NotNull Java8Parser.MethodInvocation_lfno_primaryContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompFreeguiConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpFreeguiConstruct(@NotNull Java8Parser.OmpFreeguiConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompFreeguiConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpFreeguiConstruct(@NotNull Java8Parser.OmpFreeguiConstructContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#conditionalExpression}.
@@ -1955,17 +2043,6 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitTypeParameters(@NotNull Java8Parser.TypeParametersContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompFreeguiDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpFreeguiDirective(@NotNull Java8Parser.OmpFreeguiDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompFreeguiDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpFreeguiDirective(@NotNull Java8Parser.OmpFreeguiDirectiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Java8Parser#arrayAccess_lfno_primary}.
 	 * @param ctx the parse tree
 	 */
@@ -1986,6 +2063,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMethodInvocation(@NotNull Java8Parser.MethodInvocationContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompParallelConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpParallelConstruct(@NotNull Java8Parser.OmpParallelConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompParallelConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpParallelConstruct(@NotNull Java8Parser.OmpParallelConstructContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#inclusiveOrExpression}.
@@ -2043,6 +2131,17 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitConstructorBody(@NotNull Java8Parser.ConstructorBodyContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompCopyprivateDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpCopyprivateDataClause(@NotNull Java8Parser.OmpCopyprivateDataClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompCopyprivateDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpCopyprivateDataClause(@NotNull Java8Parser.OmpCopyprivateDataClauseContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#classInstanceCreationExpression_lf_primary}.
 	 * @param ctx the parse tree
 	 */
@@ -2063,17 +2162,6 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInferredFormalParameterList(@NotNull Java8Parser.InferredFormalParameterListContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompParallelSectionsDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpParallelSectionsDirective(@NotNull Java8Parser.OmpParallelSectionsDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompParallelSectionsDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpParallelSectionsDirective(@NotNull Java8Parser.OmpParallelSectionsDirectiveContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#forInit}.
@@ -2197,6 +2285,17 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitElementValueArrayInitializer(@NotNull Java8Parser.ElementValueArrayInitializerContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompParallelForConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpParallelForConstruct(@NotNull Java8Parser.OmpParallelForConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompParallelForConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpParallelForConstruct(@NotNull Java8Parser.OmpParallelForConstructContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#fieldAccess_lfno_primary}.
 	 * @param ctx the parse tree
 	 */
@@ -2274,15 +2373,15 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitInterfaceModifier(@NotNull Java8Parser.InterfaceModifierContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompSectionDirective}.
+	 * Enter a parse tree produced by {@link Java8Parser#ompCriticalConstruct}.
 	 * @param ctx the parse tree
 	 */
-	void enterOmpSectionDirective(@NotNull Java8Parser.OmpSectionDirectiveContext ctx);
+	void enterOmpCriticalConstruct(@NotNull Java8Parser.OmpCriticalConstructContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompSectionDirective}.
+	 * Exit a parse tree produced by {@link Java8Parser#ompCriticalConstruct}.
 	 * @param ctx the parse tree
 	 */
-	void exitOmpSectionDirective(@NotNull Java8Parser.OmpSectionDirectiveContext ctx);
+	void exitOmpCriticalConstruct(@NotNull Java8Parser.OmpCriticalConstructContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#packageDeclaration}.
@@ -2362,6 +2461,17 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitStatement(@NotNull Java8Parser.StatementContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompLastprivateDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpLastprivateDataClause(@NotNull Java8Parser.OmpLastprivateDataClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompLastprivateDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpLastprivateDataClause(@NotNull Java8Parser.OmpLastprivateDataClauseContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link Java8Parser#postDecrementExpression}.
 	 * @param ctx the parse tree
 	 */
@@ -2426,6 +2536,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMethodInvocation_lf_primary(@NotNull Java8Parser.MethodInvocation_lf_primaryContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompDefaultDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpDefaultDataClause(@NotNull Java8Parser.OmpDefaultDataClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompDefaultDataClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpDefaultDataClause(@NotNull Java8Parser.OmpDefaultDataClauseContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#multiplicativeExpression}.
@@ -2549,17 +2670,6 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitResourceList(@NotNull Java8Parser.ResourceListContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompSingleDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpSingleDirective(@NotNull Java8Parser.OmpSingleDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompSingleDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpSingleDirective(@NotNull Java8Parser.OmpSingleDirectiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Java8Parser#conditionalOrExpression}.
 	 * @param ctx the parse tree
 	 */
@@ -2613,17 +2723,6 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIfThenStatement(@NotNull Java8Parser.IfThenStatementContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link Java8Parser#ompCriticalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOmpCriticalDirective(@NotNull Java8Parser.OmpCriticalDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#ompCriticalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOmpCriticalDirective(@NotNull Java8Parser.OmpCriticalDirectiveContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#constructorDeclaration}.
@@ -2681,17 +2780,6 @@ public interface Java8Listener extends ParseTreeListener {
 	void exitResource(@NotNull Java8Parser.ResourceContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link Java8Parser#openmpDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterOpenmpDirective(@NotNull Java8Parser.OpenmpDirectiveContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link Java8Parser#openmpDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitOpenmpDirective(@NotNull Java8Parser.OpenmpDirectiveContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link Java8Parser#elementValuePair}.
 	 * @param ctx the parse tree
 	 */
@@ -2745,6 +2833,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitClassType_lfno_classOrInterfaceType(@NotNull Java8Parser.ClassType_lfno_classOrInterfaceTypeContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompSingleConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpSingleConstruct(@NotNull Java8Parser.OmpSingleConstructContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompSingleConstruct}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpSingleConstruct(@NotNull Java8Parser.OmpSingleConstructContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#staticInitializer}.
