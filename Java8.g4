@@ -1,5 +1,5 @@
 /*
- * [The "BSD license"]
+ * [The 'BSD license']
  *  Copyright (c) 2014 Terence Parr
  *  Copyright (c) 2014 Sam Harwell
  *  All rights reserved.
@@ -1849,7 +1849,7 @@ SingleCharacter
 // §3.10.5 String Literals
 
 StringLiteral
-	:	'"' StringCharacters? '"'
+	:	''' StringCharacters? '''
 	;
 
 fragment
@@ -1859,7 +1859,7 @@ StringCharacters
 
 fragment
 StringCharacter
-	:	~["\\]
+	:	~['\\]
 	|	EscapeSequence
 	;
 
@@ -1867,7 +1867,7 @@ StringCharacter
 
 fragment
 EscapeSequence
-	:	'\\' [btnfr"'\\]
+	:	'\\' [btnfr''\\]
 	|	OctalEscape
     |   UnicodeEscape // This is not in the spec but prevents having to preprocess the input
 	;
@@ -1956,7 +1956,7 @@ Identifier
 
 fragment
 JavaLetter
-	:	[a-zA-Z$_] // these are the "java letters" below 0xFF
+	:	[a-zA-Z$_] // these are the 'java letters' below 0xFF
 	|	// covers all characters above 0xFF which are not a surrogate
 		~[\u0000-\u00FF\uD800-\uDBFF]
 		{Character.isJavaIdentifierStart(_input.LA(-1))}?
@@ -1967,7 +1967,7 @@ JavaLetter
 
 fragment
 JavaLetterOrDigit
-	:	[a-zA-Z0-9$_] // these are the "java letters or digits" below 0xFF
+	:	[a-zA-Z0-9$_] // these are the 'java letters or digits' below 0xFF
 	|	// covers all characters above 0xFF which are not a surrogate
 		~[\u0000-\u00FF\uD800-\uDBFF]
 		{Character.isJavaIdentifierPart(_input.LA(-1))}?
@@ -1998,3 +1998,11 @@ LINE_COMMENT
   	 :   '//' ~[\r\n]* 
 	 ;
 */
+// In compatible with the coexist of //#omp 
+
+LINE_COMMENT
+  	:	'//'    (~['#']) (~['\n','\r'])* ('\n'|'\r'|'\r\n')? 
+    |	'//#'   (~['o']) (~['\n','\r'])* ('\n'|'\r'|'\r\n')?  
+    |	'//#o'  (~['m']) (~['\n','\r'])* ('\n'|'\r'|'\r\n')?  
+    |	'//#om' (~['p']) (~['\n','\r'])* ('\n'|'\r'|'\r\n')?  
+    ;
