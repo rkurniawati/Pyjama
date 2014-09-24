@@ -1,10 +1,10 @@
 // Generated from Java8.g4 by ANTLR 4.2.2
-
+package japa;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-
+import japa.parser.*;
 /**
  * This class provides an empty implementation of {@link Java8Listener},
  * which can be extended to create a listener which only needs to handle a subset
@@ -114,6 +114,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOpenmpConstruct(@NotNull Java8Parser.OpenmpConstructContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpNumthreadsClause(@NotNull Java8Parser.OmpNumthreadsClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpNumthreadsClause(@NotNull Java8Parser.OmpNumthreadsClauseContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -2415,6 +2428,19 @@ public class Java8BaseListener implements Java8Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTypeParameters(@NotNull Java8Parser.TypeParametersContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOmpIfClause(@NotNull Java8Parser.OmpIfClauseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOmpIfClause(@NotNull Java8Parser.OmpIfClauseContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

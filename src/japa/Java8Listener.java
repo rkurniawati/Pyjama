@@ -1,4 +1,5 @@
 // Generated from Java8.g4 by ANTLR 4.2.2
+package japa;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -94,6 +95,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOpenmpConstruct(@NotNull Java8Parser.OpenmpConstructContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompNumthreadsClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpNumthreadsClause(@NotNull Java8Parser.OmpNumthreadsClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompNumthreadsClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpNumthreadsClause(@NotNull Java8Parser.OmpNumthreadsClauseContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#throws_}.
@@ -2041,6 +2053,17 @@ public interface Java8Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeParameters(@NotNull Java8Parser.TypeParametersContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link Java8Parser#ompIfClause}.
+	 * @param ctx the parse tree
+	 */
+	void enterOmpIfClause(@NotNull Java8Parser.OmpIfClauseContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Java8Parser#ompIfClause}.
+	 * @param ctx the parse tree
+	 */
+	void exitOmpIfClause(@NotNull Java8Parser.OmpIfClauseContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link Java8Parser#arrayAccess_lfno_primary}.
