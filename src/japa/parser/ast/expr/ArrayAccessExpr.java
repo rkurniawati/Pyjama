@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Júlio Vilmar Gesser.
+ * Copyright (C) 2007 Jï¿½lio Vilmar Gesser.
  * 
  * This file is part of Java 1.5 parser and Abstract Syntax Tree.
  *
@@ -54,7 +54,7 @@ public final class ArrayAccessExpr extends Expression {
 
     @Override
     public <A> void accept(VoidVisitor<A> v, A arg) {
-        v.visit(this, arg);
+        return v.visit(this, arg);
     }
 
     public Expression getIndex() {

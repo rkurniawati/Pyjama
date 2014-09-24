@@ -3,7 +3,6 @@ package japa;
 import java.util.ArrayList;
 import java.util.List;
 
-import japa.Java8Parser.TypeDeclarationContext;
 import japa.Java8Parser.*;
 import japa.parser.ast.*;
 import japa.parser.ast.body.*;
@@ -13,6 +12,7 @@ import japa.parser.ast.type.*;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -346,8 +346,17 @@ public class Java8AstVisitor<Node> extends AbstractParseTreeVisitor<Node> implem
 
 	@Override
 	public Node visitPackageModifier(PackageModifierContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		PackageModifier packageModifier = null;
+		Annotation annotation = null;
+		
+		NodeLocationer nl = new NodeLocationer(ctx);
+		
+		if (null != ctx.annotation()) {
+			annotation = (Annotation) ctx.annotation().accept(this);
+		}
+		
+		packageModifier = new PackageModifier(nl.startLine, nl.startColumn, nl.endLine, nl.endColumn, annotation);
+		return (Node)packageModifier;
 	}
 
 	@Override
@@ -612,12 +621,7 @@ public class Java8AstVisitor<Node> extends AbstractParseTreeVisitor<Node> implem
 		List<ImportDeclaration> imports = null;
 		List<TypeDeclaration> types = null;
 		
-		Token startToken = ctx.getStart();
-		Token endToken = ctx.getStop();
-		int startLine = startToken.getLine();
-		int startColumn = startToken.getStartIndex();
-		int endLine = endToken.getLine();
-		int endColumn = endToken.getStopIndex();
+		NodeLocationer nl = new NodeLocationer(ctx);
 		
 		if (null != ctx.packageDeclaration()) {
 			pakage = (PackageDeclaration)ctx.packageDeclaration().accept(this);
@@ -639,7 +643,7 @@ public class Java8AstVisitor<Node> extends AbstractParseTreeVisitor<Node> implem
 			}
 		}
 		
-		cu = new CompilationUnit(startLine, startColumn, endLine, endColumn, pakage, imports, types, null);
+		cu = new CompilationUnit(nl.startLine, nl.startColumn, nl.endLine, nl.endColumn, pakage, imports, types, null);
 		return (Node)cu;
 	}
 
@@ -709,8 +713,27 @@ public class Java8AstVisitor<Node> extends AbstractParseTreeVisitor<Node> implem
 
 	@Override
 	public Node visitNormalAnnotation(NormalAnnotationContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		NormalAnnotation normalAnnotation = null;
+	    TypeName typeName = null;
+		List<ElementValuePair> pairs = null;
+		
+		NodeLocationer nl = new NodeLocationer(ctx);
+		
+		if (null != ctx.typeName()) {
+			typeName = (TypeName)ctx.typeName().accept(this);
+		}
+
+		if (null != ctx.importDeclaration()) {
+			imports = new ArrayList<ImportDeclaration>();
+			List<ImportDeclarationContext> imptCtxs= ctx.importDeclaration();
+			for (ImportDeclarationContext imptCtx: imptCtxs) {
+				imports.add((ImportDeclaration)imptCtx.accept(this));
+			}
+		}
+		
+		normalAnnotation = new NormalAnnotation(nl.startLine, nl.startColumn, nl.endLine, nl.endColumn, typeName, pairs);
+		
+		return (Node)normalAnnotation;
 	}
 
 	@Override
@@ -1408,8 +1431,29 @@ public class Java8AstVisitor<Node> extends AbstractParseTreeVisitor<Node> implem
 
 	@Override
 	public Node visitPackageDeclaration(PackageDeclarationContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+		PackageDeclaration packageDeclaration = null;
+		List<PackageModifier> modifiers = null;
+		List<Identifier> identifiers = null;
+		
+		NodeLocationer nl = new NodeLocationer(ctx);
+		
+		if (null != ctx.packageModifier()) {
+			modifiers = new ArrayList<PackageModifier>();
+			List<PackageModifierContext> pgmfCtxs= ctx.packageModifier();
+			for (PackageModifierContext pgmfCtx: pgmfCtxs) {
+				modifiers.add((PackageModifier)pgmfCtx.accept(this));
+			}
+		}
+		
+		if (null != ctx.Identifier()) {
+			identifiers = new ArrayList<Identifier>();
+			List<TerminalNode> idCtxs= ctx.Identifier();
+			for (TerminalNode idCtx: idCtxs) {
+				identifiers.add((Identifier)idCtx.accept(this));
+			}
+		}
+		packageDeclaration = new PackageDeclaration(nl.startLine, nl.startColumn, nl.endLine, nl.endColumn, modifiers, identifiers);
+		return (Node)packageDeclaration;
 	}
 
 	@Override

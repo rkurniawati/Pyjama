@@ -1,0 +1,34 @@
+CompilationUnit cu = null;
+		PackageDeclaration pakage = null;
+		List<ImportDeclaration> imports = null;
+		List<TypeDeclaration> types = null;
+		
+		Token startToken = ctx.getStart();
+		Token endToken = ctx.getStop();
+		int startLine = startToken.getLine();
+		int startColumn = startToken.getStartIndex();
+		int endLine = endToken.getLine();
+		int endColumn = endToken.getStopIndex();
+		
+		if (null != ctx.packageDeclaration()) {
+			pakage = (PackageDeclaration)ctx.packageDeclaration().accept(this);
+		}
+
+		if (null != ctx.importDeclaration()) {
+			imports = new ArrayList<ImportDeclaration>();
+			List<ImportDeclarationContext> imptCtxs= ctx.importDeclaration();
+			for (ImportDeclarationContext imptCtx: imptCtxs) {
+				imports.add((ImportDeclaration)imptCtx.accept(this));
+			}
+		}
+
+		if (null != ctx.typeDeclaration()) {
+			types = new ArrayList<TypeDeclaration>();
+			List<TypeDeclarationContext> typeCtxs= ctx.typeDeclaration();
+			for (TypeDeclarationContext typeCtx: typeCtxs) {
+				imports.add((ImportDeclaration)typeCtx.accept(this));
+			}
+		}
+		
+		cu = new CompilationUnit(startLine, startColumn, endLine, endColumn, pakage, imports, types, null);
+		return (Node)cu;
