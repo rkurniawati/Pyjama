@@ -1,7 +1,9 @@
 package japa;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import japa.Java8Parser.TypeDeclarationContext;
 import japa.Java8Parser.*;
 import japa.parser.ast.*;
 import japa.parser.ast.body.*;
@@ -9,1659 +11,1698 @@ import japa.parser.ast.expr.*;
 import japa.parser.ast.stmt.*;
 import japa.parser.ast.type.*;
 
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
-public class Java8AnalysisVisitor<T> extends AbstractParseTreeVisitor<T> implements Java8Visitor<T>{
+public class Java8AstVisitor<Node> extends AbstractParseTreeVisitor<Node> implements Java8Visitor<Node> {
 
 	@Override
-	public T visitFieldAccess(FieldAccessContext ctx) {
+	public Node visitFieldAccess(FieldAccessContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConstructorDeclarator(ConstructorDeclaratorContext ctx) {
+	public Node visitConstructorDeclarator(ConstructorDeclaratorContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodModifier(MethodModifierContext ctx) {
+	public Node visitMethodModifier(MethodModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeDeclaration(TypeDeclarationContext ctx) {
+	public Node visitTypeDeclaration(TypeDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLambdaParameters(LambdaParametersContext ctx) {
+	public Node visitLambdaParameters(LambdaParametersContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassMemberDeclaration(ClassMemberDeclarationContext ctx) {
+	public Node visitClassMemberDeclaration(ClassMemberDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceMethodModifier(InterfaceMethodModifierContext ctx) {
+	public Node visitInterfaceMethodModifier(InterfaceMethodModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOpenmpConstruct(OpenmpConstructContext ctx) {
+	public Node visitOpenmpConstruct(OpenmpConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpNumthreadsClause(OmpNumthreadsClauseContext ctx) {
+	public Node visitOmpNumthreadsClause(OmpNumthreadsClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitThrows_(Throws_Context ctx) {
+	public Node visitThrows_(Throws_Context ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitNormalClassDeclaration(NormalClassDeclarationContext ctx) {
+	public Node visitNormalClassDeclaration(NormalClassDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPostDecrementExpression_lf_postfixExpression(
+	public Node visitPostDecrementExpression_lf_postfixExpression(
 			PostDecrementExpression_lf_postfixExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassInstanceCreationExpression(
+	public Node visitClassInstanceCreationExpression(
 			ClassInstanceCreationExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodName(MethodNameContext ctx) {
+	public Node visitMethodName(MethodNameContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEnumConstantName(EnumConstantNameContext ctx) {
+	public Node visitEnumConstantName(EnumConstantNameContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAssignmentExpression(AssignmentExpressionContext ctx) {
+	public Node visitAssignmentExpression(AssignmentExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSimpleTypeName(SimpleTypeNameContext ctx) {
+	public Node visitSimpleTypeName(SimpleTypeNameContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceTypeList(InterfaceTypeListContext ctx) {
+	public Node visitInterfaceTypeList(InterfaceTypeListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpForConstruct(OmpForConstructContext ctx) {
+	public Node visitOmpForConstruct(OmpForConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassModifier(ClassModifierContext ctx) {
+	public Node visitClassModifier(ClassModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceMethodDeclaration(
+	public Node visitInterfaceMethodDeclaration(
 			InterfaceMethodDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSuperclass(SuperclassContext ctx) {
+	public Node visitSuperclass(SuperclassContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMarkerAnnotation(MarkerAnnotationContext ctx) {
+	public Node visitMarkerAnnotation(MarkerAnnotationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitCatchClause(CatchClauseContext ctx) {
+	public Node visitCatchClause(CatchClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConstantExpression(ConstantExpressionContext ctx) {
+	public Node visitConstantExpression(ConstantExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSingleElementAnnotation(SingleElementAnnotationContext ctx) {
+	public Node visitSingleElementAnnotation(SingleElementAnnotationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEnumBody(EnumBodyContext ctx) {
+	public Node visitEnumBody(EnumBodyContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpParallelSectionsConstruct(
+	public Node visitOmpParallelSectionsConstruct(
 			OmpParallelSectionsConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitExplicitConstructorInvocation(
+	public Node visitExplicitConstructorInvocation(
 			ExplicitConstructorInvocationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceType(InterfaceTypeContext ctx) {
+	public Node visitInterfaceType(InterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitDimExprs(DimExprsContext ctx) {
+	public Node visitDimExprs(DimExprsContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitFieldModifier(FieldModifierContext ctx) {
+	public Node visitFieldModifier(FieldModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeBound(TypeBoundContext ctx) {
+	public Node visitTypeBound(TypeBoundContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannClassType(UnannClassTypeContext ctx) {
+	public Node visitUnannClassType(UnannClassTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitVariableInitializer(VariableInitializerContext ctx) {
+	public Node visitVariableInitializer(VariableInitializerContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPreDecrementExpression(PreDecrementExpressionContext ctx) {
+	public Node visitPreDecrementExpression(PreDecrementExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimaryNoNewArray(PrimaryNoNewArrayContext ctx) {
+	public Node visitPrimaryNoNewArray(PrimaryNoNewArrayContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAndExpression(AndExpressionContext ctx) {
+	public Node visitAndExpression(AndExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitWildcardBounds(WildcardBoundsContext ctx) {
+	public Node visitWildcardBounds(WildcardBoundsContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitExpressionName(ExpressionNameContext ctx) {
+	public Node visitExpressionName(ExpressionNameContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitStatementWithoutTrailingSubstatement(
+	public Node visitStatementWithoutTrailingSubstatement(
 			StatementWithoutTrailingSubstatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitStatementNoShortIf(StatementNoShortIfContext ctx) {
+	public Node visitStatementNoShortIf(StatementNoShortIfContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitFieldDeclaration(FieldDeclarationContext ctx) {
+	public Node visitFieldDeclaration(FieldDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitNormalInterfaceDeclaration(
+	public Node visitNormalInterfaceDeclaration(
 			NormalInterfaceDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannTypeVariable(UnannTypeVariableContext ctx) {
+	public Node visitUnannTypeVariable(UnannTypeVariableContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitFormalParameterList(FormalParameterListContext ctx) {
+	public Node visitFormalParameterList(FormalParameterListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitCatches(CatchesContext ctx) {
+	public Node visitCatches(CatchesContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimaryNoNewArray_lfno_primary(
+	public Node visitPrimaryNoNewArray_lfno_primary(
 			PrimaryNoNewArray_lfno_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassDeclaration(ClassDeclarationContext ctx) {
+	public Node visitClassDeclaration(ClassDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPostIncrementExpression(PostIncrementExpressionContext ctx) {
+	public Node visitPostIncrementExpression(PostIncrementExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpOrderedConstruct(OmpOrderedConstructContext ctx) {
+	public Node visitOmpOrderedConstruct(OmpOrderedConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAssignment(AssignmentContext ctx) {
+	public Node visitAssignment(AssignmentContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSwitchStatement(SwitchStatementContext ctx) {
+	public Node visitSwitchStatement(SwitchStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPackageModifier(PackageModifierContext ctx) {
+	public Node visitPackageModifier(PackageModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitFormalParameters(FormalParametersContext ctx) {
+	public Node visitFormalParameters(FormalParametersContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitCastExpression(CastExpressionContext ctx) {
+	public Node visitCastExpression(CastExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeArgument(TypeArgumentContext ctx) {
+	public Node visitTypeArgument(TypeArgumentContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTryWithResourcesStatement(TryWithResourcesStatementContext ctx) {
+	public Node visitTryWithResourcesStatement(
+			TryWithResourcesStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLambdaBody(LambdaBodyContext ctx) {
+	public Node visitLambdaBody(LambdaBodyContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitThrowStatement(ThrowStatementContext ctx) {
+	public Node visitThrowStatement(ThrowStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEnhancedForStatementNoShortIf(
+	public Node visitEnhancedForStatementNoShortIf(
 			EnhancedForStatementNoShortIfContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpFlushDirective(OmpFlushDirectiveContext ctx) {
+	public Node visitOmpFlushDirective(OmpFlushDirectiveContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeArgumentList(TypeArgumentListContext ctx) {
+	public Node visitTypeArgumentList(TypeArgumentListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitExpression(ExpressionContext ctx) {
+	public Node visitExpression(ExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitVariableDeclarator(VariableDeclaratorContext ctx) {
+	public Node visitVariableDeclarator(VariableDeclaratorContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAnnotationTypeDeclaration(AnnotationTypeDeclarationContext ctx) {
+	public Node visitAnnotationTypeDeclaration(
+			AnnotationTypeDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEnumConstantModifier(EnumConstantModifierContext ctx) {
+	public Node visitEnumConstantModifier(EnumConstantModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannInterfaceType_lf_unannClassOrInterfaceType(
+	public Node visitUnannInterfaceType_lf_unannClassOrInterfaceType(
 			UnannInterfaceType_lf_unannClassOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitFormalParameter(FormalParameterContext ctx) {
+	public Node visitFormalParameter(FormalParameterContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEnhancedForStatement(EnhancedForStatementContext ctx) {
+	public Node visitEnhancedForStatement(EnhancedForStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitReturnStatement(ReturnStatementContext ctx) {
+	public Node visitReturnStatement(ReturnStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPreIncrementExpression(PreIncrementExpressionContext ctx) {
+	public Node visitPreIncrementExpression(PreIncrementExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConstantModifier(ConstantModifierContext ctx) {
+	public Node visitConstantModifier(ConstantModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAssertStatement(AssertStatementContext ctx) {
+	public Node visitAssertStatement(AssertStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodDeclarator(MethodDeclaratorContext ctx) {
+	public Node visitMethodDeclarator(MethodDeclaratorContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitForStatementNoShortIf(ForStatementNoShortIfContext ctx) {
+	public Node visitForStatementNoShortIf(ForStatementNoShortIfContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassBody(ClassBodyContext ctx) {
+	public Node visitClassBody(ClassBodyContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSuperinterfaces(SuperinterfacesContext ctx) {
+	public Node visitSuperinterfaces(SuperinterfacesContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceDeclaration(InterfaceDeclarationContext ctx) {
+	public Node visitInterfaceDeclaration(InterfaceDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitExceptionType(ExceptionTypeContext ctx) {
+	public Node visitExceptionType(ExceptionTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitCatchType(CatchTypeContext ctx) {
+	public Node visitCatchType(CatchTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimaryNoNewArray_lf_arrayAccess(
+	public Node visitPrimaryNoNewArray_lf_arrayAccess(
 			PrimaryNoNewArray_lf_arrayAccessContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeArguments(TypeArgumentsContext ctx) {
+	public Node visitTypeArguments(TypeArgumentsContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSingleStaticImportDeclaration(
+	public Node visitSingleStaticImportDeclaration(
 			SingleStaticImportDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPostfixExpression(PostfixExpressionContext ctx) {
+	public Node visitPostfixExpression(PostfixExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEmptyStatement(EmptyStatementContext ctx) {
+	public Node visitEmptyStatement(EmptyStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSwitchLabels(SwitchLabelsContext ctx) {
+	public Node visitSwitchLabels(SwitchLabelsContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassBodyDeclaration(ClassBodyDeclarationContext ctx) {
+	public Node visitClassBodyDeclaration(ClassBodyDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassType_lf_classOrInterfaceType(
+	public Node visitClassType_lf_classOrInterfaceType(
 			ClassType_lf_classOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpDataClauseArgumentList(OmpDataClauseArgumentListContext ctx) {
+	public Node visitOmpDataClauseArgumentList(
+			OmpDataClauseArgumentListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLastFormalParameter(LastFormalParameterContext ctx) {
+	public Node visitLastFormalParameter(LastFormalParameterContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLocalVariableDeclaration(LocalVariableDeclarationContext ctx) {
+	public Node visitLocalVariableDeclaration(
+			LocalVariableDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpDataClause(OmpDataClauseContext ctx) {
+	public Node visitOmpDataClause(OmpDataClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitResult(ResultContext ctx) {
+	public Node visitResult(ResultContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
+	public Node visitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitCompilationUnit(CompilationUnitContext ctx) {
+	public Node visitCompilationUnit(CompilationUnitContext ctx) {
 		CompilationUnit cu = null;
 		PackageDeclaration pakage = null;
 		List<ImportDeclaration> imports = null;
-		ImportDeclaration in = null;
 		List<TypeDeclaration> types = null;
-		TypeDeclaration tn = null;
-		int line = -1;
-		int column = 0;
-		return null;
+		
+		Token startToken = ctx.getStart();
+		Token endToken = ctx.getStop();
+		int startLine = startToken.getLine();
+		int startColumn = startToken.getStartIndex();
+		int endLine = endToken.getLine();
+		int endColumn = endToken.getStopIndex();
+		
+		if (null != ctx.packageDeclaration()) {
+			pakage = (PackageDeclaration)ctx.packageDeclaration().accept(this);
+		}
+
+		if (null != ctx.importDeclaration()) {
+			imports = new ArrayList<ImportDeclaration>();
+			List<ImportDeclarationContext> imptCtxs= ctx.importDeclaration();
+			for (ImportDeclarationContext imptCtx: imptCtxs) {
+				imports.add((ImportDeclaration)imptCtx.accept(this));
+			}
+		}
+
+		if (null != ctx.typeDeclaration()) {
+			types = new ArrayList<TypeDeclaration>();
+			List<TypeDeclarationContext> typeCtxs= ctx.typeDeclaration();
+			for (TypeDeclarationContext typeCtx: typeCtxs) {
+				imports.add((ImportDeclaration)typeCtx.accept(this));
+			}
+		}
+		
+		cu = new CompilationUnit(startLine, startColumn, endLine, endColumn, pakage, imports, types, null);
+		return (Node)cu;
 	}
 
 	@Override
-	public T visitTypeParameterList(TypeParameterListContext ctx) {
+	public Node visitTypeParameterList(TypeParameterListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnaryExpressionNotPlusMinus(
+	public Node visitUnaryExpressionNotPlusMinus(
 			UnaryExpressionNotPlusMinusContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeArgumentsOrDiamond(TypeArgumentsOrDiamondContext ctx) {
+	public Node visitTypeArgumentsOrDiamond(TypeArgumentsOrDiamondContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSingleTypeImportDeclaration(
+	public Node visitSingleTypeImportDeclaration(
 			SingleTypeImportDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAnnotationTypeElementDeclaration(
+	public Node visitAnnotationTypeElementDeclaration(
 			AnnotationTypeElementDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAnnotationTypeBody(AnnotationTypeBodyContext ctx) {
+	public Node visitAnnotationTypeBody(AnnotationTypeBodyContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOpenmpStatement(OpenmpStatementContext ctx) {
+	public Node visitOpenmpStatement(OpenmpStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLabeledStatement(LabeledStatementContext ctx) {
+	public Node visitLabeledStatement(LabeledStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTryStatement(TryStatementContext ctx) {
+	public Node visitTryStatement(TryStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceType_lf_classOrInterfaceType(
+	public Node visitInterfaceType_lf_classOrInterfaceType(
 			InterfaceType_lf_classOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitNormalAnnotation(NormalAnnotationContext ctx) {
+	public Node visitNormalAnnotation(NormalAnnotationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitRelationalExpression(RelationalExpressionContext ctx) {
+	public Node visitRelationalExpression(RelationalExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitWhileStatementNoShortIf(WhileStatementNoShortIfContext ctx) {
+	public Node visitWhileStatementNoShortIf(WhileStatementNoShortIfContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitReceiverParameter(ReceiverParameterContext ctx) {
+	public Node visitReceiverParameter(ReceiverParameterContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimaryNoNewArray_lf_primary_lf_arrayAccess_lf_primary(
+	public Node visitPrimaryNoNewArray_lf_primary_lf_arrayAccess_lf_primary(
 			PrimaryNoNewArray_lf_primary_lf_arrayAccess_lf_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitElementValuePairList(ElementValuePairListContext ctx) {
+	public Node visitElementValuePairList(ElementValuePairListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodDeclaration(MethodDeclarationContext ctx) {
+	public Node visitMethodDeclaration(MethodDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceType_lfno_classOrInterfaceType(
+	public Node visitInterfaceType_lfno_classOrInterfaceType(
 			InterfaceType_lfno_classOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitResourceSpecification(ResourceSpecificationContext ctx) {
+	public Node visitResourceSpecification(ResourceSpecificationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpMasterConstruct(OmpMasterConstructContext ctx) {
+	public Node visitOmpMasterConstruct(OmpMasterConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLeftHandSide(LeftHandSideContext ctx) {
+	public Node visitLeftHandSide(LeftHandSideContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimaryNoNewArray_lfno_arrayAccess(
+	public Node visitPrimaryNoNewArray_lfno_arrayAccess(
 			PrimaryNoNewArray_lfno_arrayAccessContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpReductionDataClause(OmpReductionDataClauseContext ctx) {
+	public Node visitOmpReductionDataClause(OmpReductionDataClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLabeledStatementNoShortIf(LabeledStatementNoShortIfContext ctx) {
+	public Node visitLabeledStatementNoShortIf(
+			LabeledStatementNoShortIfContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpGuiConstruct(OmpGuiConstructContext ctx) {
+	public Node visitOmpGuiConstruct(OmpGuiConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitDims(DimsContext ctx) {
+	public Node visitDims(DimsContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitVariableDeclaratorList(VariableDeclaratorListContext ctx) {
+	public Node visitVariableDeclaratorList(VariableDeclaratorListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassType(ClassTypeContext ctx) {
+	public Node visitClassType(ClassTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitArgumentList(ArgumentListContext ctx) {
+	public Node visitArgumentList(ArgumentListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitContinueStatement(ContinueStatementContext ctx) {
+	public Node visitContinueStatement(ContinueStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEnumConstantList(EnumConstantListContext ctx) {
+	public Node visitEnumConstantList(EnumConstantListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodHeader(MethodHeaderContext ctx) {
+	public Node visitMethodHeader(MethodHeaderContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitIfThenElseStatementNoShortIf(
+	public Node visitIfThenElseStatementNoShortIf(
 			IfThenElseStatementNoShortIfContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitArrayInitializer(ArrayInitializerContext ctx) {
+	public Node visitArrayInitializer(ArrayInitializerContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitExtendsInterfaces(ExtendsInterfacesContext ctx) {
+	public Node visitExtendsInterfaces(ExtendsInterfacesContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitWhileStatement(WhileStatementContext ctx) {
+	public Node visitWhileStatement(WhileStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConstructorModifier(ConstructorModifierContext ctx) {
+	public Node visitConstructorModifier(ConstructorModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannInterfaceType_lfno_unannClassOrInterfaceType(
+	public Node visitUnannInterfaceType_lfno_unannClassOrInterfaceType(
 			UnannInterfaceType_lfno_unannClassOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimitiveType(PrimitiveTypeContext ctx) {
+	public Node visitPrimitiveType(PrimitiveTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannClassOrInterfaceType(UnannClassOrInterfaceTypeContext ctx) {
+	public Node visitUnannClassOrInterfaceType(
+			UnannClassOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpBarrierDirective(OmpBarrierDirectiveContext ctx) {
+	public Node visitOmpBarrierDirective(OmpBarrierDirectiveContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitFinally_(Finally_Context ctx) {
+	public Node visitFinally_(Finally_Context ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitDimExpr(DimExprContext ctx) {
+	public Node visitDimExpr(DimExprContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpSharedDataClause(OmpSharedDataClauseContext ctx) {
+	public Node visitOmpSharedDataClause(OmpSharedDataClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitArrayType(ArrayTypeContext ctx) {
+	public Node visitArrayType(ArrayTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPackageName(PackageNameContext ctx) {
+	public Node visitPackageName(PackageNameContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitExpressionStatement(ExpressionStatementContext ctx) {
+	public Node visitExpressionStatement(ExpressionStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpPrivateClause(OmpPrivateClauseContext ctx) {
+	public Node visitOmpPrivateClause(OmpPrivateClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpSectionConstruct(OmpSectionConstructContext ctx) {
+	public Node visitOmpSectionConstruct(OmpSectionConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitForUpdate(ForUpdateContext ctx) {
+	public Node visitForUpdate(ForUpdateContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitIntegralType(IntegralTypeContext ctx) {
+	public Node visitIntegralType(IntegralTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary(
+	public Node visitPrimaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary(
 			PrimaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAnnotation(AnnotationContext ctx) {
+	public Node visitAnnotation(AnnotationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEnumConstant(EnumConstantContext ctx) {
+	public Node visitEnumConstant(EnumConstantContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassInstanceCreationExpression_lfno_primary(
+	public Node visitClassInstanceCreationExpression_lfno_primary(
 			ClassInstanceCreationExpression_lfno_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConstantDeclaration(ConstantDeclarationContext ctx) {
+	public Node visitConstantDeclaration(ConstantDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpAtomicConstruct(OmpAtomicConstructContext ctx) {
+	public Node visitOmpAtomicConstruct(OmpAtomicConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAnnotationTypeMemberDeclaration(
+	public Node visitAnnotationTypeMemberDeclaration(
 			AnnotationTypeMemberDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannReferenceType(UnannReferenceTypeContext ctx) {
+	public Node visitUnannReferenceType(UnannReferenceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitImportDeclaration(ImportDeclarationContext ctx) {
+	public Node visitImportDeclaration(ImportDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInstanceInitializer(InstanceInitializerContext ctx) {
+	public Node visitInstanceInitializer(InstanceInitializerContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitBasicForStatementNoShortIf(
+	public Node visitBasicForStatementNoShortIf(
 			BasicForStatementNoShortIfContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAnnotationTypeElementModifier(
+	public Node visitAnnotationTypeElementModifier(
 			AnnotationTypeElementModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSwitchBlock(SwitchBlockContext ctx) {
+	public Node visitSwitchBlock(SwitchBlockContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitExclusiveOrExpression(ExclusiveOrExpressionContext ctx) {
+	public Node visitExclusiveOrExpression(ExclusiveOrExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpDataClauseReductionArgumentList(
+	public Node visitOmpDataClauseReductionArgumentList(
 			OmpDataClauseReductionArgumentListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpSectionsConstruct(OmpSectionsConstructContext ctx) {
+	public Node visitOmpSectionsConstruct(OmpSectionsConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEnumDeclaration(EnumDeclarationContext ctx) {
+	public Node visitEnumDeclaration(EnumDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitBreakStatement(BreakStatementContext ctx) {
+	public Node visitBreakStatement(BreakStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpScheduleClause(OmpScheduleClauseContext ctx) {
+	public Node visitOmpScheduleClause(OmpScheduleClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeParameter(TypeParameterContext ctx) {
+	public Node visitTypeParameter(TypeParameterContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitArrayAccess_lf_primary(ArrayAccess_lf_primaryContext ctx) {
+	public Node visitArrayAccess_lf_primary(ArrayAccess_lf_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEnumBodyDeclarations(EnumBodyDeclarationsContext ctx) {
+	public Node visitEnumBodyDeclarations(EnumBodyDeclarationsContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitForStatement(ForStatementContext ctx) {
+	public Node visitForStatement(ForStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitStatementExpression(StatementExpressionContext ctx) {
+	public Node visitStatementExpression(StatementExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitBlock(BlockContext ctx) {
+	public Node visitBlock(BlockContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodInvocation_lfno_primary(
+	public Node visitMethodInvocation_lfno_primary(
 			MethodInvocation_lfno_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpFreeguiConstruct(OmpFreeguiConstructContext ctx) {
+	public Node visitOmpFreeguiConstruct(OmpFreeguiConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConditionalExpression(ConditionalExpressionContext ctx) {
+	public Node visitConditionalExpression(ConditionalExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary(
+	public Node visitPrimaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary(
 			PrimaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitElementValueList(ElementValueListContext ctx) {
+	public Node visitElementValueList(ElementValueListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
+	public Node visitPrimaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
 			PrimaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLocalVariableDeclarationStatement(
+	public Node visitLocalVariableDeclarationStatement(
 			LocalVariableDeclarationStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitArrayCreationExpression(ArrayCreationExpressionContext ctx) {
+	public Node visitArrayCreationExpression(ArrayCreationExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSynchronizedStatement(SynchronizedStatementContext ctx) {
+	public Node visitSynchronizedStatement(SynchronizedStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSwitchLabel(SwitchLabelContext ctx) {
+	public Node visitSwitchLabel(SwitchLabelContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitBasicForStatement(BasicForStatementContext ctx) {
+	public Node visitBasicForStatement(BasicForStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannType(UnannTypeContext ctx) {
+	public Node visitUnannType(UnannTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeParameterModifier(TypeParameterModifierContext ctx) {
+	public Node visitTypeParameterModifier(TypeParameterModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeParameters(TypeParametersContext ctx) {
+	public Node visitTypeParameters(TypeParametersContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpIfClause(OmpIfClauseContext ctx) {
+	public Node visitOmpIfClause(OmpIfClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitArrayAccess_lfno_primary(ArrayAccess_lfno_primaryContext ctx) {
+	public Node visitArrayAccess_lfno_primary(
+			ArrayAccess_lfno_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodInvocation(MethodInvocationContext ctx) {
+	public Node visitMethodInvocation(MethodInvocationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpParallelConstruct(OmpParallelConstructContext ctx) {
+	public Node visitOmpParallelConstruct(OmpParallelConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInclusiveOrExpression(InclusiveOrExpressionContext ctx) {
+	public Node visitInclusiveOrExpression(InclusiveOrExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannClassType_lfno_unannClassOrInterfaceType(
+	public Node visitUnannClassType_lfno_unannClassOrInterfaceType(
 			UnannClassType_lfno_unannClassOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeName(TypeNameContext ctx) {
+	public Node visitTypeName(TypeNameContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitEqualityExpression(EqualityExpressionContext ctx) {
+	public Node visitEqualityExpression(EqualityExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConstructorBody(ConstructorBodyContext ctx) {
+	public Node visitConstructorBody(ConstructorBodyContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpCopyprivateDataClause(OmpCopyprivateDataClauseContext ctx) {
+	public Node visitOmpCopyprivateDataClause(
+			OmpCopyprivateDataClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassInstanceCreationExpression_lf_primary(
+	public Node visitClassInstanceCreationExpression_lf_primary(
 			ClassInstanceCreationExpression_lf_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInferredFormalParameterList(
+	public Node visitInferredFormalParameterList(
 			InferredFormalParameterListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitForInit(ForInitContext ctx) {
+	public Node visitForInit(ForInitContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLambdaExpression(LambdaExpressionContext ctx) {
+	public Node visitLambdaExpression(LambdaExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitNumericType(NumericTypeContext ctx) {
+	public Node visitNumericType(NumericTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodReference(MethodReferenceContext ctx) {
+	public Node visitMethodReference(MethodReferenceContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnaryExpression(UnaryExpressionContext ctx) {
+	public Node visitUnaryExpression(UnaryExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodReference_lf_primary(
+	public Node visitMethodReference_lf_primary(
 			MethodReference_lf_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimaryNoNewArray_lf_primary(
+	public Node visitPrimaryNoNewArray_lf_primary(
 			PrimaryNoNewArray_lf_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodReference_lfno_primary(
+	public Node visitMethodReference_lfno_primary(
 			MethodReference_lfno_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitType(TypeContext ctx) {
+	public Node visitType(TypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitFieldAccess_lf_primary(FieldAccess_lf_primaryContext ctx) {
+	public Node visitFieldAccess_lf_primary(FieldAccess_lf_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitElementValueArrayInitializer(
+	public Node visitElementValueArrayInitializer(
 			ElementValueArrayInitializerContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpParallelForConstruct(OmpParallelForConstructContext ctx) {
+	public Node visitOmpParallelForConstruct(OmpParallelForConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitFieldAccess_lfno_primary(FieldAccess_lfno_primaryContext ctx) {
+	public Node visitFieldAccess_lfno_primary(
+			FieldAccess_lfno_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAmbiguousName(AmbiguousNameContext ctx) {
+	public Node visitAmbiguousName(AmbiguousNameContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPrimary(PrimaryContext ctx) {
+	public Node visitPrimary(PrimaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitShiftExpression(ShiftExpressionContext ctx) {
+	public Node visitShiftExpression(ShiftExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitDefaultValue(DefaultValueContext ctx) {
+	public Node visitDefaultValue(DefaultValueContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitVariableModifier(VariableModifierContext ctx) {
+	public Node visitVariableModifier(VariableModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceModifier(InterfaceModifierContext ctx) {
+	public Node visitInterfaceModifier(InterfaceModifierContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpCriticalConstruct(OmpCriticalConstructContext ctx) {
+	public Node visitOmpCriticalConstruct(OmpCriticalConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPackageDeclaration(PackageDeclarationContext ctx) {
+	public Node visitPackageDeclaration(PackageDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeImportOnDemandDeclaration(
+	public Node visitTypeImportOnDemandDeclaration(
 			TypeImportOnDemandDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConditionalAndExpression(ConditionalAndExpressionContext ctx) {
+	public Node visitConditionalAndExpression(
+			ConditionalAndExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAdditiveExpression(AdditiveExpressionContext ctx) {
+	public Node visitAdditiveExpression(AdditiveExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitCatchFormalParameter(CatchFormalParameterContext ctx) {
+	public Node visitCatchFormalParameter(CatchFormalParameterContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitArrayAccess(ArrayAccessContext ctx) {
+	public Node visitArrayAccess(ArrayAccessContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitStatement(StatementContext ctx) {
+	public Node visitStatement(StatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpLastprivateDataClause(OmpLastprivateDataClauseContext ctx) {
+	public Node visitOmpLastprivateDataClause(
+			OmpLastprivateDataClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPostDecrementExpression(PostDecrementExpressionContext ctx) {
+	public Node visitPostDecrementExpression(PostDecrementExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannInterfaceType(UnannInterfaceTypeContext ctx) {
+	public Node visitUnannInterfaceType(UnannInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceBody(InterfaceBodyContext ctx) {
+	public Node visitInterfaceBody(InterfaceBodyContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannArrayType(UnannArrayTypeContext ctx) {
+	public Node visitUnannArrayType(UnannArrayTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPackageOrTypeName(PackageOrTypeNameContext ctx) {
+	public Node visitPackageOrTypeName(PackageOrTypeNameContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodInvocation_lf_primary(
+	public Node visitMethodInvocation_lf_primary(
 			MethodInvocation_lf_primaryContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpDefaultDataClause(OmpDefaultDataClauseContext ctx) {
+	public Node visitOmpDefaultDataClause(OmpDefaultDataClauseContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMultiplicativeExpression(MultiplicativeExpressionContext ctx) {
+	public Node visitMultiplicativeExpression(
+			MultiplicativeExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAssignmentOperator(AssignmentOperatorContext ctx) {
+	public Node visitAssignmentOperator(AssignmentOperatorContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitElementValue(ElementValueContext ctx) {
+	public Node visitElementValue(ElementValueContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassOrInterfaceType(ClassOrInterfaceTypeContext ctx) {
+	public Node visitClassOrInterfaceType(ClassOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitBlockStatement(BlockStatementContext ctx) {
+	public Node visitBlockStatement(BlockStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitTypeVariable(TypeVariableContext ctx) {
+	public Node visitTypeVariable(TypeVariableContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitBlockStatements(BlockStatementsContext ctx) {
+	public Node visitBlockStatements(BlockStatementsContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitAdditionalBound(AdditionalBoundContext ctx) {
+	public Node visitAdditionalBound(AdditionalBoundContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitReferenceType(ReferenceTypeContext ctx) {
+	public Node visitReferenceType(ReferenceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitIfThenElseStatement(IfThenElseStatementContext ctx) {
+	public Node visitIfThenElseStatement(IfThenElseStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitResourceList(ResourceListContext ctx) {
+	public Node visitResourceList(ResourceListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConditionalOrExpression(ConditionalOrExpressionContext ctx) {
+	public Node visitConditionalOrExpression(ConditionalOrExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitStaticImportOnDemandDeclaration(
+	public Node visitStaticImportOnDemandDeclaration(
 			StaticImportOnDemandDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitVariableInitializerList(VariableInitializerListContext ctx) {
+	public Node visitVariableInitializerList(VariableInitializerListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitDoStatement(DoStatementContext ctx) {
+	public Node visitDoStatement(DoStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitIfThenStatement(IfThenStatementContext ctx) {
+	public Node visitIfThenStatement(IfThenStatementContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitConstructorDeclaration(ConstructorDeclarationContext ctx) {
+	public Node visitConstructorDeclaration(ConstructorDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitFloatingPointType(FloatingPointTypeContext ctx) {
+	public Node visitFloatingPointType(FloatingPointTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitWildcard(WildcardContext ctx) {
+	public Node visitWildcard(WildcardContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannClassType_lf_unannClassOrInterfaceType(
+	public Node visitUnannClassType_lf_unannClassOrInterfaceType(
 			UnannClassType_lf_unannClassOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitResource(ResourceContext ctx) {
+	public Node visitResource(ResourceContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitElementValuePair(ElementValuePairContext ctx) {
+	public Node visitElementValuePair(ElementValuePairContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitPostIncrementExpression_lf_postfixExpression(
+	public Node visitPostIncrementExpression_lf_postfixExpression(
 			PostIncrementExpression_lf_postfixExpressionContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitUnannPrimitiveType(UnannPrimitiveTypeContext ctx) {
+	public Node visitUnannPrimitiveType(UnannPrimitiveTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitMethodBody(MethodBodyContext ctx) {
+	public Node visitMethodBody(MethodBodyContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitClassType_lfno_classOrInterfaceType(
+	public Node visitClassType_lfno_classOrInterfaceType(
 			ClassType_lfno_classOrInterfaceTypeContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitOmpSingleConstruct(OmpSingleConstructContext ctx) {
+	public Node visitOmpSingleConstruct(OmpSingleConstructContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitStaticInitializer(StaticInitializerContext ctx) {
+	public Node visitStaticInitializer(StaticInitializerContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitExceptionTypeList(ExceptionTypeListContext ctx) {
+	public Node visitExceptionTypeList(ExceptionTypeListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitStatementExpressionList(StatementExpressionListContext ctx) {
+	public Node visitStatementExpressionList(StatementExpressionListContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitLiteral(LiteralContext ctx) {
+	public Node visitLiteral(LiteralContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitInterfaceMemberDeclaration(
+	public Node visitInterfaceMemberDeclaration(
 			InterfaceMemberDeclarationContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public T visitSwitchBlockStatementGroup(SwitchBlockStatementGroupContext ctx) {
+	public Node visitSwitchBlockStatementGroup(
+			SwitchBlockStatementGroupContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }
