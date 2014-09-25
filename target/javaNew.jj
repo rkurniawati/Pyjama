@@ -3219,15 +3219,15 @@ OmpScheduleClause OmpScheduleClause():
 	OmpScheduleClause ret = null;
 }
 {
-	<SCHEDULE> '(' 
+	<SCHEDULE> "(" 
  	(	STATIC
  	|	DYNAMIC
  	|	GUIDED	
- 	|	'runtime'
- 	| 	'auto'
+ 	|	"runtime"
+ 	| 	"auto"
  	)
- 	(	','  expression	)? 
-		')'
+ 	(	","  expression	)? 
+	")"
 	{return ret;}
 }	
 OmpDataClause OmpDataClause():
@@ -3252,59 +3252,62 @@ OmpPrivateClause OmpPrivateClause():
 {
 
 	:	 <PRIVATE>
-		'('OmpDataClauseArgumentList')'
+		"("OmpDataClauseArgumentList")"
 	;
 OmpSharedDataClause OmpSharedDataClause():
 {
 	OmpSharedDataClause ret = null;
 }
 	:	SHARED
-		'('OmpDataClauseArgumentList')'
+		"("OmpDataClauseArgumentList")"
 	;
 OmpLastprivateDataClause OmpLastprivateDataClause():
 {
 	OmpLastprivateDataClause ret = null;
 }
 	:	LASTPRIVATE
-		'('OmpDataClauseArgumentList')'
+		"("OmpDataClauseArgumentList")"
 	;
 OmpReductionDataClause OmpReductionDataClause():
 {
 	OmpReductionDataClause ret = null;
 }
 	:	REDUCTION
-		'('OmpDataClauseReductionArgumentList')'
+		"("OmpDataClauseReductionArgumentList")"
 	;
 OmpCopyprivateDataClause OmpCopyprivateDataClause():
 {
 	OmpCopyprivateDataClause ret = null;
 }
 	:	COPYPRIVATE
-		'('OmpDataClauseArgumentList')'
+		"("OmpDataClauseArgumentList")"
 	;
 OmpDefaultDataClause OmpDefaultDataClause():
 {
 	OmpDefaultDataClause ret = null;
 }
-	:	DEFAULT '('
+	:	DEFAULT "("
 	(	SHARED
 	|	NONE
-	) 	')'
+	) 	")"
 	;
 
 
 OmpNumthreadsClause OmpNumthreadsClause():
 {
-	OmpNumthreadsClause ret = null;
+	Expression numExpr = null;
 }
-	:	NUMTHREADS '(' expression ')'
-	;
+{
+	<NUMTHREADS> {line=token.beginLine; column=token.beginColumn;}
+	 "(" numExpr = Expression() ")"
+	{return new OmpNumthreadsClause(numExpr);}
+}
 	
 OmpIfClause OmpIfClause():
 {
 	OmpIfClause ret =null;
 }
-	:	IF '(' expression ')'
+	:	IF "(" expression ")"
 	;
 	
 OmpDataClauseArgumentList OmpDataClauseArgumentList():
@@ -3312,15 +3315,15 @@ OmpDataClauseArgumentList OmpDataClauseArgumentList():
 	OmpDataClauseArgumentList ret = null;
 }
 	: Identifier 
-	( ',' Identifier )*
+	( "," Identifier )*
 	;
 	
 OmpDataClauseReductionArgumentList OmpDataClauseReductionArgumentList():
 {
 	OmpDataClauseReductionArgumentList ret = null;
 }
-	: expression ':' Identifier 
-	( ',' expression ':' Identifier )*
+	: expression ":" Identifier 
+	( "," expression ":" Identifier )*
 	;
 
 
