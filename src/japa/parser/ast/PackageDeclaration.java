@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Jï¿½lio Vilmar Gesser.
+ * Copyright (C) 2007 Júlio Vilmar Gesser.
  * 
  * This file is part of Java 1.5 parser and Abstract Syntax Tree.
  *
@@ -21,6 +21,7 @@
  */
 package japa.parser.ast;
 
+import japa.parser.ast.expr.AnnotationExpr;
 import japa.parser.ast.expr.NameExpr;
 import japa.parser.ast.visitor.GenericVisitor;
 import japa.parser.ast.visitor.VoidVisitor;
@@ -49,28 +50,26 @@ import java.util.List;
  */
 public final class PackageDeclaration extends Node {
 
-    private List<PackageModifier> modifiers;
+    private List<AnnotationExpr> annotations;
 
-    private List<Identifier> identifiers;
-    
-    private String name;
+    private NameExpr name;
 
     public PackageDeclaration() {
     }
 
-    public PackageDeclaration(List<Identifier> identifiers) {
-    	this.setIdentifiers(identifiers);
+    public PackageDeclaration(NameExpr name) {
+        this.name = name;
     }
 
-    public PackageDeclaration(List<PackageModifier> modifiers, List<Identifier> identifiers) {
-        this.setModifiers(modifiers);
-        this.setIdentifiers(identifiers);
+    public PackageDeclaration(List<AnnotationExpr> annotations, NameExpr name) {
+        this.annotations = annotations;
+        this.name = name;
     }
 
-    public PackageDeclaration(int beginLine, int beginColumn, int endLine, int endColumn, List<PackageModifier> modifiers, List<Identifier> identifiers) {
+    public PackageDeclaration(int beginLine, int beginColumn, int endLine, int endColumn, List<AnnotationExpr> annotations, NameExpr name) {
         super(beginLine, beginColumn, endLine, endColumn);
-        this.setModifiers(modifiers);
-        this.setIdentifiers(identifiers);
+        this.annotations = annotations;
+        this.name = name;
     }
 
     @Override
@@ -83,28 +82,41 @@ public final class PackageDeclaration extends Node {
         v.visit(this, arg);
     }
 
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * Retrieves the list of annotations declared before the package
+     * declaration. Return <code>null</code> if there are no annotations.
+     * 
+     * @return list of annotations or <code>null</code>
+     */
+    public List<AnnotationExpr> getAnnotations() {
+        return annotations;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Return the name of the package.
+     * 
+     * @return the name of the package
+     */
+    public NameExpr getName() {
+        return name;
+    }
 
-	public List<PackageModifier> getModifiers() {
-		return modifiers;
-	}
+    /**
+     * @param annotations
+     *            the annotations to set
+     */
+    public void setAnnotations(List<AnnotationExpr> annotations) {
+        this.annotations = annotations;
+    }
 
-	public void setModifiers(List<PackageModifier> modifiers) {
-		this.modifiers = modifiers;
-	}
-
-	public List<Identifier> getIdentifiers() {
-		return identifiers;
-	}
-
-	public void setIdentifiers(List<Identifier> identifiers) {
-		this.identifiers = identifiers;
-	}
+    /**
+     * Sets the name of this package declaration.
+     * 
+     * @param name
+     *            the name to set
+     */
+    public void setName(NameExpr name) {
+        this.name = name;
+    }
 
 }

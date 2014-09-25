@@ -17,34 +17,34 @@
  * along with Java 1.5 parser and Abstract Syntax Tree.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * Created on 05/10/2006
+ * Created on 21/11/2006
  */
 package japa.parser.ast.expr;
 
 import japa.parser.ast.visitor.GenericVisitor;
 import japa.parser.ast.visitor.VoidVisitor;
 
+import java.util.List;
+
 /**
  * @author Julio Vilmar Gesser
  */
-public final class ArrayAccessExpr extends Expression {
+public final class NormalAnnotationExpr extends AnnotationExpr {
 
-    private Expression name;
+    private List<MemberValuePair> pairs;
 
-    private Expression index;
-
-    public ArrayAccessExpr() {
+    public NormalAnnotationExpr() {
     }
 
-    public ArrayAccessExpr(Expression name, Expression index) {
+    public NormalAnnotationExpr(NameExpr name, List<MemberValuePair> pairs) {
         this.name = name;
-        this.index = index;
+        this.pairs = pairs;
     }
 
-    public ArrayAccessExpr(int beginLine, int beginColumn, int endLine, int endColumn, Expression name, Expression index) {
+    public NormalAnnotationExpr(int beginLine, int beginColumn, int endLine, int endColumn, NameExpr name, List<MemberValuePair> pairs) {
         super(beginLine, beginColumn, endLine, endColumn);
         this.name = name;
-        this.index = index;
+        this.pairs = pairs;
     }
 
     @Override
@@ -57,20 +57,12 @@ public final class ArrayAccessExpr extends Expression {
         v.visit(this, arg);
     }
 
-    public Expression getIndex() {
-        return index;
+    public List<MemberValuePair> getPairs() {
+        return pairs;
     }
 
-    public Expression getName() {
-        return name;
-    }
-
-    public void setIndex(Expression index) {
-        this.index = index;
-    }
-
-    public void setName(Expression name) {
-        this.name = name;
+    public void setPairs(List<MemberValuePair> pairs) {
+        this.pairs = pairs;
     }
 
 }
