@@ -6,7 +6,7 @@ import japa.parser.ast.visitor.GenericVisitor;
 import japa.parser.ast.visitor.VoidVisitor;
 
 public class OmpScheduleClause extends Node{
-	public static enum Type { Static, Dynamic, Guided, Runtime, Ordered };
+	public static enum Type { Static, Dynamic, Guided, Runtime, Ordered, Auto };
 	
 	private Type type;
 	private Expression chunkSize;

@@ -1,10 +1,18 @@
 package japa.parser.ast.omp;
 
+import japa.parser.ast.stmt.Statement;
 import japa.parser.ast.visitor.GenericVisitor;
 import japa.parser.ast.visitor.VoidVisitor;
 
 public class OmpFlushDirective extends OpenMPStatement{
 
+	public OmpFlushDirective(Statement statement) {
+	}
+	
+	public OmpFlushDirective(int beginLine, int beginColumn, int endLine, int endColumn) {
+		super(beginLine, beginColumn, endLine, endColumn);
+	}
+		
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
 		// TODO Auto-generated method stub

@@ -307,7 +307,7 @@ TOKEN :
 | < SHARED: "shared" >
 | < NONE: "none" >
 | < REDUCTION: "reduction" >
-| < NOGUI: "freeguithread" >
+| < FREEGUI: "freeguithread" >
 | < GUI: "gui" >
 | < SCHEDULE: "schedule" >
 | < DYNAMIC: "dynamic" >
@@ -3073,257 +3073,371 @@ OpenMPStatement OpenMPStatement():
 
 OmpParallelConstruct OmpParallelConstruct():
 {
-	OmpParallelConstruct ret = null;
+	Statement body = null;
+	OmpDataClause dataClause = null;
+	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
+	int numThreadsClauseCount = 0;
+	int IfClauseCount = 0;
+	OmpNumthreadsClause numThreads = null;
+	OmpIfClause ifExpr = null; 
+	int line;
+	int column;
 }
 {
-	<PARALLEL>
-	(	OmpNumthreadsClause
-	|	OmpIfClause
-	|	OmpDataClause
+	<PARALLEL> {line=token.beginLine; column=token.beginColumn;}
+	(	numThreads = OmpNumthreadsClause() {if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
+	|	ifExpr = OmpIfClause()	{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
 	)*
-	Statement
-	{return ret;}
+	body = Statement()
+	{ return new OmpParallelConstruct(body, dataClauseList, ifExpr, numThreads); }
 }
 
 OmpParallelForConstruct OmpParallelForConstruct():
 {
-	OmpParallelForConstruct ret = null;
+	ForStmt forBody = null;
+	OmpDataClause dataClause = null;
+	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
+	int numThreadsClauseCount = 0;
+	int IfClauseCount = 0;
+	OmpNumthreadsClause numThreads = null;
+	OmpIfClause ifExpr = null; 
+	int line;
+	int column;
 }
 {
-	<PARALLEL> <FOR>
-	(	OmpNumthreadsClause
-	|	OmpIfClause
-	|	OmpDataClause
+	<PARALLEL> {line=token.beginLine; column=token.beginColumn;} <FOR>
+	(	numThreads = OmpNumthreadsClause() {if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
+	|	ifExpr = OmpIfClause()	{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
 	)*
-	FORstatement
-	{return ret;}
+	forBody = ForStatement()
+	{ return new OmpParallelForConstruct(forBody, dataClauseList, ifExpr, numThreads); }
 }
 
 OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 {
-	OmpParallelSectionsConstruct ret = null;
+	Statement body = null;
+	OmpDataClause dataClause = null;
+	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
+	int numThreadsClauseCount = 0;
+	int IfClauseCount = 0;
+	OmpNumthreadsClause numThreads = null;
+	OmpIfClause ifExpr = null; 
+	int line;
+	int column;
 }
 {
-	<PARALLEL> <SECTIONS>
-	(	OmpNumthreadsClause
-	|	OmpIfClause
-	|	OmpDataClause
+	<PARALLEL> {line=token.beginLine; column=token.beginColumn;} <SECTIONS>
+	(	numThreads = OmpNumthreadsClause() {if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
+	|	ifExpr = OmpIfClause()	{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
 	)*
-	statement
-	{return ret;}
+	body = Statement()
+	{ return new OmpParallelSectionsConstruct(body, dataClauseList, ifExpr, numThreads); }
 }
 
 OmpForConstruct OmpForConstruct():
 {
-	OmpForConstruct ret = null;
+	ForStmt forStmt = null;
+	OmpDataClause dataClause = null;
+	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
+	int schduleClauseCount = 0;
+	OmpSchedulClause schedulClause = null;
+	int line;
+	int column;
+	boolean nowait = false;
+	boolean ordered = false;
 }
 {
-	{return ret;}
+  	<FOR> {line=token.beginLine; column=token.beginColumn;} <SECTIONS>
+ 	(	<NOWAIT> {nowait = true;}
+	|	<ORDERED> {ordered = true;}
+	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
+	|	scheduleClause = OmpScheduleClause() {if((++schduleClauseCount)>1) throw new RuntimeException("more than one schedule clause");}
+	)*
+ 	forStmt = ForStatement()
+  	{ return new OmpForConstruct(forStmt, dataClauseList, scheduleClause, nowait, ordered); }
 }
 
 OmpSectionsConstruct OmpSectionsConstruct():
 {
-	OmpSectionsConstruct ret = null;
+	Statement stmt = null;
+	OmpDataClause dataClause = null;
+	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
+	int schduleClauseCount = 0;
+	OmpSchedulClause schedulClause = null;
+	int line;
+	int column;
+	boolean nowait = false;
+	boolean ordered = false;
 }
 {
-	{return ret;}
+  	<FOR> {line=token.beginLine; column=token.beginColumn;} <SECTIONS>
+ 	(	<NOWAIT> {nowait = true;}
+	|	<ORDERED> {ordered = true;}
+	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
+	|	scheduleClause = OmpScheduleClause() {if((++schduleClauseCount)>1) throw new RuntimeException("more than one schedule clause");}
+	)*
+ 	stmt = Statement()
+  	{ return new OmpForConstruct(stmt, dataClauseList, scheduleClause, nowait, ordered); }
 }
 
 OmpFreeguiConstruct OmpFreeguiConstruct():
 {
-	OmpFreeguiConstruct ret = null;
+	Statement stmt = null;
+    	OmpParallelConstruct opc = null;
+	OmpParallelForConstruct	opfc = null;
+	OmpParallelSectionsConstruct opsc = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+  < FREEGUI > {line=token.beginLine; column=token.beginColumn;}
+  (	stmt = Statement()   {return new OmpFreeguiConstruct(stmt);}
+  | LOOKAHEAD(2)
+  	opc = OmpParallelConstruct()
+	{return new OmpFreeguiConstruct(opc);}
+  | LOOKAHEAD(2)
+  	opfc = OmpParallelForConstruct()
+	{return new OmpFreeguiConstruct(opfc);}
+  | LOOKAHEAD(2)
+ 	opsc = OmpParallelSectionsConstruct()
+	{return new OmpFreeguiConstruct(opsc);}
+  )
 }
 
 OmpSectionConstruct OmpSectionConstruct():
 {
-	OmpSectionConstruct ret = null;
+	Statement stmt = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+	<SECTION> {line=token.beginLine; column=token.beginColumn;} 
+	stmt = Statement()
+	{return new OmpSectionConstruct(stmt);}
 }
 
 OmpGuiConstruct OmpGuiConstruct():
 {
-	OmpGuiConstruct ret = null;
+	Statement stmt = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+	<GUI> {line=token.beginLine; column=token.beginColumn;} 
+	stmt = Statement()
+	{return new OmpGuiConstruct(stmt);}
 }
 
 OmpSingleConstruct OmpSingleConstruct():
 {
-	OmpSingleConstruct ret = null;
+	Statement stmt = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+	<SINGLE> {line=token.beginLine; column=token.beginColumn;} 
+	stmt = Statement()
+	{return new OmpSingleConstruct(stmt);}
 }
 
 OmpMasterConstruct OmpMasterConstruct():
 {
-	OmpMasterConstruct ret = null;
+	Statement stmt = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+	<MASTER> {line=token.beginLine; column=token.beginColumn;} 
+	stmt = Statement()
+	{return new OmpMasterConstruct(stmt);}
 }
 
 OmpCriticalConstruct OmpCriticalConstruct():
 {
-	OmpCriticalConstruct ret = null;
+	Statement stmt = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+	<CRITICAL> {line=token.beginLine; column=token.beginColumn;} 
+	stmt = Statement()
+	{return new OmpCriticalConstruct(stmt);}
 }
 
 
 OmpAtomicConstruct OmpAtomicConstruct():
 {
-	OmpAtomicConstruct ret = null;
+	Statement stmt = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+	<ATOMIC> {line=token.beginLine; column=token.beginColumn;} 
+	stmt = Statement()
+	{return new OmpAtomicConstruct(stmt);}
 }
 
 
 
 OmpBarrierDirective OmpBarrierDirective():
 {
-	OmpBarrierDirective ret = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+	<BARRIER> {line=token.beginLine; column=token.beginColumn;} 
+	{return new OmpBarrierDirective();}
 }
 
 
 OmpFlushDirective OmpFlushDirective():
 {
-	OmpFlushDirective ret = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+	<FLUSH> {line=token.beginLine; column=token.beginColumn;} 
+	{return new OmpFlushDirective();}
 }
 
 OmpOrderedConstruct OmpOrderedConstruct():
 {
-	OmpOrderedConstruct ret = null;
+	Statement stmt = null;
+	int line;
+	int column;
 }
 {
-	{return ret;}
+	<ORDERED> {line=token.beginLine; column=token.beginColumn;}
+	stmt = Statement()
+	{return new OmpOrderedConstruct(stmt);}
 }
 
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25
 OmpScheduleClause OmpScheduleClause():
 {
-	OmpScheduleClause ret = null;
+	Type type = null;
+	Expression chunkSize = null;
 }
 {
 	<SCHEDULE> "(" 
- 	(	STATIC
- 	|	DYNAMIC
- 	|	GUIDED	
- 	|	"runtime"
- 	| 	"auto"
+ 	(	STATIC { type = OmpScheduleClause.Type.Static; }
+ 	|	DYNAMIC	{ type = OmpScheduleClause.Type.Dynamic; }
+ 	|	GUIDED	{ type = OmpScheduleClause.Type.Guided; }
+ 	|	"runtime" { type = OmpScheduleClause.Type.Runtime; }
+ 	| 	"auto"	{ type = OmpScheduleClause.Type.Auto; }
  	)
- 	(	","  expression	)? 
+ 	(	","  chunkSize = Expression()	)? 
 	")"
-	{return ret;}
+	{return new OmpScheduleClause(type, chunkSize);}
 }	
 OmpDataClause OmpDataClause():
 {
 	OmpDataClause ret = null;
 }
 {
-	(	OmpPrivateClause
-	|	OmpSharedDataClause
-	| 	OmpLastprivateDataClause
-	|	OmpReductionDataClause
-	|	OmpCopyprivateDataClause
-	|	OmpDefaultDataClause
+	(	ret = OmpPrivateClause()
+	|	ret = OmpSharedDataClause()
+	| 	ret = OmpLastprivateDataClause()
+	|	ret = OmpReductionDataClause()
+	|	ret = OmpCopyprivateDataClause()
+	|	ret = OmpDefaultDataClause()
 	)
 	{return ret;}
 }
 	
 OmpPrivateClause OmpPrivateClause():
 {
-	OmpPrivateClause ret = null;
+	OmpPrivateClause ret = new OmpPrivateClause();
+	Expression expr;
 }
-{
-
-	:	 <PRIVATE>
-		"("OmpDataClauseArgumentList")"
-	;
+{	<PRIVATE> "("
+	expr = Expression() {ret.addArgument(expr);}
+	( "," expr = Expression() {ret.addArgument(expr);} )*
+	")"
+	{return ret;}
+}
 OmpSharedDataClause OmpSharedDataClause():
 {
-	OmpSharedDataClause ret = null;
+	OmpSharedDataClause ret = new OmpSharedDataClause();
+	Expression expr;
 }
-	:	SHARED
-		"("OmpDataClauseArgumentList")"
-	;
+{	<SHARED> "("
+	expr = Expression() {ret.addArgument(expr);}
+	( "," expr = Expression() {ret.addArgument(expr);} )*
+	")"
+	{return ret;}
+}
 OmpLastprivateDataClause OmpLastprivateDataClause():
 {
-	OmpLastprivateDataClause ret = null;
+	OmpLastprivateDataClause ret = new OmpLastprivateDataClause();
+	Expression expr;
 }
-	:	LASTPRIVATE
-		"("OmpDataClauseArgumentList")"
-	;
+{	<LASTPRIVATE> "("
+	expr = Expression() {ret.addArgument(expr);}
+	( "," expr = Expression() {ret.addArgument(expr);} )*
+	")"
+	{return ret;}
+}
 OmpReductionDataClause OmpReductionDataClause():
 {
-	OmpReductionDataClause ret = null;
+	OmpReductionDataClause ret = new OmpReductionDataClause();
+	Expression expr;
+	Expression operator;
 }
-	:	REDUCTION
-		"("OmpDataClauseReductionArgumentList")"
-	;
+{	<REDUCTION> "("
+	operator = Expression ":" expr = Expression() {ret.addArgument(operator, expr);}
+	( "," operator = Expression ":" expr = Expression() {ret.addArgument(operator, expr);} )*
+	")"
+	{return ret;}
+}
 OmpCopyprivateDataClause OmpCopyprivateDataClause():
 {
-	OmpCopyprivateDataClause ret = null;
+	OmpCopyprivateDataClause ret = new OmpCopyprivateDataClause();
+	Expression expr;
 }
-	:	COPYPRIVATE
-		"("OmpDataClauseArgumentList")"
-	;
+{	<COPYPRIVATE> "("
+	expr = Expression() { ret.addArgument(expr); }
+	( "," expr = Expression() {} {ret.addArgument(expr);} )*
+	")"
+	{return ret;}
+}
 OmpDefaultDataClause OmpDefaultDataClause():
 {
-	OmpDefaultDataClause ret = null;
+	OmpDefaultDataClause ret = new OmpDefaultDataClause();
 }
-	:	DEFAULT "("
-	(	SHARED
-	|	NONE
+{	<DEFAULT> "("
+	(<SHARED> {ret.setPolicy(OmpDefaultDataClause.Policy.Shared);}
+	|<NONE>	  {ret.setPolicy(OmpDefaultDataClause.Policy.None);}
 	) 	")"
-	;
+	{return ret;}
+}
 
 
 OmpNumthreadsClause OmpNumthreadsClause():
 {
 	Expression numExpr = null;
+	int beginLine;
+	int beginColumn;
 }
 {
-	<NUMTHREADS> {line=token.beginLine; column=token.beginColumn;}
+	<NUMTHREADS> {beginLine=token.beginLine; beginColumn=token.beginColumn;}
 	 "(" numExpr = Expression() ")"
 	{return new OmpNumthreadsClause(numExpr);}
 }
 	
 OmpIfClause OmpIfClause():
 {
-	OmpIfClause ret =null;
+	Expression ifExpr = null;
+	int beginLine;
+	int beginColumn;
 }
-	:	IF "(" expression ")"
-	;
-	
-OmpDataClauseArgumentList OmpDataClauseArgumentList():
 {
-	OmpDataClauseArgumentList ret = null;
+	<IF> {beginLine=token.beginLine; beginColumn=token.beginColumn;}
+	"(" ifExpr = Expression() ")"
+	{return new OmpIfClause(ifExpr);}
 }
-	: Identifier 
-	( "," Identifier )*
-	;
-	
-OmpDataClauseReductionArgumentList OmpDataClauseReductionArgumentList():
-{
-	OmpDataClauseReductionArgumentList ret = null;
-}
-	: expression ":" Identifier 
-	( "," expression ":" Identifier )*
-	;
 
 
