@@ -6,7 +6,7 @@ import japa.parser.ast.visitor.VoidVisitor;
 
 public class OmpFlushDirective extends OpenMPStatement{
 
-	public OmpFlushDirective(Statement statement) {
+	public OmpFlushDirective() {
 	}
 	
 	public OmpFlushDirective(int beginLine, int beginColumn, int endLine, int endColumn) {

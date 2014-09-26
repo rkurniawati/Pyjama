@@ -55,7 +55,7 @@ import japa.parser.ast.body.*;
 import japa.parser.ast.expr.*;
 import japa.parser.ast.stmt.*;
 import japa.parser.ast.type.*;
-
+import japa.parser.ast.omp.*;
 /**
  * <p>This class was generated automatically by javacc, do not edit.</p>
  * @author Júlio Vilmar Gesser
@@ -209,12 +209,12 @@ TOKEN_MGR_DECLS :
 SPECIAL_TOKEN :
 {
   <SINGLE_LINE_COMMENT:
-	"//"    ~["#"] 	~["\r""\n"]* 
-    |	"//#"   ~["o"] 	~["\r""\n"]*  
-    |	"//#o"  ~["m"] 	~["\r""\n"]* 
-    |	"//#om" ~["p"] 	~["\r""\n"]* 
-    |	"//#omp" ~[" "] ~["\r""\n"]*
-  >
+    (	"//"    ~["#"] 	(~["\r","\n"])* 
+    |	"//#"   ~["o"] 	(~["\r","\n"])*  
+    |	"//#o"  ~["m"] 	(~["\r","\n"])* 
+    |	"//#om" ~["p"] 	(~["\r","\n"])* 
+    |	"//#omp" ~[" "] (~["\r","\n"])*
+    )>
 }
 
 MORE :
@@ -302,8 +302,8 @@ TOKEN :
 //§§ OpenMP Keywords; Xing Fan added at 2014.9.25
 | < OPENMP_PRAGMA: "//#omp" >
 | < PARALLEL: "parallel" >
-| < FIRST_PRIVATE: "firstprivate" >
-| < LAST_PRIVATE: "lastprivate" >
+| < FIRSTPRIVATE: "firstprivate" >
+| < LASTPRIVATE: "lastprivate" >
 | < SHARED: "shared" >
 | < NONE: "none" >
 | < REDUCTION: "reduction" >
@@ -313,6 +313,7 @@ TOKEN :
 | < DYNAMIC: "dynamic" >
 | < GUIDED: "guided" >
 | < RUNTIME: "runtime" >
+| < AUTO: "auto" >	
 | < ORDERED: "ordered" >
 | < SECTIONS: "sections" >
 | < SECTION: "section" >
@@ -3049,12 +3050,14 @@ OpenMPStatement OpenMPStatement():
 {	
    	<OPENMP_PRAGMA> 
 	(
+	LOOKAHEAD(2)
+		ret = OmpParallelForConstruct()
+	|
+	LOOKAHEAD(2)
+		ret = OmpParallelSectionsConstruct()
+	|
 	LOOKAHEAD(2)	
 		ret = OmpParallelConstruct()
-	LOOKAHEAD(2)
-	| 	ret = OmpParallelForConstruct()
-	LOOKAHEAD(2)
-	|	ret = OmpParallelSectionsConstruct()
 	|	ret = OmpForConstruct()
 	|	ret = OmpSectionsConstruct()
 	|	ret = OmpFreeguiConstruct()
@@ -3095,7 +3098,7 @@ OmpParallelConstruct OmpParallelConstruct():
 
 OmpParallelForConstruct OmpParallelForConstruct():
 {
-	ForStmt forBody = null;
+	Statement forBody = null;
 	OmpDataClause dataClause = null;
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
 	int numThreadsClauseCount = 0;
@@ -3117,7 +3120,8 @@ OmpParallelForConstruct OmpParallelForConstruct():
 
 OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 {
-	Statement body = null;
+	OmpSectionConstruct sectionBlock = null;
+	ArrayList<OmpSectionConstruct> sectionList = new ArrayList<OmpSectionConstruct>();
 	OmpDataClause dataClause = null;
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
 	int numThreadsClauseCount = 0;
@@ -3133,17 +3137,21 @@ OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 	|	ifExpr = OmpIfClause()	{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
 	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
 	)*
-	body = Statement()
-	{ return new OmpParallelSectionsConstruct(body, dataClauseList, ifExpr, numThreads); }
+	"{"	
+	(
+		sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
+	)*
+	"}"
+	{ return new OmpParallelSectionsConstruct(sectionList, dataClauseList, ifExpr, numThreads); }
 }
 
 OmpForConstruct OmpForConstruct():
 {
-	ForStmt forStmt = null;
+	Statement forStmt = null;
 	OmpDataClause dataClause = null;
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
 	int schduleClauseCount = 0;
-	OmpSchedulClause schedulClause = null;
+	OmpScheduleClause scheduleClause = null;
 	int line;
 	int column;
 	boolean nowait = false;
@@ -3162,25 +3170,25 @@ OmpForConstruct OmpForConstruct():
 
 OmpSectionsConstruct OmpSectionsConstruct():
 {
-	Statement stmt = null;
+	OmpSectionConstruct sectionBlock = null;
+	ArrayList<OmpSectionConstruct> sectionList = new ArrayList<OmpSectionConstruct>();
 	OmpDataClause dataClause = null;
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
-	int schduleClauseCount = 0;
-	OmpSchedulClause schedulClause = null;
 	int line;
 	int column;
 	boolean nowait = false;
-	boolean ordered = false;
 }
 {
-  	<FOR> {line=token.beginLine; column=token.beginColumn;} <SECTIONS>
+  	<SECTIONS> {line=token.beginLine; column=token.beginColumn;} 
  	(	<NOWAIT> {nowait = true;}
-	|	<ORDERED> {ordered = true;}
 	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
-	|	scheduleClause = OmpScheduleClause() {if((++schduleClauseCount)>1) throw new RuntimeException("more than one schedule clause");}
 	)*
- 	stmt = Statement()
-  	{ return new OmpForConstruct(stmt, dataClauseList, scheduleClause, nowait, ordered); }
+ 	"{"	
+	(
+		sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
+	)*
+	"}"
+  	{ return new OmpSectionsConstruct(sectionList, dataClauseList, nowait); }
 }
 
 OmpFreeguiConstruct OmpFreeguiConstruct():
@@ -3318,16 +3326,16 @@ OmpOrderedConstruct OmpOrderedConstruct():
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25
 OmpScheduleClause OmpScheduleClause():
 {
-	Type type = null;
+	OmpScheduleClause.Type type = null;
 	Expression chunkSize = null;
 }
 {
 	<SCHEDULE> "(" 
- 	(	STATIC { type = OmpScheduleClause.Type.Static; }
- 	|	DYNAMIC	{ type = OmpScheduleClause.Type.Dynamic; }
- 	|	GUIDED	{ type = OmpScheduleClause.Type.Guided; }
- 	|	"runtime" { type = OmpScheduleClause.Type.Runtime; }
- 	| 	"auto"	{ type = OmpScheduleClause.Type.Auto; }
+ 	(	<STATIC> 	{ type = OmpScheduleClause.Type.Static; }
+ 	|	<DYNAMIC>	{ type = OmpScheduleClause.Type.Dynamic; }
+ 	|	<GUIDED>	{ type = OmpScheduleClause.Type.Guided; }
+ 	|	<RUNTIME>	{ type = OmpScheduleClause.Type.Runtime; }
+ 	| 	<AUTO>		{ type = OmpScheduleClause.Type.Auto; }
  	)
  	(	","  chunkSize = Expression()	)? 
 	")"
@@ -3388,8 +3396,8 @@ OmpReductionDataClause OmpReductionDataClause():
 	Expression operator;
 }
 {	<REDUCTION> "("
-	operator = Expression ":" expr = Expression() {ret.addArgument(operator, expr);}
-	( "," operator = Expression ":" expr = Expression() {ret.addArgument(operator, expr);} )*
+	operator = Expression() ":" expr = Expression() {ret.addArgument(operator, expr);}
+	( "," operator = Expression() ":" expr = Expression() {ret.addArgument(operator, expr);} )*
 	")"
 	{return ret;}
 }
@@ -3408,7 +3416,7 @@ OmpDefaultDataClause OmpDefaultDataClause():
 {
 	OmpDefaultDataClause ret = new OmpDefaultDataClause();
 }
-{	<DEFAULT> "("
+{	<_DEFAULT> "("
 	(<SHARED> {ret.setPolicy(OmpDefaultDataClause.Policy.Shared);}
 	|<NONE>	  {ret.setPolicy(OmpDefaultDataClause.Policy.None);}
 	) 	")"

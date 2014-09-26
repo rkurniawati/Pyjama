@@ -9,60 +9,45 @@ import japa.parser.ast.visitor.VoidVisitor;
 
 public class OmpSectionsConstruct extends OpenMPStatement{
 
-	private OmpScheduleClause scheduleClause = null;
-	private Statement body = null;
+	private List<OmpSectionConstruct> sectionList;
 	private List<OmpDataClause> dataClauseList;
 	
 	private boolean nowait;
-	private boolean ordered;
+
 	
 	public OmpSectionsConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
-			Statement statement,  
+			List<OmpSectionConstruct> sectionList,  
 			List<OmpDataClause> dataClausesList, 
-			OmpScheduleClause scheduleClause,
-			boolean nowait,
-			boolean ordered
+			boolean nowait
 			){
 		super(beginLine, beginColumn, endLine, endColumn);
-		this.body = statement;
+		this.sectionList = sectionList;
 		this.dataClauseList = dataClausesList;
-		this.scheduleClause = scheduleClause;
 		this.nowait = nowait;
-		this.ordered = ordered;
+
 	}
 	
 	public OmpSectionsConstruct( 
-			Statement statement,  
+			List<OmpSectionConstruct> sectionList,  
 			List<OmpDataClause> dataClausesList, 
-			OmpScheduleClause scheduleClause,
-			boolean nowait,
-			boolean ordered
+			boolean nowait
 			){
-		this.body = statement;
+		this.sectionList = sectionList;
 		this.dataClauseList = dataClausesList;
-		this.scheduleClause = scheduleClause;
 		this.nowait = nowait;
-		this.ordered = ordered;
 	}
 	
-	public Statement getBody() {
-		return this.body;
+	public List<OmpSectionConstruct> getSectionList() {
+		return this.sectionList;
 	}
 	public List<OmpDataClause> getDataClauseList() {
 		return this.dataClauseList;
 	}
-	
-	public OmpScheduleClause getScheduleClause() {
-		return this.scheduleClause;
-	}
-	
+		
 	public boolean isNowait() {
 		return this.nowait;
 	}
 	
-	public boolean isOrdered() {
-		return this.ordered;
-	}
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
 		// TODO Auto-generated method stub

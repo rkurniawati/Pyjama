@@ -3,20 +3,21 @@ package japa.parser.ast.omp;
 import java.util.List;
 
 import japa.parser.ast.stmt.ForStmt;
+import japa.parser.ast.stmt.Statement;
 import japa.parser.ast.visitor.GenericVisitor;
 import japa.parser.ast.visitor.VoidVisitor;
 
 public class OmpForConstruct extends OpenMPStatement{
 
 	private OmpScheduleClause scheduleClause = null;
-	private ForStmt forStmt = null;
+	private Statement forStmt = null;
 	private List<OmpDataClause> dataClauseList;
 	
 	private boolean nowait;
 	private boolean ordered;
 	
 	public OmpForConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
-			ForStmt statement,  
+			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpScheduleClause scheduleClause,
 			boolean nowait,
@@ -31,7 +32,7 @@ public class OmpForConstruct extends OpenMPStatement{
 	}
 	
 	public OmpForConstruct( 
-			ForStmt statement,  
+			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpScheduleClause scheduleClause,
 			boolean nowait,
@@ -44,7 +45,7 @@ public class OmpForConstruct extends OpenMPStatement{
 		this.ordered = ordered;
 	}
 	
-	public ForStmt  getForStmt() {
+	public Statement  getForStmt() {
 		return forStmt;
 	}
 	public List<OmpDataClause> getDataClauseList() {

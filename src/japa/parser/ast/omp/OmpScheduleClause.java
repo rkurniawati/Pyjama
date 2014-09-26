@@ -8,10 +8,10 @@ import japa.parser.ast.visitor.VoidVisitor;
 public class OmpScheduleClause extends Node{
 	public static enum Type { Static, Dynamic, Guided, Runtime, Ordered, Auto };
 	
-	private Type type;
+	private OmpScheduleClause.Type type;
 	private Expression chunkSize;
 	
-	public OmpScheduleClause(Type type, Expression chunk) {
+	public OmpScheduleClause(OmpScheduleClause.Type type, Expression chunk) {
 		this.type = type;
 		this.chunkSize = chunk;
 	}

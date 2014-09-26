@@ -6,7 +6,7 @@ import japa.parser.ast.visitor.VoidVisitor;
 
 public class OmpBarrierDirective extends OpenMPStatement{
 	
-	public OmpBarrierDirective(Statement statement) {
+	public OmpBarrierDirective() {
 	}
 	
 	public OmpBarrierDirective(int beginLine, int beginColumn, int endLine, int endColumn) {

@@ -11,11 +11,11 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 
 	private OmpIfClause ifExpr = null;
 	private OmpNumthreadsClause numThreads = null;
-	private ForStmt forStmt = null;
+	private Statement forStmt = null;
 	private List<OmpDataClause> dataClauseList;
 	
 	public OmpParallelForConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
-			ForStmt statement,  
+			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
 			OmpNumthreadsClause numThreads){
@@ -27,7 +27,7 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 	}
 	
 	public OmpParallelForConstruct(
-			ForStmt statement,  
+			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
 			OmpNumthreadsClause numThreads){
@@ -37,7 +37,7 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 		this.numThreads = numThreads;
 	}
 	
-	public ForStmt getForStmt() {
+	public Statement getForStmt() {
 		return this.forStmt;
 	}
 	public List<OmpDataClause> getDataClauseList() {
