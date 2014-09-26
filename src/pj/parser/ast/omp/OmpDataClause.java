@@ -6,9 +6,9 @@ import pj.parser.ast.visitor.VoidVisitor;
 
 public class OmpDataClause extends Node{
 	
-	public static enum Type { Shared, Private, Lastprivate, Reduction, Copyprivate };
+	public static enum Type { Shared, Private, Lastprivate, Reduction, Copyprivate, Default };
 	
-	private final OmpDataClause.Type type = OmpDataClause.Type.Reduction;
+	protected OmpDataClause.Type type;
 	
 	public OmpDataClause(){}
 	

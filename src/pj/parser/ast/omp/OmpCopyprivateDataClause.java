@@ -9,19 +9,21 @@ import pj.parser.ast.visitor.VoidVisitor;
 
 public class OmpCopyprivateDataClause extends OmpDataClause{
 
-	private final OmpDataClause.Type type = OmpDataClause.Type.Copyprivate;
 	Set<Expression> argumentSet;
 	
 	public OmpCopyprivateDataClause() {
+		this.type = OmpDataClause.Type.Copyprivate;
 		this.argumentSet = new HashSet<Expression>();
 	}
 	
 	public OmpCopyprivateDataClause(Set<Expression> variableSet) {
+		this.type = OmpDataClause.Type.Copyprivate;
 		this.argumentSet = variableSet;
 	}
 	
 	public OmpCopyprivateDataClause(int beginLine, int beginColumn, int endLine, int endColumn, Set<Expression> variableList) {
 		super(beginLine, beginColumn, endLine, endColumn);
+		this.type = OmpDataClause.Type.Copyprivate;
 		this.argumentSet = variableList;
 	}
 	

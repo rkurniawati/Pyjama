@@ -8,20 +8,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class OmpSharedDataClause extends OmpDataClause{
-	
-	private final OmpDataClause.Type type = OmpDataClause.Type.Shared;
+
 	Set<Expression> argumentSet;
 	
 	public OmpSharedDataClause() {
+		this.type = OmpDataClause.Type.Shared;
 		this.argumentSet = new HashSet<Expression>();
 	}
 	
 	public OmpSharedDataClause(Set<Expression> variableSet) {
+		this.type = OmpDataClause.Type.Shared;
 		this.argumentSet = variableSet;
 	}
 	
 	public OmpSharedDataClause(int beginLine, int beginColumn, int endLine, int endColumn, Set<Expression> variableList) {
 		super(beginLine, beginColumn, endLine, endColumn);
+		this.type = OmpDataClause.Type.Shared;
 		this.argumentSet = variableList;
 	}
 	

@@ -26,7 +26,7 @@ public class OmpParallelSectionsConstruct extends OpenMPStatement{
 	}
 	
 	public OmpParallelSectionsConstruct(
-			List<OmpSectionConstruct> statement,  
+			List<OmpSectionConstruct> sectionList,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
 			OmpNumthreadsClause numThreads){

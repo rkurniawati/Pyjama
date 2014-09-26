@@ -28,24 +28,7 @@ options {
 }
 
 PARSER_BEGIN(ASTParser)
-/*
- * Copyright (C) 2008 Júlio Vilmar Gesser.
- * 
- * This file is part of Java 1.5 parser and Abstract Syntax Tree.
- *
- * Java 1.5 parser and Abstract Syntax Tree is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Java 1.5 parser and Abstract Syntax Tree is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Java 1.5 parser and Abstract Syntax Tree.  If not, see <http://www.gnu.org/licenses/>.
- */
+
 package pj.parser;
 
 import java.io.*;
@@ -3081,6 +3064,7 @@ OmpParallelConstruct OmpParallelConstruct():
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
 	int numThreadsClauseCount = 0;
 	int IfClauseCount = 0;
+	int defaultDataClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
 	int line;
@@ -3088,12 +3072,16 @@ OmpParallelConstruct OmpParallelConstruct():
 }
 {
 	<PARALLEL> {line=token.beginLine; column=token.beginColumn;}
-	(	numThreads = OmpNumthreadsClause() {if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
-	|	ifExpr = OmpIfClause()	{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
-	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
+	(	numThreads = OmpNumthreadsClause() 	{if((++numThreadsClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one num_threads() clause finded");}
+	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one if() clause finded");}
+	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
+	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
 	)*
 	body = Statement()
-	{ return new OmpParallelConstruct(body, dataClauseList, ifExpr, numThreads); }
+	{ return new OmpParallelConstruct(line, column, token.endLine, token.endColumn, body, dataClauseList, ifExpr, numThreads); }
 }
 
 OmpParallelForConstruct OmpParallelForConstruct():
@@ -3103,6 +3091,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
 	int numThreadsClauseCount = 0;
 	int IfClauseCount = 0;
+	int defaultDataClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
 	int line;
@@ -3110,12 +3099,16 @@ OmpParallelForConstruct OmpParallelForConstruct():
 }
 {
 	<PARALLEL> {line=token.beginLine; column=token.beginColumn;} <FOR>
-	(	numThreads = OmpNumthreadsClause() {if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
-	|	ifExpr = OmpIfClause()	{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
-	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
+	(	numThreads = OmpNumthreadsClause()	{if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
+	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
+	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
 	)*
 	forBody = ForStatement()
-	{ return new OmpParallelForConstruct(forBody, dataClauseList, ifExpr, numThreads); }
+	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, ifExpr, numThreads); }
 }
 
 OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
@@ -3126,6 +3119,7 @@ OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
 	int numThreadsClauseCount = 0;
 	int IfClauseCount = 0;
+	int defaultDataClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
 	int line;
@@ -3133,16 +3127,20 @@ OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 }
 {
 	<PARALLEL> {line=token.beginLine; column=token.beginColumn;} <SECTIONS>
-	(	numThreads = OmpNumthreadsClause() {if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
-	|	ifExpr = OmpIfClause()	{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
-	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
+	(	numThreads = OmpNumthreadsClause()	{if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
+	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
+	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
 	)*
 	"{"	
 	(
 		sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
 	)*
 	"}"
-	{ return new OmpParallelSectionsConstruct(sectionList, dataClauseList, ifExpr, numThreads); }
+	{ return new OmpParallelSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, ifExpr, numThreads); }
 }
 
 OmpForConstruct OmpForConstruct():
@@ -3158,14 +3156,18 @@ OmpForConstruct OmpForConstruct():
 	boolean ordered = false;
 }
 {
-  	<FOR> {line=token.beginLine; column=token.beginColumn;} <SECTIONS>
+  	<FOR> {line=token.beginLine; column=token.beginColumn;}
  	(	<NOWAIT> {nowait = true;}
 	|	<ORDERED> {ordered = true;}
-	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
-	|	scheduleClause = OmpScheduleClause() {if((++schduleClauseCount)>1) throw new RuntimeException("more than one schedule clause");}
+	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpSharedDataClause()  	{throw new ParseException("Pyjama Parsing Error: shared data clause cannot appear in for directive");}
+	|	dataClause = OmpLastprivateDataClause() {dataClauseList.add(dataClause);}
+	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpDefaultDataClause() 	{throw new ParseException("Pyjama Parsing Error: default clause cannot appear in for directive");}
+	|	scheduleClause = OmpScheduleClause() 	{if((++schduleClauseCount)>1) throw new RuntimeException("Pyjama Parsing Error: More than one schedule clause");}
 	)*
  	forStmt = ForStatement()
-  	{ return new OmpForConstruct(forStmt, dataClauseList, scheduleClause, nowait, ordered); }
+  	{ return new OmpForConstruct(line, column, token.endLine, token.endColumn, forStmt, dataClauseList, scheduleClause, nowait, ordered); }
 }
 
 OmpSectionsConstruct OmpSectionsConstruct():
@@ -3181,14 +3183,18 @@ OmpSectionsConstruct OmpSectionsConstruct():
 {
   	<SECTIONS> {line=token.beginLine; column=token.beginColumn;} 
  	(	<NOWAIT> {nowait = true;}
-	|	dataClause = OmpDataClause() {dataClauseList.add(dataClause);}
+	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpSharedDataClause()  	{throw new ParseException("Pyjama Parsing Error: shared data clause cannot appear in sections directive");}
+	|	dataClause = OmpLastprivateDataClause() {dataClauseList.add(dataClause);}
+	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpDefaultDataClause() 	{throw new ParseException("Pyjama Parsing Error: default clause cannot appear in sections directive");}
 	)*
  	"{"	
 	(
 		sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
-	)*
+	)+
 	"}"
-  	{ return new OmpSectionsConstruct(sectionList, dataClauseList, nowait); }
+  	{ return new OmpSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, nowait); }
 }
 
 OmpFreeguiConstruct OmpFreeguiConstruct():
@@ -3202,16 +3208,16 @@ OmpFreeguiConstruct OmpFreeguiConstruct():
 }
 {
   < FREEGUI > {line=token.beginLine; column=token.beginColumn;}
-  (	stmt = Statement()   {return new OmpFreeguiConstruct(stmt);}
+  (	stmt = Statement()   {return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, stmt);}
   | LOOKAHEAD(2)
   	opc = OmpParallelConstruct()
-	{return new OmpFreeguiConstruct(opc);}
+	{return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opc);}
   | LOOKAHEAD(2)
   	opfc = OmpParallelForConstruct()
-	{return new OmpFreeguiConstruct(opfc);}
+	{return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opfc);}
   | LOOKAHEAD(2)
  	opsc = OmpParallelSectionsConstruct()
-	{return new OmpFreeguiConstruct(opsc);}
+	{return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opsc);}
   )
 }
 
@@ -3224,7 +3230,7 @@ OmpSectionConstruct OmpSectionConstruct():
 {
 	<SECTION> {line=token.beginLine; column=token.beginColumn;} 
 	stmt = Statement()
-	{return new OmpSectionConstruct(stmt);}
+	{return new OmpSectionConstruct(line, column, token.endLine, token.endColumn, stmt);}
 }
 
 OmpGuiConstruct OmpGuiConstruct():
@@ -3236,19 +3242,31 @@ OmpGuiConstruct OmpGuiConstruct():
 {
 	<GUI> {line=token.beginLine; column=token.beginColumn;} 
 	stmt = Statement()
-	{return new OmpGuiConstruct(stmt);}
+	{return new OmpGuiConstruct(line, column, token.endLine, token.endColumn, stmt);}
 }
 
 OmpSingleConstruct OmpSingleConstruct():
 {
 	Statement stmt = null;
+	OmpDataClause dataClause = null;
+	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
+	boolean nowait = false;
 	int line;
 	int column;
+
 }
 {
-	<SINGLE> {line=token.beginLine; column=token.beginColumn;} 
+	<SINGLE> {line=token.beginLine; column=token.beginColumn;}
+	(	<NOWAIT> {nowait = true;}
+	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpCopyprivateDataClause() {dataClauseList.add(dataClause);}
+	|	dataClause = OmpSharedDataClause()  	{throw new ParseException("Pyjama Parsing Error: shared data clause cannot appear in single directive");}
+	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: lastprivate data clause cannot appear in single directive");}
+	|	dataClause = OmpReductionDataClause() 	{throw new ParseException("Pyjama Parsing Error: reduction data clause cannot appear in single directive");}
+	|	dataClause = OmpDefaultDataClause() 	{throw new ParseException("Pyjama Parsing Error: default clause cannot appear in single directive");}
+	)* 
 	stmt = Statement()
-	{return new OmpSingleConstruct(stmt);}
+	{return new OmpSingleConstruct(line, column, token.endLine, token.endColumn, stmt, dataClauseList, nowait);}
 }
 
 OmpMasterConstruct OmpMasterConstruct():
@@ -3260,19 +3278,21 @@ OmpMasterConstruct OmpMasterConstruct():
 {
 	<MASTER> {line=token.beginLine; column=token.beginColumn;} 
 	stmt = Statement()
-	{return new OmpMasterConstruct(stmt);}
+	{return new OmpMasterConstruct(line, column, token.endLine, token.endColumn, stmt);}
 }
 
 OmpCriticalConstruct OmpCriticalConstruct():
 {
 	Statement stmt = null;
+	Expression identifier = null;
 	int line;
 	int column;
 }
 {
-	<CRITICAL> {line=token.beginLine; column=token.beginColumn;} 
+	<CRITICAL> {line=token.beginLine; column=token.beginColumn;}
+	(LOOKAHEAD(3) "(" identifier = Expression() ")" )?
 	stmt = Statement()
-	{return new OmpCriticalConstruct(stmt);}
+	{return new OmpCriticalConstruct(line, column, token.endLine, token.endColumn, stmt, identifier);}
 }
 
 
@@ -3285,7 +3305,7 @@ OmpAtomicConstruct OmpAtomicConstruct():
 {
 	<ATOMIC> {line=token.beginLine; column=token.beginColumn;} 
 	stmt = Statement()
-	{return new OmpAtomicConstruct(stmt);}
+	{return new OmpAtomicConstruct(line, column, token.endLine, token.endColumn, stmt);}
 }
 
 
@@ -3297,7 +3317,7 @@ OmpBarrierDirective OmpBarrierDirective():
 }
 {
 	<BARRIER> {line=token.beginLine; column=token.beginColumn;} 
-	{return new OmpBarrierDirective();}
+	{return new OmpBarrierDirective(line, column, token.endLine, token.endColumn);}
 }
 
 
@@ -3308,7 +3328,7 @@ OmpFlushDirective OmpFlushDirective():
 }
 {
 	<FLUSH> {line=token.beginLine; column=token.beginColumn;} 
-	{return new OmpFlushDirective();}
+	{return new OmpFlushDirective(line, column, token.endLine, token.endColumn);}
 }
 
 OmpOrderedConstruct OmpOrderedConstruct():
@@ -3320,7 +3340,7 @@ OmpOrderedConstruct OmpOrderedConstruct():
 {
 	<ORDERED> {line=token.beginLine; column=token.beginColumn;}
 	stmt = Statement()
-	{return new OmpOrderedConstruct(stmt);}
+	{return new OmpOrderedConstruct(line, column, token.endLine, token.endColumn, stmt);}
 }
 
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25
@@ -3328,9 +3348,11 @@ OmpScheduleClause OmpScheduleClause():
 {
 	OmpScheduleClause.Type type = null;
 	Expression chunkSize = null;
+	int line;
+	int column;
 }
 {
-	<SCHEDULE> "(" 
+	<SCHEDULE> {line=token.beginLine; column=token.beginColumn;} "(" 
  	(	<STATIC> 	{ type = OmpScheduleClause.Type.Static; }
  	|	<DYNAMIC>	{ type = OmpScheduleClause.Type.Dynamic; }
  	|	<GUIDED>	{ type = OmpScheduleClause.Type.Guided; }
@@ -3339,14 +3361,14 @@ OmpScheduleClause OmpScheduleClause():
  	)
  	(	","  chunkSize = Expression()	)? 
 	")"
-	{return new OmpScheduleClause(type, chunkSize);}
+	{return new OmpScheduleClause(line, column, token.endLine, token.endColumn, type, chunkSize);}
 }	
 OmpDataClause OmpDataClause():
 {
 	OmpDataClause ret = null;
 }
 {
-	(	ret = OmpPrivateClause()
+	(	ret = OmpPrivateDataClause()
 	|	ret = OmpSharedDataClause()
 	| 	ret = OmpLastprivateDataClause()
 	|	ret = OmpReductionDataClause()
@@ -3356,38 +3378,38 @@ OmpDataClause OmpDataClause():
 	{return ret;}
 }
 	
-OmpPrivateClause OmpPrivateClause():
+OmpPrivateDataClause OmpPrivateDataClause():
 {
-	OmpPrivateClause ret = new OmpPrivateClause();
+	OmpPrivateDataClause ret = new OmpPrivateDataClause();
 	Expression expr;
 }
-{	<PRIVATE> "("
+{	<PRIVATE> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
 	expr = Expression() {ret.addArgument(expr);}
 	( "," expr = Expression() {ret.addArgument(expr);} )*
 	")"
-	{return ret;}
+	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }
 OmpSharedDataClause OmpSharedDataClause():
 {
 	OmpSharedDataClause ret = new OmpSharedDataClause();
 	Expression expr;
 }
-{	<SHARED> "("
+{	<SHARED> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
 	expr = Expression() {ret.addArgument(expr);}
 	( "," expr = Expression() {ret.addArgument(expr);} )*
 	")"
-	{return ret;}
+	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }
 OmpLastprivateDataClause OmpLastprivateDataClause():
 {
 	OmpLastprivateDataClause ret = new OmpLastprivateDataClause();
 	Expression expr;
 }
-{	<LASTPRIVATE> "("
+{	<LASTPRIVATE> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
 	expr = Expression() {ret.addArgument(expr);}
 	( "," expr = Expression() {ret.addArgument(expr);} )*
 	")"
-	{return ret;}
+	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }
 OmpReductionDataClause OmpReductionDataClause():
 {
@@ -3395,57 +3417,57 @@ OmpReductionDataClause OmpReductionDataClause():
 	Expression expr;
 	Expression operator;
 }
-{	<REDUCTION> "("
+{	<REDUCTION> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
 	operator = Expression() ":" expr = Expression() {ret.addArgument(operator, expr);}
 	( "," operator = Expression() ":" expr = Expression() {ret.addArgument(operator, expr);} )*
 	")"
-	{return ret;}
+	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }
 OmpCopyprivateDataClause OmpCopyprivateDataClause():
 {
 	OmpCopyprivateDataClause ret = new OmpCopyprivateDataClause();
 	Expression expr;
 }
-{	<COPYPRIVATE> "("
+{	<COPYPRIVATE> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
 	expr = Expression() { ret.addArgument(expr); }
-	( "," expr = Expression() {} {ret.addArgument(expr);} )*
+	( "," expr = Expression() {ret.addArgument(expr);} )*
 	")"
-	{return ret;}
+	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }
 OmpDefaultDataClause OmpDefaultDataClause():
 {
 	OmpDefaultDataClause ret = new OmpDefaultDataClause();
 }
-{	<_DEFAULT> "("
+{	<_DEFAULT> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
 	(<SHARED> {ret.setPolicy(OmpDefaultDataClause.Policy.Shared);}
 	|<NONE>	  {ret.setPolicy(OmpDefaultDataClause.Policy.None);}
 	) 	")"
-	{return ret;}
+	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }
 
 
 OmpNumthreadsClause OmpNumthreadsClause():
 {
-	Expression numExpr = null;
-	int beginLine;
-	int beginColumn;
+	Expression numExpr = null;	
+	int line;
+	int column;
 }
 {
-	<NUMTHREADS> {beginLine=token.beginLine; beginColumn=token.beginColumn;}
+	<NUMTHREADS>  {line=token.beginLine; column=token.beginColumn;}
 	 "(" numExpr = Expression() ")"
-	{return new OmpNumthreadsClause(numExpr);}
+	{return new OmpNumthreadsClause(line, column, token.endLine, token.endColumn, numExpr);}
 }
 	
 OmpIfClause OmpIfClause():
 {
 	Expression ifExpr = null;
-	int beginLine;
-	int beginColumn;
+	int line;
+	int column;
 }
 {
-	<IF> {beginLine=token.beginLine; beginColumn=token.beginColumn;}
-	"(" ifExpr = Expression() ")"
-	{return new OmpIfClause(ifExpr);}
+	<IF>  {line=token.beginLine; column=token.beginColumn;}
+	"(" ifExpr = Expression() ")" {}
+	{return new OmpIfClause(line, column, token.endLine, token.endColumn, ifExpr);}
 }
 
 

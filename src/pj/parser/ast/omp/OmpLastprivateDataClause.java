@@ -9,19 +9,21 @@ import java.util.Set;
 
 public class OmpLastprivateDataClause extends OmpDataClause{
 
-	private final OmpDataClause.Type type = OmpDataClause.Type.Lastprivate;
 	private Set<Expression> argumentSet;
 	
 	public OmpLastprivateDataClause() {
+		this.type = OmpDataClause.Type.Lastprivate;
 		this.argumentSet = new HashSet<Expression>();
 	}
 	
 	public OmpLastprivateDataClause(Set<Expression> variableSet) {
+		this.type = OmpDataClause.Type.Lastprivate;
 		this.argumentSet = variableSet;
 	}
 	
 	public OmpLastprivateDataClause(int beginLine, int beginColumn, int endLine, int endColumn, Set<Expression> variableList) {
 		super(beginLine, beginColumn, endLine, endColumn);
+		this.type = OmpDataClause.Type.Lastprivate;
 		this.argumentSet = variableList;
 	}
 	

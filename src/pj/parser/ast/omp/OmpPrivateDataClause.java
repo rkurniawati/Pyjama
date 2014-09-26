@@ -7,21 +7,23 @@ import pj.parser.ast.expr.Expression;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
 
-public class OmpPrivateClause extends OmpDataClause{
+public class OmpPrivateDataClause extends OmpDataClause{
 
-	private final OmpDataClause.Type type = OmpDataClause.Type.Private;
 	private Set<Expression> argumentSet;
 	
-	public OmpPrivateClause() {
+	public OmpPrivateDataClause() {
+		this.type = OmpDataClause.Type.Private;
 		this.argumentSet = new HashSet<Expression>();
 	}
 	
-	public OmpPrivateClause(Set<Expression> variableSet) {
+	public OmpPrivateDataClause(Set<Expression> variableSet) {
+		this.type = OmpDataClause.Type.Private;
 		this.argumentSet = variableSet;
 	}
 	
-	public OmpPrivateClause(int beginLine, int beginColumn, int endLine, int endColumn, Set<Expression> variableList) {
+	public OmpPrivateDataClause(int beginLine, int beginColumn, int endLine, int endColumn, Set<Expression> variableList) {
 		super(beginLine, beginColumn, endLine, endColumn);
+		this.type = OmpDataClause.Type.Private;
 		this.argumentSet = variableList;
 	}
 	

@@ -6,19 +6,21 @@ import pj.parser.ast.visitor.VoidVisitor;
 public class OmpDefaultDataClause extends OmpDataClause{
 
 	public static enum Policy { Shared,None };
-	private final OmpDataClause.Type type = OmpDataClause.Type.Reduction;
 	private OmpDefaultDataClause.Policy policy;
 	
 	public OmpDefaultDataClause() {
+		this.type = OmpDataClause.Type.Default;
 		this.policy = OmpDefaultDataClause.Policy.None; 
 	}
 		
 	public OmpDefaultDataClause(int beginLine, int beginColumn, int endLine, int endColumn) {
 		super(beginLine, beginColumn, endLine, endColumn);
+		this.type = OmpDataClause.Type.Default;
 		this.policy = OmpDefaultDataClause.Policy.None;
 	}
 	
 	public void setPolicy(OmpDefaultDataClause.Policy policy) {
+		this.type = OmpDataClause.Type.Default;
 		this.policy = OmpDefaultDataClause.Policy.None;
 	}
 	

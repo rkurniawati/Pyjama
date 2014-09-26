@@ -10,19 +10,21 @@ import pj.parser.ast.visitor.VoidVisitor;
 
 public class OmpReductionDataClause extends OmpDataClause{
 
-	private final OmpDataClause.Type type = OmpDataClause.Type.Reduction;
 	Map<Expression, Expression> argumentMap;
 	
 	public OmpReductionDataClause() {
+		this.type = OmpDataClause.Type.Reduction;
 		this.argumentMap = new HashMap<Expression, Expression>();
 	}
 	
 	public OmpReductionDataClause(HashMap<Expression, Expression> variableSet) {
+		this.type = OmpDataClause.Type.Reduction;
 		this.argumentMap = variableSet;
 	}
 	
 	public OmpReductionDataClause(int beginLine, int beginColumn, int endLine, int endColumn, HashMap<Expression, Expression> variableList) {
 		super(beginLine, beginColumn, endLine, endColumn);
+		this.type = OmpDataClause.Type.Reduction;
 		this.argumentMap = variableList;
 	}
 	
