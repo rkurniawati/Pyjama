@@ -1,8 +1,6 @@
 
 import java.io.File;
 
-import pj.PyjamaToAndroidParser;
-import pj.PyjamaToJavaParser;
 
 public class Generate {
 	
@@ -16,9 +14,9 @@ public class Generate {
 		
 		try {
 			if (envFlag.equalsIgnoreCase("A")) {
-				PyjamaToAndroidParser.parse(start);
+				//PyjamaToAndroidParser.parse(start);
 			}else {
-				PyjamaToJavaParser.parse(start); 
+				//PyjamaToJavaParser.parse(start); 
 			}
 		} catch(Exception e) { 			
 			System.err.println("*** Failed to process: "+start.getName()+" ****"); 

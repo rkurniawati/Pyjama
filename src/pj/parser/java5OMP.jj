@@ -231,11 +231,11 @@ TOKEN_MGR_DECLS :
 SPECIAL_TOKEN :
 {
   <SINGLE_LINE_COMMENT:
-    (	"//"    ~["#"] 	(~["\r","\n"])* 
-    |	"//#"   ~["o"] 	(~["\r","\n"])*  
-    |	"//#o"  ~["m"] 	(~["\r","\n"])* 
-    |	"//#om" ~["p"] 	(~["\r","\n"])* 
-    |	"//#omp" ~[" "] (~["\r","\n"])*
+    (	"//"    ~["#"] 	(~["\r","\n"])* ("\n"|"\r"|"\r\n")?
+    |	"//#"   ~["o"] 	(~["\r","\n"])* ("\n"|"\r"|"\r\n")?
+    |	"//#o"  ~["m"] 	(~["\r","\n"])* ("\n"|"\r"|"\r\n")?
+    |	"//#om" ~["p"] 	(~["\r","\n"])* ("\n"|"\r"|"\r\n")?
+    |	"//#omp" ~[" "] (~["\r","\n"])* ("\n"|"\r"|"\r\n")?
     )>
 }
 
@@ -3176,7 +3176,7 @@ OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 	)*
 	"{"	
 	(
-		sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
+		<OPENMP_PRAGMA> sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
 	)*
 	"}"
 	{ return new OmpParallelSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, ifExpr, numThreads); }
@@ -3230,7 +3230,7 @@ OmpSectionsConstruct OmpSectionsConstruct():
 	)*
  	"{"	
 	(
-		sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
+		<OPENMP_PRAGMA> sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
 	)+
 	"}"
   	{ return new OmpSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, nowait); }
