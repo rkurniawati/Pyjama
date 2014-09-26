@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Júlio Vilmar Gesser.
+ * Copyright (C) 2007 Jï¿½lio Vilmar Gesser.
  * 
  * This file is part of Java 1.5 parser and Abstract Syntax Tree.
  *
@@ -79,6 +79,32 @@ import pj.parser.ast.expr.SuperExpr;
 import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
+import pj.parser.ast.omp.OmpAtomicConstruct;
+import pj.parser.ast.omp.OmpBarrierDirective;
+import pj.parser.ast.omp.OmpCopyprivateDataClause;
+import pj.parser.ast.omp.OmpCriticalConstruct;
+import pj.parser.ast.omp.OmpDataClause;
+import pj.parser.ast.omp.OmpDefaultDataClause;
+import pj.parser.ast.omp.OmpFlushDirective;
+import pj.parser.ast.omp.OmpForConstruct;
+import pj.parser.ast.omp.OmpFreeguiConstruct;
+import pj.parser.ast.omp.OmpGuiConstruct;
+import pj.parser.ast.omp.OmpIfClause;
+import pj.parser.ast.omp.OmpLastprivateDataClause;
+import pj.parser.ast.omp.OmpMasterConstruct;
+import pj.parser.ast.omp.OmpNumthreadsClause;
+import pj.parser.ast.omp.OmpOrderedConstruct;
+import pj.parser.ast.omp.OmpParallelConstruct;
+import pj.parser.ast.omp.OmpParallelForConstruct;
+import pj.parser.ast.omp.OmpParallelSectionsConstruct;
+import pj.parser.ast.omp.OmpPrivateDataClause;
+import pj.parser.ast.omp.OmpReductionDataClause;
+import pj.parser.ast.omp.OmpScheduleClause;
+import pj.parser.ast.omp.OmpSectionConstruct;
+import pj.parser.ast.omp.OmpSectionsConstruct;
+import pj.parser.ast.omp.OmpSharedDataClause;
+import pj.parser.ast.omp.OmpSingleConstruct;
+import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.BreakStmt;
@@ -1298,5 +1324,161 @@ public final class DumpVisitor implements VoidVisitor<Object> {
         printer.print(n.getContent());
         printer.printLn("*/");
     }
+
+	@Override
+	public void visit(OmpAtomicConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpBarrierDirective n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpCopyprivateDataClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpCriticalConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpDataClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpDefaultDataClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpFlushDirective n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpForConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpFreeguiConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpGuiConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpIfClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpLastprivateDataClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpMasterConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpNumthreadsClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpOrderedConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpParallelConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpParallelForConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpParallelSectionsConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpPrivateDataClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpReductionDataClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpScheduleClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpSectionConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpSectionsConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpSharedDataClause n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpSingleConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OpenMPStatement n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

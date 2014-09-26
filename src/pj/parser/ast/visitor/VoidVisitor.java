@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Júlio Vilmar Gesser.
+ * Copyright (C) 2007 Jï¿½lio Vilmar Gesser.
  * 
  * This file is part of Java 1.5 parser and Abstract Syntax Tree.
  *
@@ -100,7 +100,7 @@ import pj.parser.ast.type.PrimitiveType;
 import pj.parser.ast.type.ReferenceType;
 import pj.parser.ast.type.VoidType;
 import pj.parser.ast.type.WildcardType;
-
+import pj.parser.ast.omp.*;
 /**
  * @author Julio Vilmar Gesser
  */
@@ -273,5 +273,59 @@ public interface VoidVisitor<A> {
     public void visit(TryStmt n, A arg);
 
     public void visit(CatchClause n, A arg);
+    
+    //- OpenMP expansion ----------------------------------------
+    
+    public void visit(OmpAtomicConstruct n, A arg);
+    
+    public void visit(OmpBarrierDirective n, A arg);
+    
+    public void visit(OmpCopyprivateDataClause n, A arg);
+    
+    public void visit(OmpCriticalConstruct n, A arg);
+    
+    public void visit(OmpDataClause n, A arg);
+    
+    public void visit(OmpDefaultDataClause n, A arg);
+    
+    public void visit(OmpFlushDirective n, A arg);
+    
+    public void visit(OmpForConstruct n, A arg);
+    
+    public void visit(OmpFreeguiConstruct n, A arg);
+    
+    public void visit(OmpGuiConstruct n, A arg);
+    
+    public void visit(OmpIfClause n, A arg);
+    
+    public void visit(OmpLastprivateDataClause n, A arg);
+    
+    public void visit(OmpMasterConstruct n, A arg);
+    
+    public void visit(OmpNumthreadsClause n, A arg);
+    
+    public void visit(OmpOrderedConstruct n, A arg);
+    
+    public void visit(OmpParallelConstruct n, A arg);
+    
+    public void visit(OmpParallelForConstruct n, A arg);
+    
+    public void visit(OmpParallelSectionsConstruct n, A arg);
+    
+    public void visit(OmpPrivateDataClause n, A arg);
+    
+    public void visit(OmpReductionDataClause n, A arg);
+    
+    public void visit(OmpScheduleClause n, A arg);
+    
+    public void visit(OmpSectionConstruct n, A arg);
+    
+    public void visit(OmpSectionsConstruct n, A arg);
+    
+    public void visit(OmpSharedDataClause n, A arg);
+    
+    public void visit(OmpSingleConstruct n, A arg);
+    
+    public void visit(OpenMPStatement n, A arg);
 
 }
