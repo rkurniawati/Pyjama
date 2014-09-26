@@ -31,22 +31,6 @@ public class PyjamaToJavaParser {
 	
 	static int count = 0;
 	
-    /*
-     * Utility method to push the contents of string to a file stream
-     * @param file Input file name
-     * @param contents Buffer contents to be pushed
-     */
-    private static void writeToFile(File file, String contents) {
-        try {
-        	Writer output = null;
-            output = new BufferedWriter(new FileWriter(file));
-			output.write(contents);
-	        output.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
-	
 	/**
 	 * This is main public utility to parse Pyjama code. It accepts the .pj file as input
 	 * and produces the multi-threaded Java version  
@@ -62,29 +46,40 @@ public class PyjamaToJavaParser {
 		showMsg("Processing file: " + file.toString());
 		showMsg("-----------------------------------------------------");
 		
-		/*
-		 * check if the input file is a valid Pyjama extension
-		 */
+
+		//check if the input file is a valid Pyjama extension
 		if(false == validateFile(file.getName())){
 			showMsg("Invalid file type");
 			showMsg("Processing discontinued");
 			showMsg("-----------------------------------------------------");
 			return;
 		}
-		
-		/*
-		 * the input Pyjama code
-		 */
 		InputStream is = new FileInputStream(file);
 		
-		/*
-		 * we form the initial AST here
-		 */
+
+
 		showMsg("Processing 1st Phase: Parse");
+		// we form the initial AST here
 		CompilationUnit ast = ASTParser.parse(is);
 		showMsg("Processing complete");
 		showMsg("-----------------------------------------------------");
 	}
+	
+    /*
+     * Utility method to push the contents of string to a file stream
+     * @param file Input file name
+     * @param contents Buffer contents to be pushed
+     */
+    private static void writeToFile(File file, String contents) {
+        try {
+        	Writer output = null;
+            output = new BufferedWriter(new FileWriter(file));
+			output.write(contents);
+	        output.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
 
 	/*
 	 * Utility method which ensures the correct file type

@@ -1,0 +1,33 @@
+
+public class myTest {
+	//public static int glob;
+	static	int[] a;
+	public static void main(String[] args) {
+
+		int result = 0;
+		int[] a = parallel_ordered(4);
+
+	
+    }
+
+	public static int[] parallel_ordered(int threadNumber){
+		Pyjama.omp_set_num_threads(threadNumber);
+		
+		int[] array = new int[threadNumber];
+		int[] counter=new int[1];
+		counter[0]=0;
+		//#omp parallel 
+		for (int i=0; i<10; i++)
+		{
+			//#omp ordered
+			{
+				//#omp critical
+				{
+				System.out.println("i="+i);
+				}
+			}
+		}
+		return array;
+	}
+
+}

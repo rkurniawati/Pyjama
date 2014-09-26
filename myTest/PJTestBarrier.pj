@@ -1,0 +1,39 @@
+import java.awt.Point;
+
+import pj.*;
+
+public class PJTestBarrier {
+	public static void main(String[] args) {
+		PJTestBarrier p = new PJTestBarrier();
+		p.doStuff();
+		System.out.println("D\tDone!");
+	}
+	public void doStuff() {
+		Pyjama.omp_set_num_threads(11);
+		Point p = new Point(11,11);
+		q=1;
+		//#omp parallel sections shared(p,q)
+		{
+			//#omp section
+			{
+				try {
+								Thread.currentThread().sleep(2000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}//#GEN#[-1]#PJ#
+				System.out.println("q in sleep:"+q);
+				System.out.println("p.x="+p.getX()+"p.y="+p.getY());
+			}
+			//#omp section
+			{
+				q=2;
+				p = new Point(22,33);
+System.out.println("p.x="+p.getX()+"p.y="+p.getY());
+System.out.println("q  :"+q);
+
+			}
+		}
+
+	}
+}

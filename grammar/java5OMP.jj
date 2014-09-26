@@ -28,7 +28,6 @@ options {
 }
 
 PARSER_BEGIN(ASTParser)
-
 package pj.parser;
 
 import java.io.*;
@@ -42,8 +41,48 @@ import pj.parser.ast.omp.*;
 /**
  * <p>This class was generated automatically by javacc, do not edit.</p>
  * @author Júlio Vilmar Gesser
+ * @author Xing Fan (OpenMP part)
  */
-final class ASTParser {
+public final class ASTParser {
+
+/*****************************************
+ * THE PARSE METHODS ARE HERE *
+ *****************************************/
+    private static ASTParser parser;
+
+    public static CompilationUnit parse(InputStream in, String encoding) throws ParseException {
+        if (parser == null) {
+            parser = new ASTParser(in, encoding);
+        } else {
+            parser.reset(in, encoding);
+        }
+        return parser.CompilationUnit();
+    }
+
+    public static CompilationUnit parse(InputStream in) throws ParseException {
+        return parse(in, null);
+    }
+
+    public static CompilationUnit parse(File file, String encoding) throws ParseException {
+        try {
+	        FileInputStream in = new FileInputStream(file);
+	        try {
+	        	return parse(in, encoding);
+	        } finally {
+	        	in.close();
+	        }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public static CompilationUnit parse(File file) throws ParseException {
+		return parse(file, null);
+    }
+
+/*****************************************
+ * THE AUXILARY FUNCTION IS HERE *
+ *****************************************/
 
     void reset(InputStream in, String encoding) {
         ReInit(in, encoding);

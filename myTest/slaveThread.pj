@@ -1,0 +1,14 @@
+
+import pj.*;
+
+public class slaveThread extends Thread{
+
+		@Override
+		public void run() {
+	        //#omp parallel
+	        {
+	        	System.out.println("Slave from"+Pyjama.omp_get_thread_num());
+	        }
+		}
+	
+}
