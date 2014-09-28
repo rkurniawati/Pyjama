@@ -1,5 +1,8 @@
 package pj.parser.ast.omp;
 
+import java.util.Set;
+
+import pj.parser.ast.expr.Expression;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
 
@@ -27,6 +30,12 @@ public class OmpDefaultDataClause extends OmpDataClause{
 	public OmpDefaultDataClause.Policy getPolicy() {
 		return this.policy;
 	}
+	
+	@Override
+	public Set<Expression> getArgumentSet() {
+		return null;
+	}
+	
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
 		// TODO Auto-generated method stub
@@ -38,5 +47,7 @@ public class OmpDefaultDataClause extends OmpDataClause{
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 }

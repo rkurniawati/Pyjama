@@ -3133,6 +3133,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	int defaultDataClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
+	boolean ordered = false;
 	int line;
 	int column;
 }
@@ -3140,6 +3141,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	<PARALLEL> {line=token.beginLine; column=token.beginColumn;} <FOR>
 	(	numThreads = OmpNumthreadsClause()	{if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
 	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	<ORDERED>			 	{ordered = true;}
 	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
@@ -3147,7 +3149,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
 	)*
 	forBody = ForStatement()
-	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, ifExpr, numThreads); }
+	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, ifExpr, numThreads, ordered); }
 }
 
 OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
@@ -3505,7 +3507,7 @@ OmpIfClause OmpIfClause():
 }
 {
 	<IF>  {line=token.beginLine; column=token.beginColumn;}
-	"(" ifExpr = Expression() ")" {}
+	"(" ifExpr = Expression() ")"
 	{return new OmpIfClause(line, column, token.endLine, token.endColumn, ifExpr);}
 }
 

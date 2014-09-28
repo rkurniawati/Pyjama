@@ -1,8 +1,19 @@
 package pj.parser.ast.omp;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import pj.parser.ast.body.VariableDeclarator;
+import pj.parser.ast.body.VariableDeclaratorId;
+import pj.parser.ast.expr.BinaryExpr;
+import pj.parser.ast.expr.Expression;
+import pj.parser.ast.expr.IntegerLiteralExpr;
+import pj.parser.ast.expr.NameExpr;
+import pj.parser.ast.expr.UnaryExpr;
+import pj.parser.ast.expr.VariableDeclarationExpr;
+import pj.parser.ast.stmt.ForStmt;
 import pj.parser.ast.stmt.Statement;
+import pj.parser.ast.type.PrimitiveType;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
 
@@ -38,6 +49,52 @@ public class OmpSingleConstruct extends OpenMPStatement{
 	
 	public boolean isNowait() {
 		return this.nowait;
+	}
+	
+	public OmpForConstruct normalisation() {
+		ForStmt forStmt = generateForLoop();
+		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, this.dataClauseList, null, this.nowait, false);
+		return forConstruct;
+	}
+	
+	private ForStmt generateForLoop() {
+		List<Expression> init = new ArrayList<Expression>();
+		Expression compare;
+	    List<Expression> update = new ArrayList<Expression>();
+    
+	    /* BEGIN generate init*/
+	    //generate type name: int
+	    PrimitiveType intType = new PrimitiveType(PrimitiveType.Primitive.Int);  
+	    //generate: 
+	    ArrayList<VariableDeclarator> varDeclaratorList = new ArrayList<VariableDeclarator>();
+	    //generate identifier:  _OMP_VANCY_ITERATOR_
+	    VariableDeclaratorId varIdentifier = new VariableDeclaratorId(0,0,0,0,"_OMP_VANCY_ITERATOR_",0);
+	    //generate initial value: 0
+	    Expression varInitialValue = new IntegerLiteralExpr("0");
+	    //generate: _OMP_VANCY_ITERATOR_ = 0
+	    VariableDeclarator declarator = new VariableDeclarator(varIdentifier, varInitialValue);
+	    varDeclaratorList.add(declarator);
+	    //finally we got what we want(init): 
+	    VariableDeclarationExpr localIterator = new VariableDeclarationExpr(0, 0, 0, 0, 0, null, intType, varDeclaratorList);
+	    init.add(localIterator);
+	    /*END generate init*/
+	    
+	    /* BEGIN generate compare*/
+	    NameExpr leftVar = new NameExpr("_OMP_VANCY_ITERATOR_");
+	    IntegerLiteralExpr rightVal = new IntegerLiteralExpr("1");
+	    //generate _OMP_VANCY_ITERATOR_ < 1
+	    compare = new BinaryExpr(leftVar, rightVal, BinaryExpr.Operator.less);
+	    /* END generate compare*/
+	    
+	    /* BEGIN generate update*/
+	    //generate ++_OMP_VANCY_ITERATOR_
+	    Expression iteratorUpdate = new UnaryExpr(0, 0, 0, 0, new NameExpr("_OMP_VANCY_ITERATOR_"), UnaryExpr.Operator.preIncrement);
+	    update.add(iteratorUpdate);
+	    /* END generate update*/
+	    
+	    // generate for(int _OMP_VANCY_ITERATOR_=0; _OMP_VANCY_ITERATOR_<1; ++_OMP_VANCY_ITERATOR_)
+	    ForStmt forStmt = new ForStmt(init, compare, update, this.statement);
+	    return forStmt;  
 	}
 	
 	@Override

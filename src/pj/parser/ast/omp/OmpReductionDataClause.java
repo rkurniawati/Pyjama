@@ -2,7 +2,7 @@ package pj.parser.ast.omp;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.Set;
 
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.visitor.GenericVisitor;
@@ -37,6 +37,11 @@ public class OmpReductionDataClause extends OmpDataClause{
 	}
 	
 	@Override
+	public Set<Expression> getArgumentSet() {
+		return null;
+	}
+	
+	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
 		// TODO Auto-generated method stub
 		return null;
@@ -47,5 +52,7 @@ public class OmpReductionDataClause extends OmpDataClause{
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 }

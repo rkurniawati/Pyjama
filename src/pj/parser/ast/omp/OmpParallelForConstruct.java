@@ -1,5 +1,6 @@
 package pj.parser.ast.omp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pj.parser.ast.stmt.ForStmt;
@@ -13,28 +14,33 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 	private OmpNumthreadsClause numThreads = null;
 	private Statement forStmt = null;
 	private List<OmpDataClause> dataClauseList;
+	private boolean ordered;
 	
 	public OmpParallelForConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
-			OmpNumthreadsClause numThreads){
+			OmpNumthreadsClause numThreads,
+			boolean ordered){
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.forStmt = statement;
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
+		this.ordered = ordered;
 	}
 	
 	public OmpParallelForConstruct(
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
-			OmpNumthreadsClause numThreads){
+			OmpNumthreadsClause numThreads,
+			boolean ordered){
 		this.forStmt = statement;
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
+		this.ordered = ordered;
 	}
 	
 	public Statement getForStmt() {
@@ -51,6 +57,24 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 		return numThreads;
 	}
 	
+	public OmpParallelConstruct normalisation() {
+		List<OmpDataClause> forDataClauseList = new ArrayList<OmpDataClause>();
+		List<OmpDataClause> parallelDataClauseList = new ArrayList<OmpDataClause>();
+		for (OmpDataClause clause: this.dataClauseList) {
+			if (clause.DataClauseType() == OmpDataClause.Type.Shared) {
+				parallelDataClauseList.add(clause);
+			} else if (clause.DataClauseType() == OmpDataClause.Type.Lastprivate) {
+				forDataClauseList.add(clause);
+			} else {
+				parallelDataClauseList.add(clause);
+				forDataClauseList.add(clause);
+			}
+			
+		}
+		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, forDataClauseList, null, false, this.ordered);
+		OmpParallelConstruct normalised = new OmpParallelConstruct(forConstruct, parallelDataClauseList, this.ifExpr, this.numThreads);
+		return normalised;
+	}
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
 		// TODO Auto-generated method stub
