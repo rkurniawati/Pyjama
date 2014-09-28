@@ -37,7 +37,6 @@ public class OmpScheduleClause extends Node{
 
 	@Override
 	public <A> void accept(VoidVisitor<A> v, A arg) {
-		// TODO Auto-generated method stub
-		
+		v.visit(this, arg);	
 	}
 }

@@ -1,3 +1,4 @@
+
 public class myTest {
 	static	int[] a;
 	public static void main(String[] args) {
@@ -12,20 +13,25 @@ public class myTest {
 		int[] array = new int[threadNumber];
 		int[] counter=new int[1];
 		counter[0]=0;
-		//#omp  parallel sections
+		//#omp  parallel reduction(+:uu)
 		{
-			
-	//#omp section
+			///#omp section
+			System.out.println("dfdddddddddd");
+			///#omp section
 			{
-System.out.println("dfd");
-				}
-			//#omp section
 			System.out.println("dfd");
-				//#omp section{
-			System.out.println("dfd");
-System.out.println("dfd");}
+			}
+			///#omp section
+			{
+				System.out.println("dfd");
+				System.out.println("dfd");
+			}
 		}
-		{System.out.println("dfd");}
+		///#omp single nowait private(d)
+		{
+System.out.println("dfd");
+			}
+		System.out.println("dfd");
 		return array;
 	}
 

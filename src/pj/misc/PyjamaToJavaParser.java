@@ -5,6 +5,7 @@ import java.io.*;
 //import pt.compiler.ParaTaskParser;
 import pj.parser.ASTParser;
 import pj.parser.ast.CompilationUnit;
+import pj.parser.ast.visitor.DumpVisitor;
 
  
 /**
@@ -61,8 +62,15 @@ public class PyjamaToJavaParser {
 		showMsg("Processing 1st Phase: Parse");
 		// we form the initial AST here
 		CompilationUnit ast = ASTParser.parse(is);
-		showMsg("Processing complete");
+		showMsg("Processing 2st Phase: Normalisation print");
+
+		DumpVisitor translationVisitor = new DumpVisitor();
+		ast.accept(translationVisitor, null);
+		String paraTaskCode = translationVisitor.getSource();
+		File paraTaskFile = new File(file.getParent(), file.getName().substring(0,file.getName().lastIndexOf("."))+".java"); 
+		writeToFile(paraTaskFile, paraTaskCode);
 		showMsg("-----------------------------------------------------");
+		showMsg("Processing Done");
 	}
 	
     /*

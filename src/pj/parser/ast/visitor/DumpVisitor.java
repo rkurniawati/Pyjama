@@ -1328,6 +1328,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
     /**************************************************
      * OpenMP DumpVisotors                            *
      **************************************************/
+    
 	@Override
 	public void visit(OmpAtomicConstruct n, Object arg) {
 		printer.print("//#omp atomic ");
@@ -1437,7 +1438,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 
 	@Override
 	public void visit(OmpLastprivateDataClause n, Object arg) {
-		printer.print("lastprivate ");
+		printer.print("lastprivate");
 		printer.print("(");
 		Iterator<Expression> var = n.getArgumentSet().iterator();
 		while (var.hasNext()) {
@@ -1482,9 +1483,13 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 				clause.accept(this, arg);
 			}
 		}
-		printer.print(") ");
 		printer.printLn();
+		printer.printLn("{");
+		printer.indent();
 		n.getBody().accept(this, arg);
+		printer.printLn();
+		printer.unindent();
+		printer.print("}");
 	}
 
 	@Override
@@ -1501,7 +1506,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 
 	@Override
 	public void visit(OmpPrivateDataClause n, Object arg) {
-		printer.print("private ");
+		printer.print("private");
 		printer.print("(");
 		Iterator<Expression> var = n.getArgumentSet().iterator();
 		while (var.hasNext()) {
@@ -1515,7 +1520,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 
 	@Override
 	public void visit(OmpReductionDataClause n, Object arg) {
-		printer.print("reduction ");
+		printer.print("reduction");
 		printer.print("(");
 		Iterator<Expression> var = n.getArgumentMap().keySet().iterator();
 		while (var.hasNext()) {
@@ -1570,7 +1575,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 
 	@Override
 	public void visit(OmpSharedDataClause n, Object arg) {
-		printer.print("shared ");
+		printer.print("shared");
 		printer.print("(");
 		Iterator<Expression> var = n.getArgumentSet().iterator();
 		while (var.hasNext()) {

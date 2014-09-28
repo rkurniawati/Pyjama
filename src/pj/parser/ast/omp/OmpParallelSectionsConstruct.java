@@ -65,78 +65,25 @@ public class OmpParallelSectionsConstruct extends OpenMPStatement{
 	}
 	
 	public OmpParallelConstruct normalisation() {
-		List<OmpDataClause> forDataClauseList = new ArrayList<OmpDataClause>();
+		List<OmpDataClause> sectionDataClauseList = new ArrayList<OmpDataClause>();
 		List<OmpDataClause> parallelDataClauseList = new ArrayList<OmpDataClause>();
 		for (OmpDataClause clause: this.dataClauseList) {
 			if (clause.DataClauseType() == OmpDataClause.Type.Shared) {
 				parallelDataClauseList.add(clause);
 			} else if (clause.DataClauseType() == OmpDataClause.Type.Lastprivate) {
-				forDataClauseList.add(clause);
+				sectionDataClauseList.add(clause);
 			} else {
 				parallelDataClauseList.add(clause);
-				forDataClauseList.add(clause);
+				sectionDataClauseList.add(clause);
 			}
 			
 		}
-		ForStmt forStmt = generateForLoop();
-		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, forDataClauseList, null, false, false);
+
+		OmpSectionsConstruct sectionsConstruct = new OmpSectionsConstruct(this.sectionList, sectionDataClauseList, false);
+		OmpForConstruct forConstruct = sectionsConstruct.normalisation();
 		OmpParallelConstruct normalised = new OmpParallelConstruct(forConstruct, parallelDataClauseList, this.ifExpr, this.numThreads);
 		return normalised;
 	}
-	
-	private ForStmt generateForLoop() {
-		List<Expression> init = new ArrayList<Expression>();
-		Expression compare;
-	    List<Expression> update = new ArrayList<Expression>();
-    
-	    /* BEGIN generate init*/
-	    //generate type name: int
-	    PrimitiveType intType = new PrimitiveType(PrimitiveType.Primitive.Int);  
-	    //generate: 
-	    ArrayList<VariableDeclarator> varDeclaratorList = new ArrayList<VariableDeclarator>();
-	    //generate identifier:  _OMP_VANCY_ITERATOR_
-	    VariableDeclaratorId varIdentifier = new VariableDeclaratorId(0,0,0,0,"_OMP_VANCY_ITERATOR_",0);
-	    //generate initial value: 0
-	    Expression varInitialValue = new IntegerLiteralExpr("0");
-	    //generate: _OMP_VANCY_ITERATOR_ = 0
-	    VariableDeclarator declarator = new VariableDeclarator(varIdentifier, varInitialValue);
-	    varDeclaratorList.add(declarator);
-	    //finally we got what we want(init): 
-	    VariableDeclarationExpr localIterator = new VariableDeclarationExpr(0, 0, 0, 0, 0, null, intType, varDeclaratorList);
-	    init.add(localIterator);
-	    /*END generate init*/
-	    
-	    /* BEGIN generate compare*/
-	    NameExpr leftVar = new NameExpr("_OMP_VANCY_ITERATOR_");
-	    IntegerLiteralExpr rightVal = new IntegerLiteralExpr(Integer.toString((this.sectionList.size())));
-	    //generate _OMP_VANCY_ITERATOR_ < sectionList.size()
-	    compare = new BinaryExpr(leftVar, rightVal, BinaryExpr.Operator.less);
-	    /* END generate compare*/
-	    
-	    /* BEGIN generate update*/
-	    //generate ++_OMP_VANCY_ITERATOR_
-	    Expression iteratorUpdate = new UnaryExpr(0, 0, 0, 0, new NameExpr("_OMP_VANCY_ITERATOR_"), UnaryExpr.Operator.preIncrement);
-	    update.add(iteratorUpdate);
-	    /* END generate update*/
-	    
-	    // generate for(int _OMP_VANCY_ITERATOR_=0; _OMP_VANCY_ITERATOR_<1; ++_OMP_VANCY_ITERATOR_)
-	    Expression selector = new NameExpr("_OMP_VANCY_ITERATOR_");
-	    ArrayList<SwitchEntryStmt> entries = new ArrayList<SwitchEntryStmt>();
-	    OmpSectionConstruct section;
-	    for (int j = 0; j<this.sectionList.size(); j++ ) {
-	    	section = this.sectionList.get(j);
-	    	NameExpr label = new NameExpr(Integer.toString(j));
-	    	ArrayList<Statement> entryStatements = new ArrayList<Statement>();
-	    	entryStatements.add(section);
-	    	entryStatements.add(new BreakStmt());
-	    	entries.add(new SwitchEntryStmt(label, entryStatements));
-	    }
-	    
-	    SwitchStmt switchStmt = new SwitchStmt(selector, entries);
-	    ForStmt forStmt = new ForStmt(init, compare, update, switchStmt);
-	    return forStmt;  
-	}
-	
 	
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
@@ -146,8 +93,7 @@ public class OmpParallelSectionsConstruct extends OpenMPStatement{
 
 	@Override
 	public <A> void accept(VoidVisitor<A> v, A arg) {
-		// TODO Auto-generated method stub
-		
+		v.visit(this, arg);	
 	}
 
 }

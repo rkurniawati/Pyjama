@@ -63,7 +63,8 @@ public class OmpSectionsConstruct extends OpenMPStatement{
 	
 	public OmpForConstruct normalisation() {
 		ForStmt forStmt = generateForLoop();
-		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, this.dataClauseList, null, this.nowait, false);
+		OmpScheduleClause scheduleClause = new OmpScheduleClause(OmpScheduleClause.Type.Dynamic, new IntegerLiteralExpr("1"));
+		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, this.dataClauseList, scheduleClause, this.nowait, false);
 		return forConstruct;
 	}
 	
@@ -110,7 +111,7 @@ public class OmpSectionsConstruct extends OpenMPStatement{
 	    	section = this.sectionList.get(j);
 	    	NameExpr label = new NameExpr(Integer.toString(j));
 	    	ArrayList<Statement> entryStatements = new ArrayList<Statement>();
-	    	entryStatements.add(section);
+	    	entryStatements.add(section.getStatement());
 	    	entryStatements.add(new BreakStmt());
 	    	entries.add(new SwitchEntryStmt(label, entryStatements));
 	    }
@@ -128,8 +129,7 @@ public class OmpSectionsConstruct extends OpenMPStatement{
 
 	@Override
 	public <A> void accept(VoidVisitor<A> v, A arg) {
-		// TODO Auto-generated method stub
-		
+		v.visit(this, arg);	
 	}
 
 }

@@ -3073,19 +3073,27 @@ OpenMPStatement OpenMPStatement():
    	<OPENMP_PRAGMA> 
 	(
 	LOOKAHEAD(2)
-		ret = OmpParallelForConstruct()
+	 {OmpParallelForConstruct parallelForConstruct;} //#omp parallel needs normalisation; Xing Fan at 2014.9.29
+		parallelForConstruct = OmpParallelForConstruct()
+	 {ret = parallelForConstruct.normalisation();}
 	|
 	LOOKAHEAD(2)
-		ret = OmpParallelSectionsConstruct()
+	 {OmpParallelSectionsConstruct parallelSectionsConstruct;} //#omp parallel sections needs normalisation; Xing Fan at 2014.9.29
+		parallelSectionsConstruct = OmpParallelSectionsConstruct()
+	 {ret = parallelSectionsConstruct.normalisation();}
 	|
 	LOOKAHEAD(2)	
 		ret = OmpParallelConstruct()
 	|	ret = OmpForConstruct()
-	|	ret = OmpSectionsConstruct()
+	|{OmpSectionsConstruct sectionsConstruct;} //#omp sections needs normalisation; Xing Fan at 2014.9.29
+		sectionsConstruct = OmpSectionsConstruct()
+	 {ret = sectionsConstruct.normalisation();}
 	|	ret = OmpFreeguiConstruct()
-	|	ret = OmpSectionConstruct()
+//	|	ret = OmpSectionConstruct()
 	| 	ret = OmpGuiConstruct()
-	|	ret = OmpSingleConstruct()
+	|{OmpSingleConstruct singleConstruct;} //#omp single needs normalisation; Xing Fan at 2014.9.29
+		singleConstruct = OmpSingleConstruct()
+	 {ret = singleConstruct.normalisation();}
 	|	ret = OmpMasterConstruct()
 	|	ret = OmpCriticalConstruct()
 	|	ret = OmpAtomicConstruct()
@@ -3093,7 +3101,7 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpFlushDirective()
 	|	ret = OmpOrderedConstruct()
 	)
-	{ return ret;}
+	{return ret;}
 }
 
 OmpParallelConstruct OmpParallelConstruct():
@@ -3133,6 +3141,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	int defaultDataClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
+	boolean ordered = false;
 	int line;
 	int column;
 }
@@ -3140,6 +3149,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	<PARALLEL> {line=token.beginLine; column=token.beginColumn;} <FOR>
 	(	numThreads = OmpNumthreadsClause()	{if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
 	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	<ORDERED>			 	{ordered = true;}
 	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
@@ -3147,7 +3157,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
 	)*
 	forBody = ForStatement()
-	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, ifExpr, numThreads); }
+	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, ifExpr, numThreads, ordered); }
 }
 
 OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
@@ -3275,13 +3285,15 @@ OmpSectionConstruct OmpSectionConstruct():
 OmpGuiConstruct OmpGuiConstruct():
 {
 	Statement stmt = null;
+	boolean nowait = false;
 	int line;
 	int column;
 }
 {
-	<GUI> {line=token.beginLine; column=token.beginColumn;} 
+	<GUI> {line=token.beginLine; column=token.beginColumn;}
+	(<NOWAIT>)? { nowait = true; } 
 	stmt = Statement()
-	{return new OmpGuiConstruct(line, column, token.endLine, token.endColumn, stmt);}
+	{return new OmpGuiConstruct(line, column, token.endLine, token.endColumn, stmt, nowait);}
 }
 
 OmpSingleConstruct OmpSingleConstruct():
@@ -3457,8 +3469,8 @@ OmpReductionDataClause OmpReductionDataClause():
 	Expression operator;
 }
 {	<REDUCTION> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
-	operator = Expression() ":" expr = Expression() {ret.addArgument(operator, expr);}
-	( "," operator = Expression() ":" expr = Expression() {ret.addArgument(operator, expr);} )*
+	operator = Name() ":" expr = Name() {ret.addArgument(operator, expr);}
+	( "," operator = Name() ":" expr = Name() {ret.addArgument(operator, expr);} )*
 	")"
 	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }
@@ -3505,7 +3517,7 @@ OmpIfClause OmpIfClause():
 }
 {
 	<IF>  {line=token.beginLine; column=token.beginColumn;}
-	"(" ifExpr = Expression() ")" {}
+	"(" ifExpr = Expression() ")"
 	{return new OmpIfClause(line, column, token.endLine, token.endColumn, ifExpr);}
 }
 

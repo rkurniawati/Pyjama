@@ -47,8 +47,7 @@ public class OmpFreeguiConstruct extends OpenMPStatement{
 
 	@Override
 	public <A> void accept(VoidVisitor<A> v, A arg) {
-		// TODO Auto-generated method stub
-		
+		v.visit(this, arg);	
 	}
 
 }

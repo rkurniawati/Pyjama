@@ -3073,19 +3073,27 @@ OpenMPStatement OpenMPStatement():
    	<OPENMP_PRAGMA> 
 	(
 	LOOKAHEAD(2)
-		ret = OmpParallelForConstruct()
+	 {OmpParallelForConstruct parallelForConstruct;} //#omp parallel needs normalisation; Xing Fan at 2014.9.29
+		parallelForConstruct = OmpParallelForConstruct()
+	 {ret = parallelForConstruct.normalisation();}
 	|
 	LOOKAHEAD(2)
-		ret = OmpParallelSectionsConstruct()
+	 {OmpParallelSectionsConstruct parallelSectionsConstruct;} //#omp parallel sections needs normalisation; Xing Fan at 2014.9.29
+		parallelSectionsConstruct = OmpParallelSectionsConstruct()
+	 {ret = parallelSectionsConstruct.normalisation();}
 	|
 	LOOKAHEAD(2)	
 		ret = OmpParallelConstruct()
 	|	ret = OmpForConstruct()
-	|	ret = OmpSectionsConstruct()
+	|{OmpSectionsConstruct sectionsConstruct;} //#omp sections needs normalisation; Xing Fan at 2014.9.29
+		sectionsConstruct = OmpSectionsConstruct()
+	 {ret = sectionsConstruct.normalisation();}
 	|	ret = OmpFreeguiConstruct()
-	|	ret = OmpSectionConstruct()
+//	|	ret = OmpSectionConstruct()
 	| 	ret = OmpGuiConstruct()
-	|	ret = OmpSingleConstruct()
+	|{OmpSingleConstruct singleConstruct;} //#omp single needs normalisation; Xing Fan at 2014.9.29
+		singleConstruct = OmpSingleConstruct()
+	 {ret = singleConstruct.normalisation();}
 	|	ret = OmpMasterConstruct()
 	|	ret = OmpCriticalConstruct()
 	|	ret = OmpAtomicConstruct()
@@ -3093,7 +3101,7 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpFlushDirective()
 	|	ret = OmpOrderedConstruct()
 	)
-	{ return ret;}
+	{return ret;}
 }
 
 OmpParallelConstruct OmpParallelConstruct():
@@ -3461,8 +3469,8 @@ OmpReductionDataClause OmpReductionDataClause():
 	Expression operator;
 }
 {	<REDUCTION> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
-	operator = Expression() ":" expr = Expression() {ret.addArgument(operator, expr);}
-	( "," operator = Expression() ":" expr = Expression() {ret.addArgument(operator, expr);} )*
+	operator = Name() ":" expr = Name() {ret.addArgument(operator, expr);}
+	( "," operator = Name() ":" expr = Name() {ret.addArgument(operator, expr);} )*
 	")"
 	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }

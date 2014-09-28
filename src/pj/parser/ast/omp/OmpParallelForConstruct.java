@@ -3,7 +3,6 @@ package pj.parser.ast.omp;
 import java.util.ArrayList;
 import java.util.List;
 
-import pj.parser.ast.stmt.ForStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
@@ -83,8 +82,7 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 
 	@Override
 	public <A> void accept(VoidVisitor<A> v, A arg) {
-		// TODO Auto-generated method stub
-		
+		v.visit(this, arg);	
 	}
 
 }
