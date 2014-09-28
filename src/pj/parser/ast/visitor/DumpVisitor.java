@@ -1324,160 +1324,280 @@ public final class DumpVisitor implements VoidVisitor<Object> {
         printer.print(n.getContent());
         printer.printLn("*/");
     }
-
+    
+    /**************************************************
+     * OpenMP DumpVisotors                            *
+     **************************************************/
 	@Override
 	public void visit(OmpAtomicConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("//#omp atomic ");
+		printer.printLn();
+		n.getStatement().accept(this, arg);	
 	}
 
 	@Override
 	public void visit(OmpBarrierDirective n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("//#omp barrier ");
+		printer.printLn();
 	}
 
 	@Override
 	public void visit(OmpCopyprivateDataClause n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("cpoyprivate ");
+		printer.print("(");
+		Iterator<Expression> var = n.getArgumentSet().iterator();
+		while (var.hasNext()) {
+			var.next().accept(this, arg);
+			if (var.hasNext())
+				printer.print(", ");
+		}
+		printer.print(") ");
 	}
 
 	@Override
 	public void visit(OmpCriticalConstruct n, Object arg) {
-		// TODO Auto-generated method stub
+		printer.print("//#omp critical ");
+		if (null != n.getIdentifier()) {
+			n.getIdentifier().accept(this, arg);
+		}
+		printer.printLn();
+		n.getStatement().accept(this, arg);
 		
 	}
 
 	@Override
 	public void visit(OmpDataClause n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("OmpDataClause is abstract class, should not appear here");		
 	}
 
 	@Override
 	public void visit(OmpDefaultDataClause n, Object arg) {
-		// TODO Auto-generated method stub
+		printer.print("default ");
+		printer.print("(");
+		switch (n.getPolicy()) {
+		case None:
+			printer.print("none");
+			break;
+		case Shared:
+			printer.print("shared");
+			break;
+		}
+		printer.print(") ");
 		
 	}
 
 	@Override
 	public void visit(OmpFlushDirective n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("//#omp flush ");
+		printer.printLn();
 	}
 
 	@Override
 	public void visit(OmpForConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("//#omp for ");
+		if (n.getDataClauseList() != null) {
+			for (OmpDataClause dataClause: n.getDataClauseList()) {
+				dataClause.accept(this, arg);
+			}
+		}	
+		if (n.getScheduleClause() != null)
+			n.getScheduleClause().accept(this, arg);
+		if (n.isNowait())
+			printer.print("nowait ");
+		if (n.isOrdered())
+			printer.print("ordered ");
+		printer.printLn();
+		n.getForStmt().accept(this, arg);
 	}
 
 	@Override
 	public void visit(OmpFreeguiConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("//#omp freeguithread ");
+		if (n.getOpenMPStatement() != null) {
+			n.getOpenMPStatement().accept(this, arg);
+		}
 	}
 
 	@Override
 	public void visit(OmpGuiConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.printLn("//#omp gui ");
+		if (n.isNowait())
+			printer.print("nowait ");
+		printer.printLn();
+		n.getStatement().accept(this, arg);
 	}
 
 	@Override
 	public void visit(OmpIfClause n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("if");
+		printer.print("(");
+		n.getIfExpression().accept(this, arg);
+		printer.print(") ");
 	}
 
 	@Override
 	public void visit(OmpLastprivateDataClause n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("lastprivate ");
+		printer.print("(");
+		Iterator<Expression> var = n.getArgumentSet().iterator();
+		while (var.hasNext()) {
+			var.next().accept(this, arg);
+			if (var.hasNext())
+				printer.print(", ");
+		}
+		printer.print(") ");
 	}
 
 	@Override
 	public void visit(OmpMasterConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("//#omp master ");
+		printer.printLn();
+		n.getStatement().accept(this, arg);
 	}
 
 	@Override
 	public void visit(OmpNumthreadsClause n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("num_threads");
+		printer.print("(");
+		n.getNumExpression().accept(this, arg);
+		printer.print(") "); 
 	}
 
 	@Override
 	public void visit(OmpOrderedConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("//#omp ordered ");
+		printer.printLn();
+		n.getStatement().accept(this, arg);
 	}
 
 	@Override
 	public void visit(OmpParallelConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("//#omp parallel ");
+		if (n.getNumThreadsExpression() != null)
+			n.getNumThreadsExpression().accept(this, arg);
+		if (n.getIfClause() != null) 
+			n.accept(this, arg);
+		if (n.getDataClauseList() != null) {
+			for (OmpDataClause clause: n.getDataClauseList()) {
+				clause.accept(this, arg);
+			}
+		}
+		printer.print(") ");
+		printer.printLn();
+		n.getBody().accept(this, arg);
 	}
 
 	@Override
 	public void visit(OmpParallelForConstruct n, Object arg) {
-		// TODO Auto-generated method stub
+		throw new RuntimeException("ParallelForConstruct should already be normalised");
 		
 	}
 
 	@Override
 	public void visit(OmpParallelSectionsConstruct n, Object arg) {
-		// TODO Auto-generated method stub
+		throw new RuntimeException("ParallelSectionConstruct should already be normalised");
 		
 	}
 
 	@Override
 	public void visit(OmpPrivateDataClause n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("private ");
+		printer.print("(");
+		Iterator<Expression> var = n.getArgumentSet().iterator();
+		while (var.hasNext()) {
+			var.next().accept(this, arg);
+			if (var.hasNext())
+				printer.print(", ");
+		}
+		printer.print(") ");
 	}
+	
 
 	@Override
 	public void visit(OmpReductionDataClause n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("reduction ");
+		printer.print("(");
+		Iterator<Expression> var = n.getArgumentMap().keySet().iterator();
+		while (var.hasNext()) {
+			n.getArgumentMap().get(var).accept(this, arg);
+			printer.print(":");
+			var.next().accept(this, arg);
+			if (var.hasNext())
+				printer.print(", ");
+		}
+		printer.print(") ");
 	}
 
 	@Override
 	public void visit(OmpScheduleClause n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("schedule");
+		printer.print("(");
+		switch (n.getScheduleType()) {
+		case Dynamic:
+			printer.print("dynamic");
+			break;
+		case Static:
+			printer.print("static");
+			break;
+		case Guided:
+			printer.print("guided");
+			break;
+		case Runtime:
+			printer.print("runtime");
+			break;
+		case Auto:
+			printer.print("auto");
+			break;
+		default:
+			throw new RuntimeException("Unexpected schedule type.");
+		}
+		if (n.getChunkSize() != null) {
+			printer.print(",");
+			n.getChunkSize().accept(this, arg);
+		}
+		printer.print(") ");
 	}
 
 	@Override
 	public void visit(OmpSectionConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("SectionConstruct should already be normalised");
 	}
 
 	@Override
 	public void visit(OmpSectionsConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("SectionConstruct should already be normalised");
 	}
 
 	@Override
 	public void visit(OmpSharedDataClause n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("shared ");
+		printer.print("(");
+		Iterator<Expression> var = n.getArgumentSet().iterator();
+		while (var.hasNext()) {
+			var.next().accept(this, arg);
+			if (var.hasNext())
+				printer.print(", ");
+		}
+		printer.print(") ");
 	}
 
 	@Override
 	public void visit(OmpSingleConstruct n, Object arg) {
-		// TODO Auto-generated method stub
-		
+		printer.print("//#omp single ");
+		if (n.isNowait()) 
+			printer.print("nowait ");
+		if (n.getDataClauseList() != null) {
+			for(OmpDataClause clause: n.getDataClauseList()) {
+				clause.accept(this, arg);
+			}
+		}
+		printer.printLn();
+		n.getStatement().accept(this, arg);
 	}
 
 	@Override
 	public void visit(OpenMPStatement n, Object arg) {
-		// TODO Auto-generated method stub
+		throw new RuntimeException("OpenMPStatement is abstract class, should not appear here");
 		
 	}
 

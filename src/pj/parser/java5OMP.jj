@@ -3277,13 +3277,15 @@ OmpSectionConstruct OmpSectionConstruct():
 OmpGuiConstruct OmpGuiConstruct():
 {
 	Statement stmt = null;
+	boolean nowait = false;
 	int line;
 	int column;
 }
 {
-	<GUI> {line=token.beginLine; column=token.beginColumn;} 
+	<GUI> {line=token.beginLine; column=token.beginColumn;}
+	(<NOWAIT>)? { nowait = true; } 
 	stmt = Statement()
-	{return new OmpGuiConstruct(line, column, token.endLine, token.endColumn, stmt);}
+	{return new OmpGuiConstruct(line, column, token.endLine, token.endColumn, stmt, nowait);}
 }
 
 OmpSingleConstruct OmpSingleConstruct():

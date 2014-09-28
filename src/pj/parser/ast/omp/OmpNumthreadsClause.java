@@ -18,7 +18,7 @@ public class OmpNumthreadsClause extends Node{
 		this.numExpression = numExpression;
 	}
 	
-	public Expression getIfExpression() {
+	public Expression getNumExpression() {
 		return this.numExpression;
 	}
 	
