@@ -13,15 +13,15 @@ public class myTest {
 		int[] array = new int[threadNumber];
 		int[] counter=new int[1];
 		counter[0]=0;
-		//#omp  parallel reduction(+:uu)
+		//#omp  parallel sections
 		{
-			///#omp section
+			//#omp section
 			System.out.println("dfdddddddddd");
-			///#omp section
+			//#omp section
 			{
 			System.out.println("dfd");
 			}
-			///#omp section
+			//#omp section
 			{
 				System.out.println("dfd");
 				System.out.println("dfd");

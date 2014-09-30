@@ -12,9 +12,9 @@ public class myTest {
         int[] array = new int[threadNumber];
         int[] counter = new int[1];
         counter[0] = 0;
-        //#omp parallel shared(n) private(k) 
+        //#omp parallel 
         {
-            //#omp for private(k) schedule(dynamic,1) 
+            //#omp for schedule(dynamic,1) 
             for (int _OMP_VANCY_ITERATOR_ = 0; _OMP_VANCY_ITERATOR_ < 3; ++_OMP_VANCY_ITERATOR_) switch(_OMP_VANCY_ITERATOR_) {
                 case 0:
                     System.out.println("dfdddddddddd");
@@ -29,6 +29,8 @@ public class myTest {
                         System.out.println("dfd");
                         System.out.println("dfd");
                     }
+                    break;
+                default:
                     break;
             }
         }

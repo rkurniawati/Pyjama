@@ -115,6 +115,10 @@ public class OmpSectionsConstruct extends OpenMPStatement{
 	    	entryStatements.add(new BreakStmt());
 	    	entries.add(new SwitchEntryStmt(label, entryStatements));
 	    }
+	    //add default entry
+	    ArrayList<Statement> defaultEntryStatements = new ArrayList<Statement>();
+	    defaultEntryStatements.add(new BreakStmt());
+	    entries.add(new SwitchEntryStmt(null, defaultEntryStatements));
 	    
 	    SwitchStmt switchStmt = new SwitchStmt(selector, entries);
 	    ForStmt forStmt = new ForStmt(init, compare, update, switchStmt);
