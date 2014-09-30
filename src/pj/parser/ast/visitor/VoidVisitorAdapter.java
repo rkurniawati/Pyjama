@@ -805,7 +805,6 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 	public void visit(OmpFlushDirective n, A arg) {
 	}
 
-
 	public void visit(OmpForConstruct n, A arg) {
 		if (n.getDataClauseList() != null) {
 			for (OmpDataClause dataClause: n.getDataClauseList()) {

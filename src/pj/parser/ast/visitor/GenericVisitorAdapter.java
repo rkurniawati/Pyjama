@@ -853,41 +853,46 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
     /**************************************************
      * OpenMP visitors                            *
      **************************************************/
-	public void visit(OmpAtomicConstruct n, A arg) {
+	public R visit(OmpAtomicConstruct n, A arg) {
 		n.getStatement().accept(this, arg);	
+		return null;
 	}
 
-	public void visit(OmpBarrierDirective n, A arg) {
-
+	public R visit(OmpBarrierDirective n, A arg) {
+		return null;
 	}
 
-	public void visit(OmpCopyprivateDataClause n, A arg) {
+	public R visit(OmpCopyprivateDataClause n, A arg) {
 		Iterator<Expression> var = n.getArgumentSet().iterator();
 		while (var.hasNext()) {
 			var.next().accept(this, arg);
 		}
+		return null;
 	}
 
-	public void visit(OmpCriticalConstruct n, A arg) {
+	public R visit(OmpCriticalConstruct n, A arg) {
 		if (null != n.getIdentifier()) {
 			n.getIdentifier().accept(this, arg);
 		}
 		n.getStatement().accept(this, arg);
+		return null;
 	}
 
-	public void visit(OmpDataClause n, A arg) {
-		throw new RuntimeException("OmpDataClause is abstract class, should not appear here");		
+	public R visit(OmpDataClause n, A arg) {
+		throw new RuntimeException("OmpDataClause is abstract class, should not appear here");	
 	}
 
-	public void visit(OmpDefaultDataClause n, A arg) {
-	}
-
-
-	public void visit(OmpFlushDirective n, A arg) {
+	public R visit(OmpDefaultDataClause n, A arg) {
+		return null;
 	}
 
 
-	public void visit(OmpForConstruct n, A arg) {
+	public R visit(OmpFlushDirective n, A arg) {
+		return null;
+	}
+
+
+	public R visit(OmpForConstruct n, A arg) {
 		if (n.getDataClauseList() != null) {
 			for (OmpDataClause dataClause: n.getDataClauseList()) {
 				dataClause.accept(this, arg);
@@ -896,43 +901,51 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 		if (n.getScheduleClause() != null)
 			n.getScheduleClause().accept(this, arg);
 		n.getForStmt().accept(this, arg);
+		return null;
 	}
 
-	public void visit(OmpFreeguiConstruct n, A arg) {
+	public R visit(OmpFreeguiConstruct n, A arg) {
 		if (n.getOpenMPStatement() != null) {
 			n.getOpenMPStatement().accept(this, arg);
 		}
+		return null;
 	}
 
-	public void visit(OmpGuiConstruct n, A arg) {
+	public R visit(OmpGuiConstruct n, A arg) {
 		n.getStatement().accept(this, arg);
+		return null;
 	}
 
 
-	public void visit(OmpIfClause n, A arg) {
+	public R visit(OmpIfClause n, A arg) {
 		n.getIfExpression().accept(this, arg);
+		return null;
 	}
 
-	public void visit(OmpLastprivateDataClause n, A arg) {
+	public R visit(OmpLastprivateDataClause n, A arg) {
 		Iterator<Expression> var = n.getArgumentSet().iterator();
 		while (var.hasNext()) {
 			var.next().accept(this, arg);
 		}
+		return null;
 	}
 
-	public void visit(OmpMasterConstruct n, A arg) {
+	public R visit(OmpMasterConstruct n, A arg) {
 		n.getStatement().accept(this, arg);
+		return null;
 	}
 
-	public void visit(OmpNumthreadsClause n, A arg) {
+	public R visit(OmpNumthreadsClause n, A arg) {
 		n.getNumExpression().accept(this, arg);
+		return null;
 	}
 
-	public void visit(OmpOrderedConstruct n, A arg) {
+	public R visit(OmpOrderedConstruct n, A arg) {
 		n.getStatement().accept(this, arg);
+		return null;
 	}
 
-	public void visit(OmpParallelConstruct n, A arg) {
+	public R visit(OmpParallelConstruct n, A arg) {
 		if (n.getNumThreadsExpression() != null)
 			n.getNumThreadsExpression().accept(this, arg);
 		if (n.getIfClause() != null) 
@@ -943,68 +956,73 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 			}
 		}
 		n.getBody().accept(this, arg);
+		return null;
 	}
 
-	public void visit(OmpParallelForConstruct n, Object arg) {
+	public R visit(OmpParallelForConstruct n, Object arg) {
 		throw new RuntimeException("ParallelForConstruct should already be normalised");
 		
 	}
 
-	public void visit(OmpParallelSectionsConstruct n, Object arg) {
+	public R visit(OmpParallelSectionsConstruct n, Object arg) {
 		throw new RuntimeException("ParallelSectionConstruct should already be normalised");
 		
 	}
 
-	public void visit(OmpPrivateDataClause n, A arg) {
+	public R visit(OmpPrivateDataClause n, A arg) {
 		Iterator<Expression> var = n.getArgumentSet().iterator();
 		while (var.hasNext()) {
 			var.next().accept(this, arg);
 		}
+		return null;
 	}
 	
 
-	public void visit(OmpReductionDataClause n, A arg) {
+	public R visit(OmpReductionDataClause n, A arg) {
 		Iterator<Expression> varIter = n.getArgumentMap().keySet().iterator();
 		while (varIter.hasNext()) {
 			Expression var = varIter.next();
 			n.getArgumentMap().get(var).accept(this, arg);
 			var.accept(this, arg);
 		}
+		return null;
 	}
 
-	public void visit(OmpScheduleClause n, A arg) {
+	public R visit(OmpScheduleClause n, A arg) {
 		if (n.getChunkSize() != null) {
 			n.getChunkSize().accept(this, arg);
 		}
+		return null;
 	}
 
-	public void visit(OmpSectionConstruct n, A arg) {
+	public R visit(OmpSectionConstruct n, A arg) {
 		throw new RuntimeException("SectionConstruct should already be normalised");
 	}
 
-	public void visit(OmpSectionsConstruct n, A arg) {
+	public R visit(OmpSectionsConstruct n, A arg) {
 		throw new RuntimeException("SectionConstruct should already be normalised");
 	}
 
-	public void visit(OmpSharedDataClause n, A arg) {
+	public R visit(OmpSharedDataClause n, A arg) {
 		Iterator<Expression> var = n.getArgumentSet().iterator();
 		while (var.hasNext()) {
 			var.next().accept(this, arg);
 		}
+		return null;
 	}
 
-	public void visit(OmpSingleConstruct n, A arg) {
+	public R visit(OmpSingleConstruct n, A arg) {
 		if (n.getDataClauseList() != null) {
 			for(OmpDataClause clause: n.getDataClauseList()) {
 				clause.accept(this, arg);
 			}
 		}
 		n.getStatement().accept(this, arg);
+		return null;
 	}
 
-	public void visit(OpenMPStatement n, A arg) {
+	public R visit(OpenMPStatement n, A arg) {
 		throw new RuntimeException("OpenMPStatement is abstract class, should not appear here");
-		
 	}
 
 }

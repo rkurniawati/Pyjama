@@ -23,8 +23,7 @@ public class OmpMasterConstruct extends OpenMPStatement{
 	
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-		// TODO Auto-generated method stub
-		return null;
+		return v.visit(this, arg);
 	}
 
 	@Override

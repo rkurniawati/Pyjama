@@ -34,10 +34,10 @@ public class OmpPrivateDataClause extends OmpDataClause{
 	public void addArgument(Expression argument) {
 		this.argumentSet.add(argument);
 	}
+	
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
-		// TODO Auto-generated method stub
-		return null;
+		return v.visit(this, arg);
 	}
 
 	@Override

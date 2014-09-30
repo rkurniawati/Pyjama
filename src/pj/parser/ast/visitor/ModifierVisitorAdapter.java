@@ -964,159 +964,159 @@ public abstract class ModifierVisitorAdapter<A> implements GenericVisitor<Node, 
     }
 
 	@Override
-	public void visit(OmpAtomicConstruct n, A arg) {
+	public Node visit(OmpAtomicConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpBarrierDirective n, A arg) {
+	public Node visit(OmpBarrierDirective n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpCopyprivateDataClause n, A arg) {
+	public Node visit(OmpCopyprivateDataClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpCriticalConstruct n, A arg) {
+	public Node visit(OmpCriticalConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpDataClause n, A arg) {
+	public Node visit(OmpDataClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpDefaultDataClause n, A arg) {
+	public Node visit(OmpDefaultDataClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpFlushDirective n, A arg) {
+	public Node visit(OmpFlushDirective n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpForConstruct n, A arg) {
+	public Node visit(OmpForConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpFreeguiConstruct n, A arg) {
+	public Node visit(OmpFreeguiConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpGuiConstruct n, A arg) {
+	public Node visit(OmpGuiConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpIfClause n, A arg) {
+	public Node visit(OmpIfClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpLastprivateDataClause n, A arg) {
+	public Node visit(OmpLastprivateDataClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpMasterConstruct n, A arg) {
+	public Node visit(OmpMasterConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpNumthreadsClause n, A arg) {
+	public Node visit(OmpNumthreadsClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpOrderedConstruct n, A arg) {
+	public Node visit(OmpOrderedConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpParallelConstruct n, A arg) {
+	public Node visit(OmpParallelConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpParallelForConstruct n, A arg) {
+	public Node visit(OmpParallelForConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpParallelSectionsConstruct n, A arg) {
+	public Node visit(OmpParallelSectionsConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpPrivateDataClause n, A arg) {
+	public Node visit(OmpPrivateDataClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpReductionDataClause n, A arg) {
+	public Node visit(OmpReductionDataClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpScheduleClause n, A arg) {
+	public Node visit(OmpScheduleClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpSectionConstruct n, A arg) {
+	public Node visit(OmpSectionConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpSectionsConstruct n, A arg) {
+	public Node visit(OmpSectionsConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpSharedDataClause n, A arg) {
+	public Node visit(OmpSharedDataClause n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OmpSingleConstruct n, A arg) {
+	public Node visit(OmpSingleConstruct n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visit(OpenMPStatement n, A arg) {
+	public Node visit(OpenMPStatement n, A arg) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 }

@@ -302,57 +302,57 @@ public interface GenericVisitor<R, A> {
     
     //- OpenMP expansion ----------------------------------------
     
-    public void visit(OmpAtomicConstruct n, A arg);
+    public R visit(OmpAtomicConstruct n, A arg);
     
-    public void visit(OmpBarrierDirective n, A arg);
+    public R visit(OmpBarrierDirective n, A arg);
     
-    public void visit(OmpCopyprivateDataClause n, A arg);
+    public R visit(OmpCopyprivateDataClause n, A arg);
     
-    public void visit(OmpCriticalConstruct n, A arg);
+    public R visit(OmpCriticalConstruct n, A arg);
     
-    public void visit(OmpDataClause n, A arg);
+    public R visit(OmpDataClause n, A arg);
     
-    public void visit(OmpDefaultDataClause n, A arg);
+    public R visit(OmpDefaultDataClause n, A arg);
     
-    public void visit(OmpFlushDirective n, A arg);
+    public R visit(OmpFlushDirective n, A arg);
     
-    public void visit(OmpForConstruct n, A arg);
+    public R visit(OmpForConstruct n, A arg);
     
-    public void visit(OmpFreeguiConstruct n, A arg);
+    public R visit(OmpFreeguiConstruct n, A arg);
     
-    public void visit(OmpGuiConstruct n, A arg);
+    public R visit(OmpGuiConstruct n, A arg);
     
-    public void visit(OmpIfClause n, A arg);
+    public R visit(OmpIfClause n, A arg);
     
-    public void visit(OmpLastprivateDataClause n, A arg);
+    public R visit(OmpLastprivateDataClause n, A arg);
     
-    public void visit(OmpMasterConstruct n, A arg);
+    public R visit(OmpMasterConstruct n, A arg);
     
-    public void visit(OmpNumthreadsClause n, A arg);
+    public R visit(OmpNumthreadsClause n, A arg);
     
-    public void visit(OmpOrderedConstruct n, A arg);
+    public R visit(OmpOrderedConstruct n, A arg);
     
-    public void visit(OmpParallelConstruct n, A arg);
+    public R visit(OmpParallelConstruct n, A arg);
     
-    public void visit(OmpParallelForConstruct n, A arg);
+    public R visit(OmpParallelForConstruct n, A arg);
     
-    public void visit(OmpParallelSectionsConstruct n, A arg);
+    public R visit(OmpParallelSectionsConstruct n, A arg);
     
-    public void visit(OmpPrivateDataClause n, A arg);
+    public R visit(OmpPrivateDataClause n, A arg);
     
-    public void visit(OmpReductionDataClause n, A arg);
+    public R visit(OmpReductionDataClause n, A arg);
     
-    public void visit(OmpScheduleClause n, A arg);
+    public R visit(OmpScheduleClause n, A arg);
     
-    public void visit(OmpSectionConstruct n, A arg);
+    public R visit(OmpSectionConstruct n, A arg);
     
-    public void visit(OmpSectionsConstruct n, A arg);
+    public R visit(OmpSectionsConstruct n, A arg);
     
-    public void visit(OmpSharedDataClause n, A arg);
+    public R visit(OmpSharedDataClause n, A arg);
     
-    public void visit(OmpSingleConstruct n, A arg);
+    public R visit(OmpSingleConstruct n, A arg);
     
-    public void visit(OpenMPStatement n, A arg);
+    public R visit(OpenMPStatement n, A arg);
 
 
 }
