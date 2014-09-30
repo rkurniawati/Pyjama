@@ -827,6 +827,8 @@ public final class DumpVisitor implements VoidVisitor<Object> {
             case preDecrement:
                 printer.print("--");
                 break;
+		default:
+			break;
         }
 
         n.getExpr().accept(this, arg);
@@ -838,6 +840,8 @@ public final class DumpVisitor implements VoidVisitor<Object> {
             case posDecrement:
                 printer.print("--");
                 break;
+		default:
+			break;
         }
     }
 
@@ -1522,12 +1526,13 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 	public void visit(OmpReductionDataClause n, Object arg) {
 		printer.print("reduction");
 		printer.print("(");
-		Iterator<Expression> var = n.getArgumentMap().keySet().iterator();
-		while (var.hasNext()) {
+		Iterator<Expression> varIter = n.getArgumentMap().keySet().iterator();
+		while (varIter.hasNext()) {
+			Expression var = varIter.next();
 			n.getArgumentMap().get(var).accept(this, arg);
 			printer.print(":");
-			var.next().accept(this, arg);
-			if (var.hasNext())
+			var.accept(this, arg);
+			if (varIter.hasNext())
 				printer.print(", ");
 		}
 		printer.print(") ");
