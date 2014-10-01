@@ -8,12 +8,12 @@ public class myTest {
     }
 
 	public static int[] parallel_ordered(int threadNumber){
-		Pyjama.omp_set_num_threads(threadNumber);
+		//Pyjama.omp_set_num_threads(threadNumber);
 		
 		int[] array = new int[threadNumber];
 		int[] counter=new int[1];
 		counter[0]=0;
-		//#omp  parallel sections
+		//#omp  parallel sections reduction(frr:a)
 		{
 			//#omp section
 			System.out.println("dfdddddddddd");
@@ -27,7 +27,7 @@ public class myTest {
 				System.out.println("dfd");
 			}
 		}
-		///#omp single nowait private(d)
+		//#omp single nowait private(d)
 		{
 System.out.println("dfd");
 			}

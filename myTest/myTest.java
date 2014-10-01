@@ -8,13 +8,12 @@ public class myTest {
     }
 
     public static int[] parallel_ordered(int threadNumber) {
-        Pyjama.omp_set_num_threads(threadNumber);
         int[] array = new int[threadNumber];
         int[] counter = new int[1];
         counter[0] = 0;
-        //#omp parallel 
+        //#omp parallel reduction(frr:a) 
         {
-            //#omp for schedule(dynamic,1) 
+            //#omp for reduction(frr:a) schedule(dynamic,1) 
             for (int _OMP_VANCY_ITERATOR_ = 0; _OMP_VANCY_ITERATOR_ < 3; ++_OMP_VANCY_ITERATOR_) switch(_OMP_VANCY_ITERATOR_) {
                 case 0:
                     System.out.println("dfdddddddddd");
@@ -34,7 +33,8 @@ public class myTest {
                     break;
             }
         }
-        {
+        //#omp for private(d) nowait 
+        for (int _OMP_VANCY_ITERATOR_ = 0; _OMP_VANCY_ITERATOR_ < 1; ++_OMP_VANCY_ITERATOR_) {
             System.out.println("dfd");
         }
         System.out.println("dfd");
