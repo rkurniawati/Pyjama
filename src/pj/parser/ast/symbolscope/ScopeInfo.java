@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class ScopeInfo {
 	
-	public static enum Type { RootScope, ClassScope, MethodScope, BlockScope, OpenMPConstructScope }
+	public static enum Type { RootScope, ClassScope, MethodScope, BlockScope, StatementScope, OpenMPConstructScope }
 	
 	private static int nextID = 0;
 	
@@ -49,6 +49,10 @@ public class ScopeInfo {
 	
 	public ScopeInfo getParent() {
 		return this.parentScope;
+	}
+	
+	public void setParent(ScopeInfo parent) {
+		this.parentScope = parent;
 	}
 
 	void setAsChild(ScopeInfo child) {

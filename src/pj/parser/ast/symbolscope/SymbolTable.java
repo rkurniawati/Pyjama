@@ -18,6 +18,7 @@ public class SymbolTable {
 	
 	public ScopeInfo enterNewScope(String name, ScopeInfo.Type type) {
 		ScopeInfo newScope = new ScopeInfo(this.history.peek(),name, type);
+		newScope.setParent(this.history.peek());
 		this.history.push(newScope);
 		return newScope;
 	}
