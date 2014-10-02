@@ -1,6 +1,11 @@
 
 public class myTest {
 	static	int[] a;
+	private double b;
+	Object c;
+	private int foo() {
+		return 1;
+	}
 	public static void main(String[] args) {
 
 		int result = 0;
@@ -29,8 +34,8 @@ public class myTest {
 		}
 		//#omp single nowait private(d)
 		{
-System.out.println("dfd");
-			}
+			System.out.println("dfd");
+		}
 		System.out.println("dfd");
 		return array;
 	}

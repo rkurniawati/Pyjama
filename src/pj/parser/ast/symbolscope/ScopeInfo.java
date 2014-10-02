@@ -1,10 +1,13 @@
 package pj.parser.ast.symbolscope;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
+
+import pj.parser.ast.Node;
 
 public class ScopeInfo {
 	
@@ -12,6 +15,7 @@ public class ScopeInfo {
 	
 	private static int nextID = 0;
 	
+	private Node node;
 	private ScopeInfo parentScope = null;
 	private String scopeName = null;
 	private Type type;
@@ -21,21 +25,27 @@ public class ScopeInfo {
 	private HashMap<String, Symbol> symbolsDeclared = new HashMap<String, Symbol>();
 	private HashMap<String, Symbol> symbolsUsed = new HashMap<String, Symbol>();
 	
-	public ScopeInfo(String scopeName, Type type) {
+	public ScopeInfo(Node n, String scopeName, Type type) {
+		this.node = n;
 		this.parentScope = null;
 		this.scopeName = scopeName;
 		this.type = type;
 		id = nextID++;
 	}
 	
-	public ScopeInfo(ScopeInfo parentScope, String scopeName, Type type) {
+	public ScopeInfo(Node n, ScopeInfo parentScope, String scopeName, Type type) {
+		this.node = n;
 		this.parentScope = parentScope;
 		this.scopeName = scopeName;
 		this.type = type;
 		id = nextID++;
 	}
 	
-	int getID() {
+	public Node getNode() {
+		return this.node;
+	}
+	
+	public int getID() {
 		return id;
 	}
 	
@@ -73,11 +83,51 @@ public class ScopeInfo {
 		this.symbolsDeclared.put(symbolName, symbol);
 	}
 	
-	public Set<String> getAllDefinedVariables() {
+	public Set<String> getAllDefinedSymbolNames() {
+		return this.symbolsDeclared.keySet();
+	}
+	
+	public Collection<Symbol> getAllDefinedSymbols() {
+		return this.symbolsDeclared.values();
+	}
+	
+	
+	public Set<String> getAllUsedSymbolNames() {
+		return this.symbolsUsed.keySet();
+	}
+	
+	public Collection<Symbol> getAllUsedSymbols() {
+		return this.symbolsUsed.values();
+	}
+	
+	public Collection<Symbol> getAllReachableSymbols() {
+		LinkedList<Symbol> ret = new LinkedList<Symbol>();
+		ret.addAll(this.getAllDefinedSymbols());
+		ScopeInfo parentScope = this.getParent();
+		while (parentScope != null) {
+			ret.addAll(parentScope.getAllDefinedSymbols());
+			parentScope = parentScope.getParent();
+		}
+		return ret;
+	}
+	
+	public Collection<Symbol> getAllCurrentMethodDefinedVariables(Set<String> vars) {
+		LinkedList<Symbol> ret = new LinkedList<Symbol>();
+		ScopeInfo parentScope = this;
+		while (parentScope != null) {
+			ret.addAll(parentScope.getAllDefinedSymbols());
+			if (ScopeInfo.Type.MethodScope == parentScope.getType()) {
+				return ret;
+			}
+			parentScope = parentScope.getParent();
+		}
 		return null;
 	}
 	
 	public boolean isDefinedInThisScope(String varName) {
+		if (this.symbolsDeclared.containsKey(varName)) {
+			return true;
+		}
 		return false;
 	}
 	

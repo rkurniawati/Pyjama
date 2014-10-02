@@ -10,7 +10,6 @@ import pj.parser.ast.body.FieldDeclaration;
 import pj.parser.ast.body.MethodDeclaration;
 import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
-import pj.parser.ast.body.VariableDeclaratorId;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.FieldAccessExpr;
 import pj.parser.ast.expr.NameExpr;
@@ -32,12 +31,24 @@ import pj.parser.ast.type.PrimitiveType;
 import pj.parser.ast.type.Type;
 
 
-public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>{
+public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 	
 	SymbolTable symbolTable = new SymbolTable();
+	
+	public SymbolScopingVisitor() {
+		
+	}
+	
+	public SymbolTable getSymbolTable() {
+		return this.symbolTable;
+	}
+	
+	public void printSymbolTable() {
+		this.symbolTable.printOut();
+	}
 
 	public String visit(BlockStmt n, Object arg) {
-		this.symbolTable.enterNewScope("normalBlock", ScopeInfo.Type.StatementScope);
+		this.symbolTable.enterNewScope(n, "normalBlock", ScopeInfo.Type.StatementScope);
 		if (n.getStmts() != null) {
             for (Statement s : n.getStmts()) {
                 s.accept(this, arg);
@@ -70,7 +81,7 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
             }
         }
         //////////////////////////////////////////
-		this.symbolTable.enterNewScope(className, ScopeInfo.Type.ClassScope);
+		this.symbolTable.enterNewScope(n, className, ScopeInfo.Type.ClassScope);
         //Visit the main body of class
         if (n.getMembers() != null) {
         	for (BodyDeclaration member : n.getMembers()) {
@@ -94,7 +105,7 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
 		/*
 		 * secondly enter new scope which this method holds
 		 */
-		this.symbolTable.enterNewScope(methodName, ScopeInfo.Type.MethodScope);
+		this.symbolTable.enterNewScope(n, methodName, ScopeInfo.Type.MethodScope);
 		/*
 		 * thirdly visit all parameters and method body
 		 */
@@ -105,7 +116,8 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
 	            }
 	     }
 		 if (n.getBody() != null) {
-	            n.getBody().accept(this, arg);
+			 for(Statement s: n.getBody().getStmts())
+	            s.accept(this, arg);
 	     }
 		 /*
 		  * finally exit current method scope
@@ -125,7 +137,7 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
 		/*
 		 * secondly enter new scope which this method holds
 		 */
-		this.symbolTable.enterNewScope(constructorName, ScopeInfo.Type.MethodScope);
+		this.symbolTable.enterNewScope(n, constructorName, ScopeInfo.Type.MethodScope);
 		/*
 		 * thirdly visit all parameters and method body
 		 */
@@ -148,7 +160,7 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
 		/*
 		 * firstly enter new scope which this statement
 		 */
-		this.symbolTable.enterNewScope("swithchBlock", ScopeInfo.Type.StatementScope);
+		this.symbolTable.enterNewScope(n, "swithchBlock", ScopeInfo.Type.StatementScope);
 		/*
 		 * secondly visit all nodes inside this statement
 		 */
@@ -167,7 +179,7 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
 		/*
 		 * firstly enter new scope which this statement
 		 */
-		this.symbolTable.enterNewScope("ForeachStmt", ScopeInfo.Type.StatementScope);
+		this.symbolTable.enterNewScope(n, "ForeachStmt", ScopeInfo.Type.StatementScope);
 		/*
 		 * secondly visit all nodes inside this statement
 		 */
@@ -185,7 +197,7 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
 		/*
 		 * firstly enter new scope which this statement
 		 */
-		this.symbolTable.enterNewScope("ForStmt", ScopeInfo.Type.StatementScope);
+		this.symbolTable.enterNewScope(n, "ForStmt", ScopeInfo.Type.StatementScope);
 		/*
 		 * secondly visit all nodes inside this statement
 		 */
@@ -214,7 +226,7 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
 	    
     public String visit(TryStmt n, Object arg) {
 
-		this.symbolTable.enterNewScope("tryBlock", ScopeInfo.Type.StatementScope);
+		this.symbolTable.enterNewScope(n, "tryBlock", ScopeInfo.Type.StatementScope);
         n.getTryBlock().accept(this, arg);
 		this.symbolTable.exitScope();
         if (n.getCatchs() != null) {
@@ -223,7 +235,7 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
             }
         }
         if (n.getFinallyBlock() != null) {
-    		this.symbolTable.enterNewScope("finalBlock", ScopeInfo.Type.StatementScope);
+    		this.symbolTable.enterNewScope(n, "finalBlock", ScopeInfo.Type.StatementScope);
             n.getFinallyBlock().accept(this, arg);
     		this.symbolTable.exitScope();
         }
@@ -233,7 +245,7 @@ public class VariableScopingVisitor extends GenericVisitorAdapter<String,Object>
 
     public String visit(CatchClause n, Object arg) {
 
-		this.symbolTable.enterNewScope("catchBlock", ScopeInfo.Type.StatementScope);
+		this.symbolTable.enterNewScope(n, "catchBlock", ScopeInfo.Type.StatementScope);
         n.getCatchBlock().accept(this, arg);
         this.symbolTable.exitScope();
         return null;

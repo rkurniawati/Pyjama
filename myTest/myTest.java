@@ -2,6 +2,14 @@ public class myTest {
 
     static int[] a;
 
+    private double b;
+
+    Object c;
+
+    private int foo() {
+        return 1;
+    }
+
     public static void main(String[] args) {
         int result = 0;
         int[] a = parallel_ordered(4);
