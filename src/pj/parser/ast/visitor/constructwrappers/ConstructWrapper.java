@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import pj.parser.ast.expr.OpenMP_DataClause;
-import pj.symbol.Scope;
 
 /**
  * Encapsulates the runtime generic wrapper for OpenMP 2.5 - like 
@@ -20,16 +18,6 @@ import pj.symbol.Scope;
  */
 public abstract class ConstructWrapper {
 		
-	/*
-	 * @return The scope of the variables
-	 */
-	abstract public Scope getVarScope();
-	
-	/*
-	 * @return The data clauses, if any, for the directive
-	 */
-	abstract public List<OpenMP_DataClause> getDataClauses();
-
 	/*
 	 * @return line number where construct begins
 	 */
@@ -48,7 +36,7 @@ public abstract class ConstructWrapper {
 	
 	abstract public String get_outputlist();
 	
-	abstract public HashMap<String, pj.parser.ast.type.Type> autoGetAllLocalMethodVariables();
+	abstract public HashMap<String, pj.parser.ast.type.Type> autoGetAllAvaliableSymbols();
 	
 	/*
 	 * Keeps the variables that have been re-named

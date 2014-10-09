@@ -41,4 +41,19 @@ public class Symbol {
 		this.id = nextID++;
 		this.name = name;
 	}
+	
+	public String getSymbolDataType() {
+		return this.dataType;
+	}
+	
+	public boolean isVariableNameAs(String name) {
+		if (this.symbolType == SymbolType.ClassMemberMethod) {
+		 return false;
+		}
+		if (this.name.equals(name)) {
+			return true;
+		} else {
+			return false;	 
+		}
+	}
 }

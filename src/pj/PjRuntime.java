@@ -2,7 +2,6 @@ package pj;
 
 import pj.pr.*;
 import pj.Pyjama;
-import pj.pjgui.*;
 
 import java.util.HashMap;
 import java.util.concurrent.*;
@@ -32,7 +31,7 @@ public class PjRuntime {
 	public static ReentrantLock reductionLockForWorksharing = new ReentrantLock();
 	
 	public static synchronized void init(){
-		GuiThread.init();
+		//GuiThread.init();
 		while(!isInitialized){
 //			initial_icv = new InternalControlVariables();
 //			PjThreadPoolExecutor = new ThreadPoolExecutor(10, initial_icv.thread_limit_var, 0, TimeUnit.MILLISECONDS,

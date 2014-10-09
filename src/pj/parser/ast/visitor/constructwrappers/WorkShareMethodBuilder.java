@@ -22,15 +22,12 @@ import pj.Pyjama;
 import pj.parser.ast.body.VariableDeclaratorId;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.NameExpr;
-import pj.parser.ast.expr.OpenMP_DataClause;
-import pj.parser.ast.expr.OpenMP_ScheduleClause;
-import pj.parser.ast.stmt.ForStmtSimple;
-import pj.parser.ast.stmt.OpenMP_For_Construct;
+import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.type.Type;
-import pj.parser.ast.visitor.PyjamaVisitor;
+import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClauseHandler;
-import pj.symbol.Scope;
+
 
 public class WorkShareMethodBuilder extends ConstructWrapper{
 	
@@ -39,13 +36,13 @@ public class WorkShareMethodBuilder extends ConstructWrapper{
 	private SourcePrinter printer = new SourcePrinter();
 	
 	private String staticPrefix = "";
-	private PyjamaVisitor visitor;
-	private OpenMP_For_Construct forNode;
+	private PyjamaToJavaVisitor visitor;
+	private OmpForConstruct forNode;
 	
 	private HashMap<String, pj.parser.ast.type.Type> currentParallelRegionVariablesSet;
 	public HashMap<String, Type> variablesUsedInForLoop;
 	
-	public WorkShareMethodBuilder(OpenMP_For_Construct forNode, boolean isStatic, PyjamaVisitor visitor)
+	public WorkShareMethodBuilder(OmpForConstruct forNode, boolean isStatic, PyjamaToJavaVisitor visitor)
 	{	
 		this.forNode = forNode;
 		if (isStatic) {
@@ -57,26 +54,18 @@ public class WorkShareMethodBuilder extends ConstructWrapper{
 		this.variablesUsedInForLoop = DataClauseHandler.getUsedVariablesInWapperCodeBlock(this);
 	}
 	
-	public OpenMP_For_Construct getForNode() {
+	public OmpForConstruct getForNode() {
 		return this.forNode;
 	}
+	
 	@Override
 	public HashMap<String, pj.parser.ast.type.Type> autoGetAllLocalMethodVariables()
 	{
-		Scope currentScope = this.getVarScope();
+		//Scope currentScope = this.getVarScope();
 		HashMap<String, pj.parser.ast.type.Type> currentMethodVariablesSet = new HashMap<String, pj.parser.ast.type.Type>();
 		currentScope.getMethodDefinedVariablesSet(currentMethodVariablesSet);
 
 		return currentMethodVariablesSet;
-	}
-
-	@Override
-	public Scope getVarScope() {
-		return forNode.getVarScope();
-	}
-	@Override
-	public List<OpenMP_DataClause> getDataClauses() {
-		return forNode.getDataClauses();
 	}
 
 	@Override
@@ -164,7 +153,7 @@ public class WorkShareMethodBuilder extends ConstructWrapper{
 			printer.indent();
 			printer.printLn(identifier+" = " + init_expression + " + OMP_local_iterator * (" + stride + ");");
 			//BEGIN user code 
-			this.forNode.getStatements().get(0).accept(visitor, printer);
+			this.forNode.getStatement().accept(visitor, printer);
 			//END user code
 			//BEGIN lastprivate value return
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");

@@ -2,7 +2,6 @@ package pj.parser.ast.omp;
 
 import java.util.List;
 
-import pj.parser.ast.stmt.ForStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;

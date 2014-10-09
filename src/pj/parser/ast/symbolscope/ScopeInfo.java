@@ -100,7 +100,7 @@ public class ScopeInfo {
 		return this.symbolsUsed.values();
 	}
 	
-	public Collection<Symbol> getAllReachableSymbols() {
+	public LinkedList<Symbol> getAllReachableSymbols() {
 		LinkedList<Symbol> ret = new LinkedList<Symbol>();
 		ret.addAll(this.getAllDefinedSymbols());
 		ScopeInfo parentScope = this.getParent();
@@ -111,7 +111,7 @@ public class ScopeInfo {
 		return ret;
 	}
 	
-	public Collection<Symbol> getAllCurrentMethodDefinedVariables(Set<String> vars) {
+	public LinkedList<Symbol> getAllCurrentMethodDefinedVariables(Set<String> vars) {
 		LinkedList<Symbol> ret = new LinkedList<Symbol>();
 		ScopeInfo parentScope = this;
 		while (parentScope != null) {

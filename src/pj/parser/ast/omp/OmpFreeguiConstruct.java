@@ -1,6 +1,7 @@
 package pj.parser.ast.omp;
 
 import pj.parser.ast.stmt.Statement;
+import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
 
@@ -8,6 +9,8 @@ public class OmpFreeguiConstruct extends OpenMPStatement{
 
 	private Statement body = null;
 	private OpenMPStatement ompStatement= null;
+	
+	public ScopeInfo scope;
 	
 	public OmpFreeguiConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
 			Statement statement) {

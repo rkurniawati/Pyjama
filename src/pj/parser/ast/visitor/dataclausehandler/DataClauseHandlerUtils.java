@@ -1,7 +1,12 @@
 package pj.parser.ast.visitor.dataclausehandler;
 
-import pj.parser.ast.expr.OpenMP_ReductionOperator.Operator;
-import pj.symbol.Scope;
+import java.util.Collection;
+import java.util.LinkedList;
+
+import pj.parser.ast.Node;
+import pj.parser.ast.symbolscope.ScopeInfo;
+import pj.parser.ast.symbolscope.Symbol;
+import pj.parser.ast.symbolscope.SymbolTable;
 
 /**
  * This class implements simple utility routines
@@ -15,6 +20,8 @@ import pj.symbol.Scope;
  * @version 1.0.1
  */
 public class DataClauseHandlerUtils {
+	
+	public static enum Operator { Plus, Mult, Minus, BitAND, BitOR, BitXOR, LogAND, LogOR };
 	
 	private DataClauseHandlerUtils(){
 		/*
@@ -219,7 +226,4 @@ public class DataClauseHandlerUtils {
 		return type;
 	}
 	
-	public static boolean declaredLocally(String varName, Scope currentScope) {
-		return currentScope.isDefinedWithinThisMethodScope(varName);
-	}
 }

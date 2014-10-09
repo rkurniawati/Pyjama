@@ -53,7 +53,7 @@ public class SymbolTable {
 		if (scope == null) {
 			throw new SymbolException("Cannot find scope related to this node");
 		} else {
-			return scope;		
+			return scope;
 		}
 	}
 	

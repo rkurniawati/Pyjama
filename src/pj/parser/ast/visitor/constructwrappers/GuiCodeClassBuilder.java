@@ -3,15 +3,14 @@ package pj.parser.ast.visitor.constructwrappers;
 import java.util.HashMap;
 import java.util.List;
 
-import pj.parser.ast.expr.OpenMP_DataClause;
-import pj.parser.ast.stmt.OpenMP_Gui_Construct;
+
+import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.type.Type;
-import pj.parser.ast.visitor.PyjamaVisitor;
+import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
-
 import pj.parser.ast.visitor.dataclausehandler.DataClauseHandler;
-import pj.symbol.Scope;
+
 
 /**
  * The representation for GUI-aware <code>gui</code> construct
@@ -29,11 +28,11 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 	 * the actual representation of <code>gui</code> node
 	 * from the AST
 	 */
-	private OpenMP_Gui_Construct node;	
+	private OmpGuiConstruct node;	
 	
 
 	public StringBuffer onceChecker = new StringBuffer("");
-	private PyjamaVisitor visitor;
+	private PyjamaToJavaVisitor visitor;
 	/*
 	 * though Pyjama does not support nested constructs,
 	 * the <code>gui</code> construct can be used in nested scenarios
@@ -42,27 +41,14 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 	 */
 	public StringBuffer variableNested = new StringBuffer("");
 
-	public GuiCodeClassBuilder(OpenMP_Gui_Construct guiNode, PyjamaVisitor visitor) {
+	public GuiCodeClassBuilder(OmpGuiConstruct guiNode, PyjamaToJavaVisitor visitor) {
 		this.node = guiNode;
 		this.visitor = visitor;
 	}
 
 	@Override
-	public Scope getVarScope() {
-		return node.getVarScope();
-	}
-
-	@Override
 	public int getBeginLine() {
 		return node.getBeginLine();
-	}
-
-	@Override
-	public List<OpenMP_DataClause> getDataClauses() {
-		/*
-		 * <code>gui</code> cannot have data clauses
-		 */
-		return null;
 	}
 
 	@Override
@@ -82,24 +68,24 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 		return null;
 	}
 
-	@Override
-	public HashMap<String, Type> autoGetAllLocalMethodVariables() {
-		Scope currentScope = this.getVarScope();
-		HashMap<String, pj.parser.ast.type.Type> currentMethodVariablesSet = new HashMap<String, pj.parser.ast.type.Type>();
-		currentScope.getMethodDefinedVariablesSet(currentMethodVariablesSet);
-
-		return currentMethodVariablesSet;
-	}
+//	@Override
+//	public HashMap<String, Type> autoGetAllLocalMethodVariables() {
+//		Scope currentScope = this.getVarScope();
+//		HashMap<String, pj.parser.ast.type.Type> currentMethodVariablesSet = new HashMap<String, pj.parser.ast.type.Type>();
+//		currentScope.getMethodDefinedVariablesSet(currentMethodVariablesSet);
+//
+//		return currentMethodVariablesSet;
+//	}
 	
-	public HashMap<String, Type> autoGetAllParallelRegionVariables() {
-		Scope currentScope = this.getVarScope();
-		HashMap<String, pj.parser.ast.type.Type> currentPRVariablesSet = new HashMap<String, pj.parser.ast.type.Type>();
-		currentScope.getParallelRegionDefinedVariablesSet(currentPRVariablesSet);
-
-		return currentPRVariablesSet;
-	}
+//	public HashMap<String, Type> autoGetAllParallelRegionVariables() {
+//		Scope currentScope = this.getVarScope();
+//		HashMap<String, pj.parser.ast.type.Type> currentPRVariablesSet = new HashMap<String, pj.parser.ast.type.Type>();
+//		currentScope.getParallelRegionDefinedVariablesSet(currentPRVariablesSet);
+//
+//		return currentPRVariablesSet;
+//	}
 	
-	public OpenMP_Gui_Construct getNode() {
+	public OmpGuiConstruct getNode() {
 		return this.node;
 	}
 	
@@ -129,7 +115,7 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 		printer.indent();
 		//BEGIN get construct user code
 		printer.printLn("/****User Code BEGIN***/");
-		this.node.getStatements().get(0).accept(visitor, printer);
+		this.getUserCode().accept(visitor, printer);
 		printer.printLn();
 		printer.printLn("/****User Code END***/");
 		//END get construct user code
@@ -138,7 +124,7 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 		printer.unindent();
 		printer.printLn("}");
 		/////////////////////
-		if (true == this.node.getNoWaitFlag()) {
+		if (true == this.node.isNowait()) {
 			printer.print("SwingUtilities.invokeLater(new ");
 		}
 		else {
@@ -150,5 +136,15 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
        	printer.unindent();
        	printer.printLn("} catch (InvocationTargetException e) {e.printStackTrace();}");
     	printer.printLn("catch (InterruptedException e) {e.printStackTrace();}");
+	}
+	
+	private Statement getUserCode() {
+		return this.node.getStatement();
+	}
+
+	@Override
+	public HashMap<String, Type> autoGetAllAvaliableSymbols() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

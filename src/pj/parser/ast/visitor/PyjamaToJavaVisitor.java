@@ -5,13 +5,12 @@ package pj.parser.ast.visitor;
  */
 
 
-import pj.PjRuntime;
-import pj.parser.ParseException;
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
 import pj.parser.ast.expr.*;
 import pj.parser.ast.omp.*;
 import pj.parser.ast.stmt.*;
+import pj.parser.ast.symbolscope.SymbolTable;
 import pj.parser.ast.type.*;
 import pj.parser.ast.visitor.constructwrappers.*;
 import pj.parser.ast.visitor.dataclausehandler.DataClauseHandler;
@@ -56,43 +55,38 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	 */
 	protected HashMap<String,String>  currentPrivateVariableInOMPWorksharingBlock = new HashMap<String,String>();
 	
+	private SymbolTable symbolTable = null;
+	
+	public PyjamaToJavaVisitor(SymbolTable symbolTable) {
+		this.symbolTable = symbolTable;
+	}
 	
 	//OpenMP add BEGIN*******************************************************************************OpenMP add BEGIN//
 	public void visit(Node n, SourcePrinter printer){
-		
+		throw new RuntimeException("Node: This abstract class should not appear.");
 	}
+	
 //	public void visit(ForStmtSimple n, SourcePrinter printer) {
 //		n.getBody().accept(this, printer);
 //		//Visit the user code in for loop instead of all the for loop statement
 //	}
 	//------------------------------------------------------
     public void visit(OmpParallelConstruct n, SourcePrinter printer){
+    	
+    	//get current OmpParallelConstruct's scopeinfo from symbolTable
+    	n.scope = this.symbolTable.getScopeOfNode(n);
+    	
 		int uniqueOpenMPRegionID = nextOpenMPRegionUniqueID++;
 
 		ParallelRegionClassBuilder currentPRClass = new ParallelRegionClassBuilder(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
 		currentPRClass.className = prefixTaskNameForParallelRegion + uniqueOpenMPRegionID;
 
-		/*
-		 * we use this check to see if current code is in a parallel region; it
-		 * is true for orphaned code
-		 */
-		if (n.isNoGui()) {
-			GuiCodeClassBuilder currentGuiCode = DataClauseHandler.generateDummyGuiRegionForNoguiRemainingCode(currentPRClass);
-			DataClauseHandler.addMissedSharedVariablesForRemaingGuiRegion(currentGuiCode, currentPRClass);
-		}
-		//--
-		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- START */", -1);
+		
+		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- START */");
 		String numThreadsClause = "";
-		if (n.getNumThreadsExpression() != null) {
-			numThreadsClause = "=(" + n.getNumThreadsExpression().toString() + ")";
-		}
-		if (n.getIfExpression() != null) {
-			printer.print("/* If \"");
-			n.getIfExpression().accept(this, printer);
-			printer.printLn("\" evaluates to false, execute sequentially */", -1);
-		}
+
 		//Print Parallel Region Class Code
-		this.PrinterForPRClass.printLn(currentPRClass.getSource(), -1);
+		this.PrinterForPRClass.printLn(currentPRClass.getSource());
 		
 		String previous_icv = "icv_previous_" + currentPRClass.className;
 		String new_icv = "icv_" + currentPRClass.className;
@@ -110,36 +104,32 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn(currentPRClass.className + "_in" + ".runParallelCode();", -1);
 		
 
-		if (!n.isNoGui()) {
-			DataClauseHandler.processDataClausesAfterInvocation(currentPRClass, printer);
-		}
+//		if (!n.isNoGui()) {
+//			DataClauseHandler.processDataClausesAfterInvocation(currentPRClass, printer);
+//		}
 		printer.printLn("PjRuntime.recoverParentICV(" + previous_icv + ");", -1);
-		if (n.isNoGui()) {
-			// if directive is freeguithread, return after region, following code is invoked in region.
-			printer.printLn("if (PjRuntime.getCurrentThreadICV() != null) {", -1);
-			printer.indent();
-			printer.printLn("return;", -1);
-			printer.unindent();
-			printer.printLn("}", -1);
-		}
 		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- END */", -1);
     }
+    
     public void visit(OmpParallelForConstruct n, SourcePrinter printer){
-    	throw new RuntimeException("This should have been normalised.");
+    	throw new RuntimeException("//#omp parallel for: This should have been normalised.");
     	// --------------------------- Normalised --------------------//
     }
     
     public void visit(OmpParallelSectionsConstruct n, SourcePrinter printer){
-    	throw new RuntimeException("This should have been normalised.");
+    	throw new RuntimeException("//#omp parallel sections: This should have been normalised.");
     	// --------------------------- Normalised --------------------//
     }
     public void visit(OmpForConstruct n, SourcePrinter printer){
+    	//get current OmpParallelConstruct's scopeinfo from symbolTable
+    	n.scope = this.symbolTable.getScopeOfNode(n);
+    	
     	int uniqueWorkShareRegionID = nextWorkShareID++;
     	
 		WorkShareMethodBuilder currentWSMethod = new WorkShareMethodBuilder(n, this.currentMethodIsStatic, this);
 		currentWSMethod.methodName = prefixTaskNameForWorkShare + uniqueWorkShareRegionID;
 		
-    	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- START */", -1);
+    	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- START */");
 		
     	//collect variables need to be privitized in following worksharing method.
     	currentPrivateVariableInOMPWorksharingBlock = DataClauseHandler.collectPrivateVariablesForWorksharing(currentWSMethod);
@@ -155,68 +145,65 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		// clean up currentPrivateVariableInOMPWorksharingBlock set
 		currentPrivateVariableInOMPWorksharingBlock.clear();
 		
-    	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- END */", -1);
+    	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- END */");
     }
     
 	public void visit(OmpSectionsConstruct n, SourcePrinter printer){
-		throw new RuntimeException("This should have been normalised.");
+		throw new RuntimeException("//#omp sections: This should have been normalised.");
     	// --------------------------- Normalised --------------------//
 	}
 
     public void visit(OmpSingleConstruct n, SourcePrinter printer){
-    	throw new RuntimeException("This should have been normalised.");
+    	throw new RuntimeException("//#omp single: This should have been normalised.");
     	// --------------------------- Normalised --------------------//
     }
     public void visit(OmpMasterConstruct n, SourcePrinter printer){
-    	printer.printLn("if (0 == Pyjama.omp_get_thread_num()) {", -1);
+    	printer.printLn("if (0 == Pyjama.omp_get_thread_num()) {");
     	printer.indent();
     	n.getStatement().accept(this, printer);
     	printer.unindent();
-    	printer.printLn("}", -1);
+    	printer.printLn("}");
     }
     public void visit(OmpCriticalConstruct n, SourcePrinter printer){
-    	printer.printLn("PjRuntime.OMP_lock.lock();", -1);
-    	printer.printLn("try {", -1);
+    	printer.printLn("PjRuntime.OMP_lock.lock();");
+    	printer.printLn("try {");
     	printer.indent();
     	n.getStatement().accept(this, printer);
     	printer.unindent();
-    	printer.printLn("} finally {", -1);
-    	printer.printLn("PjRuntime.OMP_lock.unlock();", -1);
+    	printer.printLn("} finally {");
+    	printer.printLn("PjRuntime.OMP_lock.unlock();");
     	printer.unindent();
-    	printer.printLn("}", -1);
+    	printer.printLn("}");
     }
     public void visit(OmpOrderedConstruct n, SourcePrinter printer){
-    	printer.printLn("while (PjRuntime.get_OMP_orderCursor().get() < OMP_local_iterator) {}", -1);
+    	printer.printLn("while (PjRuntime.get_OMP_orderCursor().get() < OMP_local_iterator) {}");
     	n.getStatement().accept(this, printer);
-    	printer.printLn(-1);
-    	printer.printLn("PjRuntime.get_OMP_orderCursor().incrementAndGet();", -1);
+    	printer.printLn();
+    	printer.printLn("PjRuntime.get_OMP_orderCursor().incrementAndGet();");
     }
     public void visit(OmpAtomicConstruct n, SourcePrinter printer){
-    	throw new RuntimeException("This should have been normalised.");
+    	throw new RuntimeException("//#omp atomic: This should have been normalised.");
     	// --------------------------- Normalised --------------------//
     }
     public void visit(OmpBarrierDirective n, SourcePrinter printer){
-    	printer.printLn("PjRuntime.setBarrier();", -1);
+    	printer.printLn("PjRuntime.setBarrier();");
     }
     public void visit(OmpFlushDirective n, SourcePrinter printer){
-    	printer.printLn("PjRuntime.flushMemory();", -1);
+    	printer.printLn("PjRuntime.flushMemory();");
     }
-//    public void visit(OpenMP_ThreadPrivate n, SourcePrinter printer){
-//    	throw new RuntimeException("Threadprivate is not intent to be implemented in Pyjama");
-//    }
 
     public void visit(OmpFreeguiConstruct n, SourcePrinter printer){
-    	OpenMP_Parallel_Construct omp_parallel_construct = n.get_ParallelConstruct();
-    	if (null == omp_parallel_construct) {
-    		try {
-				omp_parallel_construct = new OpenMP_Parallel_Construct(n.getBeginLine(), n.getBeginColumn(),
-						n.getStatements(), null, false, true, false, null, new StringLiteralExpr(0,0,"1"));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-    	}
-    	omp_parallel_construct.setNoGui();
-    	omp_parallel_construct.accept(this, printer);
+//    	OpenMP_Parallel_Construct omp_parallel_construct = n.get_ParallelConstruct();
+//    	if (null == omp_parallel_construct) {
+//    		try {
+//				omp_parallel_construct = new OpenMP_Parallel_Construct(n.getBeginLine(), n.getBeginColumn(),
+//						n.getStatements(), null, false, true, false, null, new StringLiteralExpr(0,0,"1"));
+//			} catch (ParseException e) {
+//				e.printStackTrace();
+//			}
+//    	}
+//    	omp_parallel_construct.setNoGui();
+//    	omp_parallel_construct.accept(this, printer);
     }
 
     public void visit(OmpGuiConstruct n, SourcePrinter printer){
@@ -239,65 +226,57 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     }
     
 	public void visit(OmpCopyprivateDataClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
+		throw new RuntimeException("copyprivate Clause should not be visited by PyjamaToJavaVisitor.");
 		
 	}
 
     public void visit(OmpDataClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+    	throw new RuntimeException("OpenMPStatement: This abstract class should not appear.");
 	}
 	
 	public void visit(OmpDefaultDataClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("default Clause should not be visited by PyjamaToJavaVisitor.");
 	}
 
 	public void visit(OmpIfClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("if Clause should not be visited by PyjamaToJavaVisitor.");
 	}
 
 	public void visit(OmpLastprivateDataClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("lastprivate Clause should not be visited by PyjamaToJavaVisitor.");
 	}
 
 	public void visit(OmpNumthreadsClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("num_threads Clause should not be visited by PyjamaToJavaVisitor.");
 	}
 
 	public void visit(OmpPrivateDataClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("private Clause should not be visited by PyjamaToJavaVisitor.");
 	}
 
 	public void visit(OmpReductionDataClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("reduction Clause should not be visited by PyjamaToJavaVisitor.");
 	}
 
 	public void visit(OmpScheduleClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("schedule Clause should not be visited by PyjamaToJavaVisitor.");
 	}
 
 	public void visit(OmpSectionConstruct n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("//#omp section: This should have been normalised.");
+		// --------------------------- Normalised --------------------//
 	}
 
 	public void visit(OmpSharedDataClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("shared Clause should not be visited by PyjamaToJavaVisitor.");
 	}
 
 	public void visit(OpenMPStatement n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+		throw new RuntimeException("OpenMPStatement: This abstract class should not appear.");	
 	}
-    private int tag=0;
+	
+    private int separator=0;
+    
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
 	        if (n.getPackage() != null) {
@@ -1493,14 +1472,14 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     
     private  String printRuntimeImports(){
     	SourcePrinter printer = new SourcePrinter();
-    	printer.printLn("import pj.pr.*;", -1);
-    	printer.printLn("import pj.PjRuntime;", -1);
-    	printer.printLn("import pj.Pyjama;", -1);
-    	printer.printLn("import java.util.concurrent.*;", -1);
-    	printer.printLn("import java.util.concurrent.atomic.AtomicInteger;", -1);
-    	printer.printLn("import java.util.concurrent.locks.ReentrantLock;", -1);
-    	printer.printLn("import javax.swing.SwingUtilities;", -1);
-    	printer.printLn("import java.lang.reflect.InvocationTargetException;", -1);
+    	printer.printLn("import pj.pr.*;");
+    	printer.printLn("import pj.PjRuntime;");
+    	printer.printLn("import pj.Pyjama;");
+    	printer.printLn("import java.util.concurrent.*;");
+    	printer.printLn("import java.util.concurrent.atomic.AtomicInteger;");
+    	printer.printLn("import java.util.concurrent.locks.ReentrantLock;");
+    	printer.printLn("import javax.swing.SwingUtilities;");
+    	printer.printLn("import java.lang.reflect.InvocationTargetException;");
     	
     	return printer.getSource();
     }

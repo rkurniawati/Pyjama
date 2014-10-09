@@ -2,6 +2,7 @@ package pj.parser.ast.omp;
 
 
 import java.util.List;
+
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
@@ -12,7 +13,7 @@ public class OmpParallelConstruct extends OpenMPStatement {
 	private OmpNumthreadsClause numThreads = null;
 	private Statement body = null;
 	private List<OmpDataClause> dataClauseList;
-	
+		
 	public OmpParallelConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 

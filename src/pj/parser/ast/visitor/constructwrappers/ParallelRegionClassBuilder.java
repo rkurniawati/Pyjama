@@ -19,11 +19,10 @@ import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import pj.parser.ast.expr.OpenMP_DataClause;
-import pj.parser.ast.visitor.PyjamaVisitor;
-import pj.parser.ast.stmt.OpenMP_Parallel_Construct;
+import pj.parser.ast.visitor.PyjamaToJavaVisitor;
+import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.stmt.Statement;
-import pj.symbol.Scope;
+import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClauseHandler;
 
@@ -38,12 +37,12 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	
 	private String staticPrefix = "";
 	public List<Statement> currentMethodOrConstructorStmts = null;
-	public PyjamaVisitor visitor;
-	public OpenMP_Parallel_Construct parallelConstruct;
+	public PyjamaToJavaVisitor visitor;
+	public OmpParallelConstruct parallelConstruct;
 
 	
 		
-	public ParallelRegionClassBuilder(OpenMP_Parallel_Construct parallelConstruct, boolean isStatic, PyjamaVisitor visitor, List<Statement> stmts)
+	public ParallelRegionClassBuilder(OmpParallelConstruct parallelConstruct, boolean isStatic, PyjamaToJavaVisitor visitor, List<Statement> stmts)
 	{	
 		this.parallelConstruct = parallelConstruct;
 		if (isStatic) {
@@ -55,18 +54,18 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	}
 
 	
-//	public Statement getUserCode() {
-//		return parallelConstruct.getStatements().get(0);
-//	}
+	private Statement getUserCode() {
+		return parallelConstruct.getBody();
+	}
 
-	@Override
-	public Scope getVarScope() {
-		return parallelConstruct.getVarScope();
-	}
-	@Override
-	public List<OpenMP_DataClause> getDataClauses() {
-		return parallelConstruct.getDataClauses();
-	}
+//	@Override
+//	public Scope getVarScope() {
+//		return parallelConstruct.getVarScope();
+//	}
+//	@Override
+//	public List<OpenMP_DataClause> getDataClauses() {
+//		return parallelConstruct.getDataClauses();
+//	}
 
 	@Override
 	public int getBeginLine() {
@@ -88,14 +87,20 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	}
 	
 	@Override
-	public HashMap<String, pj.parser.ast.type.Type> autoGetAllLocalMethodVariables()
-	{
-		Scope currentScope = parallelConstruct.getVarScope();
-		HashMap<String, pj.parser.ast.type.Type> currentMethodVariablesSet = new HashMap<String, pj.parser.ast.type.Type>();
-		currentScope.getMethodDefinedVariablesSet(currentMethodVariablesSet);
-
-		return currentMethodVariablesSet;
-	}	
+	public HashMap<String, Type> autoGetAllAvaliableSymbols() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+//	@Override
+//	public HashMap<String, pj.parser.ast.type.Type> autoGetAllLocalMethodVariables()
+//	{
+//		Scope currentScope = parallelConstruct.getVarScope();
+//		HashMap<String, pj.parser.ast.type.Type> currentMethodVariablesSet = new HashMap<String, pj.parser.ast.type.Type>();
+//		currentScope.getMethodDefinedVariablesSet(currentMethodVariablesSet);
+//
+//		return currentMethodVariablesSet;
+//	}	
 	
 	public String getSource()
 	{
@@ -203,7 +208,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("");
 		//BEGIN get construct user code
 		printer.printLn("/****User Code BEGIN***/");
-		this.parallelConstruct.getStatements().get(0).accept(visitor, printer);
+		this.getUserCode().accept(visitor, printer);
 		printer.printLn();
 		printer.printLn("/****User Code END***/");
 		//BEGIN reduction procedure
@@ -216,13 +221,6 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("if (0 == this.alias_id) {");
     	printer.indent();
     	printer.printLn("updateOutputListForSharedVars();");
-    	if (this.parallelConstruct.isNoGui()) {
-    		/*
-    		 * if current parallel region is freeguithread region, master
-    		 * thread also should do invoke remaining code in current method.
-    		 */
-    		printer.printLn(this.getDummyGuiCode());
-    	}
     	printer.unindent();
     	printer.printLn("}");
 		//END Master thread updateOutputList
@@ -234,46 +232,24 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("}");
 		printer.printLn("public void runParallelCode() {");
 		printer.indent();
-		/*
-		 * If current directive is //#omp freeguithread, free edt thread and make another more thread
-		 * to substitute edt thread.
-		 */
-		if (this.parallelConstruct.isNoGui()) {
-			if (null != this.parallelConstruct.getNumThreadsExpression()) {
-				printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
-				printer.printLn("PjRuntime.submit(slaveThread);");
-			}
-			else {
-				printer.printLn("for (int i = 0; i <= this.OMP_threadNumber-1; i++) {");
-				printer.indent();
-				printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
-				printer.printLn("PjRuntime.submit(slaveThread);");
-				printer.unindent();
-				printer.printLn("}");
-			}
-		}
-		/*
-		 * else the current directive is //#omp parallel, master thread is current thread, doesn't escape
-		 * from parallel region.
-		 */
-		else {
-			printer.printLn("for (int i = 1; i <= this.OMP_threadNumber-1; i++) {");
-			printer.indent();
-			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
-			printer.printLn("PjRuntime.submit(slaveThread);");
-			printer.unindent();
-			printer.printLn("}");
-			printer.printLn("Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
-			printer.printLn("try {");
-			printer.indent();
-			printer.printLn("masterThread.call();");
-			printer.unindent();
-			printer.printLn("} catch (Exception e) {");
-			printer.indent();
-			printer.printLn("e.printStackTrace();");
-			printer.unindent();
-			printer.printLn("}");
-		}
+	
+		printer.printLn("for (int i = 1; i <= this.OMP_threadNumber-1; i++) {");
+		printer.indent();
+		printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
+		printer.printLn("PjRuntime.submit(slaveThread);");
+		printer.unindent();
+		printer.printLn("}");
+		printer.printLn("Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
+		printer.printLn("try {");
+		printer.indent();
+		printer.printLn("masterThread.call();");
+		printer.unindent();
+		printer.printLn("} catch (Exception e) {");
+		printer.indent();
+		printer.printLn("e.printStackTrace();");
+		printer.unindent();
+		printer.printLn("}");
+		
 		printer.unindent();
 		printer.printLn("}");
 		printer.unindent();
@@ -281,10 +257,13 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		
 	}
 	
-	private String getDummyGuiCode() {
-		GuiCodeClassBuilder currentGuiCode = DataClauseHandler.generateDummyGuiRegionForNoguiRemainingCode(this);
-		String returnCode = currentGuiCode.getSource();
-		return returnCode;
-	}
+//	private String getDummyGuiCode() {
+//		GuiCodeClassBuilder currentGuiCode = DataClauseHandler.generateDummyGuiRegionForNoguiRemainingCode(this);
+//		String returnCode = currentGuiCode.getSource();
+//		return returnCode;
+//	}
+
+
+
 	
 }
