@@ -77,7 +77,7 @@ public class OmpSharedDataClause extends OmpDataClause{
 		}
 	}
 	
-	private HashMap<String, String> getArgsTypes(OpenMPStatement n) {
+	public HashMap<String, String> getArgsTypes(OpenMPStatement n) {
 		HashMap<String, String> varTypes = new HashMap<String, String>();
 		ScopeInfo scope = n.scope;
 		LinkedList<Symbol> symbols = scope.getAllReachableSymbols();

@@ -44,7 +44,7 @@ import pj.parser.ast.visitor.constructwrappers.WorkShareMethodBuilder;
  * 
  * @version 1.1.1
  */
-public class DataClauseHandler {
+public class DataClauseHandlerBack {
 
 	/*
 	 * set to true, to print debug messages
