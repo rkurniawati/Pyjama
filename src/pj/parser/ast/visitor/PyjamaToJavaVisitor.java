@@ -13,7 +13,7 @@ import pj.parser.ast.stmt.*;
 import pj.parser.ast.symbolscope.SymbolTable;
 import pj.parser.ast.type.*;
 import pj.parser.ast.visitor.constructwrappers.*;
-import pj.parser.ast.visitor.dataclausehandler.DataClauseHandler;
+import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
 
 import java.io.File;
@@ -93,20 +93,19 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		String thread_number = "_threadNum_" + currentPRClass.className;
 		String inputlist = "inputlist_" + currentPRClass.className;
 		String outputlist = "outputlist_" + currentPRClass.className;
-		printer.printLn("InternalControlVariables " + previous_icv + " = PjRuntime.getCurrentThreadICV();", -1);
-		printer.printLn("InternalControlVariables " + new_icv + " = PjRuntime.inheritICV(" + previous_icv + ");", -1);
-		printer.printLn("int " + thread_number + " = " + new_icv + ".nthreads_var.get("+ new_icv + ".levels_var);", -1);
-		printer.printLn("ConcurrentHashMap<String, Object> " + inputlist + " = new ConcurrentHashMap<String,Object>();", -1);
-		printer.printLn("ConcurrentHashMap<String, Object> " + outputlist + " = new ConcurrentHashMap<String,Object>();", -1);
+		printer.printLn("InternalControlVariables " + previous_icv + " = PjRuntime.getCurrentThreadICV();");
+		printer.printLn("InternalControlVariables " + new_icv + " = PjRuntime.inheritICV(" + previous_icv + ");");
+		printer.printLn("int " + thread_number + " = " + new_icv + ".nthreads_var.get("+ new_icv + ".levels_var);");
+		printer.printLn("ConcurrentHashMap<String, Object> " + inputlist + " = new ConcurrentHashMap<String,Object>();");
+		printer.printLn("ConcurrentHashMap<String, Object> " + outputlist + " = new ConcurrentHashMap<String,Object>();");
 		
-		DataClauseHandler.processDataClausesBeforeInvocation(currentPRClass, printer);
+		DataClausesHandler.processDataClausesBeforePRClassInvocation(currentPRClass, printer);
+		
 		printer.printLn(currentPRClass.className + " " + currentPRClass.className + "_in = new "+ currentPRClass.className + "(" + thread_number +numThreadsClause+ "," + new_icv + "," + inputlist + "," + outputlist + ");", -1);
-		printer.printLn(currentPRClass.className + "_in" + ".runParallelCode();", -1);
+		printer.printLn(currentPRClass.className + "_in" + ".runParallelCode();");
 		
-
-//		if (!n.isNoGui()) {
-//			DataClauseHandler.processDataClausesAfterInvocation(currentPRClass, printer);
-//		}
+		DataClausesHandler.processDataClausesAfterPRClassInvocation(currentPRClass, printer);
+		
 		printer.printLn("PjRuntime.recoverParentICV(" + previous_icv + ");", -1);
 		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- END */", -1);
     }
@@ -126,25 +125,15 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	
     	int uniqueWorkShareRegionID = nextWorkShareID++;
     	
-		WorkShareMethodBuilder currentWSMethod = new WorkShareMethodBuilder(n, this.currentMethodIsStatic, this);
-		currentWSMethod.methodName = prefixTaskNameForWorkShare + uniqueWorkShareRegionID;
+		WorkShareBlockBuilder currentWSBlock = new WorkShareBlockBuilder(n, this);
 		
     	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- START */");
 		
-    	//collect variables need to be privitized in following worksharing method.
-    	currentPrivateVariableInOMPWorksharingBlock = DataClauseHandler.collectPrivateVariablesForWorksharing(currentWSMethod);
-    	//log: list all
-//    	for (String s: currentPrivateVariableInOMPWorksharingBlock.keySet()) {
-//    		System.err.println("var need to be privatized:" + s);
-//    	}
-		
     	//Print Work Share Region
-		printer.printLn(currentWSMethod.getSource(), -1);
+		printer.printLn(currentWSBlock.getSource());
 		
 		printer.printLn("PjRuntime.setBarrier();", -1);
-		// clean up currentPrivateVariableInOMPWorksharingBlock set
-		currentPrivateVariableInOMPWorksharingBlock.clear();
-		
+	
     	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- END */");
     }
     

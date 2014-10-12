@@ -26,66 +26,36 @@ import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
-import pj.parser.ast.visitor.dataclausehandler.DataClauseHandler;
 
 
-public class WorkShareMethodBuilder extends ConstructWrapper{
+
+public class WorkShareBlockBuilder extends ConstructWrapper{
 	
-	public String methodName = "";	
-
-	private SourcePrinter printer = new SourcePrinter();
-	
-	private String staticPrefix = "";
+	private SourcePrinter printer;
 	private PyjamaToJavaVisitor visitor;
-	private OmpForConstruct forNode;
-	
-	private HashMap<String, pj.parser.ast.type.Type> currentParallelRegionVariablesSet;
-	public HashMap<String, Type> variablesUsedInForLoop;
-	
-	public WorkShareMethodBuilder(OmpForConstruct forNode, boolean isStatic, PyjamaToJavaVisitor visitor)
-	{	
-		this.forNode = forNode;
-		if (isStatic) {
-			this.staticPrefix = "static ";
-		}
+	private OmpForConstruct ompForConstruct;
 		
+	public WorkShareBlockBuilder(OmpForConstruct forNode, PyjamaToJavaVisitor visitor) {	
+		this.ompForConstruct = forNode;
 		this.visitor = visitor;
-		this.currentParallelRegionVariablesSet = this.autoGetAllLocalMethodVariables();
-		this.variablesUsedInForLoop = DataClauseHandler.getUsedVariablesInWapperCodeBlock(this);
+		this.printer = new SourcePrinter();
 	}
 	
-	public OmpForConstruct getForNode() {
-		return this.forNode;
+	public OmpForConstruct getForConstruct() {
+		return this.ompForConstruct;
 	}
 	
-	@Override
-	public HashMap<String, pj.parser.ast.type.Type> autoGetAllLocalMethodVariables()
-	{
-		//Scope currentScope = this.getVarScope();
-		HashMap<String, pj.parser.ast.type.Type> currentMethodVariablesSet = new HashMap<String, pj.parser.ast.type.Type>();
-		currentScope.getMethodDefinedVariablesSet(currentMethodVariablesSet);
-
-		return currentMethodVariablesSet;
-	}
-
+	
 	@Override
 	public int getBeginLine() {
-		return forNode.getBeginLine();
+		return ompForConstruct.getBeginLine();
 	}
 	@Override
 	public int getEndLine() {
-		return forNode.getEndLine();
+		return ompForConstruct.getEndLine();
 	}
 	
-	@Override
-	public String get_inputlist() {
-		return this.methodName + "_OMP_inputList";
-	}
-	
-	@Override
-	public String get_outputlist() {
-		return this.methodName + "_OMP_outputList";
-	}
+
 	
 	public String getSource()
 	{
@@ -100,7 +70,7 @@ public class WorkShareMethodBuilder extends ConstructWrapper{
 		Expression end_expression = null;//the ending number of the iterations
 		String compareOperator = null;
 		String stride = null;//the increment after each iteration
-		if (this.forNode.getStatements().get(0) instanceof ForStmtSimple) {
+		if (this.ompForConstruct.getStatements().get(0) instanceof ForStmtSimple) {
 			forStmt = (ForStmtSimple)this.forNode.getStatements().get(0);
 			identifier = forStmt.getIdentifier();
 			init_expression = forStmt.getInitExpression();
@@ -153,7 +123,7 @@ public class WorkShareMethodBuilder extends ConstructWrapper{
 			printer.indent();
 			printer.printLn(identifier+" = " + init_expression + " + OMP_local_iterator * (" + stride + ");");
 			//BEGIN user code 
-			this.forNode.getStatement().accept(visitor, printer);
+			this.ompForConstruct.getStatement().accept(visitor, printer);
 			//END user code
 			//BEGIN lastprivate value return
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");
@@ -316,6 +286,12 @@ public class WorkShareMethodBuilder extends ConstructWrapper{
 		
 		/////////////////END parallel worksharing code conversion///////////////////
 
+	}
+
+	@Override
+	public HashMap<String, Type> autoGetAllAvaliableSymbols() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

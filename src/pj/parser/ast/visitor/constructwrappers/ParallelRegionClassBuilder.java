@@ -24,9 +24,6 @@ import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.SourcePrinter;
-import pj.parser.ast.visitor.dataclausehandler.DataClauseHandler;
-
-
 
 
 public class ParallelRegionClassBuilder extends ConstructWrapper  {
