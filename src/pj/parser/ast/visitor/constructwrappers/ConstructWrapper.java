@@ -28,15 +28,6 @@ public abstract class ConstructWrapper {
 	 */
 	abstract public int getEndLine();
 	
-	/*
-	 * Xing added for read of inputlist name and outputlist name
-	 */
-	
-	abstract public String get_inputlist();
-	
-	abstract public String get_outputlist();
-	
-	abstract public HashMap<String, pj.parser.ast.type.Type> autoGetAllAvaliableSymbols();
 	
 	/*
 	 * Keeps the variables that have been re-named

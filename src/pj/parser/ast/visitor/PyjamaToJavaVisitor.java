@@ -75,10 +75,11 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	
     	//get current OmpParallelConstruct's scopeinfo from symbolTable
     	n.scope = this.symbolTable.getScopeOfNode(n);
+    	n.processAllReachableVariablesIfNecessary();
     	
 		int uniqueOpenMPRegionID = nextOpenMPRegionUniqueID++;
 
-		ParallelRegionClassBuilder currentPRClass = new ParallelRegionClassBuilder(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
+		ParallelRegionClassBuilder currentPRClass = new ParallelRegionClassBuilder(n, this.currentMethodIsStatic, this);
 		currentPRClass.className = prefixTaskNameForParallelRegion + uniqueOpenMPRegionID;
 
 		

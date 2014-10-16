@@ -42,8 +42,16 @@ public class Symbol {
 		this.name = name;
 	}
 	
+	public String getName() {
+		return this.name;
+	}
+	
 	public String getSymbolDataType() {
 		return this.dataType;
+	}
+	
+	public SymbolType getSymbolType() {
+		return this.symbolType;
 	}
 	
 	public boolean isVariableNameAs(String name) {

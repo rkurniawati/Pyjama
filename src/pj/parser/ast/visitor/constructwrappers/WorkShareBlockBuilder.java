@@ -23,6 +23,9 @@ import pj.parser.ast.body.VariableDeclaratorId;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.omp.OmpForConstruct;
+import pj.parser.ast.stmt.ForStmt;
+import pj.parser.ast.stmt.ForeachStmt;
+import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
@@ -55,15 +58,23 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		return ompForConstruct.getEndLine();
 	}
 	
-
-	
 	public String getSource()
 	{
 		this.generateMethod();
 		return printer.getSource();
 	}
-	private void generateLoop() {
-		ForStmtSimple forStmt = null;
+	
+	private void parseForLoop() {
+		Statement forStmt = this.ompForConstruct.getForStmt();
+		if (forStmt instanceof ForStmt) {
+			forStmt = (ForStmt)forStmt;
+			Expression initExpr = ((ForStmt) forStmt).getInit().get(0);
+			Expression compareExpr = ((ForStmt) forStmt).getCompare();
+			Expression updateExpr = ((ForStmt) forStmt).getUpdate().get(0);
+		} else if (forStmt instanceof ForeachStmt) {
+			throw new RuntimeException("Pyjama currently cannot support for-each loop parallisation");
+		}
+
 		boolean iteratorDeclaration =false;
 	    VariableDeclaratorId identifier = null;//the flag variable name in for statement
 		Expression init_expression = null;//the starting number of the iterations
@@ -84,6 +95,10 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		OpenMP_ScheduleClause schClause = this.forNode.getScheduleClause();
 		OpenMP_ScheduleClause.Type schType = null;
 		Expression chunkSize = null;
+	}
+	
+	private void generateLoop() {
+		
 		if (null != schClause) {
 			schType = schClause.getScheduleType();
 			if (schClause.getChunkSize() != null) {
@@ -236,7 +251,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			printer.indent();
 			printer.printLn(identifier+" = " + init_expression + " + OMP_local_iterator * (" + stride + ");");
 			//BEGIN user code 
-			this.forNode.getStatements().get(0).accept(visitor, printer);
+			this.ompForConstruct.getForStmt().g.accept(visitor, printer);
 			//END user code
 			//BEGIN lastprivate value return
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");
@@ -265,7 +280,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		printer.indent();
 		/////////////////BEGIN parallel worksharing code conversion///////////////////
 		printer.printLn("//#BEGIN firstprivate lastprivate reduction variables defined and initialized here");
-		DataClauseHandler.redeclareFirstprivateReductionLastPrivateVariablesForWorksharing(this, printer);
+		DataClausesHandler.redeclareFirstprivateReductionLastPrivateVariablesForWorksharing(this, printer);
 		printer.printLn("//#set implicit barrier here, otherwise unexpected initial value happens");
 		printer.printLn("PjRuntime.setBarrier();");
 		printer.printLn("//#END firstprivate lastprivate reduction variables defined and initialized here");
@@ -274,11 +289,11 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		generateLoop();
 		printer.printLn("//BEGIN  reduction");
 		printer.printLn("PjRuntime.reductionLockForWorksharing.lock();");
-		DataClauseHandler.reductionForWorksharingBlock(this, printer);
+		DataClausesHandler.reductionForWorksharingBlock(this, printer);
 		printer.print("PjRuntime.reductionLockForWorksharing.unlock();");
 		printer.printLn("//END reduction");
 
-		if (!this.forNode.isNoGui()) {
+		if (!this.ompForConstruct.isNowait()) {
 			printer.printLn("PjRuntime.setBarrier();");
 		}
 		printer.unindent();
@@ -287,11 +302,4 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		/////////////////END parallel worksharing code conversion///////////////////
 
 	}
-
-	@Override
-	public HashMap<String, Type> autoGetAllAvaliableSymbols() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

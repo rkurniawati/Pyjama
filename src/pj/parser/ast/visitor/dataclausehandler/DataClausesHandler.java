@@ -162,6 +162,41 @@ public class DataClausesHandler {
 		}
 	}
 	
+	public static void updateOutputlistForSharedVariablesInPRClass(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
+		List<OmpDataClause> dataClauseList = parallelWrapper.parallelConstruct.getDataClauseList();
+		if (null == dataClauseList) {
+			return;
+		} else {
+			for (OmpDataClause dataClause: dataClauseList) {
+				if (dataClause instanceof OmpSharedDataClause) {
+					for(Expression varExpression: dataClause.getArgumentSet()) {
+						String varName = varExpression.toString();
+						printer.printLn("OMP_outputList.put(\"" + varName + "\"," + varName + ");");
+						//e.g. this.outputList.put("sp", sp);
+					}
+				}
+			}
+		}
+	}
+	
+	public static void reduceProcessForReductionVariablesInPRClass(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
+		OmpParallelConstruct parallelConstruct = parallelWrapper.parallelConstruct;
+		List<OmpDataClause> dataClauseList = parallelWrapper.parallelConstruct.getDataClauseList();
+		if (null == dataClauseList) {
+			return;
+		} else {
+			for (OmpDataClause dataClause: dataClauseList) {
+				if (dataClause instanceof OmpReductionDataClause) {
+					HashMap<String, String> sharedArgs = ((OmpSharedDataClause)dataClause).getArgsTypes(parallelConstruct);
+					for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
+						String varName = varExpression.toString();
+						String operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varName).toString();
+					}
+				}
+			}
+		}
+	}
+	
 	public static HashMap<String, String> collectVariableNamesInWorksharingDataClauses(WorkShareBlockBuilder worksharingWrapper) {
 		HashMap<String, String> privateVariableSet = new HashMap<String, String>();
 		OmpForConstruct forConstruct = worksharingWrapper.getForConstruct();

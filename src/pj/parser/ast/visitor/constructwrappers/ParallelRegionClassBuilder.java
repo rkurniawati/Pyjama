@@ -12,18 +12,22 @@ package pj.parser.ast.visitor.constructwrappers;
  * @version 0.9
  */
 
-
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
+import pj.parser.ast.omp.OmpDataClause;
+import pj.parser.ast.omp.OmpDefaultDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
+import pj.parser.ast.omp.OmpPrivateDataClause;
+import pj.parser.ast.omp.OmpReductionDataClause;
+import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.SourcePrinter;
+import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 
 public class ParallelRegionClassBuilder extends ConstructWrapper  {
@@ -33,72 +37,45 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	private SourcePrinter printer = new SourcePrinter();
 	
 	private String staticPrefix = "";
-	public List<Statement> currentMethodOrConstructorStmts = null;
-	public PyjamaToJavaVisitor visitor;
-	public OmpParallelConstruct parallelConstruct;
 
-	
+	private PyjamaToJavaVisitor visitor;
+	public OmpParallelConstruct parallelConstruct;
+	private List<OmpDataClause> dataClauseList;
 		
-	public ParallelRegionClassBuilder(OmpParallelConstruct parallelConstruct, boolean isStatic, PyjamaToJavaVisitor visitor, List<Statement> stmts)
+	public ParallelRegionClassBuilder(OmpParallelConstruct parallelConstruct, boolean isStatic, PyjamaToJavaVisitor visitor)
 	{	
 		this.parallelConstruct = parallelConstruct;
+		this.dataClauseList = parallelConstruct.getDataClauseList();
 		if (isStatic) {
 			this.staticPrefix = "static ";
 		}
 		this.visitor = visitor;
-		this.currentMethodOrConstructorStmts = stmts;
-
+		
 	}
 
-	
 	private Statement getUserCode() {
 		return parallelConstruct.getBody();
 	}
-
-//	@Override
-//	public Scope getVarScope() {
-//		return parallelConstruct.getVarScope();
-//	}
-//	@Override
-//	public List<OpenMP_DataClause> getDataClauses() {
-//		return parallelConstruct.getDataClauses();
-//	}
 
 	@Override
 	public int getBeginLine() {
 		return parallelConstruct.getBeginLine();
 	}
+	
 	@Override
 	public int getEndLine() {
 		return parallelConstruct.getEndLine();
 	}
 	
-	@Override
+
 	public String get_inputlist() {
 		return "inputlist_" + this.className;
 	}
 	
-	@Override
 	public String get_outputlist() {
 		return "outputlist_" + this.className;
 	}
-	
-	@Override
-	public HashMap<String, Type> autoGetAllAvaliableSymbols() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-//	@Override
-//	public HashMap<String, pj.parser.ast.type.Type> autoGetAllLocalMethodVariables()
-//	{
-//		Scope currentScope = parallelConstruct.getVarScope();
-//		HashMap<String, pj.parser.ast.type.Type> currentMethodVariablesSet = new HashMap<String, pj.parser.ast.type.Type>();
-//		currentScope.getMethodDefinedVariablesSet(currentMethodVariablesSet);
-//
-//		return currentMethodVariablesSet;
-//	}	
-	
+		
 	public String getSource()
 	{
 		this.generateClass();
@@ -120,7 +97,13 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn();
 		//#BEGIN shared variables defined here
 		printer.printLn("//#BEGIN shared variables defined here");
-		DataClauseHandler.sharedVariablesDefine(this, printer);
+		for(OmpDataClause sharedClause: this.dataClauseList) {
+			if (sharedClause instanceof OmpSharedDataClause) {
+				((OmpSharedDataClause) sharedClause).printSharedVariableDefination(parallelConstruct, printer);
+			} else {
+				continue;
+			}
+		}
 		printer.printLn("//#END shared variables defined here");
 		//#END shared variables defined here
 		printer.printLn("public " + this.className + "(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {");
@@ -143,7 +126,13 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("icv.OMP_orderCursor = new AtomicInteger(0);");
 		//#BEGIN shared variables initialised here
 		printer.printLn("//#BEGIN shared variables initialised here");
-		DataClauseHandler.sharedVariablesInitialize(this, printer);
+		for(OmpDataClause sharedClause: this.dataClauseList) {
+			if (sharedClause instanceof OmpSharedDataClause) {
+				((OmpSharedDataClause) sharedClause).printSharedVariableInitialisation(parallelConstruct, printer);
+			} else {
+				continue;
+			}
+		}
 		printer.printLn("//#END shared variables initialised here");
 		//#END shared variables initialised here
 		printer.unindent();
@@ -153,7 +142,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.indent();
 		//BEGIN put shared variables lastprivate(if any, though no available) to outputlist
 		printer.printLn("//BEGIN update outputlist");
-		DataClauseHandler.updateOutputlistForSharedVariables(this, printer);
+		DataClausesHandler.updateOutputlistForSharedVariablesInPRClass(this, printer);
 		printer.printLn("//END update outputlist");
 		//END put shared variables lastprivate(if any, though no available) to outputlist
 		printer.unindent();
@@ -166,7 +155,15 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		
 		//#BEGIN firstprivate reduction variables defined for each thread here
 		printer.printLn("//#BEGIN firstprivate reduction variables defined here");
-		DataClauseHandler.firstprivateReductionVarialbesDefine(this, printer);
+		for(OmpDataClause clause: this.dataClauseList) {
+			if (clause instanceof OmpPrivateDataClause) {
+				((OmpPrivateDataClause) clause).printPrivateVariableDefination(parallelConstruct, printer);
+			} else if (clause instanceof OmpReductionDataClause) {
+				((OmpReductionDataClause) clause).printReductionVariableDefination(parallelConstruct, printer);
+			} else {
+				continue;
+			}
+		}
 		printer.printLn("//#END firstprivate reduction variables  defined here");
 		//#END firstprivate reduction variables defined for each thread here
 		
@@ -188,7 +185,15 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		
 		//#BEGIN firstprivate reduction variables initialised for each thread here
 		printer.printLn("//#BEGIN firstprivate reduction variables initialised here");
-		DataClauseHandler.firstprivateReductionVarialbesInitialize(this, printer);
+		for(OmpDataClause clause: this.dataClauseList) {
+			if (clause instanceof OmpPrivateDataClause) {
+				((OmpPrivateDataClause) clause).printPrivateVariableInitialisation(parallelConstruct, printer);
+			} else if (clause instanceof OmpReductionDataClause) {
+				((OmpReductionDataClause) clause).printReductionVariableInitialisation(parallelConstruct, printer);
+			} else {
+				continue;
+			}
+		}
 		printer.printLn("//#END firstprivate reduction variables initialised here");
 		//#END firstprivate reduction variables initialised for each thread here
 		
@@ -210,7 +215,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("/****User Code END***/");
 		//BEGIN reduction procedure
 		printer.printLn("//BEGIN reduction procedure");
-		DataClauseHandler.reductionProcedure(this, printer);
+		DataClausesHandler.reductionProcedure(this, printer);
 		printer.printLn("//END reduction procedure");
 		//END reduction procedure
 		printer.printLn("setBarrier();");
@@ -252,15 +257,5 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.unindent();
 		printer.printLn("}");
 		
-	}
-	
-//	private String getDummyGuiCode() {
-//		GuiCodeClassBuilder currentGuiCode = DataClauseHandler.generateDummyGuiRegionForNoguiRemainingCode(this);
-//		String returnCode = currentGuiCode.getSource();
-//		return returnCode;
-//	}
-
-
-
-	
+	}	
 }
