@@ -202,17 +202,17 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	GuiCodeClassBuilder currentGuiCode = new GuiCodeClassBuilder(n, this);
     	currentGuiCode.guiName = prefixTaskNameForGuiCode + uniqueGuiCodeID;
   	
-    	printer.printLn("//#BEGIN GUI execution block", -1);
-    	printer.printLn("if (SwingUtilities.isEventDispatchThread()) {", -1);
+    	printer.printLn("//#BEGIN GUI execution block");
+    	printer.printLn("if (SwingUtilities.isEventDispatchThread()) {");
     	printer.indent();
     	n.getStatement().accept(this, printer);
     	printer.unindent();
     	printer.printLn("}", -1);
     	printer.printLn("else {", -1);
     	printer.indent();
-    	printer.printLn(currentGuiCode.getSource(), -1);
+    	printer.printLn(currentGuiCode.getSource());
     	printer.printLn("}", -1);
-    	printer.printLn("//#END GUI execution block", -1);
+    	printer.printLn("//#END GUI execution block");
     }
     
 	public void visit(OmpCopyprivateDataClause n, SourcePrinter arg) {

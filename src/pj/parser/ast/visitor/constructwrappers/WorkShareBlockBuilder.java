@@ -19,10 +19,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import pj.PjRuntime;
 import pj.Pyjama;
+import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.body.VariableDeclaratorId;
+import pj.parser.ast.expr.AssignExpr;
+import pj.parser.ast.expr.BinaryExpr;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.NameExpr;
+import pj.parser.ast.expr.UnaryExpr;
+import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpForConstruct;
+import pj.parser.ast.omp.OmpScheduleClause;
 import pj.parser.ast.stmt.ForStmt;
 import pj.parser.ast.stmt.ForeachStmt;
 import pj.parser.ast.stmt.Statement;
@@ -37,6 +43,15 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	private SourcePrinter printer;
 	private PyjamaToJavaVisitor visitor;
 	private OmpForConstruct ompForConstruct;
+	
+	private boolean iteratorDeclaration =false; // whether identifier is declared in for loop
+	private Expression identifier = null; //the flag variable name in for statement
+	private Expression init_expression = null; //the starting number of the iterations
+	private Expression end_expression = null; //the ending number of the iterations
+	private Expression compareOperator = null; //compare operator
+	private Expression stride = null; //the increment after each iteration
+	
+	private Statement forBody = null;
 		
 	public WorkShareBlockBuilder(OmpForConstruct forNode, PyjamaToJavaVisitor visitor) {	
 		this.ompForConstruct = forNode;
@@ -60,44 +75,70 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	
 	public String getSource()
 	{
+		this.parseForLoop();
 		this.generateMethod();
 		return printer.getSource();
 	}
 	
 	private void parseForLoop() {
 		Statement forStmt = this.ompForConstruct.getForStmt();
+		
 		if (forStmt instanceof ForStmt) {
-			forStmt = (ForStmt)forStmt;
-			Expression initExpr = ((ForStmt) forStmt).getInit().get(0);
-			Expression compareExpr = ((ForStmt) forStmt).getCompare();
-			Expression updateExpr = ((ForStmt) forStmt).getUpdate().get(0);
+			parseSimpleForStmt(forStmt);
 		} else if (forStmt instanceof ForeachStmt) {
 			throw new RuntimeException("Pyjama currently cannot support for-each loop parallisation");
 		}
-
-		boolean iteratorDeclaration =false;
-	    VariableDeclaratorId identifier = null;//the flag variable name in for statement
-		Expression init_expression = null;//the starting number of the iterations
-		Expression end_expression = null;//the ending number of the iterations
-		String compareOperator = null;
-		String stride = null;//the increment after each iteration
-		if (this.ompForConstruct.getStatements().get(0) instanceof ForStmtSimple) {
-			forStmt = (ForStmtSimple)this.forNode.getStatements().get(0);
-			identifier = forStmt.getIdentifier();
-			init_expression = forStmt.getInitExpression();
-			end_expression = forStmt.getEndExpression();
-			compareOperator = forStmt.getCompareOperator();
-			stride = forStmt.getStride();
-			if (null != forStmt.getInit()) {
-				iteratorDeclaration = true;
-			}
+	}
+	
+	private void parseSimpleForStmt(Statement forStmt) {
+		ForStmt forSimpleStmt = null;
+		forSimpleStmt = (ForStmt)forStmt;
+		
+		forBody = forSimpleStmt.getBody();
+		
+		Expression firstInitExpr = forSimpleStmt.getInit().get(0);
+		if (firstInitExpr instanceof VariableDeclarationExpr) {
+			VariableDeclarator declarator = ((VariableDeclarationExpr) firstInitExpr).getVars().get(0);
+			iteratorDeclaration = true;
+			identifier = new NameExpr(declarator.getId().getName());
+			init_expression = declarator.getInit();
+		} else if (firstInitExpr instanceof AssignExpr){
+			identifier = ((AssignExpr)firstInitExpr).getTarget();
+			init_expression = ((AssignExpr)firstInitExpr).getValue();
+		} else {
+			throw new RuntimeException("Pyjama cannot parse the init expression in omp for");
 		}
-		OpenMP_ScheduleClause schClause = this.forNode.getScheduleClause();
-		OpenMP_ScheduleClause.Type schType = null;
-		Expression chunkSize = null;
+		
+		BinaryExpr compareExpr = (BinaryExpr)forSimpleStmt.getCompare();
+		compareOperator = new NameExpr(compareExpr.getOperator().toString());
+		end_expression = compareExpr.getRight();
+		
+		Expression firstUpdateExpr = forSimpleStmt.getUpdate().get(0);
+		if (firstUpdateExpr instanceof UnaryExpr) {
+			UnaryExpr.Operator unaryOpt = ((UnaryExpr)firstUpdateExpr).getOperator();
+			if ((UnaryExpr.Operator.posDecrement == unaryOpt) || (UnaryExpr.Operator.preDecrement == unaryOpt)) {
+				stride = new NameExpr("-1");
+			} else if ((UnaryExpr.Operator.posIncrement == unaryOpt) || (UnaryExpr.Operator.preIncrement == unaryOpt)) {
+				stride = new NameExpr("1");
+			}
+		} else if (firstUpdateExpr instanceof AssignExpr) {
+			Expression strideNum = ((AssignExpr)firstUpdateExpr).getTarget();
+			AssignExpr.Operator binaryOpt = ((AssignExpr)firstUpdateExpr).getOperator();
+			if (AssignExpr.Operator.plus == binaryOpt) {
+				stride = new NameExpr(strideNum.toString());
+			} else if (AssignExpr.Operator.minus == binaryOpt) {
+				stride = new NameExpr("-"+strideNum.toString());
+			}
+		} else  {
+			throw new RuntimeException("Pyjama cannot parse the update expression in omp for");
+		}
 	}
 	
 	private void generateLoop() {
+		
+		OmpScheduleClause schClause = this.ompForConstruct.getScheduleClause();
+		OmpScheduleClause.Type schType;
+		Expression chunkSize = null;
 		
 		if (null != schClause) {
 			schType = schClause.getScheduleType();
@@ -138,7 +179,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			printer.indent();
 			printer.printLn(identifier+" = " + init_expression + " + OMP_local_iterator * (" + stride + ");");
 			//BEGIN user code 
-			this.ompForConstruct.getStatement().accept(visitor, printer);
+			this.forBody.accept(visitor, printer);
 			//END user code
 			//BEGIN lastprivate value return
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");
@@ -155,10 +196,10 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		/*
 		 * Static and default scheduling type
 		 */
-		if(pj.parser.ast.expr.OpenMP_ScheduleClause.Type.Static == schType){
+		if(OmpScheduleClause.Type.Static == schType){
 			
 			if (null == chunkSize) {
-				chunkSize= new NameExpr(0,0,"1");
+				chunkSize= new NameExpr("1");
 			}
 			
 			printer.printLn("int __omp_loop_thread_num = Pyjama.omp_get_thread_num();");
@@ -171,7 +212,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			printer.indent();
 			printer.printLn(identifier+" = " + init_expression + " + OMP_local_iterator * (" + stride + ");");
 			//BEGIN user code 
-			this.forNode.getStatements().get(0).accept(visitor, printer);
+			this.forBody.accept(visitor, printer);
 			//END user code
 			//BEGIN lastprivate value return
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");
@@ -191,10 +232,10 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		/*
 		 * dynamic scheduling type
 		 */
-		if(pj.parser.ast.expr.OpenMP_ScheduleClause.Type.Dynamic == schType){
+		if(OmpScheduleClause.Type.Dynamic == schType){
 			
 			if (null == chunkSize) {
-				chunkSize= new NameExpr(0,0,"1");
+				chunkSize= new NameExpr("1");
 			}
 			
 			printer.printLn("if (0 == Pyjama.omp_get_thread_num()) {");
@@ -211,7 +252,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			printer.indent();
 			printer.printLn(identifier+" = " + init_expression + " + OMP_local_iterator * (" + stride + ");");
 			//BEGIN user code 
-			this.forNode.getStatements().get(0).accept(visitor, printer);
+			this.forBody.accept(visitor, printer);
 			//END user code
 			//BEGIN lastprivate value return
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");
@@ -233,10 +274,10 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		/*
 		 * guided scheduling type
 		 */
-		if(pj.parser.ast.expr.OpenMP_ScheduleClause.Type.Guided == schType){
+		if(OmpScheduleClause.Type.Guided == schType){
 			
 			if (null == chunkSize) {
-				chunkSize= new NameExpr(0,0,"1");
+				chunkSize= new NameExpr("1");
 			}
 						
 			printer.printLn("int OMP_chunkSize = " + chunkSize + ";");

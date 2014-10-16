@@ -9,7 +9,7 @@ import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
-import pj.parser.ast.visitor.dataclausehandler.DataClauseHandler;
+import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 
 /**
@@ -54,18 +54,6 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 	@Override
 	public int getEndLine() {
 		return node.getEndLine();
-	}
-
-	@Override
-	public String get_inputlist() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String get_outputlist() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 //	@Override
@@ -140,11 +128,5 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 	
 	private Statement getUserCode() {
 		return this.node.getStatement();
-	}
-
-	@Override
-	public HashMap<String, Type> autoGetAllAvaliableSymbols() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
