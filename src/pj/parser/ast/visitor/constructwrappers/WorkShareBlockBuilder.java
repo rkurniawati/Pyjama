@@ -161,7 +161,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		
 		printer.printLn("int OMP_iterator = 0;");
 		printer.printLn("int OMP_end = (int)((" + end_expression + ")-(" + init_expression + "))/(" + stride + ");");
-		if (compareOperator.equals("<") || compareOperator.equals(">")) {
+		if (compareOperator.toString().equals("<") || compareOperator.toString().equals(">")) {
 			printer.printLn("if (((" + end_expression + ")-(" + init_expression + "))%(" + stride + ") == 0) {");
 			printer.indent();
 			printer.printLn("OMP_end = OMP_end - 1;");

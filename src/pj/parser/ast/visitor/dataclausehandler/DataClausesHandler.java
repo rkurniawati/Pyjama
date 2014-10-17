@@ -1,6 +1,7 @@
 package pj.parser.ast.visitor.dataclausehandler;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,7 +13,10 @@ import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
 import pj.parser.ast.omp.OmpSharedDataClause;
+import pj.parser.ast.stmt.BlockStmt;
+import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.SourcePrinter;
+import pj.parser.ast.visitor.constructwrappers.GuiCodeClassBuilder;
 import pj.parser.ast.visitor.constructwrappers.ParallelRegionClassBuilder;
 import pj.parser.ast.visitor.constructwrappers.WorkShareBlockBuilder;
 
@@ -379,6 +383,38 @@ public class DataClausesHandler {
 			}
 		}
 	}
+	
+//	public static GuiCodeClassBuilder generateDummyGuiRegionForNoguiRemainingCode(ParallelRegionClassBuilder PRBuilder) {
+//		String returnCode = "";
+//		//check remain statements after current parallel region, if any, wrap it into gui wrapper
+//		String PRCodeString = PRBuilder.parallelConstruct.toString();
+//		PRCodeString = PRCodeString.replaceFirst("//#omp parallel freeguithread", "//#omp freeguithread parallel");
+//		ArrayList<String> currentMethodOrConstructorStmtsStrings = new ArrayList<String>();
+//		for (Statement s: PRBuilder.currentMethodOrConstructorStmts) {
+//			currentMethodOrConstructorStmtsStrings.add(s.toString());
+//		}
+//		int indexOfcurrentPR = currentMethodOrConstructorStmtsStrings.indexOf(PRCodeString);
+//		ArrayList<Statement> GuiStmt = new ArrayList<Statement>();
+////		if (indexOfcurrentPR == currentMethodOrConstructorStmtsStrings.size()-1) {
+////			//if current PR is the last statement of current method's statements, return directively;
+////			return null;
+////		}
+//		GuiCodeClassBuilder currentGuiCode = null;
+//		if (-1 != indexOfcurrentPR) {
+//			for (int i=indexOfcurrentPR+1; i<PRBuilder.currentMethodOrConstructorStmts.size(); i++) {
+//				GuiStmt.add(PRBuilder.currentMethodOrConstructorStmts.get(i));
+//			}
+//			// Create dummy GuiNode
+//			BlockStmt GuiBlock = new BlockStmt(0,0,0,0,GuiStmt);
+//			ArrayList<Statement> dummyStmt = new ArrayList<Statement>();
+//			dummyStmt.add(GuiBlock);
+//			OpenMP_Gui_Construct dummyGuiRegion = new OpenMP_Gui_Construct(PRBuilder.parallelConstruct,dummyStmt);
+//			dummyGuiRegion.setVarScope(PRBuilder.parallelConstruct.getVarScope());
+//			currentGuiCode = new GuiCodeClassBuilder(dummyGuiRegion, PRBuilder.visitor);
+//			currentGuiCode.guiName = "OMP_AfterInvocationOf_" + PRBuilder.className;
+//		}
+//		return currentGuiCode;
+//	}
 	
 	/**************************************************************************/
 	private String formatException(String msg, int line) {

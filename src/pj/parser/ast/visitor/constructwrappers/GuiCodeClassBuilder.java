@@ -1,11 +1,15 @@
 package pj.parser.ast.visitor.constructwrappers;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Map.Entry;
 
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.stmt.Statement;
+import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
@@ -84,18 +88,18 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 	}
 	
 	private void generateClass() {
-		HashMap<String, Type> variablesForGuiCode = DataClausesHandler.getUsedVariablesInWapperCodeBlock(this);
+		HashMap<String, String> variablesForGuiCode = this.getUsedVariablesInWapperCodeBlock();
     	printer.printLn("try {");
     	printer.indent();
     	//////////////////
 		printer.printLn("class "+ this.guiName + " implements Runnable{");
 		printer.indent();
-		DataClausesHandler.printVariablesDefinitionForGuiRegion(variablesForGuiCode, printer);
+		this.printVariablesDefinitionForGuiRegion(variablesForGuiCode);
 		printer.print(this.guiName + "(");
-		DataClausesHandler.printVariableParametersForGuiRegion(variablesForGuiCode, printer);
+		this.printVariableParametersForGuiRegion(variablesForGuiCode);
 		printer.printLn("){");
 		printer.indent();
-		DataClausesHandler.printVariablesInitForGuiRegion(variablesForGuiCode, printer);
+		this.printVariablesInitForGuiRegion(variablesForGuiCode);
 		printer.unindent();
 		printer.printLn("}");
 		printer.printLn("@Override");
@@ -119,7 +123,7 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 			printer.print("SwingUtilities.invokeAndWait(new ");
 		}
     	printer.print(this.guiName + "(");
-    	DataClausesHandler.printVariablesForGuiRegionInvocation(variablesForGuiCode, printer);
+    	this.printVariablesForGuiRegionInvocation(variablesForGuiCode);
     	printer.printLn("));");
        	printer.unindent();
        	printer.printLn("} catch (InvocationTargetException e) {e.printStackTrace();}");
@@ -128,5 +132,49 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 	
 	private Statement getUserCode() {
 		return this.node.getStatement();
+	}
+	/************************Print helper functions**************************/
+	private HashMap<String, String> getUsedVariablesInWapperCodeBlock() {
+		HashMap<String, String> allVariablesDefinationSet = new HashMap<String, String>();
+		Collection<Symbol> symbols = this.node.scope.getAllUsedSymbols();
+		for(Symbol s: symbols) {
+			String varName = s.getName();
+			String varType = s.getSymbolDataType();
+			allVariablesDefinationSet.put(varName, varType);
+		}	
+		return allVariablesDefinationSet;
+	}
+	private void printVariablesDefinitionForGuiRegion(HashMap<String, String> variablesForGuiCode) {
+		for (String varName : variablesForGuiCode.keySet()) {
+			printer.printLn(variablesForGuiCode.get(varName)+" "+varName+";");
+		}
+	}
+	private void printVariableParametersForGuiRegion(HashMap<String, String> variablesForGuiCode) {
+		Iterator iter = variablesForGuiCode.entrySet().iterator();
+		while (iter.hasNext()) {
+			Map.Entry<String, String> entry = (Entry<String, String>) iter.next();
+			String varName = (String) entry.getKey();
+			String varType = entry.getValue();
+			printer.print(varType + " " + varName);
+			if (iter.hasNext()) {
+				printer.print(", ");
+			}
+		}
+	}
+	private void printVariablesInitForGuiRegion(HashMap<String, String> variablesForGuiCode) {
+		for (String varName : variablesForGuiCode.keySet()) {
+			printer.printLn("this."+varName+"="+varName+";");
+		}
+	}
+	private void printVariablesForGuiRegionInvocation(HashMap<String, String> variablesForGuiCode) {
+		Iterator iter = variablesForGuiCode.entrySet().iterator();
+		while (iter.hasNext()) {
+			Map.Entry<String, String> entry = (Entry<String, String>) iter.next();
+			String varName = (String) entry.getKey();
+			printer.print(varName);
+			if (iter.hasNext()) {
+				printer.print(", ");
+			}
+		}
 	}
 }

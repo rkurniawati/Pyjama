@@ -1,11 +1,8 @@
-********Scope Name:myTest*************
+********Scope Name:OmpFor*************
 --------Defined variables--------------
-parallel_ordered
-b
-c
-a
-foo
-main
+---------Used variables--------------
+********Scope Name:OmpFor*************
+--------Defined variables--------------
 ---------Used variables--------------
 ********Scope Name:main*************
 --------Defined variables--------------
@@ -27,9 +24,6 @@ counter
 threadNumber
 array
 ---------Used variables--------------
-d
-a
-frr
 counter
 System
 array
@@ -52,8 +46,20 @@ out
 0
 System
 out
+********Scope Name:OmpParallel*************
+--------Defined variables--------------
+---------Used variables--------------
 ********Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 System
 out
+********Scope Name:myTest*************
+--------Defined variables--------------
+parallel_ordered
+b
+c
+a
+foo
+main
+---------Used variables--------------

@@ -18,25 +18,11 @@ public class myTest {
 		int[] array = new int[threadNumber];
 		int[] counter=new int[1];
 		counter[0]=0;
-		//#omp  parallel sections reduction(frr:a)
-		{
-			//#omp section
-			System.out.println("dfdddddddddd");
-			//#omp section
-			{
-			System.out.println("dfd");
-			}
-			//#omp section
-			{
-				System.out.println("dfd");
-				System.out.println("dfd");
-			}
+		//#omp  parallel for /*shared(threadNumber) */
+		for(int i=0; i<=10; i++) {
+			System.out.println("i="+i+" from thread" + Pyjama.omp_get_thread_num());
 		}
-		//#omp single nowait private(d)
-		{
-			System.out.println("dfd");
-		}
-		System.out.println("dfd");
+		System.out.println("END");
 		return array;
 	}
 

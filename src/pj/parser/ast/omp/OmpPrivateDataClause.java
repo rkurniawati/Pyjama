@@ -80,6 +80,7 @@ public class OmpPrivateDataClause extends OmpDataClause{
 		HashMap<String, String> varTypes = new HashMap<String, String>();
 		ScopeInfo scope = n.scope;
 		LinkedList<Symbol> symbols = scope.getAllReachableSymbols();
+
 		for (Expression v: this.argumentSet) {
 			String varName = v.toString();
 			for (Symbol s: symbols) {

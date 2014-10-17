@@ -102,13 +102,13 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		
 		DataClausesHandler.processDataClausesBeforePRClassInvocation(currentPRClass, printer);
 		
-		printer.printLn(currentPRClass.className + " " + currentPRClass.className + "_in = new "+ currentPRClass.className + "(" + thread_number +numThreadsClause+ "," + new_icv + "," + inputlist + "," + outputlist + ");", -1);
+		printer.printLn(currentPRClass.className + " " + currentPRClass.className + "_in = new "+ currentPRClass.className + "(" + thread_number +numThreadsClause+ "," + new_icv + "," + inputlist + "," + outputlist + ");");
 		printer.printLn(currentPRClass.className + "_in" + ".runParallelCode();");
 		
 		DataClausesHandler.processDataClausesAfterPRClassInvocation(currentPRClass, printer);
 		
-		printer.printLn("PjRuntime.recoverParentICV(" + previous_icv + ");", -1);
-		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- END */", -1);
+		printer.printLn("PjRuntime.recoverParentICV(" + previous_icv + ");");
+		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- END */");
     }
     
     public void visit(OmpParallelForConstruct n, SourcePrinter printer){
@@ -133,7 +133,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	//Print Work Share Region
 		printer.printLn(currentWSBlock.getSource());
 		
-		printer.printLn("PjRuntime.setBarrier();", -1);
+		printer.printLn("PjRuntime.setBarrier();");
 	
     	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- END */");
     }
@@ -197,6 +197,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     }
 
     public void visit(OmpGuiConstruct n, SourcePrinter printer){
+    	//get current OmpParallelConstruct's scopeinfo from symbolTable
+    	n.scope = this.symbolTable.getScopeOfNode(n);
+    	
     	int uniqueGuiCodeID = nextGuiCodeID++;
 
     	GuiCodeClassBuilder currentGuiCode = new GuiCodeClassBuilder(n, this);
@@ -207,11 +210,11 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.indent();
     	n.getStatement().accept(this, printer);
     	printer.unindent();
-    	printer.printLn("}", -1);
-    	printer.printLn("else {", -1);
+    	printer.printLn("}");
+    	printer.printLn("else {");
     	printer.indent();
     	printer.printLn(currentGuiCode.getSource());
-    	printer.printLn("}", -1);
+    	printer.printLn("}");
     	printer.printLn("//#END GUI execution block");
     }
     
@@ -276,15 +279,15 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	            for (ImportDeclaration i : n.getImports()) {
 	                i.accept(this, this.CodePrinter);
 	            }
-	            this.CodePrinter.printLn(-1);
+	            this.CodePrinter.printLn();
 	        }
-	        this.CodePrinter.printLn(this.printRuntimeImports(), -1);
+	        this.CodePrinter.printLn(this.printRuntimeImports());
 	        if (n.getTypes() != null) {
 	            for (Iterator<TypeDeclaration> i = n.getTypes().iterator(); i.hasNext();) {
 	                i.next().accept(this, this.CodePrinter);
-	                this.CodePrinter.printLn(-1);
+	                this.CodePrinter.printLn();
 	                if (i.hasNext()) {
-	                	this.CodePrinter.printLn(-1);
+	                	this.CodePrinter.printLn();
 	                }
 	            }
 	        }
@@ -294,8 +297,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        printAnnotations(n.getAnnotations(), printer);
 	        printer.print("package ");
 	        n.getName().accept(this, printer);
-	        printer.printLn(";", -1);
-	        printer.printLn(-1);
+	        printer.printLn(";");
+	        printer.printLn();
 	    }
 
 	    public void visit(NameExpr n, SourcePrinter printer) {
@@ -325,7 +328,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        if (n.isAsterisk()) {
 	            printer.print(".*");
 	        }
-	        printer.printLn(";",-1);
+	        printer.printLn(";");
 	    }
 
 	    public void visit(ClassOrInterfaceDeclaration n, SourcePrinter printer) {
@@ -365,7 +368,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	            }
 	        }
 
-	        printer.printLn(" {",-1);
+	        printer.printLn(" {");
 	        printer.indent();
 	        if (n.getMembers() != null) {
 	            printMembers(n.getMembers(), printer);
@@ -383,7 +386,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	    public void visit(JavadocComment n, SourcePrinter printer) {
 	        printer.print("/**");
 	        printer.print(n.getContent());
-	        printer.printLn("*/", -1);
+	        printer.printLn("*/");
 	    }
 
 	    public void visit(ClassOrInterfaceType n, SourcePrinter printer) {
@@ -777,7 +780,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        printArguments(n.getArgs(), printer);
 
 	        if (n.getAnonymousClassBody() != null) {
-	            printer.printLn(" {", -1);
+	            printer.printLn(" {");
 	            printer.indent();
 	            printMembers(n.getAnonymousClassBody(), printer);
 	            printer.unindent();
@@ -923,17 +926,17 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		        printer.print(" ");
 				printer.print("{");
 				n.getBody().accept(this, printer);
-				printer.printLn(-1);
+				printer.printLn();
 				//XING add -- shutdown Pyjama runtime at the end of main method
 				if (n.getName().equals("main")) {
-					printer.printLn(-1);
+					printer.printLn();
 					printer.printLn("//Pyjama runtime shutdown at the end of main method");
 					printer.printLn("PjRuntime.shutdown();");
 				}
 				printer.print("}");
 	        }
 	        ///Xing added to print Auxilary parallel region class if current method have PR region.
-			printer.printLn(this.PrinterForPRClass.getSource(), -1);
+			printer.printLn(this.PrinterForPRClass.getSource());
 			this.PrinterForPRClass.clear();
 //			//BEGIN print workshare method if any At 2014.8.3 Convert //#omp for directly to statements, no more need method build
 //			printer.printLn(this.PrinterForWSMethod.getSource(), -1);
@@ -1009,12 +1012,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	    }
 
 	    public void visit(BlockStmt n, SourcePrinter printer) {
-	        printer.printLn("{", -1);
+	        printer.printLn("{");
 	        if (n.getStmts() != null) {
 	            printer.indent();
 	            for (Statement s : n.getStmts()) {
 	                s.accept(this, printer);
-	                printer.printLn(-1);
+	                printer.printLn();
 	            }
 	            printer.unindent();
 	        }
@@ -1040,7 +1043,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	    public void visit(SwitchStmt n, SourcePrinter printer) {
 	        printer.print("switch(");
 	        n.getSelector().accept(this, printer);
-	        printer.printLn(") {", -1);
+	        printer.printLn(") {");
 	        if (n.getEntries() != null) {
 	            printer.indent();
 	            for (SwitchEntryStmt e : n.getEntries()) {
@@ -1060,12 +1063,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        } else {
 	            printer.print("default:");
 	        }
-	        printer.printLn(-1);
+	        printer.printLn();
 	        printer.indent();
 	        if (n.getStmts() != null) {
 	            for (Statement s : n.getStmts()) {
 	                s.accept(this, printer);
-	                printer.printLn(-1);
+	                printer.printLn();
 	            }
 	        }
 	        printer.unindent();
@@ -1108,10 +1111,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	            }
 	        }
 
-	        printer.printLn(" {", -1);
+	        printer.printLn(" {");
 	        printer.indent();
 	        if (n.getEntries() != null) {
-	            printer.printLn(-1);
+	            printer.printLn();
 	            for (Iterator<EnumConstantDeclaration> i = n.getEntries().iterator(); i.hasNext();) {
 	                EnumConstantDeclaration e = i.next();
 	                e.accept(this, printer);
@@ -1121,11 +1124,11 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	            }
 	        }
 	        if (n.getMembers() != null) {
-	            printer.printLn(";", -1);
+	            printer.printLn(";");
 	            printMembers(n.getMembers(), printer);
 	        } else {
 	            if (n.getEntries() != null) {
-	                printer.printLn(-1);
+	                printer.printLn();
 	            }
 	        }
 	        printer.unindent();
@@ -1142,11 +1145,11 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        }
 
 	        if (n.getClassBody() != null) {
-	            printer.printLn(" {", -1);
+	            printer.printLn(" {");
 	            printer.indent();
 	            printMembers(n.getClassBody(), printer);
 	            printer.unindent();
-	            printer.printLn("}", -1);
+	            printer.printLn("}");
 	        }
 	    }
 
@@ -1278,7 +1281,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
 	        printer.print("@interface ");
 	        printer.print(n.getName());
-	        printer.printLn(" {",-1);
+	        printer.printLn(" {");
 	        printer.indent();
 	        if (n.getMembers() != null) {
 	            printMembers(n.getMembers(), printer);
@@ -1340,13 +1343,13 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
 	    public void visit(LineComment n, SourcePrinter printer) {
 	        printer.print("//");
-	        printer.printLn(n.getContent(), -1);
+	        printer.printLn(n.getContent());
 	    }
 
 	    public void visit(BlockComment n, SourcePrinter printer) {
 	        printer.print("/*");
 	        printer.print(n.getContent());
-	        printer.printLn("*/", -1);
+	        printer.printLn("*/");
 	    }
 	
 	////////////////////PRIVATE METHODS   BEGIN///////////////////////////////
@@ -1388,9 +1391,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
     private void printMembers(List<BodyDeclaration> members, SourcePrinter printer) {
         for (BodyDeclaration member : members) {
-            printer.printLn(-1);
+            printer.printLn();
             member.accept(this, printer);
-            printer.printLn(-1);
+            printer.printLn();
         }
     }
 
@@ -1398,7 +1401,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
         if (annotations != null) {
             for (AnnotationExpr a : annotations) {
                 a.accept(this, printer);
-                printer.printLn(-1);
+                printer.printLn();
             }
         }
     }

@@ -14,6 +14,8 @@ import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.FieldAccessExpr;
 import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
+import pj.parser.ast.omp.OmpForConstruct;
+import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.CatchClause;
 import pj.parser.ast.stmt.ForStmt;
@@ -251,7 +253,7 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
         return null;
 
     }
-	/////////////////////////////////////////////////////////////////////////////
+	////////////////////Symbol visiting//////////////////////////////
 	public String visit(NameExpr n, Object arg) {
 		String varName = n.getName();
 		Symbol symbol = new Symbol(varName);
@@ -332,5 +334,23 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		return null;
 	}
 	
+	////////////////////////OpenMP visiting/////////////////////////////////////////
+	
+	public String visit(OmpParallelConstruct n, Object arg) {
+		this.symbolTable.enterNewScope(n, "OmpParallel", ScopeInfo.Type.OpenMPConstructScope);
+		if (n.getBody() != null) {
+            n.getBody().accept(this, arg);
+        }
+        this.symbolTable.exitScope();
+        return null;
+	}
+	public String visit(OmpForConstruct n, Object arg) {
+		this.symbolTable.enterNewScope(n, "OmpFor", ScopeInfo.Type.OpenMPConstructScope);
+		if (n.getForStmt() != null) {
+			n.getForStmt().accept(this, arg);
+        }
+        this.symbolTable.exitScope();
+        return null;
+	}
 
 }
