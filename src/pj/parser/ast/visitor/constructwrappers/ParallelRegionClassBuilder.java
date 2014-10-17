@@ -215,7 +215,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("/****User Code END***/");
 		//BEGIN reduction procedure
 		printer.printLn("//BEGIN reduction procedure");
-		DataClausesHandler.reductionProcedure(this, printer);
+		//DataClausesHandler.reduceProcessForReductionVariablesInPRClass(this, printer);
 		printer.printLn("//END reduction procedure");
 		//END reduction procedure
 		printer.printLn("setBarrier();");

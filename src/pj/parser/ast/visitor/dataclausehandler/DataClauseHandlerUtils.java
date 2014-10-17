@@ -226,4 +226,23 @@ public class DataClauseHandlerUtils {
 		return type;
 	}
 	
+	public static boolean isPrimitiveReductionOperator(String operator) {
+		boolean isprimitive = false;
+		switch (operator) {
+		case "+":
+		case "-":
+		case "*":
+		case "&":
+		case "|":
+		case "^":
+		case "&&":
+		case "||":
+			isprimitive = true;
+			break;
+		default:
+			break;
+		}
+		return isprimitive;
+	}
+	
 }

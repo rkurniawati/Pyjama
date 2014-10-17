@@ -84,18 +84,18 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 	}
 	
 	private void generateClass() {
-		HashMap<String, Type> variablesForGuiCode = DataClauseHandler.getUsedVariablesInWapperCodeBlock(this);
+		HashMap<String, Type> variablesForGuiCode = DataClausesHandler.getUsedVariablesInWapperCodeBlock(this);
     	printer.printLn("try {");
     	printer.indent();
     	//////////////////
 		printer.printLn("class "+ this.guiName + " implements Runnable{");
 		printer.indent();
-		DataClauseHandler.printVariablesDefinitionForGuiRegion(variablesForGuiCode, printer);
+		DataClausesHandler.printVariablesDefinitionForGuiRegion(variablesForGuiCode, printer);
 		printer.print(this.guiName + "(");
-		DataClauseHandler.printVariableParametersForGuiRegion(variablesForGuiCode, printer);
+		DataClausesHandler.printVariableParametersForGuiRegion(variablesForGuiCode, printer);
 		printer.printLn("){");
 		printer.indent();
-		DataClauseHandler.printVariablesInitForGuiRegion(variablesForGuiCode, printer);
+		DataClausesHandler.printVariablesInitForGuiRegion(variablesForGuiCode, printer);
 		printer.unindent();
 		printer.printLn("}");
 		printer.printLn("@Override");
@@ -119,7 +119,7 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 			printer.print("SwingUtilities.invokeAndWait(new ");
 		}
     	printer.print(this.guiName + "(");
-    	DataClauseHandler.printVariablesForGuiRegionInvocation(variablesForGuiCode, printer);
+    	DataClausesHandler.printVariablesForGuiRegionInvocation(variablesForGuiCode, printer);
     	printer.printLn("));");
        	printer.unindent();
        	printer.printLn("} catch (InvocationTargetException e) {e.printStackTrace();}");

@@ -9,6 +9,7 @@ import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpLastprivateDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
+import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.visitor.SourcePrinter;
@@ -179,23 +180,23 @@ public class DataClausesHandler {
 		}
 	}
 	
-	public static void reduceProcessForReductionVariablesInPRClass(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
-		OmpParallelConstruct parallelConstruct = parallelWrapper.parallelConstruct;
-		List<OmpDataClause> dataClauseList = parallelWrapper.parallelConstruct.getDataClauseList();
-		if (null == dataClauseList) {
-			return;
-		} else {
-			for (OmpDataClause dataClause: dataClauseList) {
-				if (dataClause instanceof OmpReductionDataClause) {
-					HashMap<String, String> sharedArgs = ((OmpSharedDataClause)dataClause).getArgsTypes(parallelConstruct);
-					for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
-						String varName = varExpression.toString();
-						String operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varName).toString();
-					}
-				}
-			}
-		}
-	}
+//	public static void reduceProcessForReductionVariablesInPRClass(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
+//		OmpParallelConstruct parallelConstruct = parallelWrapper.parallelConstruct;
+//		List<OmpDataClause> dataClauseList = parallelWrapper.parallelConstruct.getDataClauseList();
+//		if (null == dataClauseList) {
+//			return;
+//		} else {
+//			for (OmpDataClause dataClause: dataClauseList) {
+//				if (dataClause instanceof OmpReductionDataClause) {
+//					HashMap<String, String> sharedArgs = ((OmpReductionDataClause)dataClause).getArgsTypes(parallelConstruct);
+//					for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
+//						String varName = varExpression.toString();
+//						String operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varName).toString();
+//					}
+//				}
+//			}
+//		}
+//	}
 	
 	public static HashMap<String, String> collectVariableNamesInWorksharingDataClauses(WorkShareBlockBuilder worksharingWrapper) {
 		HashMap<String, String> privateVariableSet = new HashMap<String, String>();
@@ -234,9 +235,15 @@ public class DataClausesHandler {
 		}
 	}
 	
+	
+	/*
+	 * this method is used for redeclaration and initilisation of private/lastprivate/reduction variable
+	 * for openMP worksharing construct
+	 */
 	public static void redeclarePrivateVariablesForWorksharingBlock(WorkShareBlockBuilder worksharingWrapper, SourcePrinter printer) {
 
 		OmpForConstruct forConstruct = worksharingWrapper.getForConstruct();
+		final String RENAMING_PREFIX  = WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX+ Integer.toString(worksharingWrapper.getID());
 		List<OmpDataClause> dataClauseList = forConstruct.getDataClauseList();
 		if (null == dataClauseList) {
 			return;
@@ -246,19 +253,36 @@ public class DataClausesHandler {
 			switch (dataClause.DataClauseType()) {
 			
 			case Private:
-			case Lastprivate:
-				HashMap<String, String> sharedArgs = ((OmpSharedDataClause)dataClause).getArgsTypes(forConstruct);
+				HashMap<String, String> privateArgs = ((OmpPrivateDataClause)dataClause).getArgsTypes(forConstruct);
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
-					String varType = sharedArgs.get(varName);
+					String varType = privateArgs.get(varName);
+					worksharingWrapper.varSubstitutionSet.put(varName, RENAMING_PREFIX + varName);
 					if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-						printer.printLn(varType+ " " + WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX + varName + " = " + varName + ";");
+						printer.printLn(varType+ " " + RENAMING_PREFIX + varName + " = " + varName + ";");
 						//e.g. int OMP_WoRkShArInG_PRIVATE_a = a;
 					}
 					else {
-						printer.printLn(varType+ " " + WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX + varName + " = new "
+						printer.printLn(varType+ " " + RENAMING_PREFIX + varName + " = new "
 								+ varType + "(" + varName + ");");
 						//e.g. Point OMP_WoRkShArInG_PRIVATE_p = new Point(p);
+					}
+				}
+				break;
+			case Lastprivate:
+				HashMap<String, String> lastprivateArgs = ((OmpPrivateDataClause)dataClause).getArgsTypes(forConstruct);
+				for(Expression varExpression: dataClause.getArgumentSet()) {
+					String varName = varExpression.toString();
+					String varType = lastprivateArgs.get(varName);
+					worksharingWrapper.varSubstitutionSet.put(varName, RENAMING_PREFIX + varName);
+					if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
+						printer.printLn(varType+ " " + RENAMING_PREFIX + varName + " = " + DataClauseHandlerUtils.getDefaultValuesForPrimitiveType(varType) + ";");
+						//e.g. int OMP_WoRkShArInG_PRIVATE_a = 0;
+					}
+					else {
+						printer.printLn(varType+ " " + RENAMING_PREFIX + varName + " = new "
+								+ varType + "();");
+						//e.g. Point OMP_WoRkShArInG_PRIVATE_p = new Point();
 					}
 				}
 				break;
@@ -268,12 +292,13 @@ public class DataClausesHandler {
 				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
 					String varName = varExpression.toString();
 					String varType = reductionArgs.get(varName);
+					worksharingWrapper.varSubstitutionSet.put(varName, RENAMING_PREFIX + varName);
 					if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-						printer.printLn(varType+ " " + WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX + varName + " = " + varName + ";");
+						printer.printLn(varType+ " " + RENAMING_PREFIX + varName + " = " + varName + ";");
 						//e.g. int OMP_WoRkShArInG_PRIVATE_a = a;
 					}
 					else {
-						printer.printLn(varType+ " " + WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX + varName + " = new "
+						printer.printLn(varType+ " " + RENAMING_PREFIX + varName + " = new "
 								+ varType + "(" + varName + ");");
 						//e.g. Point OMP_WoRkShArInG_PRIVATE_p = new Point(p);
 					}
@@ -290,6 +315,71 @@ public class DataClausesHandler {
 		}
 
 	}
+	
+	public static void updateLastprivateForWorksharingBlock(WorkShareBlockBuilder worksharingWrapper, SourcePrinter printer) {
+		OmpForConstruct forConstruct = worksharingWrapper.getForConstruct();
+		final String RENAMING_PREFIX  = WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX+ Integer.toString(worksharingWrapper.getID());
+		List<OmpDataClause> dataClauseList = forConstruct.getDataClauseList();
+		if (null == dataClauseList) {
+			return;
+		}
+		
+		for (OmpDataClause dataClause: dataClauseList) {
+			switch (dataClause.DataClauseType()) {
+			
+			case Lastprivate:
+				for(Expression varExpression: dataClause.getArgumentSet()) {
+					String varName = varExpression.toString();
+					printer.printLn(varName + " = " + RENAMING_PREFIX + varName + ";");
+					//e.g. a = OMP_WoRkShArInG_PRIVATE_a;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+	public static void reductionForWorksharingBlock(WorkShareBlockBuilder worksharingWrapper, SourcePrinter printer) {
+		OmpForConstruct forConstruct = worksharingWrapper.getForConstruct();
+		final String RENAMING_PREFIX  = WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX+ Integer.toString(worksharingWrapper.getID());
+		List<OmpDataClause> dataClauseList = forConstruct.getDataClauseList();
+		if (null == dataClauseList) {
+			return;
+		}
+		
+		for (OmpDataClause dataClause: dataClauseList) {
+			switch (dataClause.DataClauseType()) {
+			
+			case Reduction:
+				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
+					String varName = varExpression.toString();
+					Expression operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varExpression);
+					String reductionOpr = operator.toString();
+					if (DataClauseHandlerUtils.isPrimitiveReductionOperator(reductionOpr)) {
+						/*
+						 * primitive type reduction operation
+						 */
+						printer.printLn(varName + "=" + varName + reductionOpr + RENAMING_PREFIX + varName + ";");
+						//e.g. i = i + OMP_WoRkShArInG_PRIVATE_i;
+					}
+					else {
+						/*
+						 * user defined reduction operation
+						 */
+						String userDefinedReduction = reductionOpr;
+						printer.printLn(varName + "=" + userDefinedReduction + "(" + varName + ", " + RENAMING_PREFIX + varName + ");");
+						//e.g. point = reductionFunction(point, OMP_WoRkShArInG_PRIVATE_point);
+					}		
+					
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
 	/**************************************************************************/
 	private String formatException(String msg, int line) {
 		return "\n\n\t" + "-------------------------------\n\t" + ": " + msg

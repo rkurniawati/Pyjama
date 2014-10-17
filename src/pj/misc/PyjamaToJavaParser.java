@@ -5,7 +5,10 @@ import java.io.*;
 //import pt.compiler.ParaTaskParser;
 import pj.parser.ASTParser;
 import pj.parser.ast.CompilationUnit;
+import pj.parser.ast.symbolscope.SymbolTable;
 import pj.parser.ast.visitor.DumpVisitor;
+import pj.parser.ast.visitor.PyjamaToJavaVisitor;
+import pj.parser.ast.visitor.SymbolScopingVisitor;
 
  
 /**
@@ -56,19 +59,24 @@ public class PyjamaToJavaParser {
 			return;
 		}
 		InputStream is = new FileInputStream(file);
-		
 
-
-		showMsg("Processing 1st Phase: Parse");
-		// we form the initial AST here
+		showMsg("Processing 1st Phase: Parse and Normalisation");
+		// we form the initial AST here, with normalisation when necessary
 		CompilationUnit ast = ASTParser.parse(is);
-		showMsg("Processing 2st Phase: Normalisation print");
-
-		DumpVisitor translationVisitor = new DumpVisitor();
-		ast.accept(translationVisitor, null);
-		String paraTaskCode = translationVisitor.getSource();
+		
+		showMsg("Processing 2nd Phase: Symbol scoping visiting");
+		SymbolScopingVisitor symbolVisitor = new SymbolScopingVisitor();
+		ast.accept(symbolVisitor, null);
+		SymbolTable symbolTable = symbolVisitor.getSymbolTable();
+		
+		showMsg("Processing 3rd Phase: Pyjama code translation visiting");
+		PyjamaToJavaVisitor pyjamaVisitor = new PyjamaToJavaVisitor(symbolTable);
+		ast.accept(pyjamaVisitor, null);
+		
+		showMsg("Processing 4th Phase: Generating java code");
+		String targetCode = pyjamaVisitor.getSource();
 		File paraTaskFile = new File(file.getParent(), file.getName().substring(0,file.getName().lastIndexOf("."))+".java"); 
-		writeToFile(paraTaskFile, paraTaskCode);
+		writeToFile(paraTaskFile, targetCode);
 		showMsg("-----------------------------------------------------");
 		showMsg("Processing Done");
 	}

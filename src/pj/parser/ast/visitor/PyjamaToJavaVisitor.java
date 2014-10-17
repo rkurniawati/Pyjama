@@ -126,7 +126,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	
     	int uniqueWorkShareRegionID = nextWorkShareID++;
     	
-		WorkShareBlockBuilder currentWSBlock = new WorkShareBlockBuilder(n, this);
+		WorkShareBlockBuilder currentWSBlock = new WorkShareBlockBuilder(n, this, uniqueWorkShareRegionID);
 		
     	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- START */");
 		

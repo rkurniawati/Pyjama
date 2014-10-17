@@ -1,15 +1,13 @@
 package pj.parser.ast.visitor;
 
-
-import java.util.Hashtable;
-
+import java.util.HashMap;
 import pj.parser.ast.expr.NameExpr;
 
 public class SymbolSubstitutionVisitor extends VoidVisitorAdapter<Object>{
 	
-	private Hashtable<String, String> symbolSubstitutionDictionary;
+	private HashMap<String, String> symbolSubstitutionDictionary;
 	
-	SymbolSubstitutionVisitor(Hashtable<String, String> dictionary) {
+	public SymbolSubstitutionVisitor(HashMap<String, String> dictionary) {
 		this.symbolSubstitutionDictionary = dictionary;
 	}
 	

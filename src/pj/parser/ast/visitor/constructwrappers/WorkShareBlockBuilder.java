@@ -11,16 +11,9 @@ package pj.parser.ast.visitor.constructwrappers;
  * @author Xing Fan
  * @version 0.9
  */
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import pj.PjRuntime;
-import pj.Pyjama;
+import java.util.HashMap;
 import pj.parser.ast.body.VariableDeclarator;
-import pj.parser.ast.body.VariableDeclaratorId;
 import pj.parser.ast.expr.AssignExpr;
 import pj.parser.ast.expr.BinaryExpr;
 import pj.parser.ast.expr.Expression;
@@ -32,9 +25,10 @@ import pj.parser.ast.omp.OmpScheduleClause;
 import pj.parser.ast.stmt.ForStmt;
 import pj.parser.ast.stmt.ForeachStmt;
 import pj.parser.ast.stmt.Statement;
-import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
+import pj.parser.ast.visitor.SymbolSubstitutionVisitor;
+import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 
 
@@ -44,7 +38,10 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	private PyjamaToJavaVisitor visitor;
 	private OmpForConstruct ompForConstruct;
 	
-	private boolean iteratorDeclaration =false; // whether identifier is declared in for loop
+	private int workshareId;
+	public HashMap<String, String> varSubstitutionSet = new HashMap<String, String>();
+	
+	private boolean iteratorDeclaration = false; // whether identifier is declared in for loop
 	private Expression identifier = null; //the flag variable name in for statement
 	private Expression init_expression = null; //the starting number of the iterations
 	private Expression end_expression = null; //the ending number of the iterations
@@ -53,14 +50,20 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	
 	private Statement forBody = null;
 		
-	public WorkShareBlockBuilder(OmpForConstruct forNode, PyjamaToJavaVisitor visitor) {	
+	public WorkShareBlockBuilder(OmpForConstruct forNode, PyjamaToJavaVisitor visitor, int id) {	
 		this.ompForConstruct = forNode;
 		this.visitor = visitor;
 		this.printer = new SourcePrinter();
+		
+		this.workshareId = id;
 	}
 	
 	public OmpForConstruct getForConstruct() {
 		return this.ompForConstruct;
+	}
+	
+	public int getID() {
+		return this.workshareId;
 	}
 	
 	
@@ -134,10 +137,17 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		}
 	}
 	
+	private void varSubstitution() {
+		SymbolSubstitutionVisitor substitutionVisitor = new SymbolSubstitutionVisitor(this.varSubstitutionSet);
+		this.forBody.accept(substitutionVisitor, null);
+	}
+	
 	private void generateLoop() {
 		
+		this.varSubstitution();
+		
 		OmpScheduleClause schClause = this.ompForConstruct.getScheduleClause();
-		OmpScheduleClause.Type schType;
+		OmpScheduleClause.Type schType = null;
 		Expression chunkSize = null;
 		
 		if (null != schClause) {
@@ -146,6 +156,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 				chunkSize = schClause.getChunkSize();
 			}
 		}
+		
 		printer.printLn((iteratorDeclaration?"int ":"")+identifier+"=0;");
 		
 		printer.printLn("int OMP_iterator = 0;");
@@ -185,7 +196,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");
 			printer.indent();
 			printer.printLn("//BEGIN lastprivate variables value set");
-			DataClauseHandler.updateOutputlistForLastprivateVariables(this, printer);
+			DataClausesHandler.updateLastprivateForWorksharingBlock(this, printer);
 			printer.printLn("//END lastprivate variables value set");
 			printer.unindent();
 			printer.printLn("}");
@@ -218,7 +229,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");
 			printer.indent();
 			printer.printLn("//BEGIN lastprivate variables value set");
-			DataClauseHandler.updateOutputlistForLastprivateVariables(this, printer);
+			DataClausesHandler.updateLastprivateForWorksharingBlock(this, printer);
 			printer.printLn("//END lastprivate variables value set");
 			printer.unindent();
 			printer.printLn("}");
@@ -258,7 +269,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");
 			printer.indent();
 			printer.printLn("//BEGIN lastprivate variables value set");
-			DataClauseHandler.updateOutputlistForLastprivateVariables(this, printer);
+			DataClausesHandler.updateLastprivateForWorksharingBlock(this, printer);
 			printer.printLn("//END lastprivate variables value set");
 			printer.unindent();
 			printer.printLn("}");
@@ -292,13 +303,13 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			printer.indent();
 			printer.printLn(identifier+" = " + init_expression + " + OMP_local_iterator * (" + stride + ");");
 			//BEGIN user code 
-			this.ompForConstruct.getForStmt().g.accept(visitor, printer);
+			this.forBody.accept(visitor, printer);
 			//END user code
 			//BEGIN lastprivate value return
 			printer.printLn("if (OMP_end == OMP_local_iterator) {");
 			printer.indent();
 			printer.printLn("//BEGIN lastprivate variables value set");
-			DataClauseHandler.updateOutputlistForLastprivateVariables(this, printer);
+			DataClausesHandler.updateLastprivateForWorksharingBlock(this, printer);
 			printer.printLn("//END lastprivate variables value set");
 			printer.unindent();
 			printer.printLn("}");
@@ -321,7 +332,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		printer.indent();
 		/////////////////BEGIN parallel worksharing code conversion///////////////////
 		printer.printLn("//#BEGIN firstprivate lastprivate reduction variables defined and initialized here");
-		DataClausesHandler.redeclareFirstprivateReductionLastPrivateVariablesForWorksharing(this, printer);
+		DataClausesHandler.redeclarePrivateVariablesForWorksharingBlock(this, printer);
 		printer.printLn("//#set implicit barrier here, otherwise unexpected initial value happens");
 		printer.printLn("PjRuntime.setBarrier();");
 		printer.printLn("//#END firstprivate lastprivate reduction variables defined and initialized here");
