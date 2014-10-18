@@ -1,0 +1,37 @@
+10
+
+dir
+6001
+https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/jUnitTestSuits/runningTimeAndStabilityTest
+https://svn.ece.auckland.ac.nz/svn/taschto
+
+
+
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+08b7a59c-0210-0410-8289-8f00336d13cc
+
+loopFor
+dir
+
+parallel
+dir
+
+schedule
+dir
+

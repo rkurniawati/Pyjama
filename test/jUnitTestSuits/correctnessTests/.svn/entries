@@ -1,0 +1,76 @@
+10
+
+dir
+6001
+https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/jUnitTestSuits/correctnessTests
+https://svn.ece.auckland.ac.nz/svn/taschto
+
+
+
+2014-09-24T23:25:52.180703Z
+5933
+wke918
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+08b7a59c-0210-0410-8289-8f00336d13cc
+
+shared
+dir
+
+atomic
+dir
+
+libraries
+dir
+
+freeguiThread
+dir
+
+loopFor
+dir
+
+flush
+dir
+
+single
+dir
+
+firstPrivate
+dir
+
+ordered
+dir
+
+barrier
+dir
+
+sections
+dir
+
+critical
+dir
+
+master
+dir
+
+parallel
+dir
+
+reduction
+dir
+
+schedule
+dir
+

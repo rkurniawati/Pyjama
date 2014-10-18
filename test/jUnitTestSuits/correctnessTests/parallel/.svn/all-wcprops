@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/parallel
+END
+Parallel_Group1_corrTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/parallel/Parallel_Group1_corrTest.java
+END
+Parallel_Group2_corrTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/parallel/Parallel_Group2_corrTest.java
+END
+Parallel_Group3_corrTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/parallel/Parallel_Group3_corrTest.java
+END

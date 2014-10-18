@@ -1,0 +1,25 @@
+package PyjamaCode.TestingComplex;
+import pj.*;
+
+public class complex_positive_test2{
+	private int[] a;
+	public int[] addIndex(int[] a){
+		int i;
+		//#omp for
+		for(i=0;i<a.length;i++){
+			a[i]=a[i]+i;
+		}
+		return a;
+	}
+
+	public int[] complex_test2(int threadNumber){
+		Pyjama.omp_set_num_threads(threadNumber);
+		a=new int[10];
+		//#omp parallel for
+		for(int i=0;i<a.length;i++)
+			a[i]=i;
+		//#omp parallel
+		int[] b=addIndex(a);
+		return b;
+	}
+}

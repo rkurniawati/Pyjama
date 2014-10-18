@@ -1,0 +1,21 @@
+package PyjamaCode.TestingClauses.Private;
+
+import pj.Pyjama;
+
+public class private_positive_test1{
+	/**
+	 *  a private copy is an uninitialized variable by the same name and same type as the original variable;
+	 *  i in parallel region is a new instance of i;
+	 * */
+	public int parallel_private(int threadNumber){
+		Pyjama.omp_set_num_threads(threadNumber);
+		
+		int i=-1;
+		//#omp parallel private(i) 
+		{
+			i++;
+		}
+		return i;
+	}
+	
+}

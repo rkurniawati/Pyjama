@@ -1,0 +1,61 @@
+10
+
+dir
+6001
+https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/PyjamaCode/TestingDirectives
+https://svn.ece.auckland.ac.nz/svn/taschto
+
+
+
+2014-09-24T23:25:52.180703Z
+5933
+wke918
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+08b7a59c-0210-0410-8289-8f00336d13cc
+
+Master
+dir
+
+Atomic
+dir
+
+Parallel
+dir
+
+FreeguiThread
+dir
+
+LoopFor
+dir
+
+Flush
+dir
+
+Single
+dir
+
+Ordered
+dir
+
+Barrier
+dir
+
+Sections
+dir
+
+Critical
+dir
+

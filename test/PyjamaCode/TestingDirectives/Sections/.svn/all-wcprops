@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Sections
+END
+section_negative_test1.pj
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Sections/section_negative_test1.pj
+END
+section_positive_test1.pj
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Sections/section_positive_test1.pj
+END
+section_positive_test2.pj
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Sections/section_positive_test2.pj
+END
+section_RT.pj
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Sections/section_RT.pj
+END
+section_positive_test1.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Sections/section_positive_test1.java
+END
+section_positive_test2.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Sections/section_positive_test2.java
+END
