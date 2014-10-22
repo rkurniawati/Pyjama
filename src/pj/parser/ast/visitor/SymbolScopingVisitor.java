@@ -13,8 +13,10 @@ import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.FieldAccessExpr;
 import pj.parser.ast.expr.NameExpr;
+import pj.parser.ast.expr.ObjectCreationExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpForConstruct;
+import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.CatchClause;
@@ -51,7 +53,9 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 	public void printSymbolTable() {
 		this.symbolTable.printOut();
 	}
-
+	////////////////////////Normal Scope visitings//////////////////////////////////
+	private byte scopeVisiting;
+	
 	public String visit(BlockStmt n, Object arg) {
 		this.symbolTable.enterNewScope(n, "normalBlock", ScopeInfo.Type.StatementScope);
 		if (n.getStmts() != null) {
@@ -258,6 +262,39 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
         return null;
 
     }
+    
+    public String visit(ObjectCreationExpr n, Object arg) {
+    	/*
+    	 * The main purpose of overriding this visit function is
+    	 * take anonymous class body into scopeTable 
+    	 */
+    	 System.out.println("QQQQQQQQQQQQQQQQQQQQQQ");
+    	if (n.getScope() != null) {
+            n.getScope().accept(this, arg);
+        }
+        if (n.getTypeArgs() != null) {
+            for (Type t : n.getTypeArgs()) {
+                t.accept(this, arg);
+            }
+        }
+        n.getType().accept(this, arg);
+        if (n.getArgs() != null) {
+            for (Expression e : n.getArgs()) {
+                e.accept(this, arg);
+            }
+        }
+        if (n.getAnonymousClassBody() != null) {
+    		this.symbolTable.enterNewScope(n, "anonymousClass "+n.getType(), ScopeInfo.Type.ClassScope);
+            for (BodyDeclaration member : n.getAnonymousClassBody()) {
+                member.accept(this, arg);
+            }
+            System.out.println("QQQQQQQQQQQQQQQQQQQQQQ");
+            this.symbolTable.exitScope();
+        }
+        return null;
+    }
+    
+    private byte symbolVisiting;
 	////////////////////Symbol visiting//////////////////////////////
 	
     public String visit(NameExpr n, Object arg) {
@@ -310,6 +347,7 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		return null;
 	}
 	////////////////////////Type visiting///////////////////////////////////////////
+	private byte dataTypeVisiting;
 	
     public String visit(ClassOrInterfaceType n, Object arg) {
         if (n.getScope() != null) {
@@ -356,6 +394,7 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
     	return "?";
     }
 	////////////////////////OpenMP visiting/////////////////////////////////////////
+	private byte openmpVisiting;
 	
 	public String visit(OmpParallelConstruct n, Object arg) {
 		this.symbolTable.enterNewScope(n, "OmpParallel", ScopeInfo.Type.OpenMPConstructScope);
@@ -365,10 +404,20 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
         this.symbolTable.exitScope();
         return null;
 	}
+	
 	public String visit(OmpForConstruct n, Object arg) {
 		this.symbolTable.enterNewScope(n, "OmpFor", ScopeInfo.Type.OpenMPConstructScope);
 		if (n.getForStmt() != null) {
 			n.getForStmt().accept(this, arg);
+        }
+        this.symbolTable.exitScope();
+        return null;
+	}
+	
+	public String visit(OmpGuiConstruct n, Object arg) {
+		this.symbolTable.enterNewScope(n, "OmpGui", ScopeInfo.Type.OpenMPConstructScope);
+		if (n.getBody() != null) {
+            n.getBody().accept(this, arg);
         }
         this.symbolTable.exitScope();
         return null;

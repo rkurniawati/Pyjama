@@ -27,6 +27,10 @@ public class OmpGuiConstruct extends OpenMPStatement{
 		return this.nowait;
 	}
 	
+	public Statement getBody() {
+		return this.statement;
+	}
+	
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
 		return v.visit(this, arg);

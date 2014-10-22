@@ -32,19 +32,15 @@ public class FreeGuiThread_positive_test2 {
 		//#omp freeguithread
 		{
 			sb.append(SwingUtilities.isEventDispatchThread());
-//			try{
-//			Thread.sleep(1000);
-//    	    } catch(Exception e){
-//				e.printStackTrace();
-//    		}
+
 			//#omp barrier
 			sb.append(SwingUtilities.isEventDispatchThread());
 		}
 		sb.append(SwingUtilities.isEventDispatchThread());
 		//#omp gui
-        {
-            sb.append(SwingUtilities.isEventDispatchThread());
-         }
+        	{
+          	  sb.append(SwingUtilities.isEventDispatchThread());
+       		  }
 		 }
 	  };
 	}
