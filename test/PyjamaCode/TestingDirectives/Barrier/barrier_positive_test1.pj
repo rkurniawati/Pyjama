@@ -3,6 +3,8 @@ package PyjamaCode.TestingDirectives.Barrier;
 import pj.Pyjama;
 
 public class barrier_positive_test1{
+
+	double[][] dummy;
 	/**
 	 * result[0+1+2+..+threadNumber,0+1+2+..+threadNumber,0+1+2+..+threadNumber,...]
 	 * */	
@@ -13,7 +15,7 @@ public class barrier_positive_test1{
 		int sum=0;
 		int[] result=new int[threadNumber];
 
-		//#omp parallel shared(array, result, threadNumber) firstprivate(sum)
+		//#omp parallel shared(array, result, threadNumber) private(sum)
 		{ 
 			int ThreadID =  Pyjama.omp_get_thread_num();
 			array[ThreadID]=ThreadID;

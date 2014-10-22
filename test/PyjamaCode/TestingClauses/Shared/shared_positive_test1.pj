@@ -10,7 +10,7 @@ public class shared_positive_test1{
 		int i = 1;
 		int[] array = new int[threadNumber];
 
-		//#omp parallel firstprivate(i) shared(array)
+		//#omp parallel private(i) shared(array)
 		{
 			int index =  Pyjama.omp_get_thread_num();
 			

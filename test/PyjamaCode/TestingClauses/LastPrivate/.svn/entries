@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/PyjamaCode/TestingClauses/LastPrivate
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 fxin927
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2014-08-18T08:20:07.000000Z
+2014-10-22T12:50:22.000000Z
 6bc06525bc6d078a139569926317b050
 2014-08-18T07:38:18.225522Z
 5643
@@ -60,47 +60,13 @@ fxin927
 
 272
 
-lastPrivate_positive_test1.pj
-file
-
-
-
-
-2014-08-18T08:20:07.000000Z
-406b47d9f23f4edffbb3db91b3d481ab
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-857
-
 lastPrivate_negative_test2.pj
 file
 
 
 
 
-2014-08-18T08:20:07.000000Z
+2014-10-22T12:50:22.000000Z
 51259ff74cff22efd6d7b6e4ac2a2747
 2014-08-18T07:38:18.225522Z
 5643
@@ -128,47 +94,13 @@ fxin927
 
 289
 
-lastPrivate_positive_test2.pj
-file
-
-
-
-
-2014-08-18T08:20:07.000000Z
-4d59b66080728ce1698699e10824a227
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-957
-
 lastPrivate_positive_test1.java
 file
 
 
 
 
-2014-08-28T02:40:51.000000Z
+2014-10-22T12:50:22.000000Z
 056914b80c4a24a1a120cbbb074e1a73
 2014-08-18T07:38:18.225522Z
 5643
@@ -196,13 +128,47 @@ fxin927
 
 9885
 
+lastPrivate_positive_test1.pj
+file
+
+
+
+
+2014-10-22T12:50:22.000000Z
+406b47d9f23f4edffbb3db91b3d481ab
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+857
+
 lastPrivate_positive_test2.java
 file
 
 
 
 
-2014-08-28T02:40:52.000000Z
+2014-10-22T12:50:22.000000Z
 a66486a5feb306dfd0e99efe79f3fead
 2014-08-18T07:38:18.225522Z
 5643
@@ -229,4 +195,38 @@ fxin927
 
 
 9817
+
+lastPrivate_positive_test2.pj
+file
+
+
+
+
+2014-10-22T12:50:22.000000Z
+4d59b66080728ce1698699e10824a227
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+957
 

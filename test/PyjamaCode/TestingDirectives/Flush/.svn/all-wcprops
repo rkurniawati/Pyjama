@@ -3,15 +3,15 @@ svn:wc:ra_dav:version-url
 V 79
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Flush
 END
-flush_positive_test1.java
-K 25
-svn:wc:ra_dav:version-url
-V 105
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Flush/flush_positive_test1.java
-END
 flush_positive_test1.pj
 K 25
 svn:wc:ra_dav:version-url
 V 103
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Flush/flush_positive_test1.pj
+END
+flush_positive_test1.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Flush/flush_positive_test1.java
 END

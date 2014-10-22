@@ -13,17 +13,20 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 	private OmpNumthreadsClause numThreads = null;
 	private Statement forStmt = null;
 	private List<OmpDataClause> dataClauseList;
+	private OmpScheduleClause scheduleClause = null;
 	private boolean ordered;
 	
 	public OmpParallelForConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
+			OmpScheduleClause scheduleClause,
 			OmpIfClause ifExpr,
 			OmpNumthreadsClause numThreads,
 			boolean ordered){
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.forStmt = statement;
 		this.dataClauseList = dataClausesList;
+		this.scheduleClause = scheduleClause;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
 		this.ordered = ordered;
@@ -32,11 +35,13 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 	public OmpParallelForConstruct(
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
+			OmpScheduleClause scheduleClause,
 			OmpIfClause ifExpr,
 			OmpNumthreadsClause numThreads,
 			boolean ordered){
 		this.forStmt = statement;
 		this.dataClauseList = dataClausesList;
+		this.scheduleClause = scheduleClause;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
 		this.ordered = ordered;
@@ -47,6 +52,9 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 	}
 	public List<OmpDataClause> getDataClauseList() {
 		return this.dataClauseList;
+	}
+	public OmpScheduleClause getScheduleClause() {
+		return this.scheduleClause;
 	}
 	public OmpIfClause getIfClause() {
 		return ifExpr;
@@ -59,6 +67,7 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 	public OmpParallelConstruct normalisation() {
 		List<OmpDataClause> forDataClauseList = new ArrayList<OmpDataClause>();
 		List<OmpDataClause> parallelDataClauseList = new ArrayList<OmpDataClause>();
+
 		for (OmpDataClause clause: this.dataClauseList) {
 			if (clause.DataClauseType() == OmpDataClause.Type.Shared) {
 				parallelDataClauseList.add(clause);
@@ -70,7 +79,7 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 			}
 			
 		}
-		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, forDataClauseList, null, false, this.ordered);
+		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, forDataClauseList, this.scheduleClause, false, this.ordered);
 		OmpParallelConstruct normalised = new OmpParallelConstruct(forConstruct, parallelDataClauseList, this.ifExpr, this.numThreads);
 		return normalised;
 	}

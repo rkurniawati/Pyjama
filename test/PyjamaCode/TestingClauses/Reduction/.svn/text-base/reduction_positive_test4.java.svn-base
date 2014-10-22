@@ -386,13 +386,13 @@ class _OMP_ParallelRegion_2{
                                 switch(_omp_i_2) {//#GEN#[-1]#PJ#
                                     case 0://#GEN#[-1]#PJ#
                                         {//#GEN#[-1]#PJ#
-                                            int index = Pyjama.omp_get_thread_num();//#GEN#[-1]#PJ#
+                                            int index = 1;//#GEN#[-1]#PJ#
                                             OMP_WoRkShArInG_PRIVATE_result &= (int) Math.pow(2, index) - 1;//#GEN#[-1]#PJ#
                                         }//#GEN#[-1]#PJ#
                                         break;//#GEN#[-1]#PJ#
                                     case 1://#GEN#[-1]#PJ#
                                         {//#GEN#[-1]#PJ#
-                                            int index = Pyjama.omp_get_thread_num();//#GEN#[-1]#PJ#
+                                            int index = 1;//#GEN#[-1]#PJ#
                                             OMP_WoRkShArInG_PRIVATE_result &= (int) Math.pow(2, index) - 1;//#GEN#[-1]#PJ#
                                         }//#GEN#[-1]#PJ#
                                         break;//#GEN#[-1]#PJ#

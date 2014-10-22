@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Sections
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 fxin927
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -26,14 +26,14 @@ fxin927
 
 08b7a59c-0210-0410-8289-8f00336d13cc
 
-section_positive_test1.java
+section_RT.pj
 file
 
 
 
 
-2014-08-28T02:40:31.000000Z
-3b40afc1ab2e4aa591e4811e0b7f8404
+2014-10-22T12:50:19.000000Z
+15cc8c73c5686da6ab3abd6976468ac9
 2014-08-18T07:38:18.225522Z
 5643
 fxin927
@@ -58,41 +58,7 @@ fxin927
 
 
 
-9651
-
-section_positive_test2.java
-file
-
-
-
-
-2014-08-28T02:40:32.000000Z
-8cb6d030041a10744c80a45d525676de
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-10062
+2318
 
 section_negative_test1.pj
 file
@@ -100,7 +66,7 @@ file
 
 
 
-2014-08-18T08:19:56.000000Z
+2014-10-22T12:50:19.000000Z
 01f69cc3ba99c4709586810f2619d637
 2014-08-18T07:38:18.225522Z
 5643
@@ -128,13 +94,47 @@ fxin927
 
 526
 
+section_positive_test1.java
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+3b40afc1ab2e4aa591e4811e0b7f8404
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9651
+
 section_positive_test1.pj
 file
 
 
 
 
-2014-08-18T08:19:56.000000Z
+2014-10-22T12:50:19.000000Z
 2156658eac76ad34cb24e10f121bb414
 2014-08-18T07:38:18.225522Z
 5643
@@ -162,13 +162,47 @@ fxin927
 
 615
 
+section_positive_test2.java
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+8cb6d030041a10744c80a45d525676de
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10062
+
 section_positive_test2.pj
 file
 
 
 
 
-2014-08-18T08:19:56.000000Z
+2014-10-22T12:50:19.000000Z
 b520ece13feb3b0fe60fde1aed52f6b7
 2014-08-18T07:38:18.225522Z
 5643
@@ -195,38 +229,4 @@ fxin927
 
 
 713
-
-section_RT.pj
-file
-
-
-
-
-2014-08-18T08:19:56.000000Z
-15cc8c73c5686da6ab3abd6976468ac9
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2318
 

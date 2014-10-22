@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/loopFor
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 fxin927
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -26,81 +26,13 @@ fxin927
 
 08b7a59c-0210-0410-8289-8f00336d13cc
 
-LoopFor_Group5_corrTest.java
-file
-
-
-
-
-2014-08-18T08:19:44.000000Z
-9dd7284b665e11174ad6c54d2cfd4ee7
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-11763
-
-LoopFor_Group6_corrTest.java
-file
-
-
-
-
-2014-08-18T08:19:44.000000Z
-b44b465eeeebf363d26721930a5d72b7
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-11747
-
 LoopFor_Group1_corrTest.java
 file
 
 
 
 
-2014-08-18T08:19:44.000000Z
+2014-10-22T12:50:16.000000Z
 2b82992f236b6a137fd0d0903811ff03
 2014-08-18T07:38:18.225522Z
 5643
@@ -134,7 +66,7 @@ file
 
 
 
-2014-08-18T08:19:44.000000Z
+2014-10-22T12:50:16.000000Z
 fa5e154c6f709bbace79133b8c9e07e8
 2014-08-18T07:38:18.225522Z
 5643
@@ -168,7 +100,7 @@ file
 
 
 
-2014-08-18T08:19:44.000000Z
+2014-10-22T12:50:16.000000Z
 ca0e201c63a7e64202b5b892c4cb83eb
 2014-08-18T07:38:18.225522Z
 5643
@@ -202,7 +134,7 @@ file
 
 
 
-2014-08-18T08:19:44.000000Z
+2014-10-22T12:50:16.000000Z
 833d43cf2c57971a5addbef837fd619b
 2014-08-18T07:38:18.225522Z
 5643
@@ -229,4 +161,72 @@ fxin927
 
 
 11751
+
+LoopFor_Group5_corrTest.java
+file
+
+
+
+
+2014-10-22T12:50:16.000000Z
+9dd7284b665e11174ad6c54d2cfd4ee7
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+11763
+
+LoopFor_Group6_corrTest.java
+file
+
+
+
+
+2014-10-22T12:50:16.000000Z
+b44b465eeeebf363d26721930a5d72b7
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+11747
 

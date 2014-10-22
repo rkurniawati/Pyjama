@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/firstPrivate
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 fxin927
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2014-08-18T08:19:44.000000Z
+2014-10-22T12:50:16.000000Z
 8322e0db9b917c39fc02a9b56dab06a1
 2014-08-18T07:38:18.225522Z
 5643
@@ -66,7 +66,7 @@ file
 
 
 
-2014-08-18T08:19:44.000000Z
+2014-10-22T12:50:16.000000Z
 5982b2e12039217e56f412d8a66f2459
 2014-08-18T07:38:18.225522Z
 5643

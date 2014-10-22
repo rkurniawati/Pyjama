@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/Domain
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 wke918
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -26,10 +26,10 @@ wke918
 
 08b7a59c-0210-0410-8289-8f00336d13cc
 
-DataType
+Bean
 dir
 
-Bean
+DataType
 dir
 
 SettingConstans.java
@@ -38,7 +38,7 @@ file
 
 
 
-2014-08-28T01:48:54.000000Z
+2014-10-22T12:50:18.000000Z
 01877de8eaafae41e9ab6483beedfe2c
 2014-08-28T02:49:04.661967Z
 5746

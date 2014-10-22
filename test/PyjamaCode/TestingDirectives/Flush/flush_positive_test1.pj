@@ -19,19 +19,19 @@ public class flush_positive_test1{
 			//#omp section
 			{
 				data[0] = 1;
-				//#omp flush(data)
+				//#omp flush
 				
 				flag = 1;
-				//#omp flush(flag)
+				//#omp flush
 			}
 			//#omp section
 			{
 				while (flag==0) {
-					//#omp flush(flag)
+					//#omp flush
 				}
-				//#omp flush(data)
+				//#omp flush
        
-				//#omp atomic
+				//#omp critical
 					data[0]++;
 			}
 		}

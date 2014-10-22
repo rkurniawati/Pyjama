@@ -134,7 +134,7 @@ public class AtomicTest {
 			PyjamaToJavaParser.parse(new File(SettingConstans.COMPILETARGETTESTCODEPATH+"/PyjamaCode/TestingDirectives/Atomic/"+filename+".pj"));
 			JavaCompiler builder = new JavaCompiler();
 			List<String> error =builder.buildJava(SettingConstans.COMPILETARGETTESTCODEPATH+"/PyjamaCode/TestingDirectives/Atomic/",test);
-			String cmd="javac -cp release/Pyjama-1.3.8a.jar "+SettingConstans.COMPILETARGETTESTCODEPATH+"/PyjamaCode/TestingDirectives/Atomic/"+filename+".java";
+			String cmd="javac "+SettingConstans.COMPILETARGETTESTCODEPATH+"/PyjamaCode/TestingDirectives/Atomic/"+filename+".java";
             Runtime rt = Runtime.getRuntime();
 		    Process proc = rt.exec(cmd);
 		    StreamGobbler errorGobbler = new StreamGobbler(

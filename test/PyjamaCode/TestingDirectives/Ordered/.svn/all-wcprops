@@ -3,17 +3,17 @@ svn:wc:ra_dav:version-url
 V 81
 /svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Ordered
 END
-ordered_positive_test1.java
-K 25
-svn:wc:ra_dav:version-url
-V 109
-/svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Ordered/ordered_positive_test1.java
-END
 ordered_negative_test1.pj
 K 25
 svn:wc:ra_dav:version-url
 V 107
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Ordered/ordered_negative_test1.pj
+END
+ordered_positive_test1.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Ordered/ordered_positive_test1.java
 END
 ordered_positive_test1.pj
 K 25

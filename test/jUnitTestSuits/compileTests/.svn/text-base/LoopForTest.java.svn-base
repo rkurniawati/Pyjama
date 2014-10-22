@@ -128,6 +128,12 @@ public class LoopForTest {
 			fail("Compile Failed");
 	}
 	
+	@Test
+	public void PositiveTest17() {
+		if(!positiveTest("PositiveTest17","loopFor_positive_test17","test17","loopFor getmax"))
+			fail("Compile Failed");
+	}
+	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	@Test
 	public void NegativeTest1() {		
@@ -174,6 +180,24 @@ public class LoopForTest {
 	@Test
 	public void NegativeTest8() {
 		if(!negativeTest("NegativeTest8","loopFor_negative_test8","loopFor expression is array.length"))
+			fail("Compile Failed");
+	}
+	
+	@Test
+	public void NegativeTest9() {
+		if(!negativeTest("NegativeTest9","loopFor_negative_test9","loopFor expression is Integer.MAX_VALUE"))
+			fail("Compile Failed");
+	}
+	
+	@Test
+	public void NegativeTest10() {
+		if(!negativeTest("NegativeTest10","loopFor_negative_test10","loopFor expression is (n-1)"))
+			fail("Compile Failed");
+	}
+	
+	@Test
+	public void NegativeTest11() {
+		if(!negativeTest("NegativeTest11","loopFor_negative_test11","loopFor expression is Test.max()"))
 			fail("Compile Failed");
 	}
 	

@@ -185,14 +185,14 @@ public abstract class Node {
         return visitor.getSource();
     }
 
-    @Override
-    public final int hashCode() {
-        return toString().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return EqualsVisitor.equals(this, (Node) obj);
-    }
+//    @Override
+//    public final int hashCode() {
+//        return toString().hashCode();
+//    }
+//
+//    @Override
+//    public boolean equals(Object obj) {
+//        return EqualsVisitor.equals(this, (Node) obj);
+//    }
 
 }

@@ -3139,8 +3139,10 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	int numThreadsClauseCount = 0;
 	int IfClauseCount = 0;
 	int defaultDataClauseCount = 0;
+	int schduleClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
+	OmpScheduleClause scheduleClause = null; 
 	boolean ordered = false;
 	int line;
 	int column;
@@ -3155,9 +3157,10 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
 	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
+	|	scheduleClause = OmpScheduleClause() 	{if((++schduleClauseCount)>1) throw new RuntimeException("Pyjama Parsing Error: More than one schedule clause");}
 	)*
 	forBody = ForStatement()
-	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, ifExpr, numThreads, ordered); }
+	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, scheduleClause, ifExpr, numThreads, ordered); }
 }
 
 OmpParallelSectionsConstruct OmpParallelSectionsConstruct():

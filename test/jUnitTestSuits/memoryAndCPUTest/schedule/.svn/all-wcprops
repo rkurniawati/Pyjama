@@ -3,29 +3,11 @@ svn:wc:ra_dav:version-url
 V 85
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule
 END
-Schedule_Group6_MacTest.java
+Schedule_Group5_MacTest.java
 K 25
 svn:wc:ra_dav:version-url
 V 114
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group6_MacTest.java
-END
-Schedule_Group1_MacTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 114
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group1_MacTest.java
-END
-Schedule_Group2_MacTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 114
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group2_MacTest.java
-END
-Schedule_Group3_MacTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 114
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group3_MacTest.java
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group5_MacTest.java
 END
 Schedule_Group4_MacTest.java
 K 25
@@ -33,9 +15,27 @@ svn:wc:ra_dav:version-url
 V 114
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group4_MacTest.java
 END
-Schedule_Group5_MacTest.java
+Schedule_Group3_MacTest.java
 K 25
 svn:wc:ra_dav:version-url
 V 114
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group5_MacTest.java
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group3_MacTest.java
+END
+Schedule_Group2_MacTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group2_MacTest.java
+END
+Schedule_Group1_MacTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group1_MacTest.java
+END
+Schedule_Group6_MacTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/memoryAndCPUTest/schedule/Schedule_Group6_MacTest.java
 END

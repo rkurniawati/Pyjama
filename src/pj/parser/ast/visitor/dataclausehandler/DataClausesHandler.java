@@ -274,7 +274,7 @@ public class DataClausesHandler {
 				}
 				break;
 			case Lastprivate:
-				HashMap<String, String> lastprivateArgs = ((OmpPrivateDataClause)dataClause).getArgsTypes(forConstruct);
+				HashMap<String, String> lastprivateArgs = ((OmpLastprivateDataClause)dataClause).getArgsTypes(forConstruct);
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
 					String varType = lastprivateArgs.get(varName);

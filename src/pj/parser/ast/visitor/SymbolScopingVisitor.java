@@ -30,7 +30,10 @@ import pj.parser.ast.symbolscope.Symbol.SymbolType;
 import pj.parser.ast.symbolscope.SymbolTable;
 import pj.parser.ast.type.ClassOrInterfaceType;
 import pj.parser.ast.type.PrimitiveType;
+import pj.parser.ast.type.ReferenceType;
 import pj.parser.ast.type.Type;
+import pj.parser.ast.type.VoidType;
+import pj.parser.ast.type.WildcardType;
 
 
 public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
@@ -158,6 +161,7 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		 this.symbolTable.exitScope();
 		 return null;
 	}
+	
 	public String visit(SwitchStmt n, Object arg) {
 		/*
 		 * firstly enter new scope which this statement
@@ -177,6 +181,7 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		this.symbolTable.exitScope();
 		return null;
 	}
+	
 	public String visit(ForeachStmt n, Object arg) {
 		/*
 		 * firstly enter new scope which this statement
@@ -254,7 +259,8 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 
     }
 	////////////////////Symbol visiting//////////////////////////////
-	public String visit(NameExpr n, Object arg) {
+	
+    public String visit(NameExpr n, Object arg) {
 		String varName = n.getName();
 		Symbol symbol = new Symbol(varName);
 		this.symbolTable.addSymbolUse(varName,symbol);
@@ -277,6 +283,33 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		this.symbolTable.addSymbolDeclaration(varName, symbol);
 		return null;
 	}
+	
+	public String visit(VariableDeclarationExpr n, Object arg) {
+		Type varType = n.getType();
+		String typeName = varType.accept(this, arg);
+
+		for (Iterator<VariableDeclarator> i = n.getVars().iterator(); i.hasNext();) {
+			VariableDeclarator v = i.next();
+			String varName = v.getId().getName();
+			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), typeName, SymbolType.ScopeLocalParameter);
+			this.symbolTable.addSymbolDeclaration(varName, symbol);
+		}
+		return null;
+	}
+
+	public String visit(FieldDeclaration n, Object arg) {
+		Type varType = n.getType();
+		String typeName = varType.accept(this, arg);
+		
+		for (Iterator<VariableDeclarator> i = n.getVariables().iterator(); i.hasNext();) {
+			VariableDeclarator var = i.next();
+			String varName = var.getId().getName();
+			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), typeName, SymbolType.ClassMemberField);
+			this.symbolTable.addSymbolDeclaration(varName, symbol);
+		}
+		return null;
+	}
+	////////////////////////Type visiting///////////////////////////////////////////
 	
     public String visit(ClassOrInterfaceType n, Object arg) {
         if (n.getScope() != null) {
@@ -307,33 +340,21 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
         return null;
     }
     
-
-	public String visit(VariableDeclarationExpr n, Object arg) {
-		Type varType = n.getType();
-		String typeName = varType.accept(this, arg);
-
-		for (Iterator<VariableDeclarator> i = n.getVars().iterator(); i.hasNext();) {
-			VariableDeclarator v = i.next();
-			String varName = v.getId().getName();
-			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), typeName, SymbolType.ScopeLocalParameter);
-			this.symbolTable.addSymbolDeclaration(varName, symbol);
-		}
-		return null;
-	}
-
-	public String visit(FieldDeclaration n, Object arg) {
-		Type varType = n.getType();
-		String typeName = varType.accept(this, arg);
-		
-		for (Iterator<VariableDeclarator> i = n.getVariables().iterator(); i.hasNext();) {
-			VariableDeclarator var = i.next();
-			String varName = var.getId().getName();
-			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), typeName, SymbolType.ClassMemberField);
-			this.symbolTable.addSymbolDeclaration(varName, symbol);
-		}
-		return null;
-	}
-	
+    public String visit(ReferenceType n, Object arg) {
+    	String type = n.getType().accept(this, arg);
+        for (int i = 0; i < n.getArrayCount(); i++) {
+            type = type.concat("[]");
+        }
+        return type;
+    }
+    
+    public String visit(VoidType n, Object arg) {
+    	return "void";
+    }
+    
+    public String visit(WildcardType n, Object arg) {
+    	return "?";
+    }
 	////////////////////////OpenMP visiting/////////////////////////////////////////
 	
 	public String visit(OmpParallelConstruct n, Object arg) {

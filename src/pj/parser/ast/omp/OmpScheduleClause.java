@@ -18,15 +18,16 @@ public class OmpScheduleClause extends Node{
 	
 	public OmpScheduleClause(int beginLine, int beginColumn, int endLine, int endColumn, Type type, Expression chunk) {
 		super(beginLine, beginColumn, endLine, endColumn);
-
+		this.type = type;
+		this.chunkSize = chunk;
 	}
 	
 	public Type getScheduleType() {
-		return type;
+		return this.type;
 	}
 	
 	public Expression getChunkSize() {
-		return chunkSize;
+		return this.chunkSize;
 	}
 
 	@Override

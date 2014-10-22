@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/reduction/group3
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 fxin927
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2014-08-18T08:19:46.000000Z
+2014-10-22T12:50:16.000000Z
 c1059f67b4a2e6d199f907e3fe0d0418
 2014-08-18T07:38:18.225522Z
 5643
@@ -66,7 +66,7 @@ file
 
 
 
-2014-08-18T08:19:46.000000Z
+2014-10-22T12:50:16.000000Z
 3e1531b62900276a24112b7a0113c616
 2014-08-18T07:38:18.225522Z
 5643
@@ -100,7 +100,7 @@ file
 
 
 
-2014-08-18T08:19:46.000000Z
+2014-10-22T12:50:16.000000Z
 b90f8fedf0aa08c16ed229e284151d17
 2014-08-18T07:38:18.225522Z
 5643

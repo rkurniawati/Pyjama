@@ -172,8 +172,17 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.printLn("PjRuntime.get_OMP_orderCursor().incrementAndGet();");
     }
     public void visit(OmpAtomicConstruct n, SourcePrinter printer){
-    	throw new RuntimeException("//#omp atomic: This should have been normalised.");
+    	//    	throw new RuntimeException("//#omp atomic: This should have been normalised.");
     	// --------------------------- Normalised --------------------//
+    	printer.printLn("PjRuntime.OMP_lock.lock();");
+    	printer.printLn("try {");
+    	printer.indent();
+    	n.getStatement().accept(this, printer);
+    	printer.unindent();
+    	printer.printLn("} finally {");
+    	printer.printLn("PjRuntime.OMP_lock.unlock();");
+    	printer.unindent();
+    	printer.printLn("}");
     }
     public void visit(OmpBarrierDirective n, SourcePrinter printer){
     	printer.printLn("PjRuntime.setBarrier();");

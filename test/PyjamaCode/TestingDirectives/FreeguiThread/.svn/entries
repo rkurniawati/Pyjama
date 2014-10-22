@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/PyjamaCode/TestingDirectives/FreeguiThread
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 wke918
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2014-09-30T06:04:54.645298Z
+2014-10-22T12:50:20.000000Z
 27ba03e5b8ef4381060598985f72f39f
 2014-09-24T23:25:52.180703Z
 5933
@@ -60,81 +60,13 @@ has-props
 
 7895
 
-FreeGuiThread_positive_test2.java
-file
-
-
-
-
-2014-09-30T06:04:54.645298Z
-b549f3a8cc76eafa6b5305db9215aa28
-2014-09-24T23:25:52.180703Z
-5933
-wke918
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-9936
-
-FreeGuiThread_positive_test3.java
-file
-
-
-
-
-2014-09-30T06:04:54.645298Z
-c063569b12f6c6ec1bcdfbc68b8f3344
-2014-09-24T23:25:52.180703Z
-5933
-wke918
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-7630
-
 FreeGuiThread_positive_test1.pj
 file
 
 
 
 
-2014-09-30T06:04:54.645298Z
+2014-10-22T12:50:20.000000Z
 18a98d03de08ad9ed16801b10e09eff6
 2014-09-24T23:25:52.180703Z
 5933
@@ -162,13 +94,47 @@ wke918
 
 1007
 
+FreeGuiThread_positive_test2.java
+file
+
+
+
+
+2014-10-22T12:50:20.000000Z
+b549f3a8cc76eafa6b5305db9215aa28
+2014-09-24T23:25:52.180703Z
+5933
+wke918
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9936
+
 FreeGuiThread_positive_test2.pj
 file
 
 
 
 
-2014-09-30T06:04:54.645298Z
+2014-10-22T12:50:20.000000Z
 6e18c0eb04c978e91f14a1af98c1cd07
 2014-09-24T23:25:52.180703Z
 5933
@@ -196,13 +162,47 @@ wke918
 
 1247
 
+FreeGuiThread_positive_test3.java
+file
+
+
+
+
+2014-10-22T12:50:20.000000Z
+c063569b12f6c6ec1bcdfbc68b8f3344
+2014-09-24T23:25:52.180703Z
+5933
+wke918
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7630
+
 FreeGuiThread_positive_test3.pj
 file
 
 
 
 
-2014-09-30T06:04:54.645298Z
+2014-10-22T12:50:20.000000Z
 484bf415d23f0b7b4f40d0b4f7ee29f0
 2014-09-24T23:25:52.180703Z
 5933

@@ -3,12 +3,6 @@ svn:wc:ra_dav:version-url
 V 95
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/runningTimeAndStabilityTest/loopFor
 END
-LoopFor_Group6_RtTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 122
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/runningTimeAndStabilityTest/loopFor/LoopFor_Group6_RtTest.java
-END
 LoopFor_Group1_RtTest.java
 K 25
 svn:wc:ra_dav:version-url
@@ -38,4 +32,10 @@ K 25
 svn:wc:ra_dav:version-url
 V 122
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/runningTimeAndStabilityTest/loopFor/LoopFor_Group5_RtTest.java
+END
+LoopFor_Group6_RtTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/runningTimeAndStabilityTest/loopFor/LoopFor_Group6_RtTest.java
 END

@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/Utility
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 wke918
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -26,16 +26,16 @@ wke918
 
 08b7a59c-0210-0410-8289-8f00336d13cc
 
-JavaCompileHelper
-dir
-
-ResultReportHelper
-dir
-
 JSONDatabaseHelper
 dir
 
+JavaCompileHelper
+dir
+
 MemoryAndCPUHelper
+dir
+
+ResultReportHelper
 dir
 
 StreamGobbler

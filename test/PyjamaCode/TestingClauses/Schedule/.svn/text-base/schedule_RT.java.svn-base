@@ -419,7 +419,7 @@ class _OMP_ParallelRegion_2{
                     if (((n)-(0))%(1) == 0) {
                         OMP_end = OMP_end - 1;
                     }
-                    int OMP_chunkSize = null;
+                    int OMP_chunkSize = 1;
                     if (0 == Pyjama.omp_get_thread_num()) {PjRuntime.get_OMP_loopCursor().getAndSet(0);}
                     PjRuntime.setBarrier();
                     while ((OMP_iterator = PjRuntime.get_OMP_loopCursor().getAndAdd(OMP_chunkSize)) <= OMP_end) {

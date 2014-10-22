@@ -67,6 +67,7 @@ public class PyjamaToJavaParser {
 		showMsg("Processing 2nd Phase: Symbol scoping visiting");
 		SymbolScopingVisitor symbolVisitor = new SymbolScopingVisitor();
 		ast.accept(symbolVisitor, null);
+		symbolVisitor.printSymbolTable(); //log info print
 		SymbolTable symbolTable = symbolVisitor.getSymbolTable();
 		
 		showMsg("Processing 3rd Phase: Pyjama code translation visiting");

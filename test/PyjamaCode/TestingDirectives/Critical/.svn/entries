@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 fxin927
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -26,149 +26,13 @@ fxin927
 
 08b7a59c-0210-0410-8289-8f00336d13cc
 
-critical_positive_test1.java
-file
-
-
-
-
-2014-08-28T02:40:27.000000Z
-bdbb9baeb11cf4c8777af264777b72c4
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6646
-
-critical_positive_test2.java
-file
-
-
-
-
-2014-08-28T02:40:27.000000Z
-9d66a52939d4cf9172188ae53be265cf
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6657
-
-critical_positive_test3.java
-file
-
-
-
-
-2014-08-28T02:40:28.000000Z
-4722b7451faffe3abe8ddcdfcfa2f6fa
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6646
-
-critical_positive_test4.java
-file
-
-
-
-
-2014-08-28T02:40:28.000000Z
-bb223ff45ec7c4eba98c811a4466a568
-2014-08-28T02:49:04.661967Z
-5746
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-9816
-
 critical_negative_test1.pj
 file
 
 
 
 
-2014-08-18T08:19:57.000000Z
+2014-10-22T12:50:19.000000Z
 b7ae88474aa651700543063e5ec64d39
 2014-08-18T07:38:18.225522Z
 5643
@@ -196,47 +60,13 @@ fxin927
 
 323
 
-critical_positive_test1.pj
-file
-
-
-
-
-2014-08-18T08:19:57.000000Z
-a604a33f1b6d9c8185b6971d172e1365
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-361
-
 critical_negative_test2.pj
 file
 
 
 
 
-2014-08-18T08:19:57.000000Z
+2014-10-22T12:50:19.000000Z
 6401441109cf0e84f7b216d63c4ceb8d
 2014-08-18T07:38:18.225522Z
 5643
@@ -264,47 +94,13 @@ fxin927
 
 323
 
-critical_positive_test2.pj
-file
-
-
-
-
-2014-08-18T08:19:57.000000Z
-7d5306b486917909bb0a04203581f32f
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-373
-
 critical_negative_test3.pj
 file
 
 
 
 
-2014-08-18T08:19:57.000000Z
+2014-10-22T12:50:19.000000Z
 86cf8a995bd7498018d33bdccfa14ed2
 2014-08-18T07:38:18.225522Z
 5643
@@ -332,47 +128,13 @@ fxin927
 
 334
 
-critical_positive_test3.pj
-file
-
-
-
-
-2014-08-18T08:19:57.000000Z
-03299216f776ddcf3617afeb07f07750
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-362
-
 critical_negative_test4.pj
 file
 
 
 
 
-2014-08-18T08:19:57.000000Z
+2014-10-22T12:50:19.000000Z
 acf4a1324c9020dae298981a61af14b1
 2014-08-18T07:38:18.225522Z
 5643
@@ -400,13 +162,251 @@ fxin927
 
 334
 
+critical_positive_test1.java
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+bdbb9baeb11cf4c8777af264777b72c4
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6646
+
+critical_positive_test1.pj
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+a604a33f1b6d9c8185b6971d172e1365
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+361
+
+critical_positive_test2.java
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+9d66a52939d4cf9172188ae53be265cf
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6657
+
+critical_positive_test2.pj
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+7d5306b486917909bb0a04203581f32f
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+373
+
+critical_positive_test3.java
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+4722b7451faffe3abe8ddcdfcfa2f6fa
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6646
+
+critical_positive_test3.pj
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+03299216f776ddcf3617afeb07f07750
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+362
+
+critical_positive_test4.java
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+bb223ff45ec7c4eba98c811a4466a568
+2014-08-28T02:49:04.661967Z
+5746
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9816
+
 critical_positive_test4.pj
 file
 
 
 
 
-2014-08-18T08:19:57.000000Z
+2014-10-22T12:50:19.000000Z
 0c013396322e152e093fd311c6147da0
 2014-08-18T07:38:18.225522Z
 5643

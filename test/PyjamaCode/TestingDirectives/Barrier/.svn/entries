@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Barrier
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 fxin927
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -26,47 +26,13 @@ fxin927
 
 08b7a59c-0210-0410-8289-8f00336d13cc
 
-barrier_positive_test1.java
-file
-
-
-
-
-2014-08-28T02:40:26.000000Z
-d4f6b0fedda1db0551b0de5d0ae33aad
-2014-08-18T07:38:18.225522Z
-5643
-fxin927
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-7751
-
 barrier_negative_test1.pj
 file
 
 
 
 
-2014-08-18T08:19:56.000000Z
+2014-10-22T12:50:19.000000Z
 c12ca4dd4803acd88ab49058cfba4fc9
 2014-08-18T07:38:18.225522Z
 5643
@@ -94,13 +60,47 @@ fxin927
 
 638
 
+barrier_positive_test1.java
+file
+
+
+
+
+2014-10-22T12:50:19.000000Z
+d4f6b0fedda1db0551b0de5d0ae33aad
+2014-08-18T07:38:18.225522Z
+5643
+fxin927
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7751
+
 barrier_positive_test1.pj
 file
 
 
 
 
-2014-08-18T08:19:56.000000Z
+2014-10-22T12:50:19.000000Z
 fc7d282babd5d4302db5cf28d2affe21
 2014-08-18T07:38:18.225522Z
 5643

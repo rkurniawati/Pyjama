@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/barrier
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 fxin927
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2014-08-18T08:19:44.000000Z
+2014-10-22T12:50:16.000000Z
 6e7bf6e15ddf68cf11894f35beac1f37
 2014-08-18T07:38:18.225522Z
 5643

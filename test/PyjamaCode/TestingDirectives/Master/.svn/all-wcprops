@@ -3,11 +3,11 @@ svn:wc:ra_dav:version-url
 V 80
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Master
 END
-master_positive_test1.java
+master_positive_test1.pj
 K 25
 svn:wc:ra_dav:version-url
-V 107
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Master/master_positive_test1.java
+V 105
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Master/master_positive_test1.pj
 END
 master_negative_test1.pj
 K 25
@@ -15,9 +15,9 @@ svn:wc:ra_dav:version-url
 V 105
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Master/master_negative_test1.pj
 END
-master_positive_test1.pj
+master_positive_test1.java
 K 25
 svn:wc:ra_dav:version-url
-V 105
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Master/master_positive_test1.pj
+V 107
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Master/master_positive_test1.java
 END

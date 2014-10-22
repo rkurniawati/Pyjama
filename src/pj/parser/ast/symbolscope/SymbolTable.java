@@ -71,15 +71,19 @@ public class SymbolTable {
 		
 		for(Node node : this.allScopes.keySet()) {
 			ScopeInfo scope = this.allScopes.get(node);
-			out.println("********Scope Name:" + scope.getName()+"*************");
+			out.println("***************Scope Name:" + scope.getName()+"*************");
 			out.println("--------Defined variables--------------");
-			for (String s: scope.getAllDefinedSymbolNames()) {
-				out.println(s);
+			for (Symbol s: scope.getAllDefinedSymbols()) {
+				out.print(s.getName());
+				out.print("\t");
+				out.print(s.getSymbolDataType());
+				out.println("(" + s.getSymbolType() + ")");
 			}
 			out.println("---------Used variables--------------");
 			for (String s: scope.getAllUsedSymbolNames()) {
 				out.println(s);
 			}
+			out.println("******************************************************");
 		}
 		out.close();
 	}

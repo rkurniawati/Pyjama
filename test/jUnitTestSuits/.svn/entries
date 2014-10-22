@@ -1,18 +1,18 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/jUnitTestSuits
 https://svn.ece.auckland.ac.nz/svn/taschto
 
 
 
-2014-09-24T23:25:52.180703Z
-5933
+2014-10-06T08:14:08.878600Z
+6067
 wke918
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -26,15 +26,15 @@ wke918
 
 08b7a59c-0210-0410-8289-8f00336d13cc
 
-memoryAndCPUTest
-dir
-
-runningTimeAndStabilityTest
-dir
-
 compileTests
 dir
 
 correctnessTests
+dir
+
+memoryAndCPUTest
+dir
+
+runningTimeAndStabilityTest
 dir
 

@@ -21,7 +21,7 @@ public class schedule_positive_test1 {
 
 		int[] array = new int[threadNumber];
 
-		//#omp parallel for shared(array, arraySize) firstprivate(chunkSize) schedule(static,chunkSize)
+		//#omp parallel for shared(array, arraySize) private(chunkSize) schedule(static,chunkSize)
 		for (int i = 0; i < arraySize; i++) {
 			int threadId = Pyjama.omp_get_thread_num();
 			array[threadId] += 1;

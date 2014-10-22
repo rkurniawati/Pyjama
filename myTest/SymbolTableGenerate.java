@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
 
-import pj.misc.FileExtension;
-import pj.misc.Version;
+import pj.FileExtension;
+import pj.Version;
 import pj.parser.ASTParser;
 import pj.parser.ast.CompilationUnit;
 import pj.parser.ast.visitor.*;

@@ -3,29 +3,11 @@ svn:wc:ra_dav:version-url
 V 77
 /svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared
 END
-shared_positive_test1.java
-K 25
-svn:wc:ra_dav:version-url
-V 104
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test1.java
-END
-shared_positive_test2.java
-K 25
-svn:wc:ra_dav:version-url
-V 104
-/svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test2.java
-END
-shared_positive_test3.java
-K 25
-svn:wc:ra_dav:version-url
-V 104
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test3.java
-END
-shared_positive_test1.pj
+shared_positive_test3.pj
 K 25
 svn:wc:ra_dav:version-url
 V 102
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test1.pj
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test3.pj
 END
 shared_positive_test2.pj
 K 25
@@ -33,9 +15,27 @@ svn:wc:ra_dav:version-url
 V 102
 /svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test2.pj
 END
-shared_positive_test3.pj
+shared_positive_test1.pj
 K 25
 svn:wc:ra_dav:version-url
 V 102
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test3.pj
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test1.pj
+END
+shared_positive_test3.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test3.java
+END
+shared_positive_test2.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test2.java
+END
+shared_positive_test1.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingClauses/Shared/shared_positive_test1.java
 END

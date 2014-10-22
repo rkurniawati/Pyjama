@@ -1,19 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 72
-/svn/taschto/!svn/ver/5933/Pyjama/trunk/test/jUnitTestSuits/compileTests
-END
-ComplexTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 89
-/svn/taschto/!svn/ver/5665/Pyjama/trunk/test/jUnitTestSuits/compileTests/ComplexTest.java
-END
-PrivateTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 89
-/svn/taschto/!svn/ver/5933/Pyjama/trunk/test/jUnitTestSuits/compileTests/PrivateTest.java
+/svn/taschto/!svn/ver/6067/Pyjama/trunk/test/jUnitTestSuits/compileTests
 END
 LibrariesTest.java
 K 25
@@ -21,47 +9,11 @@ svn:wc:ra_dav:version-url
 V 91
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/LibrariesTest.java
 END
-AtomicTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 88
-/svn/taschto/!svn/ver/5933/Pyjama/trunk/test/jUnitTestSuits/compileTests/AtomicTest.java
-END
 FreeGuiThreadTest.java
 K 25
 svn:wc:ra_dav:version-url
 V 95
 /svn/taschto/!svn/ver/5933/Pyjama/trunk/test/jUnitTestSuits/compileTests/FreeGuiThreadTest.java
-END
-LoopForTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 89
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/LoopForTest.java
-END
-SingleTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 88
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/SingleTest.java
-END
-FlushTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 87
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/FlushTest.java
-END
-FirstPrivateTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 94
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/FirstPrivateTest.java
-END
-OrderedTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 89
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/OrderedTest.java
 END
 BarrierTest.java
 K 25
@@ -69,29 +21,17 @@ svn:wc:ra_dav:version-url
 V 89
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/BarrierTest.java
 END
-SectionsTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 90
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/SectionsTest.java
-END
-CriticalTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 90
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/CriticalTest.java
-END
-MasterTest.java
-K 25
-svn:wc:ra_dav:version-url
-V 88
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/MasterTest.java
-END
 ScheduleTest.java
 K 25
 svn:wc:ra_dav:version-url
 V 90
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/ScheduleTest.java
+END
+FirstPrivateTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/FirstPrivateTest.java
 END
 ReductionTest.java
 K 25
@@ -99,11 +39,23 @@ svn:wc:ra_dav:version-url
 V 91
 /svn/taschto/!svn/ver/5933/Pyjama/trunk/test/jUnitTestSuits/compileTests/ReductionTest.java
 END
-ParallelTest.java
+CopyPrivateTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/CopyPrivateTest.java
+END
+SectionsTest.java
 K 25
 svn:wc:ra_dav:version-url
 V 90
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/ParallelTest.java
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/SectionsTest.java
+END
+OrderedTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/OrderedTest.java
 END
 LastPrivateTest.java
 K 25
@@ -111,15 +63,57 @@ svn:wc:ra_dav:version-url
 V 93
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/LastPrivateTest.java
 END
-CopyPrivateTest.java
+AtomicTest.java
 K 25
 svn:wc:ra_dav:version-url
-V 93
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/CopyPrivateTest.java
+V 88
+/svn/taschto/!svn/ver/5933/Pyjama/trunk/test/jUnitTestSuits/compileTests/AtomicTest.java
+END
+SingleTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/SingleTest.java
+END
+ParallelTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/ParallelTest.java
 END
 SharedTest.java
 K 25
 svn:wc:ra_dav:version-url
 V 88
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/SharedTest.java
+END
+LoopForTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/taschto/!svn/ver/6067/Pyjama/trunk/test/jUnitTestSuits/compileTests/LoopForTest.java
+END
+FlushTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/FlushTest.java
+END
+PrivateTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/taschto/!svn/ver/5933/Pyjama/trunk/test/jUnitTestSuits/compileTests/PrivateTest.java
+END
+MasterTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/MasterTest.java
+END
+CriticalTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/compileTests/CriticalTest.java
 END

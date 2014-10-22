@@ -1,65 +1,41 @@
-********Scope Name:OmpFor*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
-********Scope Name:OmpFor*************
---------Defined variables--------------
----------Used variables--------------
-********Scope Name:main*************
---------Defined variables--------------
-result
-args
-a
----------Used variables--------------
-********Scope Name:ForStmt*************
---------Defined variables--------------
-_OMP_VANCY_ITERATOR_
----------Used variables--------------
-_OMP_VANCY_ITERATOR_
-********Scope Name:foo*************
---------Defined variables--------------
----------Used variables--------------
-********Scope Name:parallel_ordered*************
---------Defined variables--------------
-counter
-threadNumber
+i
 array
+******************************************************
+***************Scope Name:parallel_loopFor*************
+--------Defined variables--------------
+threadCount	int(MethodParameter)
+array	int[](ScopeLocalParameter)
 ---------Used variables--------------
-counter
-System
+threadCount
+Pyjama
 array
-out
-********Scope Name:ForStmt*************
+******************************************************
+***************Scope Name:ForStmt*************
 --------Defined variables--------------
-_OMP_VANCY_ITERATOR_
+i	int(ScopeLocalParameter)
 ---------Used variables--------------
-_OMP_VANCY_ITERATOR_
-********Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-System
-out
-********Scope Name:swithchBlock*************
+i
+******************************************************
+***************Scope Name:max*************
 --------Defined variables--------------
 ---------Used variables--------------
-2
-1
-0
-System
-out
-********Scope Name:OmpParallel*************
+MAX_VALUE
+Integer
+******************************************************
+***************Scope Name:loopFor_negative_test11*************
+--------Defined variables--------------
+max	int(ClassMemberField)
+parallel_loopFor	int[](ClassMemberField)
+---------Used variables--------------
+******************************************************
+***************Scope Name:OmpFor*************
 --------Defined variables--------------
 ---------Used variables--------------
-********Scope Name:normalBlock*************
+******************************************************
+***************Scope Name:OmpParallel*************
 --------Defined variables--------------
 ---------Used variables--------------
-System
-out
-********Scope Name:myTest*************
---------Defined variables--------------
-parallel_ordered
-b
-c
-a
-foo
-main
----------Used variables--------------
+******************************************************

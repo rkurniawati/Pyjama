@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/jUnitTestSuits/runningTimeAndStabilityTest/loopFor
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 fxin927
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2014-08-18T08:19:40.000000Z
+2014-10-22T12:50:15.000000Z
 c476e737eb2fb9da80a4b3642352e35c
 2014-08-18T07:38:18.225522Z
 5643
@@ -66,7 +66,7 @@ file
 
 
 
-2014-08-18T08:19:40.000000Z
+2014-10-22T12:50:15.000000Z
 0bf98a0b5ae2e16d29590ee69ea41463
 2014-08-18T07:38:18.225522Z
 5643
@@ -100,7 +100,7 @@ file
 
 
 
-2014-08-18T08:19:40.000000Z
+2014-10-22T12:50:15.000000Z
 949ee50ee234337fc34a1116197f3a7c
 2014-08-18T07:38:18.225522Z
 5643
@@ -134,7 +134,7 @@ file
 
 
 
-2014-08-18T08:19:40.000000Z
+2014-10-22T12:50:15.000000Z
 2aea4a9eb5d93dbdd879da2a5ae1221f
 2014-08-18T07:38:18.225522Z
 5643
@@ -168,7 +168,7 @@ file
 
 
 
-2014-08-18T08:19:40.000000Z
+2014-10-22T12:50:15.000000Z
 46b2a5cc1f9e3f950871b46527431944
 2014-08-18T07:38:18.225522Z
 5643
@@ -202,7 +202,7 @@ file
 
 
 
-2014-08-18T08:19:40.000000Z
+2014-10-22T12:50:15.000000Z
 b2d6340ee89a66db790237cb4aaf4e8f
 2014-08-18T07:38:18.225522Z
 5643

@@ -1,7 +1,7 @@
 10
 
 dir
-6001
+6201
 https://svn.ece.auckland.ac.nz/svn/taschto/Pyjama/trunk/test/Domain/Bean
 https://svn.ece.auckland.ac.nz/svn/taschto
 
@@ -12,7 +12,7 @@ https://svn.ece.auckland.ac.nz/svn/taschto
 wke918
 
 
-
+svn:special svn:externals svn:needs-lock
 
 
 
@@ -26,47 +26,13 @@ wke918
 
 08b7a59c-0210-0410-8289-8f00336d13cc
 
-Result.java
-file
-
-
-
-
-2014-09-30T06:04:54.401298Z
-9431fed109a421090ef3fbe565ee8169
-2014-09-24T23:25:52.180703Z
-5933
-wke918
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-6832
-
 Data.java
 file
 
 
 
 
-2014-08-18T08:19:51.000000Z
+2014-10-22T12:50:18.000000Z
 444af71fcf89314102821cee5fed8c65
 2014-08-18T07:38:18.225522Z
 5643
@@ -100,7 +66,7 @@ file
 
 
 
-2014-08-18T08:19:51.000000Z
+2014-10-22T12:50:18.000000Z
 db5202d354770a16cb86ad717665c7ba
 2014-08-18T07:38:18.225522Z
 5643
@@ -127,4 +93,38 @@ fxin927
 
 
 951
+
+Result.java
+file
+
+
+
+
+2014-10-22T12:50:18.000000Z
+9431fed109a421090ef3fbe565ee8169
+2014-09-24T23:25:52.180703Z
+5933
+wke918
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6832
 

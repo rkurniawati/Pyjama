@@ -3,11 +3,11 @@ svn:wc:ra_dav:version-url
 V 93
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/reduction/group7
 END
-Reduction_Group7_1Test.java
+Reduction_Group7_3Test.java
 K 25
 svn:wc:ra_dav:version-url
 V 121
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/reduction/group7/Reduction_Group7_1Test.java
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/reduction/group7/Reduction_Group7_3Test.java
 END
 Reduction_Group7_2Test.java
 K 25
@@ -15,9 +15,9 @@ svn:wc:ra_dav:version-url
 V 121
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/reduction/group7/Reduction_Group7_2Test.java
 END
-Reduction_Group7_3Test.java
+Reduction_Group7_1Test.java
 K 25
 svn:wc:ra_dav:version-url
 V 121
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/reduction/group7/Reduction_Group7_3Test.java
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/jUnitTestSuits/correctnessTests/reduction/group7/Reduction_Group7_1Test.java
 END

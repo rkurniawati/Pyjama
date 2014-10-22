@@ -3,29 +3,11 @@ svn:wc:ra_dav:version-url
 V 82
 /svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical
 END
-critical_negative_test1.pj
+critical_negative_test4.pj
 K 25
 svn:wc:ra_dav:version-url
 V 109
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_negative_test1.pj
-END
-critical_positive_test1.pj
-K 25
-svn:wc:ra_dav:version-url
-V 109
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test1.pj
-END
-critical_negative_test2.pj
-K 25
-svn:wc:ra_dav:version-url
-V 109
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_negative_test2.pj
-END
-critical_positive_test2.pj
-K 25
-svn:wc:ra_dav:version-url
-V 109
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test2.pj
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_negative_test4.pj
 END
 critical_negative_test3.pj
 K 25
@@ -33,35 +15,23 @@ svn:wc:ra_dav:version-url
 V 109
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_negative_test3.pj
 END
-critical_positive_test3.pj
+critical_negative_test2.pj
 K 25
 svn:wc:ra_dav:version-url
 V 109
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test3.pj
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_negative_test2.pj
 END
-critical_negative_test4.pj
+critical_negative_test1.pj
 K 25
 svn:wc:ra_dav:version-url
 V 109
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_negative_test4.pj
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_negative_test1.pj
 END
-critical_positive_test4.pj
-K 25
-svn:wc:ra_dav:version-url
-V 109
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test4.pj
-END
-critical_positive_test1.java
+critical_positive_test4.java
 K 25
 svn:wc:ra_dav:version-url
 V 111
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test1.java
-END
-critical_positive_test2.java
-K 25
-svn:wc:ra_dav:version-url
-V 111
-/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test2.java
+/svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test4.java
 END
 critical_positive_test3.java
 K 25
@@ -69,9 +39,39 @@ svn:wc:ra_dav:version-url
 V 111
 /svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test3.java
 END
-critical_positive_test4.java
+critical_positive_test2.java
 K 25
 svn:wc:ra_dav:version-url
 V 111
-/svn/taschto/!svn/ver/5746/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test4.java
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test2.java
+END
+critical_positive_test1.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test1.java
+END
+critical_positive_test4.pj
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test4.pj
+END
+critical_positive_test3.pj
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test3.pj
+END
+critical_positive_test2.pj
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test2.pj
+END
+critical_positive_test1.pj
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/taschto/!svn/ver/5643/Pyjama/trunk/test/PyjamaCode/TestingDirectives/Critical/critical_positive_test1.pj
 END
