@@ -8,6 +8,7 @@ import java.util.List;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpForConstruct;
+import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpLastprivateDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
@@ -384,37 +385,31 @@ public class DataClausesHandler {
 		}
 	}
 	
-//	public static GuiCodeClassBuilder generateDummyGuiRegionForNoguiRemainingCode(ParallelRegionClassBuilder PRBuilder) {
-//		String returnCode = "";
-//		//check remain statements after current parallel region, if any, wrap it into gui wrapper
-//		String PRCodeString = PRBuilder.parallelConstruct.toString();
-//		PRCodeString = PRCodeString.replaceFirst("//#omp parallel freeguithread", "//#omp freeguithread parallel");
-//		ArrayList<String> currentMethodOrConstructorStmtsStrings = new ArrayList<String>();
-//		for (Statement s: PRBuilder.currentMethodOrConstructorStmts) {
-//			currentMethodOrConstructorStmtsStrings.add(s.toString());
-//		}
-//		int indexOfcurrentPR = currentMethodOrConstructorStmtsStrings.indexOf(PRCodeString);
-//		ArrayList<Statement> GuiStmt = new ArrayList<Statement>();
-////		if (indexOfcurrentPR == currentMethodOrConstructorStmtsStrings.size()-1) {
-////			//if current PR is the last statement of current method's statements, return directively;
-////			return null;
-////		}
-//		GuiCodeClassBuilder currentGuiCode = null;
-//		if (-1 != indexOfcurrentPR) {
-//			for (int i=indexOfcurrentPR+1; i<PRBuilder.currentMethodOrConstructorStmts.size(); i++) {
-//				GuiStmt.add(PRBuilder.currentMethodOrConstructorStmts.get(i));
-//			}
-//			// Create dummy GuiNode
-//			BlockStmt GuiBlock = new BlockStmt(0,0,0,0,GuiStmt);
-//			ArrayList<Statement> dummyStmt = new ArrayList<Statement>();
-//			dummyStmt.add(GuiBlock);
-//			OpenMP_Gui_Construct dummyGuiRegion = new OpenMP_Gui_Construct(PRBuilder.parallelConstruct,dummyStmt);
-//			dummyGuiRegion.setVarScope(PRBuilder.parallelConstruct.getVarScope());
-//			currentGuiCode = new GuiCodeClassBuilder(dummyGuiRegion, PRBuilder.visitor);
-//			currentGuiCode.guiName = "OMP_AfterInvocationOf_" + PRBuilder.className;
-//		}
-//		return currentGuiCode;
-//	}
+	public static GuiCodeClassBuilder generateDummyGuiRegionForNoguiRemainingCode(ParallelRegionClassBuilder PRBuilder) {
+		//check remain statements after current parallel region, if any, wrap it into gui wrapper
+		String PRCodeString = PRBuilder.parallelConstruct.toString();
+
+		ArrayList<String> currentMethodOrConstructorStmtsStrings = new ArrayList<String>();
+		for (Statement s: PRBuilder.currentMethodOrConstructorStmts) {
+			currentMethodOrConstructorStmtsStrings.add(s.toString());
+		}
+		int indexOfcurrentPR = currentMethodOrConstructorStmtsStrings.indexOf(PRCodeString);
+		ArrayList<Statement> GuiStmt = new ArrayList<Statement>();
+
+		GuiCodeClassBuilder currentGuiCode = null;
+		if (-1 != indexOfcurrentPR) {
+			for (int i=indexOfcurrentPR+1; i<PRBuilder.currentMethodOrConstructorStmts.size(); i++) {
+				GuiStmt.add(PRBuilder.currentMethodOrConstructorStmts.get(i));
+			}
+			// Create dummy GuiNode
+			BlockStmt GuiBlock = new BlockStmt(0,0,0,0,GuiStmt);
+			
+			OmpGuiConstruct dummyGuiRegion = new OmpGuiConstruct(GuiBlock);
+			currentGuiCode = new GuiCodeClassBuilder(dummyGuiRegion, PRBuilder.visitor);
+			currentGuiCode.guiName = "OMP_AfterInvocationOf_" + PRBuilder.className;
+		}
+		return currentGuiCode;
+	}
 	
 	/**************************************************************************/
 	private String formatException(String msg, int line) {

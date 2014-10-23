@@ -36,7 +36,7 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 	
 
 	public StringBuffer onceChecker = new StringBuffer("");
-	private PyjamaToJavaVisitor visitor;
+	public PyjamaToJavaVisitor visitor;
 	/*
 	 * though Pyjama does not support nested constructs,
 	 * the <code>gui</code> construct can be used in nested scenarios

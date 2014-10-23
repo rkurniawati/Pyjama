@@ -37,12 +37,17 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	private SourcePrinter printer = new SourcePrinter();
 	
 	private String staticPrefix = "";
+	
+	public List<Statement> currentMethodOrConstructorStmts = null;
 
-	private PyjamaToJavaVisitor visitor;
+	public PyjamaToJavaVisitor visitor;
 	public OmpParallelConstruct parallelConstruct;
 	private List<OmpDataClause> dataClauseList;
 		
-	public ParallelRegionClassBuilder(OmpParallelConstruct parallelConstruct, boolean isStatic, PyjamaToJavaVisitor visitor)
+	public ParallelRegionClassBuilder(OmpParallelConstruct parallelConstruct, 
+			boolean isStatic, 
+			PyjamaToJavaVisitor visitor,
+			List<Statement> stmts)
 	{	
 		this.parallelConstruct = parallelConstruct;
 		this.dataClauseList = parallelConstruct.getDataClauseList();
@@ -51,6 +56,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		}
 		this.visitor = visitor;
 		
+		this.currentMethodOrConstructorStmts = stmts;
 	}
 
 	private Statement getUserCode() {
@@ -221,10 +227,17 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("setBarrier();");
 		//BEGIN Master thread updateOutputList
 		printer.printLn("if (0 == this.alias_id) {");
-    	printer.indent();
-    	printer.printLn("updateOutputListForSharedVars();");
-    	printer.unindent();
-    	printer.printLn("}");
+		printer.indent();
+		printer.printLn("updateOutputListForSharedVars();");
+		if (this.parallelConstruct.isFreegui()) {
+		    /*
+		     * if current parallel region has freegui attribute, master
+		     * thread also should do invoke remaining code in current method.
+		     */
+		    printer.printLn(this.generateDummyGuiCode());
+		}
+		printer.unindent();
+		printer.printLn("}");
 		//END Master thread updateOutputList
 		//END get construct user code
 		printer.printLn("return null;");
@@ -234,28 +247,54 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("}");
 		printer.printLn("public void runParallelCode() {");
 		printer.indent();
-	
-		printer.printLn("for (int i = 1; i <= this.OMP_threadNumber-1; i++) {");
-		printer.indent();
-		printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
-		printer.printLn("PjRuntime.submit(slaveThread);");
-		printer.unindent();
-		printer.printLn("}");
-		printer.printLn("Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
-		printer.printLn("try {");
-		printer.indent();
-		printer.printLn("masterThread.call();");
-		printer.unindent();
-		printer.printLn("} catch (Exception e) {");
-		printer.indent();
-		printer.printLn("e.printStackTrace();");
-		printer.unindent();
-		printer.printLn("}");
-		
+		this.generateRunnable();
 		printer.unindent();
 		printer.printLn("}");
 		printer.unindent();
 		printer.printLn("}");
 		
 	}	
+	
+	private void generateRunnable() {
+		/*
+		 * If current directive is //#omp freeguithread, free edt thread and make another more thread
+		 * to substitute edt thread.
+		 */
+		if (this.parallelConstruct.isFreegui()) {
+			printer.printLn("for (int i = 0; i <= this.OMP_threadNumber-1; i++) {");
+			printer.indent();
+			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
+			printer.printLn("PjRuntime.submit(slaveThread);");
+			printer.unindent();
+			printer.printLn("}");
+		}
+		/*
+		 * else the current directive is //#omp parallel, master thread is current thread, doesn't escape
+		 * from parallel region.
+		 */
+		else {
+			printer.printLn("for (int i = 1; i <= this.OMP_threadNumber-1; i++) {");
+			printer.indent();
+			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
+			printer.printLn("PjRuntime.submit(slaveThread);");
+			printer.unindent();
+			printer.printLn("}");
+			printer.printLn("Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
+			printer.printLn("try {");
+			printer.indent();
+			printer.printLn("masterThread.call();");
+			printer.unindent();
+			printer.printLn("} catch (Exception e) {");
+			printer.indent();
+			printer.printLn("e.printStackTrace();");
+			printer.unindent();
+			printer.printLn("}");
+		}
+	}
+	
+	private String generateDummyGuiCode() {
+		GuiCodeClassBuilder currentGuiCode = DataClausesHandler.generateDummyGuiRegionForNoguiRemainingCode(this);
+		String returnCode = currentGuiCode.getSource();
+		return returnCode;
+	}
 }

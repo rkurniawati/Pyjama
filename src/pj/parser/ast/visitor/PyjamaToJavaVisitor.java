@@ -79,7 +79,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	
 		int uniqueOpenMPRegionID = nextOpenMPRegionUniqueID++;
 
-		ParallelRegionClassBuilder currentPRClass = new ParallelRegionClassBuilder(n, this.currentMethodIsStatic, this);
+		ParallelRegionClassBuilder currentPRClass = new ParallelRegionClassBuilder(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
 		currentPRClass.className = prefixTaskNameForParallelRegion + uniqueOpenMPRegionID;
 
 		
@@ -192,17 +192,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     }
 
     public void visit(OmpFreeguiConstruct n, SourcePrinter printer){
-//    	OpenMP_Parallel_Construct omp_parallel_construct = n.get_ParallelConstruct();
-//    	if (null == omp_parallel_construct) {
-//    		try {
-//				omp_parallel_construct = new OpenMP_Parallel_Construct(n.getBeginLine(), n.getBeginColumn(),
-//						n.getStatements(), null, false, true, false, null, new StringLiteralExpr(0,0,"1"));
-//			} catch (ParseException e) {
-//				e.printStackTrace();
-//			}
-//    	}
-//    	omp_parallel_construct.setNoGui();
-//    	omp_parallel_construct.accept(this, printer);
+    	throw new RuntimeException("OmpFreeguiConstruct should be normalised ad OmpParallelConstruct with freegui property");
     }
 
     public void visit(OmpGuiConstruct n, SourcePrinter printer){
@@ -229,7 +219,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     
 	public void visit(OmpCopyprivateDataClause n, SourcePrinter arg) {
 		throw new RuntimeException("copyprivate Clause should not be visited by PyjamaToJavaVisitor.");
-		
 	}
 
     public void visit(OmpDataClause n, SourcePrinter arg) {

@@ -1418,7 +1418,9 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 	@Override
 	public void visit(OmpFreeguiConstruct n, Object arg) {
 		printer.print("//#omp freeguithread ");
-		if (n.getOpenMPStatement() != null) {
+		if (null != n.getBody()) {
+			n.getBody().accept(this, arg);
+		}else if (n.getOpenMPStatement() != null) {
 			n.getOpenMPStatement().accept(this, arg);
 		}
 	}
