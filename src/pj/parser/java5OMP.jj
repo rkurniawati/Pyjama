@@ -3089,7 +3089,6 @@ OpenMPStatement OpenMPStatement():
 		sectionsConstruct = OmpSectionsConstruct()
 	 {ret = sectionsConstruct.normalisation();}
 	|	ret = OmpFreeguiConstruct()
-//	|	ret = OmpSectionConstruct()
 	| 	ret = OmpGuiConstruct()
 	|{OmpSingleConstruct singleConstruct;} //#omp single needs normalisation; Xing Fan at 2014.9.29
 		singleConstruct = OmpSingleConstruct()
@@ -3249,9 +3248,10 @@ OmpSectionsConstruct OmpSectionsConstruct():
   	{ return new OmpSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, nowait); }
 }
 
-OmpFreeguiConstruct OmpFreeguiConstruct():
+OmpParallelConstruct OmpFreeguiConstruct():
 {
 	Statement stmt = null;
+	OmpFreeguiConstruct freeguiConstruct = null;
     	OmpParallelConstruct opc = null;
 	OmpParallelForConstruct	opfc = null;
 	OmpParallelSectionsConstruct opsc = null;
@@ -3260,17 +3260,20 @@ OmpFreeguiConstruct OmpFreeguiConstruct():
 }
 {
   < FREEGUI > {line=token.beginLine; column=token.beginColumn;}
-  (	stmt = Statement()   {return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, stmt);}
+  (	stmt = Statement()   
+	{freeguiConstruct = new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, stmt);}
+	 
   | LOOKAHEAD(2)
   	opc = OmpParallelConstruct()
-	{return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opc);}
+	{freeguiConstruct = new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opc);}
   | LOOKAHEAD(2)
   	opfc = OmpParallelForConstruct()
-	{return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opfc);}
+	{freeguiConstruct = new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opfc);}
   | LOOKAHEAD(2)
  	opsc = OmpParallelSectionsConstruct()
-	{return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opsc);}
+	{freeguiConstruct = new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opsc);}
   )
+  {return freeguiConstruct.normalisation();}
 }
 
 OmpSectionConstruct OmpSectionConstruct():

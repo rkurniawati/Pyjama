@@ -7,7 +7,6 @@ import java.util.List;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.stmt.Statement;
-import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
@@ -19,14 +18,16 @@ public class OmpParallelConstruct extends OpenMPStatement {
 	private Statement body = null;
 	private List<OmpDataClause> dataClauseList;
 	
+	private boolean freegui = false;
+	
 	//this symbol is true when default(shared) data clause happens. Default is none.
 	private boolean defaultShared = false;
-		
+
 	public OmpParallelConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
-			OmpNumthreadsClause numThreads){
+			OmpNumthreadsClause numThreads) {
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.body = statement;
 		this.dataClauseList = dataClausesList;
@@ -57,6 +58,14 @@ public class OmpParallelConstruct extends OpenMPStatement {
 
 	public OmpNumthreadsClause getNumThreadsExpression() {
 		return numThreads;
+	}
+	
+	public boolean isFreegui() {
+		return this.freegui;
+	}
+	
+	public void setFreegui() {
+		this.freegui = true;
 	}
 	
 	/*
