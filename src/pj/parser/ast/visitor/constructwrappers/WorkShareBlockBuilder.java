@@ -118,6 +118,9 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		
 		Expression firstUpdateExpr = forSimpleStmt.getUpdate().get(0);
 		if (firstUpdateExpr instanceof UnaryExpr) {
+			/*
+			 * Parse updates such like: i--; i++; ++i; --i;
+			 */
 			UnaryExpr.Operator unaryOpt = ((UnaryExpr)firstUpdateExpr).getOperator();
 			if ((UnaryExpr.Operator.posDecrement == unaryOpt) || (UnaryExpr.Operator.preDecrement == unaryOpt)) {
 				stride = new NameExpr("-1");
@@ -125,12 +128,40 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 				stride = new NameExpr("1");
 			}
 		} else if (firstUpdateExpr instanceof AssignExpr) {
-			Expression strideNum = ((AssignExpr)firstUpdateExpr).getTarget();
+
 			AssignExpr.Operator binaryOpt = ((AssignExpr)firstUpdateExpr).getOperator();
 			if (AssignExpr.Operator.plus == binaryOpt) {
+				/*
+				 * Parse updates such like i+=stride;
+				 */
+				Expression strideNum = ((AssignExpr)firstUpdateExpr).getTarget();
 				stride = new NameExpr(strideNum.toString());
 			} else if (AssignExpr.Operator.minus == binaryOpt) {
+				/*
+				 * Parse updates such like i-=stride;
+				 */
+				Expression strideNum = ((AssignExpr)firstUpdateExpr).getTarget();
 				stride = new NameExpr("-"+strideNum.toString());
+			} else if (AssignExpr.Operator.assign == binaryOpt) {
+				/*
+				 * Parse updates such like i=i[+-]stride;
+				 */
+				NameExpr targetIdentifier = (NameExpr) ((AssignExpr)firstUpdateExpr).getTarget();
+				BinaryExpr valueExpr = (BinaryExpr) ((AssignExpr)firstUpdateExpr).getValue();
+				NameExpr updateIdentifier = (NameExpr) valueExpr.getLeft();
+				if (!updateIdentifier.toString().equals(this.identifier.toString()) ||
+						!targetIdentifier.toString().equals(this.identifier.toString())) {
+					throw new RuntimeException("Pyjama cannot parse the update expression in omp for");
+				}
+				BinaryExpr.Operator strideOpt = valueExpr.getOperator();
+				Expression strideExpr = valueExpr.getRight();
+				if (BinaryExpr.Operator.plus == strideOpt) {
+					stride = new NameExpr(strideExpr.toString());
+				} else if (BinaryExpr.Operator.minus == strideOpt) {
+					stride = new NameExpr("-" + strideExpr.toString());
+				} else {
+					throw new RuntimeException("Pyjama cannot parse the update expression in omp for");
+				}
 			}
 		} else  {
 			throw new RuntimeException("Pyjama cannot parse the update expression in omp for");
