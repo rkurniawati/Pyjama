@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.swing.SwingUtilities;
 import java.lang.reflect.InvocationTargetException;
 
-public class loopFor_negative_test11 {
+public class loopFor_positive_test17 {
 
     /**
 	 * loopFor More

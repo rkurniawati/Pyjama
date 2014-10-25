@@ -1,12 +1,9 @@
-***************Scope Name:max*************
+***************Scope Name:OmpFor*************
 --------Defined variables--------------
 ---------Used variables--------------
-MAX_VALUE
-Integer
 ******************************************************
-***************Scope Name:loopFor_negative_test11*************
+***************Scope Name:loopFor_positive_test20*************
 --------Defined variables--------------
-max	int(ClassMemberField)
 parallel_loopFor	int[](ClassMemberField)
 ---------Used variables--------------
 ******************************************************
@@ -16,6 +13,16 @@ parallel_loopFor	int[](ClassMemberField)
 i
 array
 ******************************************************
+***************Scope Name:OmpParallel*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:ForStmt*************
+--------Defined variables--------------
+i	int(ScopeLocalParameter)
+---------Used variables--------------
+i
+******************************************************
 ***************Scope Name:parallel_loopFor*************
 --------Defined variables--------------
 threadCount	int(MethodParameter)
@@ -24,18 +31,4 @@ array	int[](ScopeLocalParameter)
 threadCount
 Pyjama
 array
-******************************************************
-***************Scope Name:ForStmt*************
---------Defined variables--------------
-i	int(ScopeLocalParameter)
----------Used variables--------------
-i
-******************************************************
-***************Scope Name:OmpFor*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:OmpParallel*************
---------Defined variables--------------
----------Used variables--------------
 ******************************************************

@@ -113,6 +113,13 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		}
 		
 		BinaryExpr compareExpr = (BinaryExpr)forSimpleStmt.getCompare();
+		BinaryExpr.Operator opt = compareExpr.getOperator();
+		if (!(   (opt == BinaryExpr.Operator.greater) 
+			  || (opt == BinaryExpr.Operator.greaterEquals)
+			  || (opt == BinaryExpr.Operator.less)
+			  || (opt == BinaryExpr.Operator.lessEquals) )) {
+			throw new RuntimeException("illegal compare operator '" + opt.toString() + "' in omp for");
+		}
 		compareOperator = new NameExpr(compareExpr.getOperator().toString());
 		end_expression = compareExpr.getRight();
 		

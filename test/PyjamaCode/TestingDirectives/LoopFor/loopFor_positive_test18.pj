@@ -1,6 +1,6 @@
 package PyjamaCode.TestingDirectives.LoopFor;
 
-public class loopFor_negative_test10 {
+public class loopFor_positive_test18 {
 	/**
 	 * loopFor More
 	 * */
@@ -9,7 +9,7 @@ public class loopFor_negative_test10 {
 		int[] array = new int[1000];
 
 		//#omp parallel for shared(array)
-		for (int i = 0; i < 5-1; i++) {
+		for (int i = 0; i <array.length; i++) {
 			array[i]=i;
 		}
 

@@ -32,15 +32,15 @@ public class loopFor_positive_test2 {
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         inputlist__OMP_ParallelRegion_0.put("Stride",Stride);
         inputlist__OMP_ParallelRegion_0.put("EndValue",EndValue);
-        inputlist__OMP_ParallelRegion_0.put("InitialValue",InitialValue);
         inputlist__OMP_ParallelRegion_0.put("startIndex",startIndex);
+        inputlist__OMP_ParallelRegion_0.put("InitialValue",InitialValue);
         inputlist__OMP_ParallelRegion_0.put("array",array);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
         Stride = (Integer)outputlist__OMP_ParallelRegion_0.get("Stride");
         EndValue = (Integer)outputlist__OMP_ParallelRegion_0.get("EndValue");
-        InitialValue = (Integer)outputlist__OMP_ParallelRegion_0.get("InitialValue");
         startIndex = (Integer)outputlist__OMP_ParallelRegion_0.get("startIndex");
+        InitialValue = (Integer)outputlist__OMP_ParallelRegion_0.get("InitialValue");
         array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         /*OpenMP Parallel region (#0) -- END */
@@ -89,8 +89,8 @@ class _OMP_ParallelRegion_0{
             //BEGIN update outputlist
             OMP_outputList.put("Stride",Stride);
             OMP_outputList.put("EndValue",EndValue);
-            OMP_outputList.put("InitialValue",InitialValue);
             OMP_outputList.put("startIndex",startIndex);
+            OMP_outputList.put("InitialValue",InitialValue);
             OMP_outputList.put("array",array);
             //END update outputlist
         }
