@@ -33,11 +33,11 @@ public class PrivateTest {
 		n.write(Data,"JsonResult","Private","CompileJunitResults",false);
 	}
 	
-//	@Test
-//	public void PositiveTest1() {
-//		if(!positiveTest("PositiveTest1","private_positive_test1","test1","private variables in prarllel region"))
-//			fail("Compile Failed");
-//	}
+	@Test
+	public void PositiveTest1() {
+		if(!positiveTest("PositiveTest1","private_positive_test1","test1","private variables in prarllel region"))
+			fail("Compile Failed");
+	}
 	
 	@Test
 	public void PositiveTest2() {
@@ -56,7 +56,7 @@ public class PrivateTest {
 		if(!positiveTest("PositiveTest4","private_positive_test4","test4","private variables in prarllel single construct"))
 			fail("Compile Failed");
 	}
-	
+		
 	@Test
 	public void NegativeTest1() {		
 		if(!negativeTest("NegativeTest1","private_negative_test1","Undefined variable"))

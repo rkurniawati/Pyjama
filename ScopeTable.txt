@@ -1,34 +1,23 @@
-***************Scope Name:OmpFor*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:loopFor_positive_test20*************
---------Defined variables--------------
-parallel_loopFor	int[](ClassMemberField)
----------Used variables--------------
-******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 i
-array
+******************************************************
+***************Scope Name:parallel_private*************
+--------Defined variables--------------
+threadNumber	int(MethodParameter)
+i	int(ScopeLocalParameter)
+---------Used variables--------------
+Pyjama
+threadNumber
+i
 ******************************************************
 ***************Scope Name:OmpParallel*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:private_negative_test2*************
 --------Defined variables--------------
-i	int(ScopeLocalParameter)
+parallel_private	int(ClassMemberField)
 ---------Used variables--------------
-i
-******************************************************
-***************Scope Name:parallel_loopFor*************
---------Defined variables--------------
-threadCount	int(MethodParameter)
-array	int[](ScopeLocalParameter)
----------Used variables--------------
-threadCount
-Pyjama
-array
 ******************************************************
