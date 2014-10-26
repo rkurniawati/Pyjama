@@ -269,9 +269,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	public void visit(OpenMPStatement n, SourcePrinter arg) {
 		throw new RuntimeException("OpenMPStatement: This abstract class should not appear.");	
 	}
-	
-    private int separator=0;
-    
+	    
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
 	        if (n.getPackage() != null) {

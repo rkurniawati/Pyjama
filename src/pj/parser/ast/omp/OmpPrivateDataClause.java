@@ -83,11 +83,16 @@ public class OmpPrivateDataClause extends OmpDataClause{
 
 		for (Expression v: this.argumentSet) {
 			String varName = v.toString();
+			boolean findVarName = false;
 			for (Symbol s: symbols) {
 				if (s.isVariableNameAs(varName)) {
 					String varType = s.getSymbolDataType();
 					varTypes.put(varName, varType);
+					findVarName = true;
 				}
+			}
+			if (!findVarName) {
+				throw new RuntimeException("Illegal variable '" + varName + "' in private data clause");
 			}
 		}
 		return varTypes;

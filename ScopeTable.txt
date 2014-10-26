@@ -1,95 +1,23 @@
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-sum
-******************************************************
-***************Scope Name:ForStmt*************
---------Defined variables--------------
-_OMP_VANCY_ITERATOR_	int(ScopeLocalParameter)
----------Used variables--------------
-_OMP_VANCY_ITERATOR_
-******************************************************
-***************Scope Name:parallel_for_reduction*************
---------Defined variables--------------
-n	int(MethodParameter)
-sum	int(ScopeLocalParameter)
-threadNumber	int(MethodParameter)
----------Used variables--------------
-sum
-Pyjama
-threadNumber
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-sum
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-sum
-******************************************************
-***************Scope Name:parallel_reduction*************
---------Defined variables--------------
-sum	int(ScopeLocalParameter)
-threadNumber	int(MethodParameter)
----------Used variables--------------
-sum
-Pyjama
-threadNumber
-******************************************************
 ***************Scope Name:OmpParallel*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:OmpFor*************
+***************Scope Name:parallel_private*************
 --------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:OmpFor*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-sum
-i
-******************************************************
-***************Scope Name:ForStmt*************
---------Defined variables--------------
+threadNumber	int(MethodParameter)
 i	int(ScopeLocalParameter)
 ---------Used variables--------------
-n
-i
-******************************************************
-***************Scope Name:parallel_sections_reduction*************
---------Defined variables--------------
-sum	int(ScopeLocalParameter)
-threadNumber	int(MethodParameter)
----------Used variables--------------
-sum
 Pyjama
 threadNumber
+i
 ******************************************************
-***************Scope Name:swithchBlock*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
-1
-0
+i
 ******************************************************
-***************Scope Name:OmpParallel*************
+***************Scope Name:private_negative_test1*************
 --------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:reduction_positive_test1*************
---------Defined variables--------------
-parallel_reduction	int(ClassMemberField)
-parallel_for_reduction	int(ClassMemberField)
-parallel_sections_reduction	int(ClassMemberField)
----------Used variables--------------
-******************************************************
-***************Scope Name:OmpParallel*************
---------Defined variables--------------
+parallel_private	int(ClassMemberField)
 ---------Used variables--------------
 ******************************************************

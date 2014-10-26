@@ -13,6 +13,7 @@ import pj.parser.ast.omp.OmpLastprivateDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
+import pj.parser.ast.omp.OmpReductionOperator;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.Statement;
@@ -359,8 +360,8 @@ public class DataClausesHandler {
 			case Reduction:
 				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
 					String varName = varExpression.toString();
-					Expression operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varExpression);
-					String reductionOpr = operator.toString();
+					OmpReductionOperator operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varExpression);
+					String reductionOpr = operator.getOperatorString();
 					if (DataClauseHandlerUtils.isPrimitiveReductionOperator(reductionOpr)) {
 						/*
 						 * primitive type reduction operation
@@ -412,11 +413,6 @@ public class DataClausesHandler {
 	}
 	
 	/**************************************************************************/
-	private String formatException(String msg, int line) {
-		return "\n\n\t" + "-------------------------------\n\t" + ": " + msg
-				+ ", line " + line + "\n\t-------------------------------\n";
-	}
-
 	/*
 	 * Utility method to print debug message
 	 * 

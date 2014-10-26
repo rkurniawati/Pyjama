@@ -160,7 +160,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList;");
 		
 		//#BEGIN firstprivate reduction variables defined for each thread here
-		printer.printLn("//#BEGIN firstprivate reduction variables defined here");
+		printer.printLn("//#BEGIN private/firstprivate reduction variables defined here");
 		for(OmpDataClause clause: this.dataClauseList) {
 			if (clause instanceof OmpPrivateDataClause) {
 				((OmpPrivateDataClause) clause).printPrivateVariableDefination(parallelConstruct, printer);
@@ -170,7 +170,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 				continue;
 			}
 		}
-		printer.printLn("//#END firstprivate reduction variables  defined here");
+		printer.printLn("//#END private/firstprivate reduction variables  defined here");
 		//#END firstprivate reduction variables defined for each thread here
 		
 		//#BEGIN setBarrier method

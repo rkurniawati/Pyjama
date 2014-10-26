@@ -63,12 +63,6 @@ public class PrivateTest {
 			fail("Compile Failed");
 	}
 	
-	@Test
-	public void NegativeTest2() {
-		if(!negativeTest("NegativeTest2","private_negative_test2","private variables in prarllel region"))
-			fail("Compile Failed");
-	}
-	
 	private boolean positiveTest(String name,String filename,String test,String remark){
 		Result result = new Result();		
 		result.setTestName(name);
@@ -82,26 +76,26 @@ public class PrivateTest {
 			PyjamaToJavaParser.parse(new File(SettingConstans.COMPILETARGETTESTCODEPATH+"/PyjamaCode/TestingClauses/Private/"+filename+".pj"));
 			JavaCompiler builder = new JavaCompiler();
 			List<String> error =builder.buildJava(SettingConstans.COMPILETARGETTESTCODEPATH+"/PyjamaCode/TestingClauses/Private/",test);
-			String cmd="javac "+SettingConstans.COMPILETARGETTESTCODEPATH+"/PyjamaCode/TestingClauses/Private/"+filename+".java";
-            Runtime rt = Runtime.getRuntime();
-		    Process proc = rt.exec(cmd);
-		    StreamGobbler errorGobbler = new StreamGobbler(
-					proc.getErrorStream(), "ERROR");
-		    errorGobbler.start();
-		    errorGobbler.join();
+//			String cmd="javac "+SettingConstans.COMPILETARGETTESTCODEPATH+"/PyjamaCode/TestingClauses/Private/"+filename+".java";
+//            Runtime rt = Runtime.getRuntime();
+//		    Process proc = rt.exec(cmd);
+//		    StreamGobbler errorGobbler = new StreamGobbler(
+//					proc.getErrorStream(), "ERROR");
+//		    errorGobbler.start();
+//		    errorGobbler.join();
 			if (error.size()>0){
 				result.setCompileResult(error.toString());
 				result.setJunitResult("notPass");
 				Data.ReSetResult(result);
 				return false;
 			}
-			else if (!errorGobbler.getMsg().isEmpty()) {
-				System.out.println(errorGobbler.getMsg());
-				result.setCompileResult(error.toString());
-				result.setJunitResult("notPass");
-				Data.ReSetResult(result);
-				return false;
-				}
+//			else if (!errorGobbler.getMsg().isEmpty()) {
+//				System.out.println(errorGobbler.getMsg());
+//				result.setCompileResult(error.toString());
+//				result.setJunitResult("notPass");
+//				Data.ReSetResult(result);
+//				return false;
+//				}
 			else{
 				result.setCompileResult("success");
 				result.setJunitResult("Pass");

@@ -18,9 +18,11 @@ public class myTest {
 		int[] array = new int[threadNumber];
 		int[] counter=new int[1];
 		counter[0]=0;
-		//#omp  parallel for /*shared(threadNumber) */
+		//#omp  parallel 
+		{
 		for(int i=0; i<=10; i++) {
 			System.out.println("i="+i+" from thread" + Pyjama.omp_get_thread_num());
+		}
 		}
 		System.out.println("END");
 		return array;

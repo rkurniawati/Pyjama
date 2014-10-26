@@ -1,13 +1,5 @@
 package pj.parser.ast.visitor.dataclausehandler;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-import pj.parser.ast.Node;
-import pj.parser.ast.symbolscope.ScopeInfo;
-import pj.parser.ast.symbolscope.Symbol;
-import pj.parser.ast.symbolscope.SymbolTable;
-
 /**
  * This class implements simple utility routines
  * for handling the data clauses

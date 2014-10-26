@@ -11,7 +11,7 @@ public class firstPrivate_positive_test2{
 
 		//#omp parallel shared(i, array)
 		{
-			//#omp for schedule(static) firstprivate(i) shared(array)
+			//#omp for schedule(static) firstprivate(i)
 			for (int j = 0; j < 10; j++) {
 				int index = Pyjama.omp_get_thread_num();
 				array[index]=i;

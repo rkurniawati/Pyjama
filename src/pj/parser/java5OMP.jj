@@ -3440,7 +3440,7 @@ OmpPrivateDataClause OmpPrivateDataClause():
 	OmpPrivateDataClause ret = new OmpPrivateDataClause();
 	Expression expr;
 }
-{	<PRIVATE> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
+{	(<PRIVATE> | <FIRSTPRIVATE>) {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
 	expr = Expression() {ret.addArgument(expr);}
 	( "," expr = Expression() {ret.addArgument(expr);} )*
 	")"
