@@ -89,6 +89,7 @@ public class OmpPrivateDataClause extends OmpDataClause{
 					String varType = s.getSymbolDataType();
 					varTypes.put(varName, varType);
 					findVarName = true;
+					break;
 				}
 			}
 			if (!findVarName) {

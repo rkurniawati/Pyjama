@@ -82,11 +82,17 @@ public class OmpReductionDataClause extends OmpDataClause{
 		LinkedList<Symbol> symbols = scope.getAllReachableSymbols();
 		for (Expression v: this.argumentMap.keySet()) {
 			String varName = v.toString();
+			boolean findVarName = false;
 			for (Symbol s: symbols) {
 				if (s.isVariableNameAs(varName)) {
 					String varType = s.getSymbolDataType();
 					varTypes.put(varName, varType);
+					findVarName = true;
+					break;
 				}
+			}
+			if (!findVarName) {
+				throw new RuntimeException("Illegal variable '" + varName + "' in reduction data clause");
 			}
 		}
 		return varTypes;

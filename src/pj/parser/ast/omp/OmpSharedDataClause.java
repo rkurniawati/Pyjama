@@ -8,7 +8,6 @@ import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.VoidVisitor;
 import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -83,11 +82,17 @@ public class OmpSharedDataClause extends OmpDataClause{
 		LinkedList<Symbol> symbols = scope.getAllReachableSymbols();
 		for (Expression v: this.argumentSet) {
 			String varName = v.toString();
+			boolean findVarName = false;
 			for (Symbol s: symbols) {
 				if (s.isVariableNameAs(varName)) {
 					String varType = s.getSymbolDataType();
 					varTypes.put(varName, varType);
+					findVarName = true;
+					break;
 				}
+			}
+			if (!findVarName) {
+				throw new RuntimeException("Illegal variable '" + varName + "' in shared data clause");
 			}
 		}
 		return varTypes;
