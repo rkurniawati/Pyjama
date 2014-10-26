@@ -64,20 +64,32 @@ public class CriticalTest {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*
 	 * From Pyjama 1.3, single statement is supported for directives, so does //#omp critical
-	 * So the NegativeTests are not available now.
+	 * So the NegativeTests are not available now, become PositiveTests
 	 * Xing Fan at 2014.10.22
 	 */
-//	@Test
-//	public void NegativeTest1() {
-//		if(!negativeTest("NegativeTest1","critical_negative_test1","Increasement of atomic interger (counter++)"))
-//			fail("Compile Failed");
-//	}
-//	
-//	@Test
-//	public void NegativeTest3() {
-//		if(!negativeTest("NegativeTest3","critical_negative_test3","Decreasement of atomic interger (counter--)"))
-//			fail("Compile Failed");
-//	}
+	@Test
+	public void PositiveTest5() {
+		if(!positiveTest("PositiveTest5","critical_positive_test5","test5","Decreasement of atomic interger (counter--)"))
+			fail("Compile Failed");
+	}
+	
+	@Test
+	public void PositiveTest6() {
+		if(!positiveTest("PositiveTest6","critical_positive_test6","test6","Increasement of atomic interger (++counter)"))
+			fail("Compile Failed");
+	}
+	
+	@Test
+	public void PositiveTest7() {
+		if(!positiveTest("PositiveTest7","critical_positive_test7","test7","Decreasement of atomic interger (--counter)"))
+			fail("Compile Failed");
+	}
+	
+	@Test
+	public void PositiveTest8() {
+		if(!positiveTest("PositiveTest8","critical_positive_test8","test8","Increasement of atomic interger (counter++)"))
+			fail("Compile Failed");
+	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private boolean positiveTest(String name,String filename,String test,String remark){

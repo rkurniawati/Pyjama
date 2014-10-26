@@ -1,5 +1,4 @@
 import jUnitTestSuits.compileTests.*;
-import jUnitTestSuits.correctnessTests.atomic.*;
 import jUnitTestSuits.correctnessTests.barrier.Barrier_corrTest;
 import jUnitTestSuits.correctnessTests.critical.Critical_corrTest;
 import jUnitTestSuits.correctnessTests.firstPrivate.*;
@@ -64,7 +63,7 @@ public class JunitTestRunner {
 	 */
 	public static void main(String[] args) {
 
-		Class<?>[] directiveClasses = { AtomicTest.class, BarrierTest.class,
+		Class<?>[] directiveClasses = { BarrierTest.class,
 				CriticalTest.class, FlushTest.class, MasterTest.class,
 				OrderedTest.class, SectionsTest.class, SingleTest.class,
 				LoopForTest.class, ParallelTest.class };
@@ -141,8 +140,6 @@ public class JunitTestRunner {
 		
 		 Class<?>[] directiveClasses_corr = { 
 		 Single_corrTest.class,
-		 Atomic_Group1_corrTest.class, Atomic_Group2_corrTest.class,
-		 Atomic_Group3_corrTest.class, Atomic_Group4_corrTest.class,
 		 Ordered_corrTest.class,
 		 Master_corrTest.class, 
 		 Sections_corrTest.class, 

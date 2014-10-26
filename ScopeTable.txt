@@ -1,23 +1,23 @@
+***************Scope Name:parallel_omp_set_num_threads*************
+--------Defined variables--------------
+thread	int(ScopeLocalParameter)
+threadNumber	int(MethodParameter)
+---------Used variables--------------
+thread
+Pyjama
+threadNumber
+******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
-i
+thread
 ******************************************************
-***************Scope Name:parallel_private*************
+***************Scope Name:testCase_omp_set_num_threads*************
 --------Defined variables--------------
-threadNumber	int(MethodParameter)
-i	int(ScopeLocalParameter)
+parallel_omp_set_num_threads	int(ClassMemberField)
 ---------Used variables--------------
-Pyjama
-threadNumber
-i
 ******************************************************
 ***************Scope Name:OmpParallel*************
 --------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:private_negative_test2*************
---------Defined variables--------------
-parallel_private	int(ClassMemberField)
 ---------Used variables--------------
 ******************************************************
