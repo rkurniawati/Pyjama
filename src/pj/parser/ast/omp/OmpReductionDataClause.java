@@ -15,29 +15,29 @@ import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
 
 public class OmpReductionDataClause extends OmpDataClause{
 
-	Map<Expression, Expression> argumentMap;
+	Map<Expression, OmpReductionOperator> argumentMap;
 	
 	public OmpReductionDataClause() {
 		this.type = OmpDataClause.Type.Reduction;
-		this.argumentMap = new HashMap<Expression, Expression>();
+		this.argumentMap = new HashMap<Expression, OmpReductionOperator>();
 	}
 	
-	public OmpReductionDataClause(HashMap<Expression, Expression> variableSet) {
+	public OmpReductionDataClause(HashMap<Expression, OmpReductionOperator> variableSet) {
 		this.type = OmpDataClause.Type.Reduction;
 		this.argumentMap = variableSet;
 	}
 	
-	public OmpReductionDataClause(int beginLine, int beginColumn, int endLine, int endColumn, HashMap<Expression, Expression> variableList) {
+	public OmpReductionDataClause(int beginLine, int beginColumn, int endLine, int endColumn, HashMap<Expression, OmpReductionOperator> variableList) {
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.type = OmpDataClause.Type.Reduction;
 		this.argumentMap = variableList;
 	}
 	
-	public Map<Expression, Expression> getArgumentMap() {
+	public Map<Expression, OmpReductionOperator> getArgumentMap() {
 		return this.argumentMap;
 	}
 	
-	public void addArgument(Expression operator, Expression argument) {
+	public void addArgument(OmpReductionOperator operator, Expression argument) {
 		this.argumentMap.put(argument, operator);
 	}
 	

@@ -100,6 +100,7 @@ import pj.parser.ast.omp.OmpParallelForConstruct;
 import pj.parser.ast.omp.OmpParallelSectionsConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
+import pj.parser.ast.omp.OmpReductionOperator;
 import pj.parser.ast.omp.OmpScheduleClause;
 import pj.parser.ast.omp.OmpSectionConstruct;
 import pj.parser.ast.omp.OmpSectionsConstruct;
@@ -888,6 +889,9 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 			n.getArgumentMap().get(var).accept(this, arg);
 			var.accept(this, arg);
 		}
+	}
+	
+	public void visit(OmpReductionOperator n, A arg) {
 	}
 
 	public void visit(OmpScheduleClause n, A arg) {

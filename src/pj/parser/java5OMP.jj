@@ -3472,11 +3472,11 @@ OmpReductionDataClause OmpReductionDataClause():
 {
 	OmpReductionDataClause ret = new OmpReductionDataClause();
 	Expression expr;
-	Expression operator;
+	OmpReductionOperator operator;
 }
 {	<REDUCTION> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
-	operator = Name() ":" expr = Name() {ret.addArgument(operator, expr);}
-	( "," operator = Name() ":" expr = Name() {ret.addArgument(operator, expr);} )*
+	operator = OmpReductionOperator() ":" expr = Name() {ret.addArgument(operator, expr);}
+	( "," operator = OmpReductionOperator() ":" expr = Name() {ret.addArgument(operator, expr);} )*
 	")"
 	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }
@@ -3527,4 +3527,30 @@ OmpIfClause OmpIfClause():
 	{return new OmpIfClause(line, column, token.endLine, token.endColumn, ifExpr);}
 }
 
-
+OmpReductionOperator OmpReductionOperator():
+{
+	OmpReductionOperator op = null;
+	NameExpr userDefined = null;
+}
+{
+	(
+	  "+" { op = new OmpReductionOperator(OmpReductionOperator.Operator.Plus); }
+	|
+	  "*" { op = new OmpReductionOperator(OmpReductionOperator.Operator.Mult); }
+	|
+	  "-" { op = new OmpReductionOperator(OmpReductionOperator.Operator.Minus); }
+	|
+	  "&" { op = new OmpReductionOperator(OmpReductionOperator.Operator.BitAND); }
+	|
+	  "|" { op = new OmpReductionOperator(OmpReductionOperator.Operator.BitOR); }
+	|
+	  "^" { op = new OmpReductionOperator(OmpReductionOperator.Operator.BitXOR); }
+	|
+	  "&&" { op = new OmpReductionOperator(OmpReductionOperator.Operator.LogAND); }
+	|
+	  "||" { op = new OmpReductionOperator(OmpReductionOperator.Operator.LogOR); }
+	|
+	  userDefined = Name() { op = new OmpReductionOperator(userDefined); }
+	)
+	{return op;}
+} 

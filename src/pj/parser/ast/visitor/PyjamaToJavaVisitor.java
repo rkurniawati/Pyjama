@@ -248,6 +248,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	public void visit(OmpReductionDataClause n, SourcePrinter arg) {
 		throw new RuntimeException("reduction Clause should not be visited by PyjamaToJavaVisitor.");
 	}
+	@Override
+	public void visit(OmpReductionOperator n, SourcePrinter arg) {
+		throw new RuntimeException("reduction Operator should not be visited by PyjamaToJavaVisitor.");
+	}
 
 	public void visit(OmpScheduleClause n, SourcePrinter arg) {
 		throw new RuntimeException("schedule Clause should not be visited by PyjamaToJavaVisitor.");
@@ -1486,5 +1490,4 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		return CodePrinter.getSource();
 	}
 	/********************************************************************************************************************************/
-	
 }

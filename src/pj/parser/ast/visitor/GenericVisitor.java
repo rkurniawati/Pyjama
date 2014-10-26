@@ -94,6 +94,7 @@ import pj.parser.ast.omp.OmpParallelForConstruct;
 import pj.parser.ast.omp.OmpParallelSectionsConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
+import pj.parser.ast.omp.OmpReductionOperator;
 import pj.parser.ast.omp.OmpScheduleClause;
 import pj.parser.ast.omp.OmpSectionConstruct;
 import pj.parser.ast.omp.OmpSectionsConstruct;
@@ -341,6 +342,8 @@ public interface GenericVisitor<R, A> {
     public R visit(OmpPrivateDataClause n, A arg);
     
     public R visit(OmpReductionDataClause n, A arg);
+    
+    public R visit(OmpReductionOperator n, A arg);
     
     public R visit(OmpScheduleClause n, A arg);
     

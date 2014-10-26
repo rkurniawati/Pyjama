@@ -316,6 +316,8 @@ public interface VoidVisitor<A> {
     
     public void visit(OmpReductionDataClause n, A arg);
     
+    public void visit(OmpReductionOperator n, A arg);
+    
     public void visit(OmpScheduleClause n, A arg);
     
     public void visit(OmpSectionConstruct n, A arg);

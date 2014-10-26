@@ -99,6 +99,7 @@ import pj.parser.ast.omp.OmpParallelForConstruct;
 import pj.parser.ast.omp.OmpParallelSectionsConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
+import pj.parser.ast.omp.OmpReductionOperator;
 import pj.parser.ast.omp.OmpScheduleClause;
 import pj.parser.ast.omp.OmpSectionConstruct;
 import pj.parser.ast.omp.OmpSectionsConstruct;
@@ -1538,6 +1539,15 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 				printer.print(", ");
 		}
 		printer.print(") ");
+	}
+	
+	@Override
+    public void visit(OmpReductionOperator n, Object arg) {
+		if (null != n.getUserDefinedReduction()) {
+			printer.print(n.getUserDefinedReduction().toString());
+		} else {
+			printer.print(n.getOperatorString());
+		}
 	}
 
 	@Override
