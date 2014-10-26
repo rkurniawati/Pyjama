@@ -84,11 +84,11 @@ public class ReductionTest {
 			fail("Compile Failed");
 	}
 	
-//	@Test
-//	public void PositiveTest9() {
-//		if(!positiveTest("PositiveTest9","reduction_positive_test9","test9","sum of double"))
-//			fail("Compile Failed");
-//	}
+	@Test
+	public void PositiveTest9() {
+		if(!negativeTest("PositiveTest9","reduction_positive_test9","sum of integer"))
+			fail("Compile Failed");
+	}
 	
 	@Test
 	public void PositiveTest10() {
@@ -101,13 +101,6 @@ public class ReductionTest {
 		if(!negativeTest("NegativeTest1","reduction_negative_test1","Undefined variable"))
 			fail("Compile Failed");
 	}
-	
-	@Test
-	public void NegativeTest2() {
-		if(!negativeTest("NegativeTest2","reduction_negative_test2","sum of integer"))
-			fail("Compile Failed");
-	}
-
 	
 	private boolean positiveTest(String name,String filename,String test,String remark){
 		Result result = new Result();		

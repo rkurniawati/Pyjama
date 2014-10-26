@@ -4,7 +4,7 @@ import pj.Pyjama;
 /**
  * current pyjama does not support i<=n-1, use like this: i<=(n-1)
  */
-public class reduction_negative_test2{
+public class reduction_positive_test9{
 	private int[] a;
 	public int parallel_for_reduction(int threadNumber,int n){		
 		Pyjama.omp_set_num_threads(threadNumber);
