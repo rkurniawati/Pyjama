@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 J�lio Vilmar Gesser.
+ * Copyright (C) 2008 Julio Vilmar Gesser.
  * 
  * This file is part of Java 1.5 parser and Abstract Syntax Tree.
  *
