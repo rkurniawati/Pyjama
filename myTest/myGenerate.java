@@ -7,7 +7,7 @@ public class myGenerate extends Object{
 		// TODO Auto-generated method stub
 		try {
 			//pj.PyjamaToJavaParser.parse(new File("myTest/myTest.pj"));
-			pj.PyjamaToJavaParser.parse(new File("myTest/FreeGuiThread_positive_test1.pj"));
+			pj.PyjamaToJavaParser.parse(new File("myTest/squares/Squares.pj"));
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

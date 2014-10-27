@@ -1,0 +1,326 @@
+package squares;
+
+import pj.*;
+import javax.swing.JApplet;
+import java.awt.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Collections;
+
+import pi.ParIterator;
+import pi.ParIteratorFactory;
+import utils.SimulateWork;
+
+
+public class Squares extends JApplet {
+	//Amount to slow down computation
+	private static final int WORK_AMOUNT = 50;
+
+	//Dimensions for drawing pane
+	private int width;
+	private int height;
+	
+	//Dimensions for squares
+	private int sqCols;
+	private int sqRows;
+	private int sqWidth;
+	private int sqHeight;
+	
+	//Number of rows/columns for EACH type of squares
+	private int sqRowsEa;
+	
+	//Types of Squares (Blue, Red, etc)
+	private int squareTypes;
+
+	//4 Different sets of squares
+	private ArrayList<Square> blueSquaresList;
+	private ArrayList<Square> redSquaresList;
+	private ArrayList<Square> greenSquaresList;
+	private ArrayList<Square> yellowSquaresList;
+
+	//Sequential Iterators
+	private Iterator<Square> blueSquaresIterator;
+	private Iterator<Square> redSquaresIterator;
+	private Iterator<Square> greenSquaresIterator;
+	private Iterator<Square> yellowSquaresIterator;
+	
+	//ParIterator version of Arrays
+	private ParIterator<Square> blueSquaresParIterator;
+	private ParIterator<Square> redSquaresParIterator;
+	private ParIterator<Square> greenSquaresParIterator;
+	private ParIterator<Square> yellowSquaresParIterator;
+		
+	//Threads
+	private int threads = 8;
+
+	//Clearing Screen
+	private boolean isClear = false;
+
+	public Squares() {
+		width = 800;
+		height = 800;
+		sqCols = 20;
+		sqRows = 20;
+		squareTypes = 4;
+		sqRowsEa = sqRows/squareTypes;
+		setPreferredSize(new Dimension(width, height));
+		init();
+	}
+
+
+	public void init() {
+
+		blueSquaresList = new ArrayList<Square>();
+		redSquaresList = new ArrayList<Square>();
+		greenSquaresList = new ArrayList<Square>();
+		yellowSquaresList = new ArrayList<Square>();
+		
+		calcSquareDim();
+		initBlueSquares();
+		initRedSquares();
+		initGreenSquares();
+		initYellowSquares();
+	}
+
+	private void calcSquareDim() {
+		sqWidth = this.width/sqCols;
+		sqHeight = this.height/sqRows;
+	}
+
+	//Method to deduce where the coloured squares should start based on rank (1st set, 2nd set, etc)
+	private int getColouredSquaresY(int rank) {
+		return rank * sqRowsEa * sqHeight;
+	}
+	
+	private void initBlueSquares() {
+		//Offset for height - 0, first row
+		int height = getColouredSquaresY(0);
+		
+		//Create squares and designate location on grid
+		for(int i=0; i<sqCols; i++) {
+			for(int j=0; j<sqRowsEa; j++) {
+				blueSquaresList.add(new Square(i*sqWidth, height+j*sqHeight, sqWidth, sqHeight, false));
+			}
+		}
+		Collections.shuffle(blueSquaresList);
+	}
+	
+	private void initRedSquares() {
+		//Offset for height, second section
+		int height = getColouredSquaresY(1);
+		
+		//Create squares and designate location on grid
+		for(int i=0; i<sqCols; i++) {
+			for(int j=0; j<sqRowsEa; j++) {
+				redSquaresList.add(new Square(i*sqWidth, height+j*sqHeight, sqWidth, sqHeight, false));
+			}
+		}
+		Collections.shuffle(redSquaresList);
+	}
+	
+	private void initGreenSquares() {
+		//Offset for height, third section
+		int height = getColouredSquaresY(2);
+		
+		//Create squares and designate location on grid
+		for(int i=0; i<sqCols; i++) {
+			for(int j=0; j<sqRowsEa; j++) {
+				greenSquaresList.add(new Square(i*sqWidth, height+j*sqHeight, sqWidth, sqHeight, false));
+			}
+		}
+		Collections.shuffle(greenSquaresList);
+	}
+	
+	private void initYellowSquares() {
+		//Offset for height, fourth section
+		int height = getColouredSquaresY(3);
+		
+		//Create squares and designate location on grid
+		for(int i=0; i<sqCols; i++) {
+			for(int j=0; j<sqRowsEa; j++) {
+				yellowSquaresList.add(new Square(i*sqWidth, height+j*sqHeight, sqWidth, sqHeight, false));
+			}
+		}
+		Collections.shuffle(yellowSquaresList);
+	}
+
+	public void update(Graphics g) {
+		paint(g);
+	}
+	
+	//NOTE: See if we can un-clutter this
+	public void paint(Graphics g) {
+		
+		if(isClear) {
+			Dimension d = getSize();
+			g.setColor(Color.white);
+			g.fillRect(0, 0, d.width, d.height);
+			isClear = false;
+		}
+		
+		//Iterates through each and draws if visible
+		for(Square s : blueSquaresList) {
+			if(s.getIsVisible()) {
+				g.setColor(Color.blue);
+				g.fillRect(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(new Color(200, 200, 255));
+				g.fillOval(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(Color.white);
+				g.drawOval(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(Color.black);
+				g.drawRect(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+			}
+		}
+		
+		for(Square s : redSquaresList) {
+			if(s.getIsVisible()) {
+				g.setColor(Color.red);
+				g.fillRect(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(new Color(255, 200, 200));
+				g.fillOval(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(Color.white);
+				g.drawOval(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(Color.black);
+				g.drawRect(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+			}
+		}
+		
+		for(Square s : greenSquaresList) {
+			if(s.getIsVisible()) {
+				g.setColor(Color.green);
+				g.fillRect(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(new Color(200, 255, 200));
+				g.fillOval(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(Color.white);
+				g.drawOval(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(Color.black);
+				g.drawRect(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+			}
+		}
+
+		for(Square s : yellowSquaresList) {
+			if(s.getIsVisible()) {
+				g.setColor(Color.yellow);
+				g.fillRect(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(new Color(255, 255, 200));
+				g.fillOval(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(Color.white);
+				g.drawOval(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+				g.setColor(Color.black);
+				g.drawRect(s.getX(), s.getY(), s.getWidth(), s.getHeight());
+			}
+		}
+	}
+
+	public void reset() {
+		//init();
+		isClear = true;
+		
+		blueSquaresIterator = blueSquaresList.iterator();
+		redSquaresIterator = redSquaresList.iterator();
+		greenSquaresIterator = greenSquaresList.iterator();
+		yellowSquaresIterator = yellowSquaresList.iterator();
+		
+		resetPaint(blueSquaresIterator);
+		resetPaint(redSquaresIterator);
+		resetPaint(greenSquaresIterator);
+		resetPaint(yellowSquaresIterator);
+		
+		repaint();
+	}
+
+	//Resets values for paints to be false again
+	private void resetPaint(Iterator<Square> squareIterator) {
+		while(squareIterator.hasNext()) {
+			Square s = squareIterator.next();
+			s.setIsVisible(false);
+		}
+	}
+	
+	private void makeSquaresVisible(Iterator<Square> squareIterator) {
+		while(squareIterator.hasNext()) {
+			Square s = squareIterator.next();
+			if(!s.getIsVisible()) {
+				s.setIsVisible(true);
+				
+				//Slow down with heavy computation
+				SimulateWork.work(WORK_AMOUNT);
+				
+				//#omp gui 
+				{
+					repaint();
+				}
+			}
+		}
+	}
+
+	//Parallel version
+	private void makeParaSquaresVisible(ParIterator<Square> squareIterator) {
+		makeSquaresVisible(squareIterator);
+	}
+
+	public void makeSequential() {
+		//Supposedly initialise
+		//Go through each element and paint
+		init();
+		blueSquaresIterator = blueSquaresList.iterator();
+		redSquaresIterator = redSquaresList.iterator();
+		greenSquaresIterator = greenSquaresList.iterator();
+		yellowSquaresIterator = yellowSquaresList.iterator();
+		
+		makeSquaresVisible(blueSquaresIterator);
+		makeSquaresVisible(redSquaresIterator);
+		makeSquaresVisible(greenSquaresIterator);
+		makeSquaresVisible(yellowSquaresIterator);
+	}
+
+	//Concurrent Version
+	public void makeConcurrent() {		
+		init();
+
+			blueSquaresIterator = blueSquaresList.iterator();
+			redSquaresIterator = redSquaresList.iterator();
+			greenSquaresIterator = greenSquaresList.iterator();
+			yellowSquaresIterator = yellowSquaresList.iterator();
+		
+		Pyjama.omp_set_num_threads(8);
+		////#omp freeguithread
+		//#omp parallel
+		{
+			makeSquaresVisible(blueSquaresIterator);
+			makeSquaresVisible(redSquaresIterator);
+			makeSquaresVisible(greenSquaresIterator);
+			makeSquaresVisible(yellowSquaresIterator);
+		}
+	}
+
+	public void makeParallel() {
+		
+
+		//Create parallelIterator versions of this
+		blueSquaresParIterator = ParIteratorFactory.createParIterator(blueSquaresList, threads);
+		redSquaresParIterator = ParIteratorFactory.createParIterator(redSquaresList, threads);
+		greenSquaresParIterator = ParIteratorFactory.createParIterator(greenSquaresList, threads);
+		yellowSquaresParIterator = ParIteratorFactory.createParIterator(yellowSquaresList, threads);
+		int durant = 35;
+		Pyjama.omp_set_num_threads(8);
+		System.out.println("REAL EDT"+ Thread.currentThread().getId());
+		//#omp  freeguithread  parallel  
+		////#omp parallel
+		{
+			
+			makeParaSquaresVisible(blueSquaresParIterator);
+			makeParaSquaresVisible(redSquaresParIterator);
+			makeParaSquaresVisible(greenSquaresParIterator);
+			makeParaSquaresVisible(yellowSquaresParIterator);
+			////#omp barrier
+			System.out.println("Durant1:"+durant);
+			//System.out.println("Barrier - Wait\tThread ID: " + Pyjama.omp_get_thread_num()+"REAL ID:"+Thread.currentThread().getId());
+		}
+		System.out.println("Durant:"+durant);
+		System.out.println("Finished\tThread ID: " + Pyjama.omp_get_thread_num()+"REAL ID:"+Thread.currentThread().getId());
+		System.out.println("HAHAHAHAHA REAL ID:"+Thread.currentThread().getId());
+		return;
+	}
+}

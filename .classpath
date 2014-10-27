@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/test/hamcrest-core.jar"/>
 	<classpathentry kind="lib" path="lib/test/junit.jar"/>
 	<classpathentry kind="lib" path="lib/test/rt.jar"/>
+	<classpathentry kind="lib" path="lib/ParaIterator-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

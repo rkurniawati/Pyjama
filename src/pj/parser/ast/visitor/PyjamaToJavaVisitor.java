@@ -48,6 +48,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected Type currentMethodType = null;
 	//keep track of current type of declaration of variables 2014.7.14
 	protected Type currentVarDeclarationType = null;
+	//if current var declaration is in foreach header, do not give initial value 2014.7.4 => 2014.10.27
+	protected boolean needNotVarInit = false;
 	//keep track of current worksharing block's private variables, including firstprivate, lastprivate, and reduction
 	/*
 	 * currentPrivateVariableInOMPWorksharingBlock: contain all variable name inside current //#omp for or //#omp sections
@@ -500,7 +502,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        if (n.getInit() != null) {
 	            printer.print(" = ");
 	            n.getInit().accept(this, printer);
-	        } else {
+	        } else if (!this.needNotVarInit){
 	        	printer.print(" = ");
 	        	printer.print(DataClauseHandlerUtils.getDefaultValuesForPrimitiveType(currentVarDeclarationType.toString()));
 	        }
@@ -991,6 +993,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        /*this code snippet intends force initialize variables in declaration expression.
 	         * The goal is solving uninitalization problem for parallel code generation.
 	         */
+	        /*
+	         * This cause another bugs: foreach loop local variable needn't to be initialised:
+	         * however, this visitor will convert for(int i: list) => for(int i=0: list) 
+	         */
 	        currentVarDeclarationType  = n.getType();
 	        //Xing add code at 2014.7.29 END
 	        printer.print(" ");
@@ -1210,7 +1216,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
 	    public void visit(ForeachStmt n, SourcePrinter printer) {
 	        printer.print("for (");
+	        //Xing added at 2014.10.27, fix init bug at foreach loop
+	        this.needNotVarInit = true;
 	        n.getVariable().accept(this, printer);
+	        this.needNotVarInit = false;
 	        printer.print(" : ");
 	        n.getIterable().accept(this, printer);
 	        printer.print(") ");
