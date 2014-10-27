@@ -268,7 +268,6 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
     	 * The main purpose of overriding this visit function is
     	 * take anonymous class body into scopeTable 
     	 */
-    	 System.out.println("QQQQQQQQQQQQQQQQQQQQQQ");
     	if (n.getScope() != null) {
             n.getScope().accept(this, arg);
         }
@@ -288,7 +287,6 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
             for (BodyDeclaration member : n.getAnonymousClassBody()) {
                 member.accept(this, arg);
             }
-            System.out.println("QQQQQQQQQQQQQQQQQQQQQQ");
             this.symbolTable.exitScope();
         }
         return null;
@@ -330,6 +328,9 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 			String varName = v.getId().getName();
 			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), typeName, SymbolType.ScopeLocalParameter);
 			this.symbolTable.addSymbolDeclaration(varName, symbol);
+			if (null != v.getInit()) {
+				v.getInit().accept(this, arg);
+			}
 		}
 		return null;
 	}
@@ -343,6 +344,9 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 			String varName = var.getId().getName();
 			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), typeName, SymbolType.ClassMemberField);
 			this.symbolTable.addSymbolDeclaration(varName, symbol);
+			if (null != var.getInit()) {
+				var.getInit().accept(this, arg);
+			}
 		}
 		return null;
 	}

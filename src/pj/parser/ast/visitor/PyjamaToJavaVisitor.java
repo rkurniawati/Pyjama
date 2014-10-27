@@ -105,7 +105,18 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn(currentPRClass.className + " " + currentPRClass.className + "_in = new "+ currentPRClass.className + "(" + thread_number +numThreadsClause+ "," + new_icv + "," + inputlist + "," + outputlist + ");");
 		printer.printLn(currentPRClass.className + "_in" + ".runParallelCode();");
 		
-		DataClausesHandler.processDataClausesAfterPRClassInvocation(currentPRClass, printer);
+		
+		if (!n.isFreegui()) {
+			// if directive is normal parallel directive, recovery data from PRClass
+			DataClausesHandler.processDataClausesAfterPRClassInvocation(currentPRClass, printer);
+		}else if (n.isFreegui()) {
+			// if directive is freeguithread property, return after region, following code is invoked in region.
+			printer.printLn("if (PjRuntime.getCurrentThreadICV() != null) {", -1);
+			printer.indent();
+			printer.printLn("return;", -1);
+			printer.unindent();
+			printer.printLn("}", -1);
+		}
 		
 		printer.printLn("PjRuntime.recoverParentICV(" + previous_icv + ");");
 		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- END */");
@@ -938,10 +949,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        ///Xing added to print Auxilary parallel region class if current method have PR region.
 			printer.printLn(this.PrinterForPRClass.getSource());
 			this.PrinterForPRClass.clear();
-//			//BEGIN print workshare method if any At 2014.8.3 Convert //#omp for directly to statements, no more need method build
-//			printer.printLn(this.PrinterForWSMethod.getSource(), -1);
-//			this.PrinterForWSMethod.clear();
-//			//END print workshare method if any
 			this.currentMethodOrConstructorStmts = null;
 			this.currentMethodType = null;
 			///Xing added

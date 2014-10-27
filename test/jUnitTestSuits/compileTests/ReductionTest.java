@@ -86,7 +86,7 @@ public class ReductionTest {
 	
 	@Test
 	public void PositiveTest9() {
-		if(!negativeTest("PositiveTest9","reduction_positive_test9","sum of integer"))
+		if(!positiveTest("PositiveTest9","reduction_positive_test9","test9","sum of integer"))
 			fail("Compile Failed");
 	}
 	

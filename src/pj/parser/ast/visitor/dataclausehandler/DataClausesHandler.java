@@ -17,7 +17,9 @@ import pj.parser.ast.omp.OmpReductionOperator;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.Statement;
+import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.visitor.SourcePrinter;
+import pj.parser.ast.visitor.SymbolScopingVisitor;
 import pj.parser.ast.visitor.constructwrappers.GuiCodeClassBuilder;
 import pj.parser.ast.visitor.constructwrappers.ParallelRegionClassBuilder;
 import pj.parser.ast.visitor.constructwrappers.WorkShareBlockBuilder;
@@ -81,7 +83,7 @@ public class DataClausesHandler {
 			case Copyprivate:
 				throw new RuntimeException(STR_UNSUPPORTED_ON_PYJAMA + "copyprivate clause");
 			default:
-				throw new RuntimeException("Find unexpected Data clause");	
+				throw new RuntimeException("Find unexpected Data clause" + dataClause.DataClauseType().toString());	
 			}
 		}
 		
@@ -409,6 +411,15 @@ public class DataClausesHandler {
 			currentGuiCode = new GuiCodeClassBuilder(dummyGuiRegion, PRBuilder.visitor);
 			currentGuiCode.guiName = "OMP_AfterInvocationOf_" + PRBuilder.className;
 		}
+		/*
+		 * give this dummy gui region a scope info
+		 */
+		SymbolScopingVisitor scopeVisitor = new SymbolScopingVisitor();
+		System.out.println("DFDF");
+		currentGuiCode.getNode().accept(scopeVisitor, null);
+		ScopeInfo scope = scopeVisitor.getSymbolTable().getScopeOfNode(currentGuiCode.getNode());
+		currentGuiCode.getNode().scope = scope;
+		System.out.println("DFDF");
 		return currentGuiCode;
 	}
 	
