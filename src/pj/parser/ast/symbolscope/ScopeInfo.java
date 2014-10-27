@@ -110,7 +110,7 @@ public class ScopeInfo {
 		return ret;
 	}
 	
-	public LinkedList<Symbol> getAllCurrentMethodDefinedVariables(Set<String> vars) {
+	public LinkedList<Symbol> getAllCurrentMethodDefinedVariables() {
 		LinkedList<Symbol> ret = new LinkedList<Symbol>();
 		ScopeInfo parentScope = this;
 		while (parentScope != null) {

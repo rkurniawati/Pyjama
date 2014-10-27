@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.stmt.Statement;
@@ -136,11 +137,25 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 	/************************Print helper functions**************************/
 	private HashMap<String, String> getUsedVariablesInWapperCodeBlock() {
 		HashMap<String, String> allVariablesDefinationSet = new HashMap<String, String>();
-		Collection<Symbol> symbols = this.node.scope.getAllUsedSymbols();
-		for(Symbol s: symbols) {
-			String varName = s.getName();
-			String varType = s.getSymbolDataType();
-			allVariablesDefinationSet.put(varName, varType);
+		Set<String> symbolNames = this.node.scope.getAllUsedSymbolNames();
+		List<Symbol> symbolDeclarations = this.node.scope.getAllReachableSymbols();
+		for (Symbol s: symbolDeclarations) {
+			System.out.println("AA:"+s.getName()+"-"+s.getSymbolDataType());
+		}
+		for(String varName: symbolNames) {
+			String varType = null;
+			for(Symbol s: symbolDeclarations) {
+				if (varName.equals(s.getName())) {
+					varType = s.getSymbolDataType();
+					break;
+				}
+			}
+//			if (null == varType) {
+//				throw new RuntimeException(" Dummy GUI block cannot find varaible defination for " + varName + "...");
+//			}
+			if (null != varType) {
+				allVariablesDefinationSet.put(varName, varType);
+			}
 		}	
 		return allVariablesDefinationSet;
 	}

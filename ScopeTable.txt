@@ -1,111 +1,72 @@
-***************Scope Name:normalBlock*************
+***************Scope Name:run*************
 --------Defined variables--------------
 ---------Used variables--------------
-sum
+sb
+SwingUtilities
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:catchBlock*************
 --------Defined variables--------------
-_OMP_VANCY_ITERATOR_	int(ScopeLocalParameter)
 ---------Used variables--------------
-_OMP_VANCY_ITERATOR_
 ******************************************************
-***************Scope Name:parallel_for_reduction*************
+***************Scope Name:anonymousClass Runnable*************
 --------Defined variables--------------
-n	int(MethodParameter)
-sum	int(ScopeLocalParameter)
-threadNumber	int(MethodParameter)
-i	int(ScopeLocalParameter)
+run	void(ClassMemberField)
 ---------Used variables--------------
-a
-n
-sum
-Pyjama
-threadNumber
 ******************************************************
-***************Scope Name:OmpFor*************
+***************Scope Name:tryBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
-sum
+Thread
 ******************************************************
-***************Scope Name:parallel_sections_reduction*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
-sum	int(ScopeLocalParameter)
-threadNumber	int(MethodParameter)
 ---------Used variables--------------
-sum
-Pyjama
-threadNumber
+e
 ******************************************************
-***************Scope Name:OmpParallel*************
+***************Scope Name:tryBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:OmpFor*************
+***************Scope Name:FreeGuiThread_positive_test1*************
 --------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:parallel_reduction*************
---------Defined variables--------------
-sum	int(ScopeLocalParameter)
-threadNumber	int(MethodParameter)
----------Used variables--------------
-sum
-Pyjama
-threadNumber
-******************************************************
-***************Scope Name:OmpParallel*************
---------Defined variables--------------
+positive_test1	String(ClassMemberField)
+sb	StringBuffer(ClassMemberField)
+simulateEDT	Runnable(ClassMemberField)
 ---------Used variables--------------
 ******************************************************
 ***************Scope Name:OmpParallel*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:reduction_positive_test10*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
-parallel_reduction	int(ClassMemberField)
-parallel_for_reduction	int(ClassMemberField)
-parallel_sections_reduction	int(ClassMemberField)
-a	int[](ClassMemberField)
 ---------Used variables--------------
+SwingUtilities
+simulateEDT
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:positive_test1*************
+--------Defined variables--------------
+shm	Object(ScopeLocalParameter)
+---------Used variables--------------
+sb
+SwingUtilities
+******************************************************
+***************Scope Name:catchBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
-n
-i
 ******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
-sum
-******************************************************
-***************Scope Name:swithchBlock*************
---------Defined variables--------------
----------Used variables--------------
-1
-0
+e
 ******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
-a
-sum
-i
-******************************************************
-***************Scope Name:ForStmt*************
---------Defined variables--------------
----------Used variables--------------
-n
-i
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-a
-i
+sb
+SwingUtilities
 ******************************************************

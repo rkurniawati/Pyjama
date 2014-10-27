@@ -18,6 +18,7 @@ import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.ScopeInfo;
+import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.SymbolScopingVisitor;
 import pj.parser.ast.visitor.constructwrappers.GuiCodeClassBuilder;
@@ -82,8 +83,11 @@ public class DataClausesHandler {
 				break;
 			case Copyprivate:
 				throw new RuntimeException(STR_UNSUPPORTED_ON_PYJAMA + "copyprivate clause");
+			case Default:
+				// donothing
+				break;
 			default:
-				throw new RuntimeException("Find unexpected Data clause" + dataClause.DataClauseType().toString());	
+				throw new RuntimeException("Find unexpected Data clause:" + dataClause.DataClauseType().toString());	
 			}
 		}
 		
@@ -164,7 +168,9 @@ public class DataClausesHandler {
 				
 			case Copyprivate:
 				throw new RuntimeException(STR_UNSUPPORTED_ON_PYJAMA + "copyprivate clause");
-				
+			case Default:
+				// donothing
+				break;
 			default:
 				throw new RuntimeException("Find unexpected Data clause");	
 			}
@@ -235,6 +241,9 @@ public class DataClausesHandler {
 					throw new RuntimeException(STR_UNSUPPORTED_ON_PYJAMA + "copyprivate clause");
 				case Shared:
 					throw new RuntimeException("shared data clause should not be used in worksharing directive");
+				case Default:
+					// donothing
+					break;
 				default:
 					throw new RuntimeException("Find unexpected Data clause in //#omp for ");	
 				}
@@ -317,6 +326,9 @@ public class DataClausesHandler {
 				throw new RuntimeException(STR_UNSUPPORTED_ON_PYJAMA + "copyprivate clause");
 			case Shared:
 				throw new RuntimeException("shared data clause should not be used in worksharing directive");
+			case Default:
+				// donothing
+				break;
 			default:
 				throw new RuntimeException("Find unexpected Data clause in //#omp for ");		
 			}
@@ -415,11 +427,14 @@ public class DataClausesHandler {
 		 * give this dummy gui region a scope info
 		 */
 		SymbolScopingVisitor scopeVisitor = new SymbolScopingVisitor();
-		System.out.println("DFDF");
-		currentGuiCode.getNode().accept(scopeVisitor, null);
-		ScopeInfo scope = scopeVisitor.getSymbolTable().getScopeOfNode(currentGuiCode.getNode());
+		currentGuiCode.getNode().getBody().accept(scopeVisitor, null);
+		ScopeInfo scope = scopeVisitor.getSymbolTable().getScopeOfNode(currentGuiCode.getNode().getBody());
+		scope.setParent(PRBuilder.parallelConstruct.scope);
+		System.out.println("AAA");
+		System.out.println("AAA"+ scope.getAllUsedSymbolNames());
+
 		currentGuiCode.getNode().scope = scope;
-		System.out.println("DFDF");
+
 		return currentGuiCode;
 	}
 	
