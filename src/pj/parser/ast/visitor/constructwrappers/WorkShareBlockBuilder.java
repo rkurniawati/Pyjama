@@ -45,7 +45,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	private Expression identifier = null; //the flag variable name in for statement
 	private Expression init_expression = null; //the starting number of the iterations
 	private Expression end_expression = null; //the ending number of the iterations
-	private Expression compareOperator = null; //compare operator
+	private BinaryExpr.Operator compareOperator = null; //compare operator
 	private Expression stride = null; //the increment after each iteration
 	
 	private Statement forBody = null;
@@ -120,7 +120,8 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			  || (opt == BinaryExpr.Operator.lessEquals) )) {
 			throw new RuntimeException("illegal compare operator '" + opt.toString() + "' in omp for");
 		}
-		compareOperator = new NameExpr(compareExpr.getOperator().toString());
+		compareOperator = compareExpr.getOperator();
+		System.out.println("Compare Operator:"+compareOperator);
 		end_expression = compareExpr.getRight();
 		
 		Expression firstUpdateExpr = forSimpleStmt.getUpdate().get(0);
@@ -199,7 +200,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		
 		printer.printLn("int OMP_iterator = 0;");
 		printer.printLn("int OMP_end = (int)((" + end_expression + ")-(" + init_expression + "))/(" + stride + ");");
-		if (compareOperator.toString().equals("<") || compareOperator.toString().equals(">")) {
+		if (BinaryExpr.Operator.less == compareOperator || BinaryExpr.Operator.greater == compareOperator) {
 			printer.printLn("if (((" + end_expression + ")-(" + init_expression + "))%(" + stride + ") == 0) {");
 			printer.indent();
 			printer.printLn("OMP_end = OMP_end - 1;");

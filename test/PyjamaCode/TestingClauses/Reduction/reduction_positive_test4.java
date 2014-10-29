@@ -370,6 +370,9 @@ class _OMP_ParallelRegion_2{
                     int _OMP_VANCY_ITERATOR_=0;
                     int OMP_iterator = 0;
                     int OMP_end = (int)((2)-(0))/(1);
+                    if (((2)-(0))%(1) == 0) {
+                        OMP_end = OMP_end - 1;
+                    }
                     if (0 == Pyjama.omp_get_thread_num()) {
                         PjRuntime.get_OMP_loopCursor().getAndSet(0);}
                     PjRuntime.setBarrier();
