@@ -30,17 +30,17 @@ public class loopFor_positive_test3 {
         int _threadNum__OMP_ParallelRegion_0 = icv__OMP_ParallelRegion_0.nthreads_var.get(icv__OMP_ParallelRegion_0.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_0.put("EndValue",EndValue);
         inputlist__OMP_ParallelRegion_0.put("startIndex",startIndex);
-        inputlist__OMP_ParallelRegion_0.put("array",array);
+        inputlist__OMP_ParallelRegion_0.put("EndValue",EndValue);
         inputlist__OMP_ParallelRegion_0.put("Stride",Stride);
+        inputlist__OMP_ParallelRegion_0.put("array",array);
         inputlist__OMP_ParallelRegion_0.put("InitialValue",InitialValue);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
-        EndValue = (Integer)outputlist__OMP_ParallelRegion_0.get("EndValue");
         startIndex = (Integer)outputlist__OMP_ParallelRegion_0.get("startIndex");
-        array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
+        EndValue = (Integer)outputlist__OMP_ParallelRegion_0.get("EndValue");
         Stride = (Integer)outputlist__OMP_ParallelRegion_0.get("Stride");
+        array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
         InitialValue = (Integer)outputlist__OMP_ParallelRegion_0.get("InitialValue");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         /*OpenMP Parallel region (#0) -- END */
@@ -60,8 +60,8 @@ class _OMP_ParallelRegion_0{
         int startIndex = 0;
         int EndValue = 0;
         int InitialValue = 0;
-        int Stride = 0;
         int[] array = null;
+        int Stride = 0;
         //#END shared variables defined here
         public _OMP_ParallelRegion_0(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
@@ -80,17 +80,17 @@ class _OMP_ParallelRegion_0{
             startIndex = (Integer)OMP_inputList.get("startIndex");
             EndValue = (Integer)OMP_inputList.get("EndValue");
             InitialValue = (Integer)OMP_inputList.get("InitialValue");
-            Stride = (Integer)OMP_inputList.get("Stride");
             array = (int[])OMP_inputList.get("array");
+            Stride = (Integer)OMP_inputList.get("Stride");
             //#END shared variables initialised here
         }
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
-            OMP_outputList.put("EndValue",EndValue);
             OMP_outputList.put("startIndex",startIndex);
-            OMP_outputList.put("array",array);
+            OMP_outputList.put("EndValue",EndValue);
             OMP_outputList.put("Stride",Stride);
+            OMP_outputList.put("array",array);
             OMP_outputList.put("InitialValue",InitialValue);
             //END update outputlist
         }
@@ -130,6 +130,9 @@ class _OMP_ParallelRegion_0{
                     int i=0;
                     int OMP_iterator = 0;
                     int OMP_end = (int)((EndValue)-(InitialValue))/(Stride);
+                    if (((EndValue)-(InitialValue))%(Stride) == 0) {
+                        OMP_end = OMP_end - 1;
+                    }
                     int __omp_loop_thread_num = Pyjama.omp_get_thread_num();
                     int __omp_loop_num_threads = Pyjama.omp_get_num_threads();
                     for (OMP_iterator=__omp_loop_thread_num*1; OMP_iterator<=OMP_end && 1>0; OMP_iterator=OMP_iterator+__omp_loop_num_threads*1) {

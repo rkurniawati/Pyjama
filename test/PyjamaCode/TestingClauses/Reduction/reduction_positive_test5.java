@@ -31,13 +31,12 @@ public class reduction_positive_test5 {
         int _threadNum__OMP_ParallelRegion_0 = icv__OMP_ParallelRegion_0.nthreads_var.get(icv__OMP_ParallelRegion_0.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_0.put("n",n);
         inputlist__OMP_ParallelRegion_0.put("result",result);
-        outputlist__OMP_ParallelRegion_0.put("result",result);
+        inputlist__OMP_ParallelRegion_0.put("n",n);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
-        n = (Integer)outputlist__OMP_ParallelRegion_0.get("n");
         result = (Integer)outputlist__OMP_ParallelRegion_0.get("result");
+        n = (Integer)outputlist__OMP_ParallelRegion_0.get("n");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         /*OpenMP Parallel region (#0) -- END */
 
@@ -53,6 +52,7 @@ class _OMP_ParallelRegion_0{
         private ReentrantLock OMP_lock;
 
         //#BEGIN shared variables defined here
+        int result = 0;
         int n = 0;
         //#END shared variables defined here
         public _OMP_ParallelRegion_0(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
@@ -69,12 +69,14 @@ class _OMP_ParallelRegion_0{
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
             //#BEGIN shared variables initialised here
+            result = (Integer)OMP_inputList.get("result");
             n = (Integer)OMP_inputList.get("n");
             //#END shared variables initialised here
         }
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
+            OMP_outputList.put("result",result);
             OMP_outputList.put("n",n);
             //END update outputlist
         }
@@ -83,7 +85,6 @@ class _OMP_ParallelRegion_0{
             private ConcurrentHashMap<String, Object> OMP_inputList;
             private ConcurrentHashMap<String, Object> OMP_outputList;
             //#BEGIN private/firstprivate reduction variables defined here
-            int result = 0;
             //#END private/firstprivate reduction variables  defined here
             void setBarrier() {
                 try {OMP_barrier.await();}
@@ -95,7 +96,6 @@ class _OMP_ParallelRegion_0{
                 this.OMP_inputList = inputlist;
                 this.OMP_outputList = outputlist;
                 //#BEGIN firstprivate reduction variables initialised here
-                result = (Integer)OMP_inputList.get("result");
                 //#END firstprivate reduction variables initialised here
             }
 
@@ -147,7 +147,6 @@ class _OMP_ParallelRegion_0{
 
                 /****User Code END***/
                 //BEGIN reduction procedure
-                synchronized(OMP_outputList){ OMP_outputList.put("result", ((Integer)OMP_outputList.get("result")|result)); }
                 //END reduction procedure
                 setBarrier();
                 if (0 == this.alias_id) {
@@ -295,7 +294,6 @@ class _OMP_ParallelRegion_1{
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
         inputlist__OMP_ParallelRegion_2.put("result",result);
-        outputlist__OMP_ParallelRegion_2.put("result",result);
         _OMP_ParallelRegion_2 _OMP_ParallelRegion_2_in = new _OMP_ParallelRegion_2(_threadNum__OMP_ParallelRegion_2,icv__OMP_ParallelRegion_2,inputlist__OMP_ParallelRegion_2,outputlist__OMP_ParallelRegion_2);
         _OMP_ParallelRegion_2_in.runParallelCode();
         result = (Integer)outputlist__OMP_ParallelRegion_2.get("result");
@@ -314,6 +312,7 @@ class _OMP_ParallelRegion_2{
         private ReentrantLock OMP_lock;
 
         //#BEGIN shared variables defined here
+        int result = 0;
         //#END shared variables defined here
         public _OMP_ParallelRegion_2(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
@@ -329,11 +328,13 @@ class _OMP_ParallelRegion_2{
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
             //#BEGIN shared variables initialised here
+            result = (Integer)OMP_inputList.get("result");
             //#END shared variables initialised here
         }
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
+            OMP_outputList.put("result",result);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
@@ -341,7 +342,6 @@ class _OMP_ParallelRegion_2{
             private ConcurrentHashMap<String, Object> OMP_inputList;
             private ConcurrentHashMap<String, Object> OMP_outputList;
             //#BEGIN private/firstprivate reduction variables defined here
-            int result = 0;
             //#END private/firstprivate reduction variables  defined here
             void setBarrier() {
                 try {OMP_barrier.await();}
@@ -353,7 +353,6 @@ class _OMP_ParallelRegion_2{
                 this.OMP_inputList = inputlist;
                 this.OMP_outputList = outputlist;
                 //#BEGIN firstprivate reduction variables initialised here
-                result = (Integer)OMP_inputList.get("result");
                 //#END firstprivate reduction variables initialised here
             }
 
@@ -418,7 +417,6 @@ class _OMP_ParallelRegion_2{
 
                 /****User Code END***/
                 //BEGIN reduction procedure
-                synchronized(OMP_outputList){ OMP_outputList.put("result", ((Integer)OMP_outputList.get("result")|result)); }
                 //END reduction procedure
                 setBarrier();
                 if (0 == this.alias_id) {

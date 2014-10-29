@@ -3,6 +3,7 @@ package pj.parser.ast.omp;
 import java.util.ArrayList;
 import java.util.List;
 
+import pj.parser.ast.expr.Expression;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
@@ -67,18 +68,38 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 	public OmpParallelConstruct normalisation() {
 		List<OmpDataClause> forDataClauseList = new ArrayList<OmpDataClause>();
 		List<OmpDataClause> parallelDataClauseList = new ArrayList<OmpDataClause>();
-
-		for (OmpDataClause clause: this.dataClauseList) {
-			if (clause.DataClauseType() == OmpDataClause.Type.Shared) {
+		/*
+		 * all arguments appear in //#omp parallel for directive clauses should be
+		 * normalised as //#omp parallel shared(n1,n2,n3...)
+		 * 				//#omp for private(n1) reduction(+:n2) 
+		 */
+		OmpSharedDataClause sharedClauseParallel = new OmpSharedDataClause();
+		parallelDataClauseList.add(sharedClauseParallel);
+		
+		for (OmpDataClause clause: this.dataClauseList) {	
+			switch (clause.type) {
+			case Shared:
+				//shared data clause needn't to be added to //#omp for
 				parallelDataClauseList.add(clause);
-			} else if (clause.DataClauseType() == OmpDataClause.Type.Lastprivate) {
+				break;
+			case Private:
+			case Lastprivate:
+				for (Expression arg:clause.getArgumentSet()) {
+					sharedClauseParallel.addArgument(arg);
+				}
 				forDataClauseList.add(clause);
-			} else {
-				parallelDataClauseList.add(clause);
+				break;
+			case Reduction:
+				for (Expression arg: ((OmpReductionDataClause)clause).getArgumentMap().keySet()) {
+					sharedClauseParallel.addArgument(arg);
+				}
 				forDataClauseList.add(clause);
+				break;
+			default:
+				break;
 			}
-			
 		}
+		
 		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, forDataClauseList, this.scheduleClause, false, this.ordered);
 		OmpParallelConstruct normalised = new OmpParallelConstruct(forConstruct, parallelDataClauseList, this.ifExpr, this.numThreads);
 		return normalised;

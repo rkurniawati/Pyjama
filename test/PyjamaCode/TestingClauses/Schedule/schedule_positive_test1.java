@@ -107,6 +107,9 @@ class _OMP_ParallelRegion_0{
                     int i=0;
                     int OMP_iterator = 0;
                     int OMP_end = (int)((arraySize)-(0))/(1);
+                    if (((arraySize)-(0))%(1) == 0) {
+                        OMP_end = OMP_end - 1;
+                    }
                     int __omp_loop_thread_num = Pyjama.omp_get_thread_num();
                     int __omp_loop_num_threads = Pyjama.omp_get_num_threads();
                     for (OMP_iterator=__omp_loop_thread_num*1; OMP_iterator<=OMP_end && 1>0; OMP_iterator=OMP_iterator+__omp_loop_num_threads*1) {
@@ -166,11 +169,12 @@ class _OMP_ParallelRegion_0{
         int _threadNum__OMP_ParallelRegion_1 = icv__OMP_ParallelRegion_1.nthreads_var.get(icv__OMP_ParallelRegion_1.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
+        inputlist__OMP_ParallelRegion_1.put("chunkSize",chunkSize);
         inputlist__OMP_ParallelRegion_1.put("array",array);
         inputlist__OMP_ParallelRegion_1.put("arraySize",arraySize);
-        inputlist__OMP_ParallelRegion_1.put("chunkSize",chunkSize);
         _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
         _OMP_ParallelRegion_1_in.runParallelCode();
+        chunkSize = (Integer)outputlist__OMP_ParallelRegion_1.get("chunkSize");
         array = (int[])outputlist__OMP_ParallelRegion_1.get("array");
         arraySize = (Integer)outputlist__OMP_ParallelRegion_1.get("arraySize");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
@@ -188,6 +192,7 @@ class _OMP_ParallelRegion_1{
         private ReentrantLock OMP_lock;
 
         //#BEGIN shared variables defined here
+        int chunkSize = 0;
         int arraySize = 0;
         int[] array = null;
         //#END shared variables defined here
@@ -205,6 +210,7 @@ class _OMP_ParallelRegion_1{
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
             //#BEGIN shared variables initialised here
+            chunkSize = (Integer)OMP_inputList.get("chunkSize");
             arraySize = (Integer)OMP_inputList.get("arraySize");
             array = (int[])OMP_inputList.get("array");
             //#END shared variables initialised here
@@ -212,6 +218,7 @@ class _OMP_ParallelRegion_1{
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
+            OMP_outputList.put("chunkSize",chunkSize);
             OMP_outputList.put("array",array);
             OMP_outputList.put("arraySize",arraySize);
             //END update outputlist
@@ -221,7 +228,6 @@ class _OMP_ParallelRegion_1{
             private ConcurrentHashMap<String, Object> OMP_inputList;
             private ConcurrentHashMap<String, Object> OMP_outputList;
             //#BEGIN private/firstprivate reduction variables defined here
-            int chunkSize = 0;
             //#END private/firstprivate reduction variables  defined here
             void setBarrier() {
                 try {OMP_barrier.await();}
@@ -233,7 +239,6 @@ class _OMP_ParallelRegion_1{
                 this.OMP_inputList = inputlist;
                 this.OMP_outputList = outputlist;
                 //#BEGIN firstprivate reduction variables initialised here
-                chunkSize = (Integer)OMP_inputList.get("chunkSize");
                 //#END firstprivate reduction variables initialised here
             }
 
@@ -255,6 +260,9 @@ class _OMP_ParallelRegion_1{
                     int i=0;
                     int OMP_iterator = 0;
                     int OMP_end = (int)((arraySize)-(0))/(1);
+                    if (((arraySize)-(0))%(1) == 0) {
+                        OMP_end = OMP_end - 1;
+                    }
                     int __omp_loop_thread_num = Pyjama.omp_get_thread_num();
                     int __omp_loop_num_threads = Pyjama.omp_get_num_threads();
                     for (OMP_iterator=__omp_loop_thread_num*chunkSize; OMP_iterator<=OMP_end && chunkSize>0; OMP_iterator=OMP_iterator+__omp_loop_num_threads*chunkSize) {

@@ -1,20 +1,18 @@
 package pj.parser.ast.visitor.constructwrappers;
 
-import java.util.Collection;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.Symbol;
-import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
-import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
+
 
 
 /**

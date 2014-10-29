@@ -30,18 +30,18 @@ public class loopFor_positive_test4 {
         int _threadNum__OMP_ParallelRegion_0 = icv__OMP_ParallelRegion_0.nthreads_var.get(icv__OMP_ParallelRegion_0.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
+        inputlist__OMP_ParallelRegion_0.put("EndValue",EndValue);
+        inputlist__OMP_ParallelRegion_0.put("InitialValue",InitialValue);
+        inputlist__OMP_ParallelRegion_0.put("array",array);
         inputlist__OMP_ParallelRegion_0.put("Stride",Stride);
         inputlist__OMP_ParallelRegion_0.put("startIndex",startIndex);
-        inputlist__OMP_ParallelRegion_0.put("InitialValue",InitialValue);
-        inputlist__OMP_ParallelRegion_0.put("EndValue",EndValue);
-        inputlist__OMP_ParallelRegion_0.put("array",array);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
+        EndValue = (Integer)outputlist__OMP_ParallelRegion_0.get("EndValue");
+        InitialValue = (Integer)outputlist__OMP_ParallelRegion_0.get("InitialValue");
+        array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
         Stride = (Integer)outputlist__OMP_ParallelRegion_0.get("Stride");
         startIndex = (Integer)outputlist__OMP_ParallelRegion_0.get("startIndex");
-        InitialValue = (Integer)outputlist__OMP_ParallelRegion_0.get("InitialValue");
-        EndValue = (Integer)outputlist__OMP_ParallelRegion_0.get("EndValue");
-        array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         /*OpenMP Parallel region (#0) -- END */
 
@@ -60,8 +60,8 @@ class _OMP_ParallelRegion_0{
         int startIndex = 0;
         int EndValue = 0;
         int InitialValue = 0;
-        int[] array = null;
         int Stride = 0;
+        int[] array = null;
         //#END shared variables defined here
         public _OMP_ParallelRegion_0(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
@@ -80,18 +80,18 @@ class _OMP_ParallelRegion_0{
             startIndex = (Integer)OMP_inputList.get("startIndex");
             EndValue = (Integer)OMP_inputList.get("EndValue");
             InitialValue = (Integer)OMP_inputList.get("InitialValue");
-            array = (int[])OMP_inputList.get("array");
             Stride = (Integer)OMP_inputList.get("Stride");
+            array = (int[])OMP_inputList.get("array");
             //#END shared variables initialised here
         }
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
+            OMP_outputList.put("EndValue",EndValue);
+            OMP_outputList.put("InitialValue",InitialValue);
+            OMP_outputList.put("array",array);
             OMP_outputList.put("Stride",Stride);
             OMP_outputList.put("startIndex",startIndex);
-            OMP_outputList.put("InitialValue",InitialValue);
-            OMP_outputList.put("EndValue",EndValue);
-            OMP_outputList.put("array",array);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {

@@ -3,20 +3,7 @@ package pj.parser.ast.omp;
 import java.util.ArrayList;
 import java.util.List;
 
-import pj.parser.ast.body.VariableDeclarator;
-import pj.parser.ast.body.VariableDeclaratorId;
-import pj.parser.ast.expr.BinaryExpr;
 import pj.parser.ast.expr.Expression;
-import pj.parser.ast.expr.IntegerLiteralExpr;
-import pj.parser.ast.expr.NameExpr;
-import pj.parser.ast.expr.UnaryExpr;
-import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.stmt.BreakStmt;
-import pj.parser.ast.stmt.ForStmt;
-import pj.parser.ast.stmt.Statement;
-import pj.parser.ast.stmt.SwitchEntryStmt;
-import pj.parser.ast.stmt.SwitchStmt;
-import pj.parser.ast.type.PrimitiveType;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
 
@@ -67,16 +54,36 @@ public class OmpParallelSectionsConstruct extends OpenMPStatement{
 	public OmpParallelConstruct normalisation() {
 		List<OmpDataClause> sectionDataClauseList = new ArrayList<OmpDataClause>();
 		List<OmpDataClause> parallelDataClauseList = new ArrayList<OmpDataClause>();
-		for (OmpDataClause clause: this.dataClauseList) {
-			if (clause.DataClauseType() == OmpDataClause.Type.Shared) {
+		/*
+		 * all arguments appear in //#omp parallel sections directive clauses should be
+		 * normalised as //#omp parallel shared(n1,n2,n3...)
+		 * 				//#omp sections private(n1) reduction(+:n2) 
+		 */
+		OmpSharedDataClause sharedClauseParallel = new OmpSharedDataClause();
+		parallelDataClauseList.add(sharedClauseParallel);
+		
+		for (OmpDataClause clause: this.dataClauseList) {	
+			switch (clause.type) {
+			case Shared:
+				//shared data clause needn't to be added to //#omp sections
 				parallelDataClauseList.add(clause);
-			} else if (clause.DataClauseType() == OmpDataClause.Type.Lastprivate) {
+				break;
+			case Private:
+			case Lastprivate:
+				for (Expression arg:clause.getArgumentSet()) {
+					sharedClauseParallel.addArgument(arg);
+				}
 				sectionDataClauseList.add(clause);
-			} else {
-				parallelDataClauseList.add(clause);
+				break;
+			case Reduction:
+				for (Expression arg: ((OmpReductionDataClause)clause).getArgumentMap().keySet()) {
+					sharedClauseParallel.addArgument(arg);
+				}
 				sectionDataClauseList.add(clause);
+				break;
+			default:
+				break;
 			}
-			
 		}
 
 		OmpSectionsConstruct sectionsConstruct = new OmpSectionsConstruct(this.sectionList, sectionDataClauseList, false);

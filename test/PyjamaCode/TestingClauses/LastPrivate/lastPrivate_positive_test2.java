@@ -118,6 +118,9 @@ class _OMP_ParallelRegion_0{
                     int j=0;
                     int OMP_iterator = 0;
                     int OMP_end = (int)((10)-(0))/(1);
+                    if (((10)-(0))%(1) == 0) {
+                        OMP_end = OMP_end - 1;
+                    }
                     int __omp_loop_thread_num = Pyjama.omp_get_thread_num();
                     int __omp_loop_num_threads = Pyjama.omp_get_num_threads();
                     for (OMP_iterator=__omp_loop_thread_num*1; OMP_iterator<=OMP_end && 1>0; OMP_iterator=OMP_iterator+__omp_loop_num_threads*1) {

@@ -121,7 +121,6 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			throw new RuntimeException("illegal compare operator '" + opt.toString() + "' in omp for");
 		}
 		compareOperator = compareExpr.getOperator();
-		System.out.println("Compare Operator:"+compareOperator);
 		end_expression = compareExpr.getRight();
 		
 		Expression firstUpdateExpr = forSimpleStmt.getUpdate().get(0);

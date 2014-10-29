@@ -110,6 +110,9 @@ class _OMP_ParallelRegion_0{
                     int i=0;
                     int OMP_iterator = 0;
                     int OMP_end = (int)((n)-(0))/(1);
+                    if (((n)-(0))%(1) == 0) {
+                        OMP_end = OMP_end - 1;
+                    }
                     int __omp_loop_thread_num = Pyjama.omp_get_thread_num();
                     int __omp_loop_num_threads = Pyjama.omp_get_num_threads();
                     for (OMP_iterator=__omp_loop_thread_num*1; OMP_iterator<=OMP_end && 1>0; OMP_iterator=OMP_iterator+__omp_loop_num_threads*1) {
@@ -170,12 +173,12 @@ class _OMP_ParallelRegion_0{
         int _threadNum__OMP_ParallelRegion_1 = icv__OMP_ParallelRegion_1.nthreads_var.get(icv__OMP_ParallelRegion_1.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_1.put("n",n);
         inputlist__OMP_ParallelRegion_1.put("array",array);
+        inputlist__OMP_ParallelRegion_1.put("n",n);
         _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
         _OMP_ParallelRegion_1_in.runParallelCode();
-        n = (Integer)outputlist__OMP_ParallelRegion_1.get("n");
         array = (int[])outputlist__OMP_ParallelRegion_1.get("array");
+        n = (Integer)outputlist__OMP_ParallelRegion_1.get("n");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
         /*OpenMP Parallel region (#1) -- END */
 
@@ -216,8 +219,8 @@ class _OMP_ParallelRegion_1{
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
-            OMP_outputList.put("n",n);
             OMP_outputList.put("array",array);
+            OMP_outputList.put("n",n);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
@@ -256,6 +259,9 @@ class _OMP_ParallelRegion_1{
                     int i=0;
                     int OMP_iterator = 0;
                     int OMP_end = (int)((n)-(0))/(1);
+                    if (((n)-(0))%(1) == 0) {
+                        OMP_end = OMP_end - 1;
+                    }
                     if (0 == Pyjama.omp_get_thread_num()) {
                         PjRuntime.get_OMP_loopCursor().getAndSet(0);}
                     PjRuntime.setBarrier();
@@ -318,12 +324,12 @@ class _OMP_ParallelRegion_1{
         int _threadNum__OMP_ParallelRegion_2 = icv__OMP_ParallelRegion_2.nthreads_var.get(icv__OMP_ParallelRegion_2.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_2.put("n",n);
         inputlist__OMP_ParallelRegion_2.put("array",array);
+        inputlist__OMP_ParallelRegion_2.put("n",n);
         _OMP_ParallelRegion_2 _OMP_ParallelRegion_2_in = new _OMP_ParallelRegion_2(_threadNum__OMP_ParallelRegion_2,icv__OMP_ParallelRegion_2,inputlist__OMP_ParallelRegion_2,outputlist__OMP_ParallelRegion_2);
         _OMP_ParallelRegion_2_in.runParallelCode();
-        n = (Integer)outputlist__OMP_ParallelRegion_2.get("n");
         array = (int[])outputlist__OMP_ParallelRegion_2.get("array");
+        n = (Integer)outputlist__OMP_ParallelRegion_2.get("n");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_2);
         /*OpenMP Parallel region (#2) -- END */
 
@@ -364,8 +370,8 @@ class _OMP_ParallelRegion_2{
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
-            OMP_outputList.put("n",n);
             OMP_outputList.put("array",array);
+            OMP_outputList.put("n",n);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
@@ -404,6 +410,9 @@ class _OMP_ParallelRegion_2{
                     int i=0;
                     int OMP_iterator = 0;
                     int OMP_end = (int)((n)-(0))/(1);
+                    if (((n)-(0))%(1) == 0) {
+                        OMP_end = OMP_end - 1;
+                    }
                     int OMP_chunkSize = 1;
                     if (0 == Pyjama.omp_get_thread_num()) {PjRuntime.get_OMP_loopCursor().getAndSet(0);}
                     PjRuntime.setBarrier();

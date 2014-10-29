@@ -28,12 +28,12 @@ public class flush_positive_test1 {
         int _threadNum__OMP_ParallelRegion_0 = icv__OMP_ParallelRegion_0.nthreads_var.get(icv__OMP_ParallelRegion_0.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_0.put("data",data);
         inputlist__OMP_ParallelRegion_0.put("flag",flag);
+        inputlist__OMP_ParallelRegion_0.put("data",data);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
-        data = (int[])outputlist__OMP_ParallelRegion_0.get("data");
         flag = (Integer)outputlist__OMP_ParallelRegion_0.get("flag");
+        data = (int[])outputlist__OMP_ParallelRegion_0.get("data");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         /*OpenMP Parallel region (#0) -- END */
 
@@ -73,8 +73,8 @@ class _OMP_ParallelRegion_0{
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
-            OMP_outputList.put("data",data);
             OMP_outputList.put("flag",flag);
+            OMP_outputList.put("data",data);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
@@ -113,6 +113,9 @@ class _OMP_ParallelRegion_0{
                     int _OMP_VANCY_ITERATOR_=0;
                     int OMP_iterator = 0;
                     int OMP_end = (int)((2)-(0))/(1);
+                    if (((2)-(0))%(1) == 0) {
+                        OMP_end = OMP_end - 1;
+                    }
                     if (0 == Pyjama.omp_get_thread_num()) {
                         PjRuntime.get_OMP_loopCursor().getAndSet(0);}
                     PjRuntime.setBarrier();
