@@ -268,8 +268,7 @@ public class Squares extends JApplet {
         }
     }
     SwingUtilities.invokeLater(new _OMP_GuiCode_0());
-} catch (InvocationTargetException e) {e.printStackTrace();}
-catch (InterruptedException e) {e.printStackTrace();}
+} catch (Exception e) {e.printStackTrace();}
 
                     }
                     //#END GUI execution block
@@ -502,7 +501,6 @@ class _OMP_ParallelRegion_1{
                     makeParaSquaresVisible(redSquaresParIterator);
                     makeParaSquaresVisible(greenSquaresParIterator);
                     makeParaSquaresVisible(yellowSquaresParIterator);
-                    System.out.println("Durant1:" + durant);
                 }
                 /****User Code END***/
                 //BEGIN reduction procedure
@@ -529,8 +527,7 @@ class _OMP_ParallelRegion_1{
         }
     }
     SwingUtilities.invokeAndWait(new OMP_AfterInvocationOf__OMP_ParallelRegion_1(durant));
-} catch (InvocationTargetException e) {e.printStackTrace();}
-catch (InterruptedException e) {e.printStackTrace();}
+} catch (Exception e) {e.printStackTrace();}
 
                 }
                 return null;

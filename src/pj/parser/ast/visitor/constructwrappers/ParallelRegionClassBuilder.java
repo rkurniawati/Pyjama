@@ -12,20 +12,15 @@ package pj.parser.ast.visitor.constructwrappers;
  * @version 0.9
  */
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import java.util.List;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
-import pj.parser.ast.omp.OmpDefaultDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.Statement;
-import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
@@ -221,7 +216,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("/****User Code END***/");
 		//BEGIN reduction procedure
 		printer.printLn("//BEGIN reduction procedure");
-		//DataClausesHandler.reduceProcessForReductionVariablesInPRClass(this, printer);
+		DataClausesHandler.reductionForPRClass(this, printer);
 		printer.printLn("//END reduction procedure");
 		//END reduction procedure
 		printer.printLn("setBarrier();");

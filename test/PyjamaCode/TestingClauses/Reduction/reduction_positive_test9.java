@@ -152,6 +152,7 @@ class _OMP_ParallelRegion_0{
 
                 /****User Code END***/
                 //BEGIN reduction procedure
+                synchronized(OMP_outputList){ OMP_outputList.put("sum", ((Integer)OMP_outputList.get("sum")+sum)); }
                 //END reduction procedure
                 setBarrier();
                 if (0 == this.alias_id) {
@@ -262,6 +263,7 @@ class _OMP_ParallelRegion_1{
                 }
                 /****User Code END***/
                 //BEGIN reduction procedure
+                synchronized(OMP_outputList){ OMP_outputList.put("sum", ((Integer)OMP_outputList.get("sum")+sum)); }
                 //END reduction procedure
                 setBarrier();
                 if (0 == this.alias_id) {
@@ -415,6 +417,7 @@ class _OMP_ParallelRegion_2{
 
                 /****User Code END***/
                 //BEGIN reduction procedure
+                synchronized(OMP_outputList){ OMP_outputList.put("sum", ((Integer)OMP_outputList.get("sum")+sum)); }
                 //END reduction procedure
                 setBarrier();
                 if (0 == this.alias_id) {

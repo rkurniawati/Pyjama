@@ -13,24 +13,20 @@ import javax.swing.SwingUtilities;
 import java.lang.reflect.InvocationTargetException;
 
 /**
-* Test the explicit and implicit barrier
+* Test if the certain place is EDT or not
 */
-public class FreeGuiThread_positive_test3 {
+public class FreeGuiThread_positive_test1 {
 
     private StringBuffer sb = new StringBuffer();
 
-    public String positive_test3(int threadNumber) {{
-        Pyjama.omp_set_num_threads(threadNumber);
+    public String positive_test1() {{
+        sb.append(SwingUtilities.isEventDispatchThread());
         try {
             SwingUtilities.invokeAndWait(simulateEDT);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        sb.append(SwingUtilities.isEventDispatchThread());
         return sb.toString();
     }
     }
@@ -39,6 +35,7 @@ public class FreeGuiThread_positive_test3 {
     final Runnable simulateEDT = new Runnable() {
 
         public void run() {{
+            sb.append(SwingUtilities.isEventDispatchThread());
             /*OpenMP Parallel region (#0) -- START */
             InternalControlVariables icv_previous__OMP_ParallelRegion_0 = PjRuntime.getCurrentThreadICV();
             InternalControlVariables icv__OMP_ParallelRegion_0 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_0);
@@ -53,7 +50,7 @@ public class FreeGuiThread_positive_test3 {
             PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
             /*OpenMP Parallel region (#0) -- END */
 
-            sb.append("C");
+            sb.append(SwingUtilities.isEventDispatchThread());
         }
         }
 class _OMP_ParallelRegion_0{
@@ -115,10 +112,15 @@ class _OMP_ParallelRegion_0{
                 
                 /****User Code BEGIN***/
                 {
-                    sb.append("A");
+                    sb.append(SwingUtilities.isEventDispatchThread());
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     PjRuntime.setBarrier();
 
-                    sb.append("B");
+                    sb.append(SwingUtilities.isEventDispatchThread());
                 }
                 /****User Code END***/
                 //BEGIN reduction procedure
@@ -136,7 +138,7 @@ class _OMP_ParallelRegion_0{
         public void run() {
             /****User Code BEGIN***/
             {
-                sb.append("C");
+                sb.append(SwingUtilities.isEventDispatchThread());
             }
             /****User Code END***/
         }

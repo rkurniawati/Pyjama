@@ -127,8 +127,8 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
     	this.printVariablesForGuiRegionInvocation(variablesForGuiCode);
     	printer.printLn("));");
        	printer.unindent();
-       	printer.printLn("} catch (InvocationTargetException e) {e.printStackTrace();}");
-    	printer.printLn("catch (InterruptedException e) {e.printStackTrace();}");
+       	printer.printLn("} catch (Exception e) {e.printStackTrace();}");
+
 	}
 	
 	private Statement getUserCode() {
@@ -139,9 +139,7 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 		HashMap<String, String> allVariablesDefinationSet = new HashMap<String, String>();
 		Set<String> symbolNames = this.node.scope.getAllUsedSymbolNames();
 		List<Symbol> symbolDeclarations = this.node.scope.getAllReachableSymbols();
-		for (Symbol s: symbolDeclarations) {
-			System.out.println("AA:"+s.getName()+"-"+s.getSymbolDataType());
-		}
+
 		for(String varName: symbolNames) {
 			String varType = null;
 			for(Symbol s: symbolDeclarations) {

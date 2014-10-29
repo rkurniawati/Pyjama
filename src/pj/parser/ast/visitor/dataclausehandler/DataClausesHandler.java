@@ -18,7 +18,6 @@ import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.ScopeInfo;
-import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.SymbolScopingVisitor;
 import pj.parser.ast.visitor.constructwrappers.GuiCodeClassBuilder;
@@ -360,6 +359,47 @@ public class DataClausesHandler {
 		}
 	}
 	
+	public static void reductionForPRClass(ParallelRegionClassBuilder wrapper, SourcePrinter printer) {
+		List<OmpDataClause> dataClauseList = wrapper.parallelConstruct.getDataClauseList();
+		if (null == dataClauseList) {
+			return;
+		}
+		
+		for (OmpDataClause dataClause: dataClauseList) {
+			if (OmpDataClause.Type.Reduction == dataClause.DataClauseType()) {
+				HashMap<String, String> reductionArgs = ((OmpReductionDataClause)dataClause).getArgsTypes(wrapper.parallelConstruct);
+				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
+					String varName = varExpression.toString();
+					String varType = reductionArgs.get(varName).toString();
+					OmpReductionOperator operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varExpression);
+					String reductionOpr = operator.getOperatorString();
+					if (DataClauseHandlerUtils.isPrimitiveReductionOperator(reductionOpr)) {
+						/*
+						 * primitive type reduction operation
+						 */
+						printer.print("synchronized(OMP_outputList){ ");
+						printer.print("OMP_outputList.put(" + "\"" + varName + "\", "
+									+ "((" + DataClauseHandlerUtils.autoBox(varType) + ")OMP_outputList.get(\"" 
+									+ varName + "\")" + reductionOpr + varName + "));");
+						printer.printLn(" }");
+						//e.g. OMP_outputList.put("s", ((int)this.outputList.get("s") + s));
+					}
+					else {
+						/*
+						 * user defined reduction operation
+						 */
+						printer.print("synchronized(OMP_outputList){ ");
+						printer.print("OMP_outputList.put(" + "\"" + varName + "\", "
+								+ reductionOpr +"((" + varType + ")OMP_outputList.get(\"" 
+								+ varName + "\")," + varName + "));");
+						printer.printLn(" }");
+						//e.g. OMP_outputList.put("val", reductionxing((int)OMP_outputList.get("val"),val));
+					}		
+				}
+			}
+		}
+	}
+	
 	public static void reductionForWorksharingBlock(WorkShareBlockBuilder worksharingWrapper, SourcePrinter printer) {
 		OmpForConstruct forConstruct = worksharingWrapper.getForConstruct();
 		final String RENAMING_PREFIX  = WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX+ Integer.toString(worksharingWrapper.getID());
@@ -430,8 +470,6 @@ public class DataClausesHandler {
 		currentGuiCode.getNode().getBody().accept(scopeVisitor, null);
 		ScopeInfo scope = scopeVisitor.getSymbolTable().getScopeOfNode(currentGuiCode.getNode().getBody());
 		scope.setParent(PRBuilder.parallelConstruct.scope);
-		System.out.println("AAA");
-		System.out.println("AAA"+ scope.getAllUsedSymbolNames());
 
 		currentGuiCode.getNode().scope = scope;
 
