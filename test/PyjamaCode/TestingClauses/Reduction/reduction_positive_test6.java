@@ -1,7 +1,5 @@
 package PyjamaCode.TestingClauses.Reduction;
 
-import pj.Pyjama;
-
 import pj.pr.*;
 import pj.PjRuntime;
 import pj.Pyjama;

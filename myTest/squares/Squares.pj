@@ -306,7 +306,7 @@ public class Squares extends JApplet {
 		int durant = 35;
 		Pyjama.omp_set_num_threads(8);
 		System.out.println("REAL EDT"+ Thread.currentThread().getId());
-		//#omp  freeguithread  parallel  //shared(durant)
+		//#omp  freeguithread  parallel  shared(durant)
 		{
 			
 			makeParaSquaresVisible(blueSquaresParIterator);

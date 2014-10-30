@@ -30,17 +30,17 @@ public class loopFor_positive_test4 {
         int _threadNum__OMP_ParallelRegion_0 = icv__OMP_ParallelRegion_0.nthreads_var.get(icv__OMP_ParallelRegion_0.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_0.put("EndValue",EndValue);
         inputlist__OMP_ParallelRegion_0.put("InitialValue",InitialValue);
         inputlist__OMP_ParallelRegion_0.put("array",array);
         inputlist__OMP_ParallelRegion_0.put("Stride",Stride);
+        inputlist__OMP_ParallelRegion_0.put("EndValue",EndValue);
         inputlist__OMP_ParallelRegion_0.put("startIndex",startIndex);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
-        EndValue = (Integer)outputlist__OMP_ParallelRegion_0.get("EndValue");
         InitialValue = (Integer)outputlist__OMP_ParallelRegion_0.get("InitialValue");
         array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
         Stride = (Integer)outputlist__OMP_ParallelRegion_0.get("Stride");
+        EndValue = (Integer)outputlist__OMP_ParallelRegion_0.get("EndValue");
         startIndex = (Integer)outputlist__OMP_ParallelRegion_0.get("startIndex");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         /*OpenMP Parallel region (#0) -- END */
@@ -87,10 +87,10 @@ class _OMP_ParallelRegion_0{
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
-            OMP_outputList.put("EndValue",EndValue);
             OMP_outputList.put("InitialValue",InitialValue);
             OMP_outputList.put("array",array);
             OMP_outputList.put("Stride",Stride);
+            OMP_outputList.put("EndValue",EndValue);
             OMP_outputList.put("startIndex",startIndex);
             //END update outputlist
         }

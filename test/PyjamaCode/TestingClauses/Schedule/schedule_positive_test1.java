@@ -22,12 +22,12 @@ public class schedule_positive_test1 {
         int _threadNum__OMP_ParallelRegion_0 = icv__OMP_ParallelRegion_0.nthreads_var.get(icv__OMP_ParallelRegion_0.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_0.put("arraySize",arraySize);
         inputlist__OMP_ParallelRegion_0.put("array",array);
+        inputlist__OMP_ParallelRegion_0.put("arraySize",arraySize);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
-        arraySize = (Integer)outputlist__OMP_ParallelRegion_0.get("arraySize");
         array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
+        arraySize = (Integer)outputlist__OMP_ParallelRegion_0.get("arraySize");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         /*OpenMP Parallel region (#0) -- END */
 
@@ -67,8 +67,8 @@ class _OMP_ParallelRegion_0{
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
-            OMP_outputList.put("arraySize",arraySize);
             OMP_outputList.put("array",array);
+            OMP_outputList.put("arraySize",arraySize);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
@@ -170,13 +170,13 @@ class _OMP_ParallelRegion_0{
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
         inputlist__OMP_ParallelRegion_1.put("chunkSize",chunkSize);
-        inputlist__OMP_ParallelRegion_1.put("array",array);
         inputlist__OMP_ParallelRegion_1.put("arraySize",arraySize);
+        inputlist__OMP_ParallelRegion_1.put("array",array);
         _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
         _OMP_ParallelRegion_1_in.runParallelCode();
         chunkSize = (Integer)outputlist__OMP_ParallelRegion_1.get("chunkSize");
-        array = (int[])outputlist__OMP_ParallelRegion_1.get("array");
         arraySize = (Integer)outputlist__OMP_ParallelRegion_1.get("arraySize");
+        array = (int[])outputlist__OMP_ParallelRegion_1.get("array");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
         /*OpenMP Parallel region (#1) -- END */
 
@@ -219,8 +219,8 @@ class _OMP_ParallelRegion_1{
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
             OMP_outputList.put("chunkSize",chunkSize);
-            OMP_outputList.put("array",array);
             OMP_outputList.put("arraySize",arraySize);
+            OMP_outputList.put("array",array);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {

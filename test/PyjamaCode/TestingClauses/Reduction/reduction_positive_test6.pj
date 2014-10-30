@@ -1,5 +1,5 @@
 package PyjamaCode.TestingClauses.Reduction;
-import pj.Pyjama;
+
 /**
  * 0^0=0
  * 0^1=1
@@ -15,7 +15,7 @@ public class reduction_positive_test6{
 		Pyjama.omp_set_num_threads(threadNumber);
 		int result = 1;
 
-		//#omp parallel for shared(n) reduction(^:result)
+		//#omp parallel for reduction(^:result) shared(n)
 		for(int i = 1; i <= n; i++){
 			result ^= (int)Math.pow(2, i)-1;
 		}	
@@ -38,7 +38,7 @@ public class reduction_positive_test6{
 		Pyjama.omp_set_num_threads(threadNumber);
 		int result = 1;
 
-		//#omp parallel sections reduction(^:result)
+		//#omp parallel sections reduction(^:result) 
 		{
 			//#omp section
 			{

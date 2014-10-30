@@ -23,12 +23,12 @@ public class firstPrivate_positive_test2 {
         int _threadNum__OMP_ParallelRegion_0 = icv__OMP_ParallelRegion_0.nthreads_var.get(icv__OMP_ParallelRegion_0.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_0.put("i",i);
         inputlist__OMP_ParallelRegion_0.put("array",array);
+        inputlist__OMP_ParallelRegion_0.put("i",i);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
-        i = (Integer)outputlist__OMP_ParallelRegion_0.get("i");
         array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
+        i = (Integer)outputlist__OMP_ParallelRegion_0.get("i");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         /*OpenMP Parallel region (#0) -- END */
 
@@ -44,8 +44,8 @@ class _OMP_ParallelRegion_0{
         private ReentrantLock OMP_lock;
 
         //#BEGIN shared variables defined here
-        int[] array = null;
         int i = 0;
+        int[] array = null;
         //#END shared variables defined here
         public _OMP_ParallelRegion_0(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
@@ -61,15 +61,15 @@ class _OMP_ParallelRegion_0{
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
             //#BEGIN shared variables initialised here
-            array = (int[])OMP_inputList.get("array");
             i = (Integer)OMP_inputList.get("i");
+            array = (int[])OMP_inputList.get("array");
             //#END shared variables initialised here
         }
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
-            OMP_outputList.put("i",i);
             OMP_outputList.put("array",array);
+            OMP_outputList.put("i",i);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {

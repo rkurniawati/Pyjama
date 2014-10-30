@@ -424,12 +424,14 @@ class _OMP_ParallelRegion_0{
             int _threadNum__OMP_ParallelRegion_1 = icv__OMP_ParallelRegion_1.nthreads_var.get(icv__OMP_ParallelRegion_1.levels_var);
             ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
             ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
+            inputlist__OMP_ParallelRegion_1.put("durant",durant);
             _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
             _OMP_ParallelRegion_1_in.runParallelCode();
             if (PjRuntime.getCurrentThreadICV() != null) {//#GEN#[-1]#PJ#
+                durant = (Integer)outputlist__OMP_ParallelRegion_1.get("durant");
+                PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
                 return;//#GEN#[-1]#PJ#
             }//#GEN#[-1]#PJ#
-            PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
             /*OpenMP Parallel region (#1) -- END */
 
             System.out.println("Durant:" + durant);
@@ -447,6 +449,7 @@ class _OMP_ParallelRegion_1{
         private ReentrantLock OMP_lock;
 
         //#BEGIN shared variables defined here
+        int durant = 0;
         //#END shared variables defined here
         public _OMP_ParallelRegion_1(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
@@ -462,11 +465,13 @@ class _OMP_ParallelRegion_1{
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
             //#BEGIN shared variables initialised here
+            durant = (Integer)OMP_inputList.get("durant");
             //#END shared variables initialised here
         }
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
+            OMP_outputList.put("durant",durant);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {

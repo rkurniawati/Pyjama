@@ -29,17 +29,17 @@ public class parallel_Monitor {
         int _threadNum__OMP_ParallelRegion_0 = icv__OMP_ParallelRegion_0.nthreads_var.get(icv__OMP_ParallelRegion_0.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_0.put("array",array);
-        inputlist__OMP_ParallelRegion_0.put("result",result);
         inputlist__OMP_ParallelRegion_0.put("service",service);
         inputlist__OMP_ParallelRegion_0.put("completeNumber",completeNumber);
+        inputlist__OMP_ParallelRegion_0.put("result",result);
+        inputlist__OMP_ParallelRegion_0.put("array",array);
         inputlist__OMP_ParallelRegion_0.put("n",n);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
-        array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
-        result = (List)outputlist__OMP_ParallelRegion_0.get("result");
         service = (MonitorInfo)outputlist__OMP_ParallelRegion_0.get("service");
         completeNumber = (Integer)outputlist__OMP_ParallelRegion_0.get("completeNumber");
+        result = (List)outputlist__OMP_ParallelRegion_0.get("result");
+        array = (int[])outputlist__OMP_ParallelRegion_0.get("array");
         n = (Integer)outputlist__OMP_ParallelRegion_0.get("n");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         /*OpenMP Parallel region (#0) -- END */
@@ -88,10 +88,10 @@ class _OMP_ParallelRegion_0{
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
-            OMP_outputList.put("array",array);
-            OMP_outputList.put("result",result);
             OMP_outputList.put("service",service);
             OMP_outputList.put("completeNumber",completeNumber);
+            OMP_outputList.put("result",result);
+            OMP_outputList.put("array",array);
             OMP_outputList.put("n",n);
             //END update outputlist
         }
