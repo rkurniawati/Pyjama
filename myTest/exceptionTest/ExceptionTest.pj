@@ -1,0 +1,60 @@
+package exceptionTest;
+
+import pj.*;
+
+public class ExceptionTest{
+	public static void main (String[] args) {
+		test3();
+	}
+
+	public static void test1() {
+		//#omp parallel
+		{
+			System.out.println("first Stage");
+			try {
+				if (Pyjama.omp_get_thread_num() == 11) {
+					throw new RuntimeException("HH");
+				}
+			}catch (RuntimeException e){
+				System.out.println("recovery" + e);
+			}finally {
+				System.out.println("finallay");
+			}
+			//#omp barrier
+			System.out.println("second stage");
+			//#omp barrier
+			System.out.println("third stage");
+		}
+	}
+
+	public static void test2() {
+		//#omp parallel
+		{
+			System.out.println("first Stage");
+			if (Pyjama.omp_get_thread_num() == 1) {
+				throw new RuntimeException("A thread throws an exception");
+			}
+			//#omp barrier
+			System.out.println("second stage");
+			//#omp barrier
+			System.out.println("third stage");
+		}
+	}
+
+
+	public static void test3() {
+		try {
+			//#omp parallel
+			{
+				System.out.println("first Stage");
+				if (Pyjama.omp_get_thread_num() == 1) {
+					throw new RuntimeException("A thread throws an exception");
+				}
+			}
+		} catch (RuntimeException e) {
+			System.out.println("catch");
+		} finally {
+			System.out.println("finally");
+		}
+	}
+}
