@@ -1505,4 +1505,16 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		return CodePrinter.getSource();
 	}
 	/********************************************************************************************************************************/
+
+	@Override
+	public void visit(OmpCancellationPointDirective n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpCancelDirective n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -43,6 +43,7 @@ static class _OMP_ParallelRegion_0{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
+        private volatile boolean OMP_cancellation = false;
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -74,6 +75,7 @@ static class _OMP_ParallelRegion_0{
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
             void setBarrier() {
+                if (OMP_cancellation) {throw new pj.pr.PJthreadStopException();}
                 try {OMP_barrier.await();}
                 catch (InterruptedException e) {e.printStackTrace();}
                 catch (BrokenBarrierException e) {e.printStackTrace();}
@@ -160,6 +162,7 @@ static class _OMP_ParallelRegion_1{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
+        private volatile boolean OMP_cancellation = false;
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -191,6 +194,7 @@ static class _OMP_ParallelRegion_1{
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
             void setBarrier() {
+                if (OMP_cancellation) {throw new pj.pr.PJthreadStopException();}
                 try {OMP_barrier.await();}
                 catch (InterruptedException e) {e.printStackTrace();}
                 catch (BrokenBarrierException e) {e.printStackTrace();}
@@ -213,7 +217,7 @@ static class _OMP_ParallelRegion_1{
                 /****User Code BEGIN***/
                 {
                     System.out.println("first Stage");
-                    if (Pyjama.omp_get_thread_num() == 1) {
+                    if (Pyjama.omp_get_thread_num() == 0) {
                         throw new RuntimeException("A thread throws an exception");
                     }
                     PjRuntime.setBarrier();
@@ -277,6 +281,7 @@ static class _OMP_ParallelRegion_2{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
+        private volatile boolean OMP_cancellation = false;
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -308,6 +313,7 @@ static class _OMP_ParallelRegion_2{
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
             void setBarrier() {
+                if (OMP_cancellation) {throw new pj.pr.PJthreadStopException();}
                 try {OMP_barrier.await();}
                 catch (InterruptedException e) {e.printStackTrace();}
                 catch (BrokenBarrierException e) {e.printStackTrace();}
@@ -330,7 +336,7 @@ static class _OMP_ParallelRegion_2{
                 /****User Code BEGIN***/
                 {
                     System.out.println("first Stage");
-                    if (Pyjama.omp_get_thread_num() == 1) {
+                    if (Pyjama.omp_get_thread_num() == 0) {
                         throw new RuntimeException("A thread throws an exception");
                     }
                 }

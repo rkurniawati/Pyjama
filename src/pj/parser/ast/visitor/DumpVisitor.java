@@ -81,6 +81,8 @@ import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
 import pj.parser.ast.omp.OmpBarrierDirective;
+import pj.parser.ast.omp.OmpCancelDirective;
+import pj.parser.ast.omp.OmpCancellationPointDirective;
 import pj.parser.ast.omp.OmpCopyprivateDataClause;
 import pj.parser.ast.omp.OmpCriticalConstruct;
 import pj.parser.ast.omp.OmpDataClause;
@@ -1622,5 +1624,57 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		throw new RuntimeException("OpenMPStatement is abstract class, should not appear here");
 		
 	}
+	
+	/*provide cancellation directives Xing added at 2015.1.8*/
+	@Override
+	public void visit(OmpCancellationPointDirective n, Object arg) {
+		printer.print("//#omp cancellation point ");
+		if (n.getRegion() != null) {
+			switch (n.getRegion()) {
+			case Parallel:
+				printer.print("parallel ");
+			case For:
+				printer.print("for ");
+			case Sections:
+				printer.print("sections ");
+			case Taskgroup:
+				printer.print("taskgroup ");
+			}
+		}
+		printer.printLn();
+	}
+
+	@Override
+	public void visit(OmpCancelDirective n, Object arg) {
+		printer.print("//#omp cancel ");
+		if (n.getRegion() != null) {
+			switch (n.getRegion()) {
+			case Parallel:
+				printer.print("parallel ");
+			case For:
+				printer.print("for ");
+			case Sections:
+				printer.print("sections ");
+			case Taskgroup:
+				printer.print("taskgroup ");
+			}
+		}
+		if (n.getThreadAffiliate() != null) {
+			switch (n.getThreadAffiliate()) {
+			case Local:
+				printer.print("local ");
+			case Global:
+				printer.print("global ");
+			}
+		}
+		if (n.getIfStmt() != null) {
+			printer.print(n.getIfStmt().toString());
+		}
+		if (n.getTag() != null) {
+			printer.print(n.getTag());
+		}
+		printer.printLn();
+		printer.printLn();
+	}	
 
 }

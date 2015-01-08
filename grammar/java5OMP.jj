@@ -348,6 +348,12 @@ TOKEN :
 | < NOWAIT: "nowait" >
 | < NUMTHREADS: "num_threads">
 | < COPYPRIVATE: "copyprivate" >
+| < CANCELLATION_POINT: "cancellation point" >
+| < CANCEL: "cancel" >
+| < TASKGROUP: "taskgroup" >
+| < LOCAL: "local" >
+| < GLOBAL: "global" >
+| < TAG: "tag" >
 //§§ Pyjama Depricated; Xing Fan added at 2014.9.25
 //| < COPYIN: "copyin" >
 //| < THREADPRIVATE: "threadprivate" >
@@ -3089,7 +3095,6 @@ OpenMPStatement OpenMPStatement():
 		sectionsConstruct = OmpSectionsConstruct()
 	 {ret = sectionsConstruct.normalisation();}
 	|	ret = OmpFreeguiConstruct()
-//	|	ret = OmpSectionConstruct()
 	| 	ret = OmpGuiConstruct()
 	|{OmpSingleConstruct singleConstruct;} //#omp single needs normalisation; Xing Fan at 2014.9.29
 		singleConstruct = OmpSingleConstruct()
@@ -3100,6 +3105,8 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpBarrierDirective()
 	|	ret = OmpFlushDirective()
 	|	ret = OmpOrderedConstruct()
+	|	ret = OmpCancellationPointDirective()
+	|	ret = OmpCancelDirective()
 	)
 	{return ret;}
 }
@@ -3139,8 +3146,10 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	int numThreadsClauseCount = 0;
 	int IfClauseCount = 0;
 	int defaultDataClauseCount = 0;
+	int schduleClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
+	OmpScheduleClause scheduleClause = null; 
 	boolean ordered = false;
 	int line;
 	int column;
@@ -3155,9 +3164,10 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
 	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
+	|	scheduleClause = OmpScheduleClause() 	{if((++schduleClauseCount)>1) throw new RuntimeException("Pyjama Parsing Error: More than one schedule clause");}
 	)*
 	forBody = ForStatement()
-	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, ifExpr, numThreads, ordered); }
+	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, scheduleClause, ifExpr, numThreads, ordered); }
 }
 
 OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
@@ -3246,9 +3256,10 @@ OmpSectionsConstruct OmpSectionsConstruct():
   	{ return new OmpSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, nowait); }
 }
 
-OmpFreeguiConstruct OmpFreeguiConstruct():
+OmpParallelConstruct OmpFreeguiConstruct():
 {
 	Statement stmt = null;
+	OmpFreeguiConstruct freeguiConstruct = null;
     	OmpParallelConstruct opc = null;
 	OmpParallelForConstruct	opfc = null;
 	OmpParallelSectionsConstruct opsc = null;
@@ -3257,17 +3268,20 @@ OmpFreeguiConstruct OmpFreeguiConstruct():
 }
 {
   < FREEGUI > {line=token.beginLine; column=token.beginColumn;}
-  (	stmt = Statement()   {return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, stmt);}
+  (	stmt = Statement()   
+	{freeguiConstruct = new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, stmt);}
+	 
   | LOOKAHEAD(2)
   	opc = OmpParallelConstruct()
-	{return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opc);}
+	{freeguiConstruct = new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opc);}
   | LOOKAHEAD(2)
   	opfc = OmpParallelForConstruct()
-	{return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opfc);}
+	{freeguiConstruct = new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opfc);}
   | LOOKAHEAD(2)
  	opsc = OmpParallelSectionsConstruct()
-	{return new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opsc);}
+	{freeguiConstruct = new OmpFreeguiConstruct(line, column, token.endLine, token.endColumn, opsc);}
   )
+  {return freeguiConstruct.normalisation();}
 }
 
 OmpSectionConstruct OmpSectionConstruct():
@@ -3394,6 +3408,47 @@ OmpOrderedConstruct OmpOrderedConstruct():
 	{return new OmpOrderedConstruct(line, column, token.endLine, token.endColumn, stmt);}
 }
 
+//§§Followings are Pyjama extionsion of OpenMP for thread cancellation; Xing Fan added at 2015.1.8
+OmpCancellationPointDirective OmpCancellationPointDirective():
+{
+	int line;
+	int column;
+	OmpCancellationPointDirective.Region region = null;
+}
+{
+	<CANCELLATION_POINT> {line=token.beginLine; column=token.beginColumn;} 
+	(	<PARALLEL> 	{ region = OmpCancellationPointDirective.Region.Parallel; }
+ 	|	<FOR>		{ region = OmpCancellationPointDirective.Region.For; }
+ 	|	<SECTIONS>	{ region = OmpCancellationPointDirective.Region.Sections; }
+ 	|	<TASKGROUP>	{ region = OmpCancellationPointDirective.Region.Taskgroup; }
+ 	)
+	{return new OmpCancellationPointDirective(line, column, token.endLine, token.endColumn, region);}
+}
+
+OmpCancelDirective OmpCancelDirective():
+{
+	int line;
+	int column;
+	OmpCancelDirective.Region region = null;
+	OmpCancelDirective.ThreadAffiliate affiliate = null;
+	Expression ifStmt = null;
+	NameExpr tag = null;
+}
+{
+	<CANCEL> {line=token.beginLine; column=token.beginColumn;}
+	(	<PARALLEL> 	{ region = OmpCancelDirective.Region.Parallel; }
+ 	|	<FOR>		{ region = OmpCancelDirective.Region.For; }
+ 	|	<SECTIONS>	{ region = OmpCancelDirective.Region.Sections; }
+ 	|	<TASKGROUP>	{ region = OmpCancelDirective.Region.Taskgroup; }
+ 	)
+	(	<LOCAL> 	{ affiliate = OmpCancelDirective.ThreadAffiliate.Local; }
+ 	|	<GLOBAL>	{ affiliate = OmpCancelDirective.ThreadAffiliate.Global; }
+ 	)
+	(<IF>	"(" ifStmt = Expression() ")")?
+	(<TAG>  "(" tag = Name() ")")?
+	{return new OmpCancelDirective(line, column, token.endLine, token.endColumn, region, affiliate, ifStmt, tag);}
+}
+
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25
 OmpScheduleClause OmpScheduleClause():
 {
@@ -3434,7 +3489,7 @@ OmpPrivateDataClause OmpPrivateDataClause():
 	OmpPrivateDataClause ret = new OmpPrivateDataClause();
 	Expression expr;
 }
-{	<PRIVATE> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
+{	(<PRIVATE> | <FIRSTPRIVATE>) {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
 	expr = Expression() {ret.addArgument(expr);}
 	( "," expr = Expression() {ret.addArgument(expr);} )*
 	")"
@@ -3466,11 +3521,11 @@ OmpReductionDataClause OmpReductionDataClause():
 {
 	OmpReductionDataClause ret = new OmpReductionDataClause();
 	Expression expr;
-	Expression operator;
+	OmpReductionOperator operator;
 }
 {	<REDUCTION> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
-	operator = Name() ":" expr = Name() {ret.addArgument(operator, expr);}
-	( "," operator = Name() ":" expr = Name() {ret.addArgument(operator, expr);} )*
+	operator = OmpReductionOperator() ":" expr = Name() {ret.addArgument(operator, expr);}
+	( "," operator = OmpReductionOperator() ":" expr = Name() {ret.addArgument(operator, expr);} )*
 	")"
 	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
 }
@@ -3521,4 +3576,30 @@ OmpIfClause OmpIfClause():
 	{return new OmpIfClause(line, column, token.endLine, token.endColumn, ifExpr);}
 }
 
-
+OmpReductionOperator OmpReductionOperator():
+{
+	OmpReductionOperator op = null;
+	NameExpr userDefined = null;
+}
+{
+	(
+	  "+" { op = new OmpReductionOperator(OmpReductionOperator.Operator.Plus); }
+	|
+	  "*" { op = new OmpReductionOperator(OmpReductionOperator.Operator.Mult); }
+	|
+	  "-" { op = new OmpReductionOperator(OmpReductionOperator.Operator.Minus); }
+	|
+	  "&" { op = new OmpReductionOperator(OmpReductionOperator.Operator.BitAND); }
+	|
+	  "|" { op = new OmpReductionOperator(OmpReductionOperator.Operator.BitOR); }
+	|
+	  "^" { op = new OmpReductionOperator(OmpReductionOperator.Operator.BitXOR); }
+	|
+	  "&&" { op = new OmpReductionOperator(OmpReductionOperator.Operator.LogAND); }
+	|
+	  "||" { op = new OmpReductionOperator(OmpReductionOperator.Operator.LogOR); }
+	|
+	  userDefined = Name() { op = new OmpReductionOperator(userDefined); }
+	)
+	{return op;}
+} 

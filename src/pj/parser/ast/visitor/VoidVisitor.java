@@ -329,5 +329,9 @@ public interface VoidVisitor<A> {
     public void visit(OmpSingleConstruct n, A arg);
     
     public void visit(OpenMPStatement n, A arg);
+    
+    public void visit(OmpCancellationPointDirective n, A arg);
+    
+    public void visit(OmpCancelDirective n, A arg);
 
 }

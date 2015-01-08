@@ -82,6 +82,8 @@ import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
 import pj.parser.ast.omp.OmpBarrierDirective;
+import pj.parser.ast.omp.OmpCancelDirective;
+import pj.parser.ast.omp.OmpCancellationPointDirective;
 import pj.parser.ast.omp.OmpCopyprivateDataClause;
 import pj.parser.ast.omp.OmpCriticalConstruct;
 import pj.parser.ast.omp.OmpDataClause;
@@ -926,7 +928,12 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 
 	public void visit(OpenMPStatement n, A arg) {
 		throw new RuntimeException("OpenMPStatement is abstract class, should not appear here");
-		
 	}
+	
+    public void visit(OmpCancellationPointDirective n, A arg) {
+    }
+    
+    public void visit(OmpCancelDirective n, A arg) {
+    }
 
 }

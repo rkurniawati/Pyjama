@@ -14,6 +14,7 @@ package pj.parser.ast.visitor.constructwrappers;
 
 
 import java.util.List;
+
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
@@ -95,6 +96,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private CyclicBarrier OMP_barrier;");
 		printer.printLn("private ReentrantLock OMP_lock;");
+		printer.printLn("private volatile boolean OMP_cancellation = false;");
 		printer.printLn();
 		//#BEGIN shared variables defined here
 		printer.printLn("//#BEGIN shared variables defined here");
@@ -171,6 +173,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		//#BEGIN setBarrier method
 		printer.printLn("void setBarrier() {");
 		printer.indent();
+		printer.printLn("if (OMP_cancellation) {throw new pj.pr.PJthreadStopException();}");
 		printer.printLn("try {OMP_barrier.await();}");
 		printer.printLn("catch (InterruptedException e) {e.printStackTrace();}");
 		printer.printLn("catch (BrokenBarrierException e) {e.printStackTrace();}");

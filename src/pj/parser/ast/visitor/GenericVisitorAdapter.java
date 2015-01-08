@@ -82,6 +82,8 @@ import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
 import pj.parser.ast.omp.OmpBarrierDirective;
+import pj.parser.ast.omp.OmpCancelDirective;
+import pj.parser.ast.omp.OmpCancellationPointDirective;
 import pj.parser.ast.omp.OmpCopyprivateDataClause;
 import pj.parser.ast.omp.OmpCriticalConstruct;
 import pj.parser.ast.omp.OmpDataClause;
@@ -1029,5 +1031,12 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 	public R visit(OpenMPStatement n, A arg) {
 		throw new RuntimeException("OpenMPStatement is abstract class, should not appear here");
 	}
-
+	
+	public R visit(OmpCancellationPointDirective n, A arg) {
+		return null;
+	}
+	
+	public R visit(OmpCancelDirective n, A arg) {
+		return null;
+	}
 }

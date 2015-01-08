@@ -348,6 +348,12 @@ TOKEN :
 | < NOWAIT: "nowait" >
 | < NUMTHREADS: "num_threads">
 | < COPYPRIVATE: "copyprivate" >
+| < CANCELLATION_POINT: "cancellation point" >
+| < CANCEL: "cancel" >
+| < TASKGROUP: "taskgroup" >
+| < LOCAL: "local" >
+| < GLOBAL: "global" >
+| < TAG: "tag" >
 //§§ Pyjama Depricated; Xing Fan added at 2014.9.25
 //| < COPYIN: "copyin" >
 //| < THREADPRIVATE: "threadprivate" >
@@ -3099,6 +3105,8 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpBarrierDirective()
 	|	ret = OmpFlushDirective()
 	|	ret = OmpOrderedConstruct()
+	|	ret = OmpCancellationPointDirective()
+	|	ret = OmpCancelDirective()
 	)
 	{return ret;}
 }
@@ -3398,6 +3406,47 @@ OmpOrderedConstruct OmpOrderedConstruct():
 	<ORDERED> {line=token.beginLine; column=token.beginColumn;}
 	stmt = Statement()
 	{return new OmpOrderedConstruct(line, column, token.endLine, token.endColumn, stmt);}
+}
+
+//§§Followings are Pyjama extionsion of OpenMP for thread cancellation; Xing Fan added at 2015.1.8
+OmpCancellationPointDirective OmpCancellationPointDirective():
+{
+	int line;
+	int column;
+	OmpCancellationPointDirective.Region region = null;
+}
+{
+	<CANCELLATION_POINT> {line=token.beginLine; column=token.beginColumn;} 
+	(	<PARALLEL> 	{ region = OmpCancellationPointDirective.Region.Parallel; }
+ 	|	<FOR>		{ region = OmpCancellationPointDirective.Region.For; }
+ 	|	<SECTIONS>	{ region = OmpCancellationPointDirective.Region.Sections; }
+ 	|	<TASKGROUP>	{ region = OmpCancellationPointDirective.Region.Taskgroup; }
+ 	)
+	{return new OmpCancellationPointDirective(line, column, token.endLine, token.endColumn, region);}
+}
+
+OmpCancelDirective OmpCancelDirective():
+{
+	int line;
+	int column;
+	OmpCancelDirective.Region region = null;
+	OmpCancelDirective.ThreadAffiliate affiliate = null;
+	Expression ifStmt = null;
+	NameExpr tag = null;
+}
+{
+	<CANCEL> {line=token.beginLine; column=token.beginColumn;}
+	(	<PARALLEL> 	{ region = OmpCancelDirective.Region.Parallel; }
+ 	|	<FOR>		{ region = OmpCancelDirective.Region.For; }
+ 	|	<SECTIONS>	{ region = OmpCancelDirective.Region.Sections; }
+ 	|	<TASKGROUP>	{ region = OmpCancelDirective.Region.Taskgroup; }
+ 	)
+	(	<LOCAL> 	{ affiliate = OmpCancelDirective.ThreadAffiliate.Local; }
+ 	|	<GLOBAL>	{ affiliate = OmpCancelDirective.ThreadAffiliate.Global; }
+ 	)
+	(<IF>	"(" ifStmt = Expression() ")")?
+	(<TAG>  "(" tag = Name() ")")?
+	{return new OmpCancelDirective(line, column, token.endLine, token.endColumn, region, affiliate, ifStmt, tag);}
 }
 
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25
