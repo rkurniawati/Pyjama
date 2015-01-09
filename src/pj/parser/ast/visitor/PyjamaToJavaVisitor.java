@@ -1499,6 +1499,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.printLn("import pj.PjRuntime;");
     	printer.printLn("import pj.Pyjama;");
     	printer.printLn("import java.util.concurrent.*;");
+    	printer.printLn("import java.util.concurrent.atomic.AtomicBoolean;");
     	printer.printLn("import java.util.concurrent.atomic.AtomicInteger;");
     	printer.printLn("import java.util.concurrent.locks.ReentrantLock;");
     	printer.printLn("import javax.swing.SwingUtilities;");

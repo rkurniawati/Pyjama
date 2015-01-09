@@ -96,7 +96,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private CyclicBarrier OMP_barrier;");
 		printer.printLn("private ReentrantLock OMP_lock;");
-		printer.printLn("private volatile boolean OMP_cancellation = false;");
+		printer.printLn("private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);");
 		printer.printLn();
 		//#BEGIN shared variables defined here
 		printer.printLn("//#BEGIN shared variables defined here");
@@ -127,6 +127,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);");
 		printer.printLn("icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);");
 		printer.printLn("icv.OMP_orderCursor = new AtomicInteger(0);");
+		printer.printLn("icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;");
 		//#BEGIN shared variables initialised here
 		printer.printLn("//#BEGIN shared variables initialised here");
 		for(OmpDataClause sharedClause: this.dataClauseList) {
@@ -170,17 +171,6 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("//#END private/firstprivate reduction variables  defined here");
 		//#END firstprivate reduction variables defined for each thread here
 		
-		//#BEGIN setBarrier method
-		printer.printLn("void setBarrier() {");
-		printer.indent();
-		printer.printLn("if (OMP_cancellation) {throw new pj.pr.PJthreadStopException();}");
-		printer.printLn("try {OMP_barrier.await();}");
-		printer.printLn("catch (InterruptedException e) {e.printStackTrace();}");
-		printer.printLn("catch (BrokenBarrierException e) {e.printStackTrace();}");
-		printer.unindent();
-		printer.printLn("}");
-		//#END setBarrier method
-		
 		printer.printLn("MyCallable(int id, ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){");
 		printer.indent();
 		printer.printLn("this.alias_id = id;");
@@ -222,7 +212,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		DataClausesHandler.reductionForPRClass(this, printer);
 		printer.printLn("//END reduction procedure");
 		//END reduction procedure
-		printer.printLn("setBarrier();");
+		printer.printLn("PjRuntime.setBarrier();");
 		//BEGIN Master thread updateOutputList
 		printer.printLn("if (0 == this.alias_id) {");
 		printer.indent();

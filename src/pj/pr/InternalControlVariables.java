@@ -2,6 +2,7 @@ package pj.pr;
 
 import java.util.ArrayList;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 public class InternalControlVariables {
 	/**XING Environment Variables definition BEGIN*/
@@ -56,6 +57,9 @@ public class InternalControlVariables {
 	public int cancel_var;
 	public String default_device_var;
 	
+	
+	/* Xing added those for parallel region cancellation support 2015.1.8 */
+	public volatile AtomicBoolean OMP_CurrentParallelRegionCancellationFlag = new AtomicBoolean(false);
 	
 	/* Xing added those for atomic directive support 2014.4.30 */
 	public CyclicBarrier OMP_CurrentParallelRegionBarrier = null;

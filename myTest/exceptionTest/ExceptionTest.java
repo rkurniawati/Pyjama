@@ -6,6 +6,7 @@ import pj.pr.*;
 import pj.PjRuntime;
 import pj.Pyjama;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.swing.SwingUtilities;
@@ -43,7 +44,7 @@ static class _OMP_ParallelRegion_0{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
-        private volatile boolean OMP_cancellation = false;
+        private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -60,6 +61,7 @@ static class _OMP_ParallelRegion_0{
             this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
+            icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -74,12 +76,6 @@ static class _OMP_ParallelRegion_0{
             private ConcurrentHashMap<String, Object> OMP_outputList;
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
-            void setBarrier() {
-                if (OMP_cancellation) {throw new pj.pr.PJthreadStopException();}
-                try {OMP_barrier.await();}
-                catch (InterruptedException e) {e.printStackTrace();}
-                catch (BrokenBarrierException e) {e.printStackTrace();}
-            }
             MyCallable(int id, ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){
                 this.alias_id = id;
                 this.OMP_inputList = inputlist;
@@ -117,7 +113,7 @@ static class _OMP_ParallelRegion_0{
                 /****User Code END***/
                 //BEGIN reduction procedure
                 //END reduction procedure
-                setBarrier();
+                PjRuntime.setBarrier();
                 if (0 == this.alias_id) {
                     updateOutputListForSharedVars();
                 }
@@ -162,7 +158,7 @@ static class _OMP_ParallelRegion_1{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
-        private volatile boolean OMP_cancellation = false;
+        private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -179,6 +175,7 @@ static class _OMP_ParallelRegion_1{
             this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
+            icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -193,12 +190,6 @@ static class _OMP_ParallelRegion_1{
             private ConcurrentHashMap<String, Object> OMP_outputList;
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
-            void setBarrier() {
-                if (OMP_cancellation) {throw new pj.pr.PJthreadStopException();}
-                try {OMP_barrier.await();}
-                catch (InterruptedException e) {e.printStackTrace();}
-                catch (BrokenBarrierException e) {e.printStackTrace();}
-            }
             MyCallable(int id, ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){
                 this.alias_id = id;
                 this.OMP_inputList = inputlist;
@@ -230,7 +221,7 @@ static class _OMP_ParallelRegion_1{
                 /****User Code END***/
                 //BEGIN reduction procedure
                 //END reduction procedure
-                setBarrier();
+                PjRuntime.setBarrier();
                 if (0 == this.alias_id) {
                     updateOutputListForSharedVars();
                 }
@@ -281,7 +272,7 @@ static class _OMP_ParallelRegion_2{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
-        private volatile boolean OMP_cancellation = false;
+        private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -298,6 +289,7 @@ static class _OMP_ParallelRegion_2{
             this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
+            icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -312,12 +304,6 @@ static class _OMP_ParallelRegion_2{
             private ConcurrentHashMap<String, Object> OMP_outputList;
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
-            void setBarrier() {
-                if (OMP_cancellation) {throw new pj.pr.PJthreadStopException();}
-                try {OMP_barrier.await();}
-                catch (InterruptedException e) {e.printStackTrace();}
-                catch (BrokenBarrierException e) {e.printStackTrace();}
-            }
             MyCallable(int id, ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){
                 this.alias_id = id;
                 this.OMP_inputList = inputlist;
@@ -343,7 +329,7 @@ static class _OMP_ParallelRegion_2{
                 /****User Code END***/
                 //BEGIN reduction procedure
                 //END reduction procedure
-                setBarrier();
+                PjRuntime.setBarrier();
                 if (0 == this.alias_id) {
                     updateOutputListForSharedVars();
                 }
@@ -388,7 +374,7 @@ static class _OMP_ParallelRegion_3{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
-        private volatile boolean OMP_cancellation = false;
+        private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -405,6 +391,7 @@ static class _OMP_ParallelRegion_3{
             this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
+            icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -419,12 +406,6 @@ static class _OMP_ParallelRegion_3{
             private ConcurrentHashMap<String, Object> OMP_outputList;
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
-            void setBarrier() {
-                if (OMP_cancellation) {throw new pj.pr.PJthreadStopException();}
-                try {OMP_barrier.await();}
-                catch (InterruptedException e) {e.printStackTrace();}
-                catch (BrokenBarrierException e) {e.printStackTrace();}
-            }
             MyCallable(int id, ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){
                 this.alias_id = id;
                 this.OMP_inputList = inputlist;
@@ -483,7 +464,7 @@ static class _OMP_ParallelRegion_3{
                 /****User Code END***/
                 //BEGIN reduction procedure
                 //END reduction procedure
-                setBarrier();
+                PjRuntime.setBarrier();
                 if (0 == this.alias_id) {
                     updateOutputListForSharedVars();
                 }

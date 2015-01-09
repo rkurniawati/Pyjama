@@ -108,7 +108,13 @@ public class PjRuntime {
 		if (null == icv.OMP_CurrentParallelRegionBarrier) {
 			return;
 		}
+		if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
+			return;
+		}
 		else {
+			if (icv.OMP_CurrentParallelRegionCancellationFlag.get() == true) {
+				throw new pj.pr.PJthreadStopException();
+			}
 			try {icv.OMP_CurrentParallelRegionBarrier.await();}
 			catch (InterruptedException e) {e.printStackTrace();}
 			catch (BrokenBarrierException e) {e.printStackTrace();}
@@ -161,19 +167,22 @@ public class PjRuntime {
 		            try {
 		               callable.call();
 		            } catch (Exception e) {
-		               throw new RuntimeException(e);
+		               cancelCurrentThreadGroup();
+		               throw new RuntimeException("rethrow from executorXX: " + e);
 		            }
 		         }
 		      };
 		 }
 		
-		private void cancelThreadGroup() {
+		private static void cancelCurrentThreadGroup() {
 			InternalControlVariables icv = threadICVMap.get();
-			if (null == icv.OMP_CurrentParallelRegionBarrier) {
+			if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
+				System.out.println("Cannot find cancellation flag");
+				System.out.println("CC" + icv);
 				return;
 			}
 			else {
-				
+				icv.OMP_CurrentParallelRegionCancellationFlag.set(true);
 			}
 		}
 	}
