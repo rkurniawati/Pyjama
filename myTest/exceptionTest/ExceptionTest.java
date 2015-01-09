@@ -14,7 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 public class ExceptionTest {
 
     public static void main(String[] args) {{
-        test4();
+        test1();
     }
 
     //Pyjama runtime shutdown at the end of main method
@@ -99,7 +99,7 @@ static class _OMP_ParallelRegion_0{
                 {
                     System.out.println("first Stage");
                     try {
-                        if (Pyjama.omp_get_thread_num() == 11) {
+                        if (Pyjama.omp_get_thread_num() == 1) {
                             throw new RuntimeException("HH");
                         }
                     } catch (RuntimeException e) {
@@ -217,7 +217,7 @@ static class _OMP_ParallelRegion_1{
                 /****User Code BEGIN***/
                 {
                     System.out.println("first Stage");
-                    if (Pyjama.omp_get_thread_num() == 0) {
+                    if (Pyjama.omp_get_thread_num() == 1) {
                         throw new RuntimeException("A thread throws an exception");
                     }
                     PjRuntime.setBarrier();

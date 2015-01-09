@@ -16,6 +16,7 @@ public class PjRuntime {
 			new ThreadPoolExecutor(initial_icv.thread_limit_var, initial_icv.thread_limit_var, 0, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>());
 	
+	private static PjExecutor pjExecutor = new PjExecutor();
 	/*Xing added this for store of Thread real id and related icv copy 2014.3.4*/
 	private static ThreadLocal<InternalControlVariables> threadICVMap = new ThreadLocal<InternalControlVariables>();
 
@@ -55,7 +56,7 @@ public class PjRuntime {
 
 	public static void submit(Callable<ConcurrentHashMap<String,Object>> task){
 //		PjThreadPoolExecutor.submit(task);
-		PjExecutor.submit(task);
+		pjExecutor.submit(task);
 		return;
 	}
 	
@@ -139,5 +140,41 @@ public class PjRuntime {
 	public static void reset_OMP_orderCursor() {
 		InternalControlVariables icv = getCurrentThreadICV();
 		icv.OMP_orderCursor.set(0);
+	}
+	/* private class: PjExecutor (A helper class to run an openMP thread) */
+	static class PjExecutor {
+		
+		PjExecutor() {
+			
+		}
+
+		public static void submit(Callable<ConcurrentHashMap<String,Object>> task){
+			Runnable runnableTask = getRunnable(task);
+			Thread workerThread = new Thread(runnableTask);
+			workerThread.start();
+		}
+		
+		private static Runnable getRunnable(final Callable<ConcurrentHashMap<String,Object>> callable) {
+		      return new Runnable() {
+		         @Override
+		         public void run() {
+		            try {
+		               callable.call();
+		            } catch (Exception e) {
+		               throw new RuntimeException(e);
+		            }
+		         }
+		      };
+		 }
+		
+		private void cancelThreadGroup() {
+			InternalControlVariables icv = threadICVMap.get();
+			if (null == icv.OMP_CurrentParallelRegionBarrier) {
+				return;
+			}
+			else {
+				
+			}
+		}
 	}
  }

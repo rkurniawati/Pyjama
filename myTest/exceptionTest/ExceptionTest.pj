@@ -4,15 +4,17 @@ import pj.*;
 
 public class ExceptionTest{
 	public static void main (String[] args) {
-		test3();
+		test2();
 	}
 
+
+//handling locally
 	public static void test1() {
 		//#omp parallel
 		{
 			System.out.println("first Stage");
 			try {
-				if (Pyjama.omp_get_thread_num() == 11) {
+				if (Pyjama.omp_get_thread_num() == 1) {
 					throw new RuntimeException("HH");
 				}
 			}catch (RuntimeException e){
@@ -27,11 +29,12 @@ public class ExceptionTest{
 		}
 	}
 
+//does not handle locally
 	public static void test2() {
 		//#omp parallel
 		{
 			System.out.println("first Stage");
-			if (Pyjama.omp_get_thread_num() == 0) {
+			if (Pyjama.omp_get_thread_num() == 1) {
 				throw new RuntimeException("A thread throws an exception");
 			}
 			//#omp barrier

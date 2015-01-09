@@ -20,7 +20,6 @@
 package pj.parser.ast.visitor.helper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import pj.parser.ast.type.PrimitiveType;
