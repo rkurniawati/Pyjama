@@ -1,7 +1,6 @@
 package pj.pr;
 
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 public class InternalControlVariables {

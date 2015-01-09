@@ -283,6 +283,19 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	public void visit(OpenMPStatement n, SourcePrinter arg) {
 		throw new RuntimeException("OpenMPStatement: This abstract class should not appear.");	
 	}
+	
+
+	@Override
+	public void visit(OmpCancellationPointDirective n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpCancelDirective n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+		
+	}
 	    
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
@@ -1505,16 +1518,4 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		return CodePrinter.getSource();
 	}
 	/********************************************************************************************************************************/
-
-	@Override
-	public void visit(OmpCancellationPointDirective n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(OmpCancelDirective n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
-	}
 }

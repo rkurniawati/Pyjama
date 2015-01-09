@@ -1,9 +1,7 @@
 package pj;
 
 import pj.pr.*;
-import pj.Pyjama;
 
-import java.util.HashMap;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
@@ -50,12 +48,14 @@ public class PjRuntime {
 		}
 	}
 	
+	@Deprecated
 	public static synchronized void shutdown() {
 		PjThreadPoolExecutor.shutdown();
 	}
 
 	public static void submit(Callable<ConcurrentHashMap<String,Object>> task){
-		PjThreadPoolExecutor.submit(task);
+//		PjThreadPoolExecutor.submit(task);
+		PjExecutor.submit(task);
 		return;
 	}
 	

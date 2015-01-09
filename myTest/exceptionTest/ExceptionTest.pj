@@ -57,4 +57,11 @@ public class ExceptionTest{
 			System.out.println("finally");
 		}
 	}
+
+	public static void test4() {
+		//#omp parallel for
+		for(int i=0; i<10; i++) {
+			System.out.println("i="+i+"==>"+Pyjama.omp_get_thread_num());
+		}
+	}
 }
