@@ -96,7 +96,6 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private CyclicBarrier OMP_barrier;");
 		printer.printLn("private ReentrantLock OMP_lock;");
-		printer.printLn("private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);");
 		printer.printLn();
 		//#BEGIN shared variables defined here
 		printer.printLn("//#BEGIN shared variables defined here");
@@ -127,7 +126,6 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);");
 		printer.printLn("icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);");
 		printer.printLn("icv.OMP_orderCursor = new AtomicInteger(0);");
-		printer.printLn("icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;");
 		//#BEGIN shared variables initialised here
 		printer.printLn("//#BEGIN shared variables initialised here");
 		for(OmpDataClause sharedClause: this.dataClauseList) {

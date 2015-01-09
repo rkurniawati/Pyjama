@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 public class ExceptionTest {
 
     public static void main(String[] args) {{
-        test1();
+        test2();
     }
 
     //Pyjama runtime shutdown at the end of main method
@@ -44,7 +44,6 @@ static class _OMP_ParallelRegion_0{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
-        private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -61,7 +60,6 @@ static class _OMP_ParallelRegion_0{
             this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
-            icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -97,6 +95,8 @@ static class _OMP_ParallelRegion_0{
                     try {
                         if (Pyjama.omp_get_thread_num() == 1) {
                             throw new RuntimeException("HH");
+                        } else {
+                            for (int i = 0; i < 9999999; i++) ;
                         }
                     } catch (RuntimeException e) {
                         System.out.println("recovery" + e);
@@ -158,7 +158,6 @@ static class _OMP_ParallelRegion_1{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
-        private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -175,7 +174,6 @@ static class _OMP_ParallelRegion_1{
             this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
-            icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -210,6 +208,8 @@ static class _OMP_ParallelRegion_1{
                     System.out.println("first Stage");
                     if (Pyjama.omp_get_thread_num() == 1) {
                         throw new RuntimeException("A thread throws an exception");
+                    } else {
+                        for (int i = 0; i < 9999999; i++) ;
                     }
                     PjRuntime.setBarrier();
 
@@ -272,7 +272,6 @@ static class _OMP_ParallelRegion_2{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
-        private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -289,7 +288,6 @@ static class _OMP_ParallelRegion_2{
             this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
-            icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -324,6 +322,8 @@ static class _OMP_ParallelRegion_2{
                     System.out.println("first Stage");
                     if (Pyjama.omp_get_thread_num() == 0) {
                         throw new RuntimeException("A thread throws an exception");
+                    } else {
+                        for (int i = 0; i < 9999999; i++) ;
                     }
                 }
                 /****User Code END***/
@@ -374,7 +374,6 @@ static class _OMP_ParallelRegion_3{
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
-        private volatile AtomicBoolean OMP_cancellation = new AtomicBoolean(false);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -391,7 +390,6 @@ static class _OMP_ParallelRegion_3{
             this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
             icv.OMP_orderCursor = new AtomicInteger(0);
-            icv.OMP_CurrentParallelRegionCancellationFlag = this.OMP_cancellation;
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }

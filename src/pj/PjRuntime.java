@@ -106,12 +106,14 @@ public class PjRuntime {
 	public static void setBarrier() {
 		InternalControlVariables icv = threadICVMap.get();
 		if (null == icv.OMP_CurrentParallelRegionBarrier) {
+			//need throw brokenBarrier exception
 			return;
 		}
 		if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
 			return;
 		}
 		else {
+			System.out.println("Barrier"+ Pyjama.omp_get_thread_num()+ " flag " + icv.OMP_CurrentParallelRegionCancellationFlag.get());
 			if (icv.OMP_CurrentParallelRegionCancellationFlag.get() == true) {
 				throw new pj.pr.PJthreadStopException();
 			}
@@ -178,11 +180,11 @@ public class PjRuntime {
 			InternalControlVariables icv = threadICVMap.get();
 			if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
 				System.out.println("Cannot find cancellation flag");
-				System.out.println("CC" + icv);
 				return;
 			}
 			else {
 				icv.OMP_CurrentParallelRegionCancellationFlag.set(true);
+				System.out.println("set flag:" + icv.OMP_CurrentParallelRegionCancellationFlag);
 			}
 		}
 	}
