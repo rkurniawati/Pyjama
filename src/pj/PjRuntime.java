@@ -10,7 +10,7 @@ public class PjRuntime {
 	
 	private static InternalControlVariables initial_icv = new InternalControlVariables();
 	
-	private static boolean isInitialized = false;
+//	private static boolean isInitialized = false;
 	
 	private static ThreadPoolExecutor PjThreadPoolExecutor = 
 			new ThreadPoolExecutor(initial_icv.thread_limit_var, initial_icv.thread_limit_var, 0, TimeUnit.MILLISECONDS,
@@ -102,16 +102,16 @@ public class PjRuntime {
 	/*Xing added this to substitute to using as openMP barrier directive 2014.4.30*/
 	public static void setBarrier() {
 		InternalControlVariables icv = getCurrentThreadICV();
-		//System.out.println("Thread "+Thread.currentThread().getId()+"DDD"+icv.OMP_CurrentParallelRegionBarrier);
+		System.out.println("Barrier "+Pyjama.omp_get_thread_num()+" b(pointer):"+icv.OMP_CurrentParallelRegionBarrier.hashCode());
 		if (null == icv.OMP_CurrentParallelRegionBarrier) {
 			//need throw brokenBarrier exception
 			return;
 		}
 		if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
-			return;
+			throw new RuntimeException("Pyjama: Cancellation flag null!");
 		}
 		else {
-			//System.out.println("Barrier"+ Pyjama.omp_get_thread_num()+ " flag " + icv.OMP_CurrentParallelRegionCancellationFlag.get()+" pointer(icv):"+icv);
+			System.out.println("Barrier"+ Pyjama.omp_get_thread_num()+ " flag " + icv.OMP_CurrentParallelRegionCancellationFlag.get()+" pointer(flag):"+icv.OMP_CurrentParallelRegionCancellationFlag.hashCode());
 			if (icv.OMP_CurrentParallelRegionCancellationFlag.get() == true) {
 				throw new pj.pr.PJthreadStopException();
 			}
