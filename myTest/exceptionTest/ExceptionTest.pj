@@ -4,7 +4,16 @@ import pj.*;
 
 public class ExceptionTest{
 	public static void main (String[] args) {
-		test2();
+		test0();
+	}
+	
+	public static void test0() {
+		//#omp parallel
+		{
+			System.out.println("first Stage");
+			//#omp barrier
+			System.out.println("second stage");
+		}
 	}
 
 

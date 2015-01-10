@@ -23,7 +23,7 @@ public class ExceptionTest {
     }
 
 
-    public static void test1() {{
+    public static void test0() {{
         /*OpenMP Parallel region (#0) -- START */
         InternalControlVariables icv_previous__OMP_ParallelRegion_0 = PjRuntime.getCurrentThreadICV();
         InternalControlVariables icv__OMP_ParallelRegion_0 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_0);
@@ -42,7 +42,6 @@ static class _OMP_ParallelRegion_0{
         private InternalControlVariables icv;
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
-        private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
 
         //#BEGIN shared variables defined here
@@ -54,12 +53,10 @@ static class _OMP_ParallelRegion_0{
             }else {
                 this.OMP_threadNumber = thread_num;
             }
-            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             this.OMP_inputList = inputlist;
             this.OMP_outputList = outputlist;
-            this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
+            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
-            icv.OMP_orderCursor = new AtomicInteger(0);
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -84,11 +81,99 @@ static class _OMP_ParallelRegion_0{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                InternalControlVariables currentThreadICV = new InternalControlVariables(icv);
-                currentThreadICV.currentThreadAliasID = this.alias_id;
-                PjRuntime.setCurrentThreadICV(currentThreadICV);
+                /****User Code BEGIN***/
+                {
+                    System.out.println("first Stage");
+                    PjRuntime.setBarrier();
 
-                
+                    System.out.println("second stage");
+                }
+                /****User Code END***/
+                //BEGIN reduction procedure
+                //END reduction procedure
+                PjRuntime.setBarrier();
+                if (0 == this.alias_id) {
+                    updateOutputListForSharedVars();
+                }
+                return null;
+            }
+        }
+        public void runParallelCode() {
+            for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
+                Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
+                PjRuntime.submit(i, slaveThread, icv);
+            }
+            Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
+            PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
+            try {
+                masterThread.call();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
+    public static void test1() {{
+        /*OpenMP Parallel region (#1) -- START */
+        InternalControlVariables icv_previous__OMP_ParallelRegion_1 = PjRuntime.getCurrentThreadICV();
+        InternalControlVariables icv__OMP_ParallelRegion_1 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_1);
+        int _threadNum__OMP_ParallelRegion_1 = icv__OMP_ParallelRegion_1.nthreads_var.get(icv__OMP_ParallelRegion_1.levels_var);
+        ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
+        _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
+        _OMP_ParallelRegion_1_in.runParallelCode();
+        PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
+        /*OpenMP Parallel region (#1) -- END */
+
+    }
+    }
+static class _OMP_ParallelRegion_1{
+        private int OMP_threadNumber = 1;
+        private InternalControlVariables icv;
+        private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
+        private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
+        private ReentrantLock OMP_lock;
+
+        //#BEGIN shared variables defined here
+        //#END shared variables defined here
+        public _OMP_ParallelRegion_1(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
+            this.icv = icv;
+            if ((false == Pyjama.omp_get_nested()) && (Pyjama.omp_get_level() > 0)) {
+                this.OMP_threadNumber = 1;
+            }else {
+                this.OMP_threadNumber = thread_num;
+            }
+            this.OMP_inputList = inputlist;
+            this.OMP_outputList = outputlist;
+            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
+            icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
+            //#BEGIN shared variables initialised here
+            //#END shared variables initialised here
+        }
+
+        private void updateOutputListForSharedVars() {
+            //BEGIN update outputlist
+            //END update outputlist
+        }
+        class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
+            private int alias_id;
+            private ConcurrentHashMap<String, Object> OMP_inputList;
+            private ConcurrentHashMap<String, Object> OMP_outputList;
+            //#BEGIN private/firstprivate reduction variables defined here
+            //#END private/firstprivate reduction variables  defined here
+            MyCallable(int id, ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){
+                this.alias_id = id;
+                this.OMP_inputList = inputlist;
+                this.OMP_outputList = outputlist;
+                //#BEGIN firstprivate reduction variables initialised here
+                //#END firstprivate reduction variables initialised here
+            }
+
+            @Override
+            public ConcurrentHashMap<String,Object> call() {
                 /****User Code BEGIN***/
                 {
                     System.out.println("first Stage");
@@ -123,9 +208,10 @@ static class _OMP_ParallelRegion_0{
         public void runParallelCode() {
             for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
                 Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
-                PjRuntime.submit(slaveThread, icv);
+                PjRuntime.submit(i, slaveThread, icv);
             }
             Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
+            PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
             try {
                 masterThread.call();
             } catch (Exception e) {
@@ -138,42 +224,39 @@ static class _OMP_ParallelRegion_0{
 
 
     public static void test2() {{
-        /*OpenMP Parallel region (#1) -- START */
-        InternalControlVariables icv_previous__OMP_ParallelRegion_1 = PjRuntime.getCurrentThreadICV();
-        InternalControlVariables icv__OMP_ParallelRegion_1 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_1);
-        int _threadNum__OMP_ParallelRegion_1 = icv__OMP_ParallelRegion_1.nthreads_var.get(icv__OMP_ParallelRegion_1.levels_var);
-        ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
-        ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
-        _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
-        _OMP_ParallelRegion_1_in.runParallelCode();
-        PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
-        /*OpenMP Parallel region (#1) -- END */
+        /*OpenMP Parallel region (#2) -- START */
+        InternalControlVariables icv_previous__OMP_ParallelRegion_2 = PjRuntime.getCurrentThreadICV();
+        InternalControlVariables icv__OMP_ParallelRegion_2 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_2);
+        int _threadNum__OMP_ParallelRegion_2 = icv__OMP_ParallelRegion_2.nthreads_var.get(icv__OMP_ParallelRegion_2.levels_var);
+        ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
+        _OMP_ParallelRegion_2 _OMP_ParallelRegion_2_in = new _OMP_ParallelRegion_2(_threadNum__OMP_ParallelRegion_2,icv__OMP_ParallelRegion_2,inputlist__OMP_ParallelRegion_2,outputlist__OMP_ParallelRegion_2);
+        _OMP_ParallelRegion_2_in.runParallelCode();
+        PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_2);
+        /*OpenMP Parallel region (#2) -- END */
 
     }
     }
-static class _OMP_ParallelRegion_1{
+static class _OMP_ParallelRegion_2{
         private int OMP_threadNumber = 1;
         private InternalControlVariables icv;
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
-        private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
-        public _OMP_ParallelRegion_1(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
+        public _OMP_ParallelRegion_2(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
             if ((false == Pyjama.omp_get_nested()) && (Pyjama.omp_get_level() > 0)) {
                 this.OMP_threadNumber = 1;
             }else {
                 this.OMP_threadNumber = thread_num;
             }
-            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             this.OMP_inputList = inputlist;
             this.OMP_outputList = outputlist;
-            this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
+            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
-            icv.OMP_orderCursor = new AtomicInteger(0);
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -198,11 +281,6 @@ static class _OMP_ParallelRegion_1{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                InternalControlVariables currentThreadICV = new InternalControlVariables(icv);
-                currentThreadICV.currentThreadAliasID = this.alias_id;
-                PjRuntime.setCurrentThreadICV(currentThreadICV);
-
-                
                 /****User Code BEGIN***/
                 {
                     System.out.println("first Stage");
@@ -231,9 +309,10 @@ static class _OMP_ParallelRegion_1{
         public void runParallelCode() {
             for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
                 Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
-                PjRuntime.submit(slaveThread, icv);
+                PjRuntime.submit(i, slaveThread, icv);
             }
             Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
+            PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
             try {
                 masterThread.call();
             } catch (Exception e) {
@@ -247,16 +326,16 @@ static class _OMP_ParallelRegion_1{
 
     public static void test3() {{
         try {
-            /*OpenMP Parallel region (#2) -- START */
-            InternalControlVariables icv_previous__OMP_ParallelRegion_2 = PjRuntime.getCurrentThreadICV();
-            InternalControlVariables icv__OMP_ParallelRegion_2 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_2);
-            int _threadNum__OMP_ParallelRegion_2 = icv__OMP_ParallelRegion_2.nthreads_var.get(icv__OMP_ParallelRegion_2.levels_var);
-            ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
-            ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
-            _OMP_ParallelRegion_2 _OMP_ParallelRegion_2_in = new _OMP_ParallelRegion_2(_threadNum__OMP_ParallelRegion_2,icv__OMP_ParallelRegion_2,inputlist__OMP_ParallelRegion_2,outputlist__OMP_ParallelRegion_2);
-            _OMP_ParallelRegion_2_in.runParallelCode();
-            PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_2);
-            /*OpenMP Parallel region (#2) -- END */
+            /*OpenMP Parallel region (#3) -- START */
+            InternalControlVariables icv_previous__OMP_ParallelRegion_3 = PjRuntime.getCurrentThreadICV();
+            InternalControlVariables icv__OMP_ParallelRegion_3 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_3);
+            int _threadNum__OMP_ParallelRegion_3 = icv__OMP_ParallelRegion_3.nthreads_var.get(icv__OMP_ParallelRegion_3.levels_var);
+            ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_3 = new ConcurrentHashMap<String,Object>();
+            ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_3 = new ConcurrentHashMap<String,Object>();
+            _OMP_ParallelRegion_3 _OMP_ParallelRegion_3_in = new _OMP_ParallelRegion_3(_threadNum__OMP_ParallelRegion_3,icv__OMP_ParallelRegion_3,inputlist__OMP_ParallelRegion_3,outputlist__OMP_ParallelRegion_3);
+            _OMP_ParallelRegion_3_in.runParallelCode();
+            PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_3);
+            /*OpenMP Parallel region (#3) -- END */
 
         } catch (RuntimeException e) {
             System.out.println("catch");
@@ -265,29 +344,26 @@ static class _OMP_ParallelRegion_1{
         }
     }
     }
-static class _OMP_ParallelRegion_2{
+static class _OMP_ParallelRegion_3{
         private int OMP_threadNumber = 1;
         private InternalControlVariables icv;
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
-        private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
-        public _OMP_ParallelRegion_2(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
+        public _OMP_ParallelRegion_3(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
             if ((false == Pyjama.omp_get_nested()) && (Pyjama.omp_get_level() > 0)) {
                 this.OMP_threadNumber = 1;
             }else {
                 this.OMP_threadNumber = thread_num;
             }
-            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             this.OMP_inputList = inputlist;
             this.OMP_outputList = outputlist;
-            this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
+            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
-            icv.OMP_orderCursor = new AtomicInteger(0);
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -312,11 +388,6 @@ static class _OMP_ParallelRegion_2{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                InternalControlVariables currentThreadICV = new InternalControlVariables(icv);
-                currentThreadICV.currentThreadAliasID = this.alias_id;
-                PjRuntime.setCurrentThreadICV(currentThreadICV);
-
-                
                 /****User Code BEGIN***/
                 {
                     System.out.println("first Stage");
@@ -339,9 +410,10 @@ static class _OMP_ParallelRegion_2{
         public void runParallelCode() {
             for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
                 Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
-                PjRuntime.submit(slaveThread, icv);
+                PjRuntime.submit(i, slaveThread, icv);
             }
             Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
+            PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
             try {
                 masterThread.call();
             } catch (Exception e) {
@@ -354,42 +426,39 @@ static class _OMP_ParallelRegion_2{
 
 
     public static void test4() {{
-        /*OpenMP Parallel region (#3) -- START */
-        InternalControlVariables icv_previous__OMP_ParallelRegion_3 = PjRuntime.getCurrentThreadICV();
-        InternalControlVariables icv__OMP_ParallelRegion_3 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_3);
-        int _threadNum__OMP_ParallelRegion_3 = icv__OMP_ParallelRegion_3.nthreads_var.get(icv__OMP_ParallelRegion_3.levels_var);
-        ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_3 = new ConcurrentHashMap<String,Object>();
-        ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_3 = new ConcurrentHashMap<String,Object>();
-        _OMP_ParallelRegion_3 _OMP_ParallelRegion_3_in = new _OMP_ParallelRegion_3(_threadNum__OMP_ParallelRegion_3,icv__OMP_ParallelRegion_3,inputlist__OMP_ParallelRegion_3,outputlist__OMP_ParallelRegion_3);
-        _OMP_ParallelRegion_3_in.runParallelCode();
-        PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_3);
-        /*OpenMP Parallel region (#3) -- END */
+        /*OpenMP Parallel region (#4) -- START */
+        InternalControlVariables icv_previous__OMP_ParallelRegion_4 = PjRuntime.getCurrentThreadICV();
+        InternalControlVariables icv__OMP_ParallelRegion_4 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_4);
+        int _threadNum__OMP_ParallelRegion_4 = icv__OMP_ParallelRegion_4.nthreads_var.get(icv__OMP_ParallelRegion_4.levels_var);
+        ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_4 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_4 = new ConcurrentHashMap<String,Object>();
+        _OMP_ParallelRegion_4 _OMP_ParallelRegion_4_in = new _OMP_ParallelRegion_4(_threadNum__OMP_ParallelRegion_4,icv__OMP_ParallelRegion_4,inputlist__OMP_ParallelRegion_4,outputlist__OMP_ParallelRegion_4);
+        _OMP_ParallelRegion_4_in.runParallelCode();
+        PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_4);
+        /*OpenMP Parallel region (#4) -- END */
 
     }
     }
-static class _OMP_ParallelRegion_3{
+static class _OMP_ParallelRegion_4{
         private int OMP_threadNumber = 1;
         private InternalControlVariables icv;
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
-        private CyclicBarrier OMP_barrier;
         private ReentrantLock OMP_lock;
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
-        public _OMP_ParallelRegion_3(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
+        public _OMP_ParallelRegion_4(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
             if ((false == Pyjama.omp_get_nested()) && (Pyjama.omp_get_level() > 0)) {
                 this.OMP_threadNumber = 1;
             }else {
                 this.OMP_threadNumber = thread_num;
             }
-            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             this.OMP_inputList = inputlist;
             this.OMP_outputList = outputlist;
-            this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);
+            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);
-            icv.OMP_orderCursor = new AtomicInteger(0);
             //#BEGIN shared variables initialised here
             //#END shared variables initialised here
         }
@@ -414,11 +483,6 @@ static class _OMP_ParallelRegion_3{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                InternalControlVariables currentThreadICV = new InternalControlVariables(icv);
-                currentThreadICV.currentThreadAliasID = this.alias_id;
-                PjRuntime.setCurrentThreadICV(currentThreadICV);
-
-                
                 /****User Code BEGIN***/
                 /*OpenMP Work Share region (#0) -- START */
                 
@@ -472,9 +536,10 @@ static class _OMP_ParallelRegion_3{
         public void runParallelCode() {
             for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
                 Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
-                PjRuntime.submit(slaveThread, icv);
+                PjRuntime.submit(i, slaveThread, icv);
             }
             Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
+            PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
             try {
                 masterThread.call();
             } catch (Exception e) {

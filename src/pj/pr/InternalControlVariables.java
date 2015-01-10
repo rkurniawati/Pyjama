@@ -62,6 +62,7 @@ public class InternalControlVariables {
 	public volatile AtomicBoolean OMP_CurrentParallelRegionCancellationFlag = new AtomicBoolean(false);
 	
 	/* Xing added those for atomic directive support 2014.4.30 */
+	// the initialisation of OMP_CurrentParallelRegionBarrier should be done in runtime
 	public CyclicBarrier OMP_CurrentParallelRegionBarrier = null;
 	public int currentParallelRegionThreadNumber = 1;
 	public AtomicInteger OMP_loopCursor = new AtomicInteger(0);
@@ -90,6 +91,8 @@ public class InternalControlVariables {
 	}
 	
 	public InternalControlVariables(InternalControlVariables icv){
+		
+		//value copy
 		this.dyn_var = icv.dyn_var;
 		this.nest_var = icv.nest_var;
 		this.nthreads_var = icv.nthreads_var;
@@ -106,8 +109,8 @@ public class InternalControlVariables {
 		this.cancel_var = icv.cancel_var;
 		this.default_device_var = icv.default_device_var;
 		
+		//references redefine
 		this.OMP_CurrentParallelRegionBarrier = icv.OMP_CurrentParallelRegionBarrier;
-		this.currentParallelRegionThreadNumber = icv.currentParallelRegionThreadNumber;
 		this.OMP_loopCursor = icv.OMP_loopCursor;
 		this.OMP_orderCursor = icv.OMP_orderCursor;
 		

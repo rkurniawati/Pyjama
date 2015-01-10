@@ -15,6 +15,7 @@ package pj.parser.ast.visitor.constructwrappers;
 
 import java.util.List;
 
+import pj.PjRuntime;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
@@ -94,7 +95,6 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("private InternalControlVariables icv;");
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
-		printer.printLn("private CyclicBarrier OMP_barrier;");
 		printer.printLn("private ReentrantLock OMP_lock;");
 		printer.printLn();
 		//#BEGIN shared variables defined here
@@ -120,12 +120,10 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("this.OMP_threadNumber = thread_num;");
 		printer.unindent();
 		printer.printLn("}");
-		printer.printLn("icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;");
 		printer.printLn("this.OMP_inputList = inputlist;");
 		printer.printLn("this.OMP_outputList = outputlist;");
-		printer.printLn("this.OMP_barrier = new CyclicBarrier(this.OMP_threadNumber);");
+		printer.printLn("icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;");
 		printer.printLn("icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);");
-		printer.printLn("icv.OMP_orderCursor = new AtomicInteger(0);");
 		//#BEGIN shared variables initialised here
 		printer.printLn("//#BEGIN shared variables initialised here");
 		for(OmpDataClause sharedClause: this.dataClauseList) {
@@ -195,11 +193,6 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("@Override");
 		printer.printLn("public ConcurrentHashMap<String,Object> call() {");
 		printer.indent();
-		printer.printLn("InternalControlVariables currentThreadICV = new InternalControlVariables(icv);");
-		printer.printLn("currentThreadICV.currentThreadAliasID = this.alias_id;");
-		printer.printLn("PjRuntime.setCurrentThreadICV(currentThreadICV);");
-		printer.printLn();
-		printer.printLn("");
 		//BEGIN get construct user code
 		printer.printLn("/****User Code BEGIN***/");
 		this.getUserCode().accept(visitor, printer);
@@ -250,7 +243,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 			printer.printLn("for (int i = 0; i <= this.OMP_threadNumber-1; i++) {");
 			printer.indent();
 			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
-			printer.printLn("PjRuntime.submit(slaveThread, icv);");
+			printer.printLn("PjRuntime.submit(i, slaveThread, icv);");
 			printer.unindent();
 			printer.printLn("}");
 		}
@@ -262,10 +255,11 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 			printer.printLn("for (int i = 1; i <= this.OMP_threadNumber-1; i++) {");
 			printer.indent();
 			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
-			printer.printLn("PjRuntime.submit(slaveThread, icv);");
+			printer.printLn("PjRuntime.submit(i, slaveThread, icv);");
 			printer.unindent();
 			printer.printLn("}");
 			printer.printLn("Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
+			printer.printLn("PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;");
 			printer.printLn("try {");
 			printer.indent();
 			printer.printLn("masterThread.call();");
