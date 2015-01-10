@@ -16,7 +16,6 @@ public class PjRuntime {
 			new ThreadPoolExecutor(initial_icv.thread_limit_var, initial_icv.thread_limit_var, 0, TimeUnit.MILLISECONDS,
                     new LinkedBlockingQueue<Runnable>());
 	
-	private static PjExecutor pjExecutor = new PjExecutor();
 	/*Xing added this for store of Thread real id and related icv copy 2014.3.4*/
 	private static ThreadLocal<InternalControlVariables> threadICVMap = new ThreadLocal<InternalControlVariables>();
 
@@ -54,9 +53,9 @@ public class PjRuntime {
 		PjThreadPoolExecutor.shutdown();
 	}
 
-	public static void submit(Callable<ConcurrentHashMap<String,Object>> task){
+	public static void submit(Callable<ConcurrentHashMap<String,Object>> task, InternalControlVariables parent_icv){
 //		PjThreadPoolExecutor.submit(task);
-		pjExecutor.submit(task);
+		PjExecutor.submit(task, parent_icv);
 		return;
 	}
 	
@@ -69,6 +68,8 @@ public class PjRuntime {
 		if (0 != child_icv.active_levels_var) {
 			child_icv.active_levels_var--;
 		}
+		
+		PjRuntime.setCurrentThreadICV(child_icv);
 
 		return child_icv;
 	}
@@ -89,9 +90,8 @@ public class PjRuntime {
 	public static InternalControlVariables getCurrentThreadICV() {
 		InternalControlVariables icv = threadICVMap.get();
 		if (null == icv) {
-			//System.err.println("/*ERROR, cannot get current thread's icv*/");
 			icv = new InternalControlVariables();
-			setCurrentThreadICV(icv);
+			System.out.println("new Icv:" + icv +" from thread:" + Thread.currentThread().getId());
 		}
 		return icv;
 	}
@@ -113,7 +113,7 @@ public class PjRuntime {
 			return;
 		}
 		else {
-			System.out.println("Barrier"+ Pyjama.omp_get_thread_num()+ " flag " + icv.OMP_CurrentParallelRegionCancellationFlag.get());
+			System.out.println("Barrier"+ Pyjama.omp_get_thread_num()+ " flag " + icv.OMP_CurrentParallelRegionCancellationFlag.get()+" pointer(icv):"+icv);
 			if (icv.OMP_CurrentParallelRegionCancellationFlag.get() == true) {
 				throw new pj.pr.PJthreadStopException();
 			}
@@ -156,22 +156,24 @@ public class PjRuntime {
 			
 		}
 
-		public static void submit(Callable<ConcurrentHashMap<String,Object>> task){
-			Runnable runnableTask = getRunnable(task);
+		public static void submit(Callable<ConcurrentHashMap<String,Object>> task, InternalControlVariables parent_icv){
+			Runnable runnableTask = getRunnable(task,parent_icv);
 			Thread workerThread = new Thread(runnableTask);
 			workerThread.start();
 		}
 		
-		private static Runnable getRunnable(final Callable<ConcurrentHashMap<String,Object>> callable) {
+		private static Runnable getRunnable(final Callable<ConcurrentHashMap<String,Object>> callable, final InternalControlVariables parent_icv) {
 		      return new Runnable() {
 		         @Override
 		         public void run() {
-		            try {
-		               callable.call();
-		            } catch (Exception e) {
-		               cancelCurrentThreadGroup();
-		               throw new RuntimeException("rethrow from executorXX: " + e);
-		            }
+		        	 setCurrentThreadICV(parent_icv);
+		        	 System.out.println("set parent_icv:" + parent_icv);
+		             try {
+		            	 callable.call();
+		             } catch (Exception e) {
+		            	 cancelCurrentThreadGroup();
+		                throw new RuntimeException("rethrow from executorXX: " + e);
+		             }
 		         }
 		      };
 		 }
@@ -184,7 +186,7 @@ public class PjRuntime {
 			}
 			else {
 				icv.OMP_CurrentParallelRegionCancellationFlag.set(true);
-				System.out.println("set flag:" + icv.OMP_CurrentParallelRegionCancellationFlag);
+				System.out.println("set flag:" + icv.OMP_CurrentParallelRegionCancellationFlag.get() + " pointer(icv):"+icv);
 			}
 		}
 	}

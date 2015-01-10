@@ -250,7 +250,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 			printer.printLn("for (int i = 0; i <= this.OMP_threadNumber-1; i++) {");
 			printer.indent();
 			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
-			printer.printLn("PjRuntime.submit(slaveThread);");
+			printer.printLn("PjRuntime.submit(slaveThread, icv);");
 			printer.unindent();
 			printer.printLn("}");
 		}
@@ -262,7 +262,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 			printer.printLn("for (int i = 1; i <= this.OMP_threadNumber-1; i++) {");
 			printer.indent();
 			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
-			printer.printLn("PjRuntime.submit(slaveThread);");
+			printer.printLn("PjRuntime.submit(slaveThread, icv);");
 			printer.unindent();
 			printer.printLn("}");
 			printer.printLn("Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");

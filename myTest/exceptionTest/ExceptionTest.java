@@ -123,7 +123,7 @@ static class _OMP_ParallelRegion_0{
         public void runParallelCode() {
             for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
                 Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
-                PjRuntime.submit(slaveThread);
+                PjRuntime.submit(slaveThread, icv);
             }
             Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
             try {
@@ -231,7 +231,7 @@ static class _OMP_ParallelRegion_1{
         public void runParallelCode() {
             for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
                 Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
-                PjRuntime.submit(slaveThread);
+                PjRuntime.submit(slaveThread, icv);
             }
             Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
             try {
@@ -339,7 +339,7 @@ static class _OMP_ParallelRegion_2{
         public void runParallelCode() {
             for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
                 Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
-                PjRuntime.submit(slaveThread);
+                PjRuntime.submit(slaveThread, icv);
             }
             Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
             try {
@@ -472,7 +472,7 @@ static class _OMP_ParallelRegion_3{
         public void runParallelCode() {
             for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
                 Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
-                PjRuntime.submit(slaveThread);
+                PjRuntime.submit(slaveThread, icv);
             }
             Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
             try {
