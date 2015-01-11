@@ -22,7 +22,8 @@ public class PjWorkerThread extends Thread {
        	 	task.call();
         } catch (Exception e) {
         	PjExecutor.cancelCurrentThreadGroup();
-           throw new RuntimeException("Worker Thread re-throw Exception: " + e);
+            //throw new RuntimeException("Worker Thread re-throw Exception: " + e);
+        	Thread.currentThread().stop();
         }
     }
 }

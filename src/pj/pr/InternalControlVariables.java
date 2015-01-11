@@ -60,6 +60,7 @@ public class InternalControlVariables {
 	
 	/* Xing added those for parallel region cancellation support 2015.1.8 */
 	public volatile AtomicBoolean OMP_CurrentParallelRegionCancellationFlag = new AtomicBoolean(false);
+	public volatile AtomicBoolean OMP_CurrentWorksharingRegionCancellationFlag = new AtomicBoolean(false);
 	
 	/* Xing added those for atomic directive support 2014.4.30 */
 	// the initialisation of OMP_CurrentParallelRegionBarrier should be done in runtime
@@ -111,6 +112,7 @@ public class InternalControlVariables {
 		
 		//references redefine
 		this.OMP_CurrentParallelRegionCancellationFlag =  icv.OMP_CurrentParallelRegionCancellationFlag;
+		this.OMP_CurrentWorksharingRegionCancellationFlag = icv.OMP_CurrentParallelRegionCancellationFlag;
 		this.OMP_CurrentParallelRegionBarrier = icv.OMP_CurrentParallelRegionBarrier;
 		this.OMP_loopCursor = icv.OMP_loopCursor;
 		this.OMP_orderCursor = icv.OMP_orderCursor;

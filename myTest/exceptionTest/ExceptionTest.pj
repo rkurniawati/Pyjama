@@ -4,7 +4,7 @@ import pj.*;
 
 public class ExceptionTest{
 	public static void main (String[] args) {
-		test0();
+		test2();
 	}
 	
 	public static void test0() {
@@ -50,7 +50,7 @@ public class ExceptionTest{
 			} else {
 				for(int i=0; i<9999999; i++);
 			}
-			//#omp barrier
+			///#omp barrier
 			System.out.println("second stage");
 			//#omp barrier
 			System.out.println("third stage");
