@@ -264,6 +264,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 			printer.indent();
 			printer.printLn("masterThread.call();");
 			printer.unindent();
+			printer.printLn("} catch (OmpThreadStopException e) {");
 			printer.printLn("} catch (Exception e) {");
 			printer.indent();
 			printer.printLn("e.printStackTrace();");

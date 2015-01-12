@@ -5,6 +5,7 @@ import pj.*;
 import pj.pr.*;
 import pj.PjRuntime;
 import pj.Pyjama;
+import pj.pr.exceptions.OmpThreadStopException;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -107,6 +108,7 @@ static class _OMP_ParallelRegion_0{
             PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
             try {
                 masterThread.call();
+            } catch (OmpThreadStopException e) {
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -214,6 +216,7 @@ static class _OMP_ParallelRegion_1{
             PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
             try {
                 masterThread.call();
+            } catch (OmpThreadStopException e) {
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -313,6 +316,7 @@ static class _OMP_ParallelRegion_2{
             PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
             try {
                 masterThread.call();
+            } catch (OmpThreadStopException e) {
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -414,6 +418,7 @@ static class _OMP_ParallelRegion_3{
             PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
             try {
                 masterThread.call();
+            } catch (OmpThreadStopException e) {
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -540,6 +545,7 @@ static class _OMP_ParallelRegion_4{
             PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
             try {
                 masterThread.call();
+            } catch (OmpThreadStopException e) {
             } catch (Exception e) {
                 e.printStackTrace();
             }

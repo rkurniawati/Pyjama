@@ -111,8 +111,7 @@ public class PjRuntime {
 		else {
 			//System.out.println("Barrier"+ Pyjama.omp_get_thread_num()+ " flag " + icv.OMP_CurrentParallelRegionCancellationFlag.get()+" pointer(flag):"+icv.OMP_CurrentParallelRegionCancellationFlag.hashCode());
 			if (icv.OMP_CurrentParallelRegionCancellationFlag.get() == true) {
-				//throw new pj.pr.PJthreadStopException("from thread" +Pyjama.omp_get_thread_num());
-				Thread.currentThread().stop();
+				throw new pj.pr.exceptions.OmpThreadStopException();
 			}
 			try {icv.OMP_CurrentParallelRegionBarrier.await();}
 			catch (InterruptedException e) {e.printStackTrace();}

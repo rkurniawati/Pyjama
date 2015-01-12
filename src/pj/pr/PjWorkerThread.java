@@ -1,6 +1,7 @@
 package pj.pr;
 
 import pj.PjRuntime;
+import pj.pr.exceptions.OmpThreadStopException;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,10 +21,9 @@ public class PjWorkerThread extends Thread {
     public void run() {
         try {
        	 	task.call();
+        } catch (OmpThreadStopException e) {
         } catch (Exception e) {
         	PjExecutor.cancelCurrentThreadGroup();
-            //throw new RuntimeException("Worker Thread re-throw Exception: " + e);
-        	Thread.currentThread().stop();
-        }
+		}
     }
 }
