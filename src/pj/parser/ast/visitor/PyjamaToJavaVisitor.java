@@ -4,8 +4,6 @@ package pj.parser.ast.visitor;
  * @version 1.0
  */
 
-
-import pj.PjRuntime;
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
 import pj.parser.ast.expr.*;
@@ -296,7 +294,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
 	public void visit(OmpCancelDirective n, SourcePrinter printer) {
 		if (n.getRegion() == OmpCancelDirective.Region.Parallel) {
-			printer.printLn("throw new pj.pr.exceptions.OmpThreadStopException();");
+			if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Global) {
+				printer.printLn("throw new pj.pr.exceptions.OmpThreadStopException();");
+			} else if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Local) {
+				printer.printLn("throw new pj.pr.exceptions.OmpThreadStopException();");
+			}
+
 		} else {
 		}
 	}

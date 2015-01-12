@@ -1,7 +1,6 @@
 package pj.pr;
 
 import java.util.ArrayList;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 public class InternalControlVariables {
@@ -64,7 +63,7 @@ public class InternalControlVariables {
 	
 	/* Xing added those for atomic directive support 2014.4.30 */
 	// the initialisation of OMP_CurrentParallelRegionBarrier should be done in runtime
-	public CyclicBarrier OMP_CurrentParallelRegionBarrier = null;
+	public PjCyclicBarrier OMP_CurrentParallelRegionBarrier = null;
 	public AtomicInteger OMP_loopCursor = new AtomicInteger(0);
 	public AtomicInteger OMP_orderCursor = new AtomicInteger(0);
 

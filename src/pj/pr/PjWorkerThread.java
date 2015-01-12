@@ -22,6 +22,7 @@ public class PjWorkerThread extends Thread {
         try {
        	 	task.call();
         } catch (OmpThreadStopException e) {
+        	PjRuntime.decreaseBarrierCount();
         } catch (Exception e) {
         	PjExecutor.cancelCurrentThreadGroup();
 		}

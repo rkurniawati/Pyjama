@@ -123,7 +123,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("this.OMP_inputList = inputlist;");
 		printer.printLn("this.OMP_outputList = outputlist;");
 		printer.printLn("icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;");
-		printer.printLn("icv.OMP_CurrentParallelRegionBarrier = new CyclicBarrier(this.OMP_threadNumber);");
+		printer.printLn("icv.OMP_CurrentParallelRegionBarrier = new PjCyclicBarrier(this.OMP_threadNumber);");
 		//#BEGIN shared variables initialised here
 		printer.printLn("//#BEGIN shared variables initialised here");
 		for(OmpDataClause sharedClause: this.dataClauseList) {

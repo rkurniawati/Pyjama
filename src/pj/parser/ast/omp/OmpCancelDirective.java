@@ -28,7 +28,7 @@ public class OmpCancelDirective extends OpenMPStatement{
 		this.region = r;
 		this.threadAffiliate = ta;
 		this.ifStmt = ifS;
-		this.tag = t.toString();
+		this.tag = (t==null)?null:t.toString();
 	}
 	
 	public Region getRegion() {

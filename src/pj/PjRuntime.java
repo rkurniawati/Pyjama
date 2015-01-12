@@ -104,6 +104,14 @@ public class PjRuntime {
 		}
 	}
 	
+	public static void decreaseBarrierCount() {
+		InternalControlVariables icv = getCurrentThreadICV();
+		if (null == icv.OMP_CurrentParallelRegionBarrier) {
+			throw new pj.pr.exceptions.OmpBrokenBarrierException();
+		}
+		icv.OMP_CurrentParallelRegionBarrier.decreaseParties();
+	}
+	
 	/*Xing added this to substitute to using as openMP flush directive 2014.4.30*/
 	public static void flushMemory() {
 		OMP_lock.lock();
@@ -117,6 +125,7 @@ public class PjRuntime {
 			throw new pj.pr.exceptions.OmpBrokenBarrierException();
 		}
 		checkCancellationPoint();
+		//System.out.println("current barrier count:"+ icv.OMP_CurrentParallelRegionBarrier.getParties()+"from thread"+ Pyjama.omp_get_thread_num());
 		try {icv.OMP_CurrentParallelRegionBarrier.await();}
 		catch (InterruptedException e) {e.printStackTrace();}
 		catch (BrokenBarrierException e) {e.printStackTrace();}
