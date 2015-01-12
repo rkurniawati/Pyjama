@@ -376,7 +376,12 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		printer.printLn("//#END firstprivate lastprivate reduction variables defined and initialized here");
 		
 		// print the real for-loop code and enclosed user code
+		printer.printLn("try{");
+		printer.indent();
 		generateLoop();
+		printer.unindent();
+		printer.printLn("} catch (pj.pr.exceptions.OmpWorksharingLocalCancellationException wse){");
+		printer.printLn("} catch (Exception e){throw e;}");
 		printer.printLn("//BEGIN  reduction");
 		printer.printLn("PjRuntime.reductionLockForWorksharing.lock();");
 		DataClausesHandler.reductionForWorksharingBlock(this, printer);

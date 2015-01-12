@@ -15,7 +15,6 @@ package pj.parser.ast.visitor.constructwrappers;
 
 import java.util.List;
 
-import pj.PjRuntime;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
@@ -264,7 +263,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 			printer.indent();
 			printer.printLn("masterThread.call();");
 			printer.unindent();
-			printer.printLn("} catch (OmpThreadStopException e) {");
+			printer.printLn("} catch (pj.pr.exceptions.OmpParallelRegionLocalCancellationException e) {");
 			printer.printLn("} catch (Exception e) {");
 			printer.indent();
 			printer.printLn("e.printStackTrace();");

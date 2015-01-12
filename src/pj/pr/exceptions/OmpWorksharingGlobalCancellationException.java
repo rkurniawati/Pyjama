@@ -1,6 +1,6 @@
 package pj.pr.exceptions;
 
-public class OmpThreadStopException extends RuntimeException{
+public class OmpWorksharingGlobalCancellationException extends RuntimeException{
 
 	/**
 	 * 

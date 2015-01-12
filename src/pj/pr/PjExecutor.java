@@ -18,7 +18,6 @@ public class PjExecutor {
 		}
 		else {
 			icv.OMP_CurrentParallelRegionCancellationFlag.set(true);
-			//System.out.println("set flag:" + icv.OMP_CurrentParallelRegionCancellationFlag.get() + " pointer(flag):"+icv.OMP_CurrentParallelRegionCancellationFlag.hashCode());
 		}
 	}
 }

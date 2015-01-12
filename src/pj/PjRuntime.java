@@ -93,13 +93,24 @@ public class PjRuntime {
 		return icv;
 	}
 	
-	public static void checkCancellationPoint() {
+	public static void checkWorksharingCancellationPoint() {
+		InternalControlVariables icv = getCurrentThreadICV();
+		if (null == icv.OMP_CurrentWorksharingRegionCancellationFlag) {
+			throw new RuntimeException("Pyjama: Cancellation flag null!");
+		} else {
+			if (icv.OMP_CurrentWorksharingRegionCancellationFlag.get() == true) {
+				throw new pj.pr.exceptions.OmpWorksharingLocalCancellationException();
+			}
+		}
+	}
+	
+	public static void checkParallelCancellationPoint() {
 		InternalControlVariables icv = getCurrentThreadICV();
 		if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
 			throw new RuntimeException("Pyjama: Cancellation flag null!");
 		} else {
 			if (icv.OMP_CurrentParallelRegionCancellationFlag.get() == true) {
-				throw new pj.pr.exceptions.OmpThreadStopException();
+				throw new pj.pr.exceptions.OmpParallelRegionLocalCancellationException();
 			}
 		}
 	}
@@ -124,7 +135,7 @@ public class PjRuntime {
 		if (null == icv.OMP_CurrentParallelRegionBarrier) {
 			throw new pj.pr.exceptions.OmpBrokenBarrierException();
 		}
-		checkCancellationPoint();
+		checkParallelCancellationPoint();
 		//System.out.println("current barrier count:"+ icv.OMP_CurrentParallelRegionBarrier.getParties()+"from thread"+ Pyjama.omp_get_thread_num());
 		try {icv.OMP_CurrentParallelRegionBarrier.await();}
 		catch (InterruptedException e) {e.printStackTrace();}

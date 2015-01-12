@@ -1,7 +1,7 @@
 package pj.pr;
 
 import pj.PjRuntime;
-import pj.pr.exceptions.OmpThreadStopException;
+import pj.pr.exceptions.OmpParallelRegionLocalCancellationException;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +21,7 @@ public class PjWorkerThread extends Thread {
     public void run() {
         try {
        	 	task.call();
-        } catch (OmpThreadStopException e) {
+        } catch (OmpParallelRegionLocalCancellationException e) {
         	PjRuntime.decreaseBarrierCount();
         } catch (Exception e) {
         	PjRuntime.decreaseBarrierCount();

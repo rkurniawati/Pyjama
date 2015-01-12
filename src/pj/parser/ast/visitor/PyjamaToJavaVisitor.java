@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-
 public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	
 	protected File file;
@@ -288,7 +287,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
 	public void visit(OmpCancellationPointDirective n, SourcePrinter printer) {
 		if (n.getRegion() == OmpCancellationPointDirective.Region.Parallel) {
-			printer.printLn("PjRuntime.checkCancellationPoint();");
+			printer.printLn("PjRuntime.checkParallelCancellationPoint();");
 		} else {	
 		}
 	}
@@ -298,10 +297,17 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Global) {
 				printer.printLn("throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException();");
 			} else if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Local) {
-				printer.printLn("throw new pj.pr.exceptions.OmpThreadStopException();");
+				printer.printLn("throw new pj.pr.exceptions.OmpParallelRegionLocalCancellationException();");
 			}
 
-		} else {
+		} else if (n.getRegion() == OmpCancelDirective.Region.For || n.getRegion() == OmpCancelDirective.Region.Sections){
+			if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Global) {
+				printer.printLn("throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException();");
+			} else if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Local) {
+				printer.printLn("throw new pj.pr.exceptions.OmpWorksharingLocalCancellationException();");
+			}
+		} else if (n.getRegion() == OmpCancelDirective.Region.Taskgroup) {
+			throw new RuntimeException("Pyjama does not support omp task yet!");
 		}
 	}
 	    
@@ -1507,7 +1513,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.printLn("import pj.pr.*;");
     	printer.printLn("import pj.PjRuntime;");
     	printer.printLn("import pj.Pyjama;");
-    	printer.printLn("import pj.pr.exceptions.OmpThreadStopException;");
     	printer.printLn("import java.util.concurrent.*;");
     	printer.printLn("import java.util.concurrent.atomic.AtomicBoolean;");
     	printer.printLn("import java.util.concurrent.atomic.AtomicInteger;");
