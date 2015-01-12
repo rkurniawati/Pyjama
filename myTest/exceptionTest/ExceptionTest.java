@@ -15,7 +15,15 @@ import java.lang.reflect.InvocationTargetException;
 public class ExceptionTest {
 
     public static void main(String[] args) {{
-        test3();
+        System.out.println("the time span" + measure());
+    }
+    }
+
+
+    public static long measure() {{
+        long start = System.currentTimeMillis();
+        test1();
+        return System.currentTimeMillis() - start;
     }
     }
 
@@ -184,7 +192,7 @@ static class _OMP_ParallelRegion_1{
                     } catch (RuntimeException e) {
                         System.out.println("recovery" + e);
                     } finally {
-                        System.out.println("finallay");
+                        System.out.println("finally");
                     }
                     PjRuntime.setBarrier();
 

@@ -4,8 +4,15 @@ import pj.*;
 
 public class ExceptionTest{
 	public static void main (String[] args) {
-		test3();
+		
+		System.out.println("the time span"+ measure());
 	}
+	
+	public static long measure(){
+    	long start = System.currentTimeMillis();
+    	test1();
+    	return System.currentTimeMillis()-start;
+    }
 	
 	public static void test0() {
 		//#omp parallel
@@ -31,7 +38,7 @@ public class ExceptionTest{
 			}catch (RuntimeException e){
 				System.out.println("recovery" + e);
 			}finally {
-				System.out.println("finallay");
+				System.out.println("finally");
 			}
 			//#omp barrier
 			System.out.println("second stage");

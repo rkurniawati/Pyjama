@@ -2,6 +2,7 @@
 --------Defined variables--------------
 test1	void(ClassMemberField)
 test0	void(ClassMemberField)
+measure	long(ClassMemberField)
 test6	void(ClassMemberField)
 test4	void(ClassMemberField)
 test5	void(ClassMemberField)
@@ -10,134 +11,7 @@ test3	void(ClassMemberField)
 main	void(ClassMemberField)
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-e
-System
-out
-******************************************************
-***************Scope Name:OmpParallel*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-System
-out
-******************************************************
-***************Scope Name:ForStmt*************
---------Defined variables--------------
-i	int(ScopeLocalParameter)
----------Used variables--------------
-i
-******************************************************
-***************Scope Name:OmpFor*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-System
-out
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-Pyjama
-System
-out
-******************************************************
-***************Scope Name:test5*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:main*************
---------Defined variables--------------
-args	String[](MethodParameter)
----------Used variables--------------
-******************************************************
-***************Scope Name:OmpParallel*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-Pyjama
-System
-i
-out
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-System
-out
-******************************************************
-***************Scope Name:finalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-System
-out
-******************************************************
-***************Scope Name:test6*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:finalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:OmpParallel*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:ForStmt*************
---------Defined variables--------------
-i	int(ScopeLocalParameter)
----------Used variables--------------
-i
-******************************************************
-***************Scope Name:test4*************
+***************Scope Name:catchBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
@@ -145,45 +19,47 @@ i
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
-i	int(ScopeLocalParameter)
 ---------Used variables--------------
-i
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:OmpParallel*************
 --------Defined variables--------------
-i	int(ScopeLocalParameter)
 ---------Used variables--------------
-i
+******************************************************
+***************Scope Name:finalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:OmpParallel*************
+--------Defined variables--------------
+---------Used variables--------------
 ******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:catchBlock*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
+Pyjama
+System
+i
+out
 ******************************************************
-***************Scope Name:test3*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
+Pyjama
+System
+out
 ******************************************************
-***************Scope Name:test1*************
+***************Scope Name:main*************
 --------Defined variables--------------
+args	String[](MethodParameter)
 ---------Used variables--------------
-******************************************************
-***************Scope Name:OmpParallel*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:OmpParallel*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:OmpParallel*************
---------Defined variables--------------
----------Used variables--------------
+System
+out
 ******************************************************
 ***************Scope Name:test0*************
 --------Defined variables--------------
@@ -192,18 +68,6 @@ i
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
-Pyjama
-System
-out
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-Pyjama
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
 ******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
@@ -212,11 +76,99 @@ Pyjama
 System
 out
 ******************************************************
+***************Scope Name:ForStmt*************
+--------Defined variables--------------
+i	int(ScopeLocalParameter)
+---------Used variables--------------
+i
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+Pyjama
+******************************************************
+***************Scope Name:OmpParallel*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+System
+out
+******************************************************
+***************Scope Name:ForStmt*************
+--------Defined variables--------------
+i	int(ScopeLocalParameter)
+---------Used variables--------------
+i
+******************************************************
+***************Scope Name:OmpParallel*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+System
+out
+******************************************************
+***************Scope Name:ForStmt*************
+--------Defined variables--------------
+i	int(ScopeLocalParameter)
+---------Used variables--------------
+i
+******************************************************
+***************Scope Name:test5*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:test3*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+Pyjama
+System
+out
+******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:catchBlock*************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+System
+out
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:OmpFor*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:ForStmt*************
+--------Defined variables--------------
+i	int(ScopeLocalParameter)
+---------Used variables--------------
+i
+******************************************************
+***************Scope Name:ForStmt*************
+--------Defined variables--------------
+i	int(ScopeLocalParameter)
+---------Used variables--------------
+i
+******************************************************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
@@ -230,23 +182,81 @@ out
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
+System
+out
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+e
+System
+out
+******************************************************
+***************Scope Name:test4*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:test1*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:measure*************
+--------Defined variables--------------
+start	long(ScopeLocalParameter)
+---------Used variables--------------
+start
+System
+******************************************************
+***************Scope Name:OmpParallel*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:finalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
 Pyjama
 System
 out
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:OmpParallel*************
 --------Defined variables--------------
-i	int(ScopeLocalParameter)
 ---------Used variables--------------
-i
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
 ******************************************************
 ***************Scope Name:ForStmt*************
 --------Defined variables--------------
 i	int(ScopeLocalParameter)
 ---------Used variables--------------
 i
+******************************************************
+***************Scope Name:catchBlock*************
+--------Defined variables--------------
+---------Used variables--------------
 ******************************************************
 ***************Scope Name:OmpParallel*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:test6*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
