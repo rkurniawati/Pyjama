@@ -4,7 +4,7 @@ import pj.*;
 
 public class ExceptionTest{
 	public static void main (String[] args) {
-		test22();
+		test3();
 	}
 	
 	public static void test0() {
@@ -17,14 +17,14 @@ public class ExceptionTest{
 	}
 
 
-//handling locally
+//handle exception locally
 	public static void test1() {
 		//#omp parallel
 		{
 			System.out.println("first Stage");
 			try {
 				if (Pyjama.omp_get_thread_num() == 1) {
-					throw new RuntimeException("HH");
+					throw new RuntimeException("Local thread Exception");
 				} else {
 					for(int i=0; i<9999999; i++);
 				}
@@ -40,7 +40,7 @@ public class ExceptionTest{
 		}
 	}
 
-//does not handle locally
+//does not handle locally, stop entire parallel region
 	public static void test2() {
 		//#omp parallel
 		{
@@ -57,9 +57,26 @@ public class ExceptionTest{
 			System.out.println("third stage");
 		}
 	}
+//use cancel directive to cancel the parallel region
+	public static void test3() {
+		//#omp parallel
+		{
+			System.out.println("first Stage");
+			if (Pyjama.omp_get_thread_num() == 1) {
+				for(int i=0; i<100000; i++) {
+					}
+				//#omp cancel parallel global
+			} 
+			
+			//#omp barrier
+			System.out.println("second stage");
+			//#omp barrier
+			System.out.println("third stage");
+		}
+	}
 
-//stop locally
-	public static void test22() {
+//stop a thread parallel locally, other threads continue
+	public static void test4() {
 		//#omp parallel
 		{
 			System.out.println("first Stage"+Pyjama.omp_get_thread_num());
@@ -76,8 +93,8 @@ public class ExceptionTest{
 		}
 	}
 
-
-	public static void test3() {
+// souround parallel region with try-catch block
+	public static void test5() {
 		try {
 			//#omp parallel
 			{
@@ -89,13 +106,14 @@ public class ExceptionTest{
 				}
 			}
 		} catch (RuntimeException e) {
-			System.out.println("catch");
+			System.out.println("catch exception" + e);
 		} finally {
 			System.out.println("finally");
 		}
 	}
 
-	public static void test4() {
+//normal parallel for
+	public static void test6() {
 		//#omp parallel for
 		for(int i=0; i<10; i++) {
 			System.out.println("i="+i+"==>"+Pyjama.omp_get_thread_num());
