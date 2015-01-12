@@ -14,8 +14,7 @@ public class PjExecutor {
 	public static void cancelCurrentThreadGroup() {
 		InternalControlVariables icv = PjRuntime.threadICVMap.get(Thread.currentThread().getId());
 		if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
-			System.out.println("Cannot find cancellation flag");
-			return;
+			throw new RuntimeException("Pyjama: Cannot find cancellation flag in current parallel region");
 		}
 		else {
 			icv.OMP_CurrentParallelRegionCancellationFlag.set(true);

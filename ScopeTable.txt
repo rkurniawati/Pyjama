@@ -20,11 +20,9 @@ System
 i
 out
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
-i	int(ScopeLocalParameter)
 ---------Used variables--------------
-i
 ******************************************************
 ***************Scope Name:test4*************
 --------Defined variables--------------
@@ -175,9 +173,11 @@ Pyjama
 System
 out
 ******************************************************
-***************Scope Name:normalBlock*************
+***************Scope Name:ForStmt*************
 --------Defined variables--------------
+i	int(ScopeLocalParameter)
 ---------Used variables--------------
+i
 ******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------

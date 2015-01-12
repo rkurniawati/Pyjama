@@ -18,9 +18,6 @@ public class ExceptionTest {
     public static void main(String[] args) {{
         test2();
     }
-
-    //Pyjama runtime shutdown at the end of main method
-    PjRuntime.shutdown();
     }
 
 
@@ -287,14 +284,17 @@ static class _OMP_ParallelRegion_2{
                 /****User Code BEGIN***/
                 {
                     System.out.println("first Stage");
-                    if (Pyjama.omp_get_thread_num() == 1) {
-                        throw new RuntimeException("A thread throws an exception");
-                    } else {
-                        for (int i = 0; i < 9999999; i++) ;
+                    for (int i = 0; i < 100000; i++) {
                     }
-                    System.out.println("second stage");
+                    if (Pyjama.omp_get_thread_num() == 1) {
+
+                        throw new RuntimeException("A thread throws an exception");
+                    }
                     PjRuntime.setBarrier();
 
+                    System.out.println("second stage");
+                    PjRuntime.setBarrier();
+                    PjRuntime.checkCancellationPoint();
                     System.out.println("third stage");
                 }
                 /****User Code END***/

@@ -46,11 +46,11 @@ public class ExceptionTest{
 		{
 			System.out.println("first Stage");
 			if (Pyjama.omp_get_thread_num() == 1) {
+				for(int i=0; i<100000; i++) {
+					}
 				throw new RuntimeException("A thread throws an exception");
-			} else {
-				for(int i=0; i<9999999; i++);
-			}
-			///#omp barrier
+			} 
+			//#omp barrier
 			System.out.println("second stage");
 			//#omp barrier
 			System.out.println("third stage");

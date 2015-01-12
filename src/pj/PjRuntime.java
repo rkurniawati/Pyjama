@@ -93,6 +93,17 @@ public class PjRuntime {
 		return icv;
 	}
 	
+	public static void checkCancellationPoint() {
+		InternalControlVariables icv = getCurrentThreadICV();
+		if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
+			throw new RuntimeException("Pyjama: Cancellation flag null!");
+		} else {
+			if (icv.OMP_CurrentParallelRegionCancellationFlag.get() == true) {
+				throw new pj.pr.exceptions.OmpThreadStopException();
+			}
+		}
+	}
+	
 	/*Xing added this to substitute to using as openMP flush directive 2014.4.30*/
 	public static void flushMemory() {
 		OMP_lock.lock();
@@ -105,18 +116,10 @@ public class PjRuntime {
 		if (null == icv.OMP_CurrentParallelRegionBarrier) {
 			throw new pj.pr.exceptions.OmpBrokenBarrierException();
 		}
-		if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
-			throw new RuntimeException("Pyjama: Cancellation flag null!");
-		}
-		else {
-			//System.out.println("Barrier"+ Pyjama.omp_get_thread_num()+ " flag " + icv.OMP_CurrentParallelRegionCancellationFlag.get()+" pointer(flag):"+icv.OMP_CurrentParallelRegionCancellationFlag.hashCode());
-			if (icv.OMP_CurrentParallelRegionCancellationFlag.get() == true) {
-				throw new pj.pr.exceptions.OmpThreadStopException();
-			}
-			try {icv.OMP_CurrentParallelRegionBarrier.await();}
-			catch (InterruptedException e) {e.printStackTrace();}
-			catch (BrokenBarrierException e) {e.printStackTrace();}
-		}
+		checkCancellationPoint();
+		try {icv.OMP_CurrentParallelRegionBarrier.await();}
+		catch (InterruptedException e) {e.printStackTrace();}
+		catch (BrokenBarrierException e) {e.printStackTrace();}
 	}
 	
 	public static void setCurrentParallelRegionThreadNumber(int num) {

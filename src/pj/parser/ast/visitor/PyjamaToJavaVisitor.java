@@ -5,6 +5,7 @@ package pj.parser.ast.visitor;
  */
 
 
+import pj.PjRuntime;
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
 import pj.parser.ast.expr.*;
@@ -285,16 +286,19 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	
 
-	@Override
-	public void visit(OmpCancellationPointDirective n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+
+	public void visit(OmpCancellationPointDirective n, SourcePrinter printer) {
+		if (n.getRegion() == OmpCancellationPointDirective.Region.Parallel) {
+			printer.printLn("PjRuntime.checkCancellationPoint();");
+		} else {	
+		}
 	}
 
-	@Override
-	public void visit(OmpCancelDirective n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
+	public void visit(OmpCancelDirective n, SourcePrinter printer) {
+		if (n.getRegion() == OmpCancelDirective.Region.Parallel) {
+			printer.printLn("throw new pj.pr.exceptions.OmpThreadStopException();");
+		} else {
+		}
 	}
 	    
 	//OpenMP add END*********************************************************************************OpenMP add END//
@@ -955,11 +959,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 				n.getBody().accept(this, printer);
 				printer.printLn();
 				//XING add -- shutdown Pyjama runtime at the end of main method
-				if (n.getName().equals("main")) {
-					printer.printLn();
-					printer.printLn("//Pyjama runtime shutdown at the end of main method");
-					printer.printLn("PjRuntime.shutdown();");
-				}
+				//Xing commented at 2015.1.11, needn't shutdown because don't use ThreadPoolExecutor
+//				if (n.getName().equals("main")) {
+//					printer.printLn();
+//					printer.printLn("//Pyjama runtime shutdown at the end of main method");
+//					printer.printLn("PjRuntime.shutdown();");
+//				}
 				printer.print("}");
 	        }
 	        ///Xing added to print Auxilary parallel region class if current method have PR region.
