@@ -4,15 +4,20 @@ import pj.*;
 
 public class ExceptionTest{
 	public static void main (String[] args) {
+		long a = test5();
+		System.out.println("++++++++++++++++++++++++++++");
+		long b = test5_1();
+		System.out.println("++++++++++++++++++++++++++++");
 		
-		System.out.println("the time span"+ measure());
+		System.out.println("speed up:"+ (Double.longBitsToDouble(a)/Double.longBitsToDouble(b)));
+		//test0();
 	}
 	
 	public static long measure(){
     	long start = System.currentTimeMillis();
-    	test1();
     	return System.currentTimeMillis()-start;
     }
+
 	
 	public static void test0() {
 		//#omp parallel
@@ -64,6 +69,7 @@ public class ExceptionTest{
 			System.out.println("third stage");
 		}
 	}
+
 //use cancel directive to cancel the parallel region
 	public static void test3() {
 		//#omp parallel
@@ -101,22 +107,62 @@ public class ExceptionTest{
 	}
 
 // souround parallel region with try-catch block
-	public static void test5() {
+	public static long test5() {
+		long end = 0;
+		long start = System.nanoTime();
 		try {
 			//#omp parallel
 			{
-				System.out.println("first Stage");
-				if (Pyjama.omp_get_thread_num() == 0) {
+				//System.out.println("first Stage");
+				//for(int i=0; i<100000; i++){}
+/*
+				if (Pyjama.omp_get_thread_num() == 1) {
+					for(int i=0; i<100000; i++) {}
 					throw new RuntimeException("A thread throws an exception");
-				} else {
-					for(int i=0; i<9999999; i++);
-				}
+				} */
+				///#omp barrier
+				//System.out.println("second stage");
+				///#omp barrier
+				//System.out.println("third stage");
 			}
 		} catch (RuntimeException e) {
 			System.out.println("catch exception" + e);
-		} finally {
-			System.out.println("finally");
+		} 
+		end = System.nanoTime()-start;
+		System.out.println("the time span of test5:"+ end);
+		return end;
+	}
+
+//does not handle locally, stop entire parallel region, using conventional programming style
+	public static long test5_1() {
+		RuntimeException re = new RuntimeException("null");
+		long end = 0;
+    	long start = System.nanoTime();
+		//#omp parallel shared(re)
+		{
+			//System.out.println("first Stage");
+			//for(int i=0; i<100000; i++){}
+		/*	if (Pyjama.omp_get_thread_num() == 1) {
+				//for(int i=0; i<100000; i++) {}
+				//#omp critical 
+				{
+					re = new RuntimeException("A thread throws an exception");
+					//#omp cancel parallel global
+				} 
+			} */
+			
+			///#omp barrier
+			//System.out.println("second stage");
+			///#omp barrier
+			//System.out.println("third stage");
 		}
+		if (re != null) {
+			System.out.println("Handling thread outside parallel region " + re);
+		}
+		//System.out.println("finally");
+		end = System.nanoTime()-start;
+		System.out.println("the time span of test5_1:"+ end);
+		return end;
 	}
 
 //normal parallel for

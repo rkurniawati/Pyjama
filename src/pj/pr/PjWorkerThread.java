@@ -19,13 +19,12 @@ public class PjWorkerThread extends Thread {
 	}
 	@Override
     public void run() {
-        try {
-       	 	task.call();
-        } catch (OmpParallelRegionLocalCancellationException e) {
-        	PjRuntime.decreaseBarrierCount();
-        } catch (Exception e) {
-        	PjRuntime.decreaseBarrierCount();
-        	PjExecutor.cancelCurrentThreadGroup();
-		}
+       	 	try {
+				task.call();
+			} catch (Exception e) {
+				//e.printStackTrace();
+				//WorkerThread should always be silent
+			}
+       
     }
 }

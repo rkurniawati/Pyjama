@@ -1519,6 +1519,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.printLn("import java.util.concurrent.locks.ReentrantLock;");
     	printer.printLn("import javax.swing.SwingUtilities;");
     	printer.printLn("import java.lang.reflect.InvocationTargetException;");
+    	printer.printLn("import pj.pr.exceptions.OmpParallelRegionLocalCancellationException;");
     	
     	return printer.getSource();
     }

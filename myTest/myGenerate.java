@@ -8,6 +8,7 @@ public class myGenerate extends Object{
 			//pj.PyjamaToJavaParser.parse(new File("myTest/myTest.pj"));
 			//pj.PyjamaToJavaParser.parse(new File("myTest/squares/Squares.pj"));
 			pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/ExceptionTest.pj"));
+			pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/Benchmark.pj"));
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -11,18 +11,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.swing.SwingUtilities;
 import java.lang.reflect.InvocationTargetException;
+import pj.pr.exceptions.OmpParallelRegionLocalCancellationException;
 
 public class ExceptionTest {
 
     public static void main(String[] args) {{
-        System.out.println("the time span" + measure());
+        long a = test5();
+        System.out.println("++++++++++++++++++++++++++++");
+        long b = test5_1();
+        System.out.println("++++++++++++++++++++++++++++");
+        System.out.println("speed up:" + (Double.longBitsToDouble(a) / Double.longBitsToDouble(b)));
     }
     }
 
 
     public static long measure() {{
         long start = System.currentTimeMillis();
-        test1();
         return System.currentTimeMillis() - start;
     }
     }
@@ -86,14 +90,22 @@ static class _OMP_ParallelRegion_0{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                /****User Code BEGIN***/
-                {
-                    System.out.println("first Stage");
-                    PjRuntime.setBarrier();
+                try {
+                    /****User Code BEGIN***/
+                    {
+                        System.out.println("first Stage");
+                        PjRuntime.setBarrier();
 
-                    System.out.println("second stage");
+                        System.out.println("second stage");
+                    }
+                    /****User Code END***/
+                } catch (OmpParallelRegionLocalCancellationException e) {
+                 	PjRuntime.decreaseBarrierCount();
+                } catch (Exception e) {
+                    PjRuntime.decreaseBarrierCount();
+                	PjExecutor.cancelCurrentThreadGroup();
+                
                 }
-                /****User Code END***/
                 //BEGIN reduction procedure
                 //END reduction procedure
                 PjRuntime.setBarrier();
@@ -180,28 +192,36 @@ static class _OMP_ParallelRegion_1{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                /****User Code BEGIN***/
-                {
-                    System.out.println("first Stage");
-                    try {
-                        if (Pyjama.omp_get_thread_num() == 1) {
-                            throw new RuntimeException("Local thread Exception");
-                        } else {
-                            for (int i = 0; i < 9999999; i++) ;
+                try {
+                    /****User Code BEGIN***/
+                    {
+                        System.out.println("first Stage");
+                        try {
+                            if (Pyjama.omp_get_thread_num() == 1) {
+                                throw new RuntimeException("Local thread Exception");
+                            } else {
+                                for (int i = 0; i < 9999999; i++) ;
+                            }
+                        } catch (RuntimeException e) {
+                            System.out.println("recovery" + e);
+                        } finally {
+                            System.out.println("finally");
                         }
-                    } catch (RuntimeException e) {
-                        System.out.println("recovery" + e);
-                    } finally {
-                        System.out.println("finally");
+                        PjRuntime.setBarrier();
+
+                        System.out.println("second stage");
+                        PjRuntime.setBarrier();
+
+                        System.out.println("third stage");
                     }
-                    PjRuntime.setBarrier();
-
-                    System.out.println("second stage");
-                    PjRuntime.setBarrier();
-
-                    System.out.println("third stage");
+                    /****User Code END***/
+                } catch (OmpParallelRegionLocalCancellationException e) {
+                 	PjRuntime.decreaseBarrierCount();
+                } catch (Exception e) {
+                    PjRuntime.decreaseBarrierCount();
+                	PjExecutor.cancelCurrentThreadGroup();
+                
                 }
-                /****User Code END***/
                 //BEGIN reduction procedure
                 //END reduction procedure
                 PjRuntime.setBarrier();
@@ -288,22 +308,30 @@ static class _OMP_ParallelRegion_2{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                /****User Code BEGIN***/
-                {
-                    System.out.println("first Stage");
-                    if (Pyjama.omp_get_thread_num() == 1) {
-                        for (int i = 0; i < 100000; i++) {
+                try {
+                    /****User Code BEGIN***/
+                    {
+                        System.out.println("first Stage");
+                        if (Pyjama.omp_get_thread_num() == 1) {
+                            for (int i = 0; i < 100000; i++) {
+                            }
+                            throw new RuntimeException("A thread throws an exception");
                         }
-                        throw new RuntimeException("A thread throws an exception");
+                        PjRuntime.setBarrier();
+
+                        System.out.println("second stage");
+                        PjRuntime.setBarrier();
+
+                        System.out.println("third stage");
                     }
-                    PjRuntime.setBarrier();
-
-                    System.out.println("second stage");
-                    PjRuntime.setBarrier();
-
-                    System.out.println("third stage");
+                    /****User Code END***/
+                } catch (OmpParallelRegionLocalCancellationException e) {
+                 	PjRuntime.decreaseBarrierCount();
+                } catch (Exception e) {
+                    PjRuntime.decreaseBarrierCount();
+                	PjExecutor.cancelCurrentThreadGroup();
+                
                 }
-                /****User Code END***/
                 //BEGIN reduction procedure
                 //END reduction procedure
                 PjRuntime.setBarrier();
@@ -390,23 +418,31 @@ static class _OMP_ParallelRegion_3{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                /****User Code BEGIN***/
-                {
-                    System.out.println("first Stage");
-                    if (Pyjama.omp_get_thread_num() == 1) {
-                        for (int i = 0; i < 100000; i++) {
+                try {
+                    /****User Code BEGIN***/
+                    {
+                        System.out.println("first Stage");
+                        if (Pyjama.omp_get_thread_num() == 1) {
+                            for (int i = 0; i < 100000; i++) {
+                            }
+                            throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException();
+
                         }
-                        throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException();
+                        PjRuntime.setBarrier();
 
+                        System.out.println("second stage");
+                        PjRuntime.setBarrier();
+
+                        System.out.println("third stage");
                     }
-                    PjRuntime.setBarrier();
-
-                    System.out.println("second stage");
-                    PjRuntime.setBarrier();
-
-                    System.out.println("third stage");
+                    /****User Code END***/
+                } catch (OmpParallelRegionLocalCancellationException e) {
+                 	PjRuntime.decreaseBarrierCount();
+                } catch (Exception e) {
+                    PjRuntime.decreaseBarrierCount();
+                	PjExecutor.cancelCurrentThreadGroup();
+                
                 }
-                /****User Code END***/
                 //BEGIN reduction procedure
                 //END reduction procedure
                 PjRuntime.setBarrier();
@@ -493,23 +529,31 @@ static class _OMP_ParallelRegion_4{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                /****User Code BEGIN***/
-                {
-                    System.out.println("first Stage" + Pyjama.omp_get_thread_num());
-                    if (Pyjama.omp_get_thread_num() == 1) {
-                        for (int i = 0; i < 100000; i++) {
+                try {
+                    /****User Code BEGIN***/
+                    {
+                        System.out.println("first Stage" + Pyjama.omp_get_thread_num());
+                        if (Pyjama.omp_get_thread_num() == 1) {
+                            for (int i = 0; i < 100000; i++) {
+                            }
+                            throw new pj.pr.exceptions.OmpParallelRegionLocalCancellationException();
+
                         }
-                        throw new pj.pr.exceptions.OmpParallelRegionLocalCancellationException();
+                        PjRuntime.setBarrier();
 
+                        System.out.println("second stage" + Pyjama.omp_get_thread_num());
+                        PjRuntime.setBarrier();
+
+                        System.out.println("third stage" + Pyjama.omp_get_thread_num());
                     }
-                    PjRuntime.setBarrier();
-
-                    System.out.println("second stage" + Pyjama.omp_get_thread_num());
-                    PjRuntime.setBarrier();
-
-                    System.out.println("third stage" + Pyjama.omp_get_thread_num());
+                    /****User Code END***/
+                } catch (OmpParallelRegionLocalCancellationException e) {
+                 	PjRuntime.decreaseBarrierCount();
+                } catch (Exception e) {
+                    PjRuntime.decreaseBarrierCount();
+                	PjExecutor.cancelCurrentThreadGroup();
+                
                 }
-                /****User Code END***/
                 //BEGIN reduction procedure
                 //END reduction procedure
                 PjRuntime.setBarrier();
@@ -538,7 +582,9 @@ static class _OMP_ParallelRegion_4{
 
 
 
-    public static void test5() {{
+    public static long test5() {{
+        long end = 0;
+        long start = System.nanoTime();
         try {
             /*OpenMP Parallel region (#5) -- START */
             InternalControlVariables icv_previous__OMP_ParallelRegion_5 = PjRuntime.getCurrentThreadICV();
@@ -553,9 +599,10 @@ static class _OMP_ParallelRegion_4{
 
         } catch (RuntimeException e) {
             System.out.println("catch exception" + e);
-        } finally {
-            System.out.println("finally");
         }
+        end = System.nanoTime() - start;
+        System.out.println("the time span of test5:" + end);
+        return end;
     }
     }
 static class _OMP_ParallelRegion_5{
@@ -602,16 +649,130 @@ static class _OMP_ParallelRegion_5{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                /****User Code BEGIN***/
-                {
-                    System.out.println("first Stage");
-                    if (Pyjama.omp_get_thread_num() == 0) {
-                        throw new RuntimeException("A thread throws an exception");
-                    } else {
-                        for (int i = 0; i < 9999999; i++) ;
+                try {
+                    /****User Code BEGIN***/
+                    {
                     }
+                    /****User Code END***/
+                } catch (OmpParallelRegionLocalCancellationException e) {
+                 	PjRuntime.decreaseBarrierCount();
+                } catch (Exception e) {
+                    PjRuntime.decreaseBarrierCount();
+                	PjExecutor.cancelCurrentThreadGroup();
+                
                 }
-                /****User Code END***/
+                //BEGIN reduction procedure
+                //END reduction procedure
+                PjRuntime.setBarrier();
+                if (0 == this.alias_id) {
+                    updateOutputListForSharedVars();
+                }
+                return null;
+            }
+        }
+        public void runParallelCode() {
+            for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
+                Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
+                PjRuntime.submit(i, slaveThread, icv);
+            }
+            Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
+            PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
+            try {
+                masterThread.call();
+            } catch (pj.pr.exceptions.OmpParallelRegionLocalCancellationException e) {
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
+    public static long test5_1() {{
+        RuntimeException re = new RuntimeException("null");
+        long end = 0;
+        long start = System.nanoTime();
+        /*OpenMP Parallel region (#6) -- START */
+        InternalControlVariables icv_previous__OMP_ParallelRegion_6 = PjRuntime.getCurrentThreadICV();
+        InternalControlVariables icv__OMP_ParallelRegion_6 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_6);
+        int _threadNum__OMP_ParallelRegion_6 = icv__OMP_ParallelRegion_6.nthreads_var.get(icv__OMP_ParallelRegion_6.levels_var);
+        ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_6 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_6 = new ConcurrentHashMap<String,Object>();
+        inputlist__OMP_ParallelRegion_6.put("re",re);
+        _OMP_ParallelRegion_6 _OMP_ParallelRegion_6_in = new _OMP_ParallelRegion_6(_threadNum__OMP_ParallelRegion_6,icv__OMP_ParallelRegion_6,inputlist__OMP_ParallelRegion_6,outputlist__OMP_ParallelRegion_6);
+        _OMP_ParallelRegion_6_in.runParallelCode();
+        re = (RuntimeException)outputlist__OMP_ParallelRegion_6.get("re");
+        PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_6);
+        /*OpenMP Parallel region (#6) -- END */
+
+        if (re != null) {
+            System.out.println("Handling thread outside parallel region " + re);
+        }
+        end = System.nanoTime() - start;
+        System.out.println("the time span of test5_1:" + end);
+        return end;
+    }
+    }
+static class _OMP_ParallelRegion_6{
+        private int OMP_threadNumber = 1;
+        private InternalControlVariables icv;
+        private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
+        private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
+        private ReentrantLock OMP_lock;
+
+        //#BEGIN shared variables defined here
+        RuntimeException re = null;
+        //#END shared variables defined here
+        public _OMP_ParallelRegion_6(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
+            this.icv = icv;
+            if ((false == Pyjama.omp_get_nested()) && (Pyjama.omp_get_level() > 0)) {
+                this.OMP_threadNumber = 1;
+            }else {
+                this.OMP_threadNumber = thread_num;
+            }
+            this.OMP_inputList = inputlist;
+            this.OMP_outputList = outputlist;
+            icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
+            icv.OMP_CurrentParallelRegionBarrier = new PjCyclicBarrier(this.OMP_threadNumber);
+            //#BEGIN shared variables initialised here
+            re = (RuntimeException)OMP_inputList.get("re");
+            //#END shared variables initialised here
+        }
+
+        private void updateOutputListForSharedVars() {
+            //BEGIN update outputlist
+            OMP_outputList.put("re",re);
+            //END update outputlist
+        }
+        class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
+            private int alias_id;
+            private ConcurrentHashMap<String, Object> OMP_inputList;
+            private ConcurrentHashMap<String, Object> OMP_outputList;
+            //#BEGIN private/firstprivate reduction variables defined here
+            //#END private/firstprivate reduction variables  defined here
+            MyCallable(int id, ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){
+                this.alias_id = id;
+                this.OMP_inputList = inputlist;
+                this.OMP_outputList = outputlist;
+                //#BEGIN firstprivate reduction variables initialised here
+                //#END firstprivate reduction variables initialised here
+            }
+
+            @Override
+            public ConcurrentHashMap<String,Object> call() {
+                try {
+                    /****User Code BEGIN***/
+                    {
+                    }
+                    /****User Code END***/
+                } catch (OmpParallelRegionLocalCancellationException e) {
+                 	PjRuntime.decreaseBarrierCount();
+                } catch (Exception e) {
+                    PjRuntime.decreaseBarrierCount();
+                	PjExecutor.cancelCurrentThreadGroup();
+                
+                }
                 //BEGIN reduction procedure
                 //END reduction procedure
                 PjRuntime.setBarrier();
@@ -641,20 +802,20 @@ static class _OMP_ParallelRegion_5{
 
 
     public static void test6() {{
-        /*OpenMP Parallel region (#6) -- START */
-        InternalControlVariables icv_previous__OMP_ParallelRegion_6 = PjRuntime.getCurrentThreadICV();
-        InternalControlVariables icv__OMP_ParallelRegion_6 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_6);
-        int _threadNum__OMP_ParallelRegion_6 = icv__OMP_ParallelRegion_6.nthreads_var.get(icv__OMP_ParallelRegion_6.levels_var);
-        ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_6 = new ConcurrentHashMap<String,Object>();
-        ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_6 = new ConcurrentHashMap<String,Object>();
-        _OMP_ParallelRegion_6 _OMP_ParallelRegion_6_in = new _OMP_ParallelRegion_6(_threadNum__OMP_ParallelRegion_6,icv__OMP_ParallelRegion_6,inputlist__OMP_ParallelRegion_6,outputlist__OMP_ParallelRegion_6);
-        _OMP_ParallelRegion_6_in.runParallelCode();
-        PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_6);
-        /*OpenMP Parallel region (#6) -- END */
+        /*OpenMP Parallel region (#7) -- START */
+        InternalControlVariables icv_previous__OMP_ParallelRegion_7 = PjRuntime.getCurrentThreadICV();
+        InternalControlVariables icv__OMP_ParallelRegion_7 = PjRuntime.inheritICV(icv_previous__OMP_ParallelRegion_7);
+        int _threadNum__OMP_ParallelRegion_7 = icv__OMP_ParallelRegion_7.nthreads_var.get(icv__OMP_ParallelRegion_7.levels_var);
+        ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_7 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_7 = new ConcurrentHashMap<String,Object>();
+        _OMP_ParallelRegion_7 _OMP_ParallelRegion_7_in = new _OMP_ParallelRegion_7(_threadNum__OMP_ParallelRegion_7,icv__OMP_ParallelRegion_7,inputlist__OMP_ParallelRegion_7,outputlist__OMP_ParallelRegion_7);
+        _OMP_ParallelRegion_7_in.runParallelCode();
+        PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_7);
+        /*OpenMP Parallel region (#7) -- END */
 
     }
     }
-static class _OMP_ParallelRegion_6{
+static class _OMP_ParallelRegion_7{
         private int OMP_threadNumber = 1;
         private InternalControlVariables icv;
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
@@ -663,7 +824,7 @@ static class _OMP_ParallelRegion_6{
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
-        public _OMP_ParallelRegion_6(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
+        public _OMP_ParallelRegion_7(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
             if ((false == Pyjama.omp_get_nested()) && (Pyjama.omp_get_level() > 0)) {
                 this.OMP_threadNumber = 1;
@@ -698,9 +859,10 @@ static class _OMP_ParallelRegion_6{
 
             @Override
             public ConcurrentHashMap<String,Object> call() {
-                /****User Code BEGIN***/
-                /*OpenMP Work Share region (#0) -- START */
-                
+                try {
+                    /****User Code BEGIN***/
+                    /*OpenMP Work Share region (#0) -- START */
+                    
                 {//#BEGIN firstprivate lastprivate reduction variables defined and initialized here
                     //#set implicit barrier here, otherwise unexpected initial value happens
                     PjRuntime.setBarrier();
@@ -738,10 +900,17 @@ static class _OMP_ParallelRegion_6{
                     PjRuntime.setBarrier();
                 }
 
-                PjRuntime.setBarrier();
-                /*OpenMP Work Share region (#0) -- END */
+                    PjRuntime.setBarrier();
+                    /*OpenMP Work Share region (#0) -- END */
 
-                /****User Code END***/
+                    /****User Code END***/
+                } catch (OmpParallelRegionLocalCancellationException e) {
+                 	PjRuntime.decreaseBarrierCount();
+                } catch (Exception e) {
+                    PjRuntime.decreaseBarrierCount();
+                	PjExecutor.cancelCurrentThreadGroup();
+                
+                }
                 //BEGIN reduction procedure
                 //END reduction procedure
                 PjRuntime.setBarrier();

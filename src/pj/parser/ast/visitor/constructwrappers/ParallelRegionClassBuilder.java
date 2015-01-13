@@ -15,6 +15,7 @@ package pj.parser.ast.visitor.constructwrappers;
 
 import java.util.List;
 
+import pj.PjRuntime;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
@@ -24,6 +25,8 @@ import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
+import pj.pr.PjExecutor;
+import pj.pr.exceptions.OmpParallelRegionLocalCancellationException;
 
 
 public class ParallelRegionClassBuilder extends ConstructWrapper  {
@@ -192,11 +195,21 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("@Override");
 		printer.printLn("public ConcurrentHashMap<String,Object> call() {");
 		printer.indent();
+		printer.printLn("try {");
+		printer.indent();
 		//BEGIN get construct user code
 		printer.printLn("/****User Code BEGIN***/");
 		this.getUserCode().accept(visitor, printer);
 		printer.printLn();
 		printer.printLn("/****User Code END***/");
+		printer.unindent();
+		printer.printLn("} catch (OmpParallelRegionLocalCancellationException e) {");
+		printer.printLn(" 	PjRuntime.decreaseBarrierCount();");
+		printer.printLn("} catch (Exception e) {");
+		printer.printLn("    PjRuntime.decreaseBarrierCount();");
+		printer.printLn("	PjExecutor.cancelCurrentThreadGroup();");
+		printer.printLn("");
+		printer.printLn("}");
 		//BEGIN reduction procedure
 		printer.printLn("//BEGIN reduction procedure");
 		DataClausesHandler.reductionForPRClass(this, printer);
