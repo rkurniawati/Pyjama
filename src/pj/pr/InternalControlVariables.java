@@ -3,6 +3,7 @@ package pj.pr;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 public class InternalControlVariables {
 	/**XING Environment Variables definition BEGIN*/
 	/*describes the OpenMP environment variables that specify the settings of
@@ -60,6 +61,7 @@ public class InternalControlVariables {
 	/* Xing added those for parallel region cancellation support 2015.1.8 */
 	public volatile AtomicBoolean OMP_CurrentParallelRegionCancellationFlag = new AtomicBoolean(false);
 	public volatile AtomicBoolean OMP_CurrentWorksharingRegionCancellationFlag = new AtomicBoolean(false);
+
 	
 	/* Xing added those for atomic directive support 2014.4.30 */
 	// the initialisation of OMP_CurrentParallelRegionBarrier should be done in runtime

@@ -4,13 +4,7 @@ import pj.*;
 
 public class ExceptionTest{
 	public static void main (String[] args) {
-		long a = test5();
-		System.out.println("++++++++++++++++++++++++++++");
-		long b = test5_1();
-		System.out.println("++++++++++++++++++++++++++++");
-		
-		System.out.println("speed up:"+ (Double.longBitsToDouble(a)/Double.longBitsToDouble(b)));
-		//test0();
+		test7();
 	}
 	
 	public static long measure(){
@@ -115,11 +109,11 @@ public class ExceptionTest{
 			{
 				//System.out.println("first Stage");
 				//for(int i=0; i<100000; i++){}
-/*
+
 				if (Pyjama.omp_get_thread_num() == 1) {
 					for(int i=0; i<100000; i++) {}
 					throw new RuntimeException("A thread throws an exception");
-				} */
+				} 
 				///#omp barrier
 				//System.out.println("second stage");
 				///#omp barrier
@@ -142,14 +136,14 @@ public class ExceptionTest{
 		{
 			//System.out.println("first Stage");
 			//for(int i=0; i<100000; i++){}
-		/*	if (Pyjama.omp_get_thread_num() == 1) {
+			if (Pyjama.omp_get_thread_num() == 1) {
 				//for(int i=0; i<100000; i++) {}
 				//#omp critical 
 				{
 					re = new RuntimeException("A thread throws an exception");
 					//#omp cancel parallel global
 				} 
-			} */
+			} 
 			
 			///#omp barrier
 			//System.out.println("second stage");
@@ -170,6 +164,19 @@ public class ExceptionTest{
 		//#omp parallel for
 		for(int i=0; i<10; i++) {
 			System.out.println("i="+i+"==>"+Pyjama.omp_get_thread_num());
+		}
+	}
+
+	public static void test7() {
+		//#omp parallel 
+		{
+			if (Pyjama.omp_get_thread_num() == 1) {
+				for(int i=1 ;i<9999;i++);
+				throw new RuntimeException("A1");
+			} 
+			if (Pyjama.omp_get_thread_num() == 2) {
+				throw new RuntimeException("B1");
+			}
 		}
 	}
 }

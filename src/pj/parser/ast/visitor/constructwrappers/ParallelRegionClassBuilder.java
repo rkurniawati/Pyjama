@@ -14,6 +14,7 @@ package pj.parser.ast.visitor.constructwrappers;
 
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import pj.PjRuntime;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
@@ -98,6 +99,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ReentrantLock OMP_lock;");
+		printer.printLn("private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);");
 		printer.printLn();
 		//#BEGIN shared variables defined here
 		printer.printLn("//#BEGIN shared variables defined here");
@@ -202,14 +204,6 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		this.getUserCode().accept(visitor, printer);
 		printer.printLn();
 		printer.printLn("/****User Code END***/");
-		printer.unindent();
-		printer.printLn("} catch (OmpParallelRegionLocalCancellationException e) {");
-		printer.printLn(" 	PjRuntime.decreaseBarrierCount();");
-		printer.printLn("} catch (Exception e) {");
-		printer.printLn("    PjRuntime.decreaseBarrierCount();");
-		printer.printLn("	PjExecutor.cancelCurrentThreadGroup();");
-		printer.printLn("");
-		printer.printLn("}");
 		//BEGIN reduction procedure
 		printer.printLn("//BEGIN reduction procedure");
 		DataClausesHandler.reductionForPRClass(this, printer);
@@ -217,6 +211,15 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		//END reduction procedure
 		printer.printLn("PjRuntime.setBarrier();");
 		//BEGIN Master thread updateOutputList
+		printer.unindent();
+		printer.printLn("} catch (OmpParallelRegionLocalCancellationException e) {");
+		printer.printLn(" 	PjRuntime.decreaseBarrierCount();");
+		printer.printLn("} catch (Exception e) {");
+		printer.printLn("    PjRuntime.decreaseBarrierCount();");
+		printer.printLn("	PjExecutor.cancelCurrentThreadGroup();");
+		printer.printLn("OMP_CurrentParallelRegionExceptionSlot.compareAndSet(null, e);");
+		printer.unindent();
+		printer.printLn("}");
 		printer.printLn("if (0 == this.alias_id) {");
 		printer.indent();
 		printer.printLn("updateOutputListForSharedVars();");
@@ -276,12 +279,13 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 			printer.indent();
 			printer.printLn("masterThread.call();");
 			printer.unindent();
-			printer.printLn("} catch (pj.pr.exceptions.OmpParallelRegionLocalCancellationException e) {");
 			printer.printLn("} catch (Exception e) {");
 			printer.indent();
 			printer.printLn("e.printStackTrace();");
 			printer.unindent();
 			printer.printLn("}");
+			printer.printLn("RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();");
+			printer.printLn("if (OMP_ee != null) {throw OMP_ee;}");
 		}
 	}
 	
