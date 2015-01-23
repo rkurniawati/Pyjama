@@ -1,24 +1,34 @@
-***************Scope Name:normalBlock*************
+***************Scope Name:Benchmark*************
 --------Defined variables--------------
+test_no	double(ClassMemberField)
+test_old	double(ClassMemberField)
+recordTime	void(ClassMemberField)
+test_new	double(ClassMemberField)
+main	void(ClassMemberField)
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:test_old*************
 --------Defined variables--------------
-i	int(ScopeLocalParameter)
+start	long(ScopeLocalParameter)
+reNull	RuntimeException(ScopeLocalParameter)
+re	RuntimeException(ScopeLocalParameter)
+end	long(ScopeLocalParameter)
 ---------Used variables--------------
-i
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-fileName
-writer
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
+start
+reNull
+re
+System
+end
 ******************************************************
 ***************Scope Name:OmpParallel*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:catchBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
@@ -30,42 +40,31 @@ end	long(ScopeLocalParameter)
 start
 System
 end
-out
 ******************************************************
-***************Scope Name:catchBlock*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
+e
 ******************************************************
-***************Scope Name:test_old*************
+***************Scope Name:normalBlock*************
 --------Defined variables--------------
-start	long(ScopeLocalParameter)
-re	RuntimeException(ScopeLocalParameter)
-end	long(ScopeLocalParameter)
 ---------Used variables--------------
-start
-re
+e
 System
-end
 out
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:recordTime*************
 --------Defined variables--------------
-i	int(ScopeLocalParameter)
+n	int(MethodParameter)
+fileName	String(MethodParameter)
+writer	PrintWriter(ScopeLocalParameter)
 ---------Used variables--------------
-i
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
+writer
 ******************************************************
 ***************Scope Name:catchBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:tryBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
@@ -74,119 +73,64 @@ i
 --------Defined variables--------------
 i	int(ScopeLocalParameter)
 ---------Used variables--------------
+n
 i
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
 ******************************************************
 ***************Scope Name:OmpParallel*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
-***************Scope Name:ForStmt*************
+***************Scope Name:test_no*************
 --------Defined variables--------------
-i	int(ScopeLocalParameter)
+start	long(ScopeLocalParameter)
+end	long(ScopeLocalParameter)
 ---------Used variables--------------
-i
+start
+System
+end
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
 ******************************************************
 ***************Scope Name:tryBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 ******************************************************
+***************Scope Name:tryBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:OmpParallel*************
+--------Defined variables--------------
+---------Used variables--------------
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+---------Used variables--------------
+fileName
+writer
+******************************************************
+***************Scope Name:normalBlock*************
+--------Defined variables--------------
+value	double(ScopeLocalParameter)
+---------Used variables--------------
+value
+writer
+******************************************************
 ***************Scope Name:normalBlock*************
 --------Defined variables--------------
 ---------Used variables--------------
 re
 System
 out
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-e
 ******************************************************
 ***************Scope Name:main*************
 --------Defined variables--------------
 args	String[](MethodParameter)
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-Pyjama
-System
-out
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-e
-System
-out
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-******************************************************
-***************Scope Name:recordTime*************
---------Defined variables--------------
-fileName	String(MethodParameter)
-sum	long(ScopeLocalParameter)
-writer	PrintWriter(ScopeLocalParameter)
-ave	double(ScopeLocalParameter)
----------Used variables--------------
-sum
-writer
-ave
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
-value	long(ScopeLocalParameter)
----------Used variables--------------
-value
-sum
-writer
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-Pyjama
-System
-out
-******************************************************
-***************Scope Name:normalBlock*************
---------Defined variables--------------
----------Used variables--------------
-re
-******************************************************
-***************Scope Name:ForStmt*************
---------Defined variables--------------
-i	int(ScopeLocalParameter)
----------Used variables--------------
-i
-******************************************************
-***************Scope Name:conventional*************
---------Defined variables--------------
-b	long(ScopeLocalParameter)
-a	long(ScopeLocalParameter)
----------Used variables--------------
-Double
-b
-a
-System
-out
-******************************************************
-***************Scope Name:Benchmark*************
---------Defined variables--------------
-test_old	long(ClassMemberField)
-conventional	void(ClassMemberField)
-recordTime	void(ClassMemberField)
-test_new	long(ClassMemberField)
-main	void(ClassMemberField)
 ---------Used variables--------------
 ******************************************************

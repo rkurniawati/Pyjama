@@ -5,94 +5,73 @@ import java.io.PrintWriter;
 
 public class Benchmark{
 	public static void main (String[] args) {
-		recordTime("testOld");
+		recordTime("pure_overhead_no_approach_100_0", 1000);
 	}
 
-	public static void conventional() {
-		long a = test_new();
-		System.out.println("++++++++++++++++++++++++++++");
-		long b = test_old();
-		System.out.println("++++++++++++++++++++++++++++");
-		
-		System.out.println("speed up:"+ (Double.longBitsToDouble(a)/Double.longBitsToDouble(b)));
-		//test0();
-	}
-
-	public static void recordTime(String fileName) {
+	public static void recordTime(String fileName, int n) {
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter("/home/fxin927/benchmark/" + fileName + ".txt", "UTF-8");
+			writer = new PrintWriter("/home/fxin927/benchmark/pure/" + fileName + ".txt", "UTF-8");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		long sum =0;
-		for (int i=0; i<1000; i++) {
-			long value = test_old();
-			sum += value;
+
+		for (int i=0; i<n; i++) {
+			double value = test_no();
 			writer.println(value);
 		}
-		double ave = (double)sum / 1000;
-		writer.println("ave:"+ ave);
 		writer.close();
+	}
+
+	public static double test_no() {
+		long end = 0;
+		long start = System.nanoTime();
+			//#omp parallel 
+			{
+
+			}
+		end = System.nanoTime()-start;
+		return (double)(end)/1000000; //nanoseconds-> microseconds-> miliseconds
 	}
 	
 	// souround parallel region with try-catch block
-	public static long test_new() {
+	public static double test_new() {
 		long end = 0;
 		long start = System.nanoTime();
 		try {
+
 			//#omp parallel
 			{
-				System.out.println("first Stage");
-				for(int i=0; i<100000; i++){}
 
-				if (Pyjama.omp_get_thread_num() == 1) {
-					for(int i=0; i<100000; i++) {}
-					throw new RuntimeException("A thread throws an exception");
-				} 
-				//#omp barrier
-				System.out.println("second stage");
-				//#omp barrier
-				System.out.println("third stage");
+			
 			}
+
+			
 		} catch (RuntimeException e) {
 			System.out.println("catch exception" + e);
 		} 
 		end = System.nanoTime()-start;
-		System.out.println("the time span of test5:"+ end);
-		return end;
+		return (double)(end)/1000000; //nanoseconds-> microseconds-> miliseconds
 	}
 
 //does not handle locally, stop entire parallel region, using conventional programming style
-	public static long test_old() {
+	public static double test_old() {
 		RuntimeException re = new RuntimeException("null");
+		RuntimeException reNull = re;
 		long end = 0;
     	long start = System.nanoTime();
+
 		//#omp parallel shared(re)
 		{
-			System.out.println("first Stage");
-			for(int i=0; i<100000; i++){}
-			if (Pyjama.omp_get_thread_num() == 1) {
-				for(int i=0; i<100000; i++) {}
-				//#omp critical 
-				{
-					re = new RuntimeException("A thread throws an exception");
-					//#omp cancel parallel global
-				} 
-			} 
 			
-			//#omp barrier
-			System.out.println("second stage");
-			//#omp barrier
-			System.out.println("third stage");
 		}
-		if (re != null) {
+
+		if (re != reNull) {
 			System.out.println("Handling thread outside parallel region " + re);
 		}
 		//System.out.println("finally");
 		end = System.nanoTime()-start;
-		System.out.println("the time span of test5_1:"+ end);
-		return end;
+		return (double)(end)/1000000; //nanoseconds-> microseconds-> miliseconds
 	}
 }
