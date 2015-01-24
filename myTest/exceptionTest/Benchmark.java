@@ -18,7 +18,7 @@ import pj.pr.exceptions.OmpParallelRegionLocalCancellationException;
 public class Benchmark {
 
     public static void main(String[] args) {{
-        recordTime("pure_overhead_new_approach_100_0", 1000);
+        recordTime("new", 1000);
     }
     }
 
@@ -26,13 +26,14 @@ public class Benchmark {
     public static void recordTime(String fileName, int n) {{
         PrintWriter writer = null;
         try {
-            writer = new PrintWriter("/home/fxin927/benchmark/pure/" + fileName + ".txt", "UTF-8");
+            writer = new PrintWriter("/home/fxin927/benchmark/pc/exceptionthrowingOverhead/" + fileName + ".txt", "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
         }
         for (int i = 0; i < n; i++) {
             double value = test_new();
             writer.println(value);
+            System.out.println("========================");
         }
         writer.close();
     }
@@ -51,6 +52,8 @@ public class Benchmark {
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_0_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#0) -- END */
 
         end = System.nanoTime() - start;
@@ -63,7 +66,7 @@ static class _OMP_ParallelRegion_0{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -105,6 +108,10 @@ static class _OMP_ParallelRegion_0{
                 try {
                     /****User Code BEGIN***/
                     {
+                        for (int i = 0; i < 100; i++) {
+                            PjRuntime.setBarrier();
+
+                        }
                     }
                     /****User Code END***/
                     //BEGIN reduction procedure
@@ -135,8 +142,6 @@ static class _OMP_ParallelRegion_0{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 
@@ -156,10 +161,12 @@ static class _OMP_ParallelRegion_0{
             _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
             _OMP_ParallelRegion_1_in.runParallelCode();
             PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
+            RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_1_in.OMP_CurrentParallelRegionExceptionSlot.get();
+            if (OMP_ee != null) {throw OMP_ee;}
             /*OpenMP Parallel region (#1) -- END */
 
         } catch (RuntimeException e) {
-            System.out.println("catch exception" + e);
+            System.out.println("new Handling thread outside parallel region " + e);
         }
         end = System.nanoTime() - start;
         return (double) (end) / 1000000;
@@ -171,7 +178,7 @@ static class _OMP_ParallelRegion_1{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -213,6 +220,12 @@ static class _OMP_ParallelRegion_1{
                 try {
                     /****User Code BEGIN***/
                     {
+                        if (Pyjama.omp_get_thread_num() == 1) {
+                            throw new RuntimeException("A thread throws an exception");
+                        }
+                        PjRuntime.setBarrier();
+
+                        System.out.println("second stage");
                     }
                     /****User Code END***/
                     //BEGIN reduction procedure
@@ -243,8 +256,6 @@ static class _OMP_ParallelRegion_1{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 
@@ -267,10 +278,12 @@ static class _OMP_ParallelRegion_1{
         _OMP_ParallelRegion_2_in.runParallelCode();
         re = (RuntimeException)outputlist__OMP_ParallelRegion_2.get("re");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_2);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_2_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#2) -- END */
 
         if (re != reNull) {
-            System.out.println("Handling thread outside parallel region " + re);
+            System.out.println("Old Handling thread outside parallel region " + re);
         }
         end = System.nanoTime() - start;
         return (double) (end) / 1000000;
@@ -282,7 +295,7 @@ static class _OMP_ParallelRegion_2{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         RuntimeException re = null;
@@ -327,39 +340,56 @@ static class _OMP_ParallelRegion_2{
                 try {
                     /****User Code BEGIN***/
                     {
+                        try {
+                            if (Pyjama.omp_get_thread_num() == 1) {
+                                re = new RuntimeException("A thread throws an exception");
+                            }
+                        } catch (RuntimeException e) {
+                            PjRuntime.OMP_lock.lock();
+                            try {
+                                {
+                                    re = e;
+                                    throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException();
+
+                                }} finally {
+                            PjRuntime.OMP_lock.unlock();
+                        }
+
                     }
-                    /****User Code END***/
-                    //BEGIN reduction procedure
-                    //END reduction procedure
                     PjRuntime.setBarrier();
-                } catch (OmpParallelRegionLocalCancellationException e) {
-                 	PjRuntime.decreaseBarrierCount();
-                } catch (Exception e) {
-                    PjRuntime.decreaseBarrierCount();
-                	PjExecutor.cancelCurrentThreadGroup();
-                OMP_CurrentParallelRegionExceptionSlot.compareAndSet(null, e);
-            }
-            if (0 == this.alias_id) {
-                updateOutputListForSharedVars();
-            }
-            return null;
+
+                    System.out.println("second stage");
+                }
+                /****User Code END***/
+                //BEGIN reduction procedure
+                //END reduction procedure
+                PjRuntime.setBarrier();
+            } catch (OmpParallelRegionLocalCancellationException e) {
+             	PjRuntime.decreaseBarrierCount();
+            } catch (Exception e) {
+                PjRuntime.decreaseBarrierCount();
+            	PjExecutor.cancelCurrentThreadGroup();
+            OMP_CurrentParallelRegionExceptionSlot.compareAndSet(null, e);
         }
+        if (0 == this.alias_id) {
+            updateOutputListForSharedVars();
+        }
+        return null;
     }
-    public void runParallelCode() {
-        for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
-            Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
-            PjRuntime.submit(i, slaveThread, icv);
-        }
-        Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
-        PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
-        try {
-            masterThread.call();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
+}
+public void runParallelCode() {
+    for (int i = 1; i <= this.OMP_threadNumber-1; i++) {
+        Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);
+        PjRuntime.submit(i, slaveThread, icv);
     }
+    Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);
+    PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;
+    try {
+        masterThread.call();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 }
 
 

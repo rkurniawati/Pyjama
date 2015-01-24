@@ -99,7 +99,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ReentrantLock OMP_lock;");
-		printer.printLn("private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);");
+		printer.printLn("public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);");
 		printer.printLn();
 		//#BEGIN shared variables defined here
 		printer.printLn("//#BEGIN shared variables defined here");
@@ -284,8 +284,6 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 			printer.printLn("e.printStackTrace();");
 			printer.unindent();
 			printer.printLn("}");
-			printer.printLn("RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();");
-			printer.printLn("if (OMP_ee != null) {throw OMP_ee;}");
 		}
 	}
 	

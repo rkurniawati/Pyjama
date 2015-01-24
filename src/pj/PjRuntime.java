@@ -3,6 +3,7 @@ package pj;
 import pj.pr.*;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -64,6 +65,10 @@ public class PjRuntime {
 		InternalControlVariables child_icv = new InternalControlVariables(current_icv);
 		//if parent icv isn't initial icv, remove a top nthreads value for next nested parallel region to use 
 		child_icv.levels_var++;
+		
+		//Xing(2015.1.24) always make cancellation flags as false when inheriting a new parallel region
+		child_icv.OMP_CurrentParallelRegionCancellationFlag = new AtomicBoolean(false);
+		child_icv.OMP_CurrentWorksharingRegionCancellationFlag = new AtomicBoolean(false);
 		
 		if (0 != child_icv.active_levels_var) {
 			child_icv.active_levels_var--;
@@ -136,7 +141,6 @@ public class PjRuntime {
 			throw new pj.pr.exceptions.OmpBrokenBarrierException();
 		}
 		checkParallelCancellationPoint();
-		//System.out.println("current barrier count:"+ icv.OMP_CurrentParallelRegionBarrier.getParties()+"from thread"+ Pyjama.omp_get_thread_num());
 		try {icv.OMP_CurrentParallelRegionBarrier.await();}
 		catch (InterruptedException e) {e.printStackTrace();}
 		catch (BrokenBarrierException e) {e.printStackTrace();}

@@ -15,7 +15,7 @@ public class PjWorkerThread extends Thread {
 		InternalControlVariables currentThreadICV = new InternalControlVariables(parent_icv);
         currentThreadICV.currentThreadAliasID = this.alias_id;
 		PjRuntime.threadICVMap.put(this.getId(), currentThreadICV);
-		this.task =callable;
+		this.task = callable;
 	}
 	@Override
     public void run() {

@@ -39,6 +39,8 @@ public class ExceptionTest {
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_0_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#0) -- END */
 
     }
@@ -49,7 +51,7 @@ static class _OMP_ParallelRegion_0{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -125,8 +127,6 @@ static class _OMP_ParallelRegion_0{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 
@@ -143,6 +143,8 @@ static class _OMP_ParallelRegion_0{
         _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
         _OMP_ParallelRegion_1_in.runParallelCode();
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_1_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#1) -- END */
 
     }
@@ -153,7 +155,7 @@ static class _OMP_ParallelRegion_1{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -243,8 +245,6 @@ static class _OMP_ParallelRegion_1{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 
@@ -261,6 +261,8 @@ static class _OMP_ParallelRegion_1{
         _OMP_ParallelRegion_2 _OMP_ParallelRegion_2_in = new _OMP_ParallelRegion_2(_threadNum__OMP_ParallelRegion_2,icv__OMP_ParallelRegion_2,inputlist__OMP_ParallelRegion_2,outputlist__OMP_ParallelRegion_2);
         _OMP_ParallelRegion_2_in.runParallelCode();
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_2);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_2_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#2) -- END */
 
     }
@@ -271,7 +273,7 @@ static class _OMP_ParallelRegion_2{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -355,8 +357,6 @@ static class _OMP_ParallelRegion_2{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 
@@ -373,6 +373,8 @@ static class _OMP_ParallelRegion_2{
         _OMP_ParallelRegion_3 _OMP_ParallelRegion_3_in = new _OMP_ParallelRegion_3(_threadNum__OMP_ParallelRegion_3,icv__OMP_ParallelRegion_3,inputlist__OMP_ParallelRegion_3,outputlist__OMP_ParallelRegion_3);
         _OMP_ParallelRegion_3_in.runParallelCode();
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_3);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_3_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#3) -- END */
 
     }
@@ -383,7 +385,7 @@ static class _OMP_ParallelRegion_3{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -468,8 +470,6 @@ static class _OMP_ParallelRegion_3{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 
@@ -486,6 +486,8 @@ static class _OMP_ParallelRegion_3{
         _OMP_ParallelRegion_4 _OMP_ParallelRegion_4_in = new _OMP_ParallelRegion_4(_threadNum__OMP_ParallelRegion_4,icv__OMP_ParallelRegion_4,inputlist__OMP_ParallelRegion_4,outputlist__OMP_ParallelRegion_4);
         _OMP_ParallelRegion_4_in.runParallelCode();
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_4);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_4_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#4) -- END */
 
     }
@@ -496,7 +498,7 @@ static class _OMP_ParallelRegion_4{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -581,8 +583,6 @@ static class _OMP_ParallelRegion_4{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 
@@ -602,6 +602,8 @@ static class _OMP_ParallelRegion_4{
             _OMP_ParallelRegion_5 _OMP_ParallelRegion_5_in = new _OMP_ParallelRegion_5(_threadNum__OMP_ParallelRegion_5,icv__OMP_ParallelRegion_5,inputlist__OMP_ParallelRegion_5,outputlist__OMP_ParallelRegion_5);
             _OMP_ParallelRegion_5_in.runParallelCode();
             PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_5);
+            RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_5_in.OMP_CurrentParallelRegionExceptionSlot.get();
+            if (OMP_ee != null) {throw OMP_ee;}
             /*OpenMP Parallel region (#5) -- END */
 
         } catch (RuntimeException e) {
@@ -618,7 +620,7 @@ static class _OMP_ParallelRegion_5{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -695,8 +697,6 @@ static class _OMP_ParallelRegion_5{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 
@@ -718,6 +718,8 @@ static class _OMP_ParallelRegion_5{
         _OMP_ParallelRegion_6_in.runParallelCode();
         re = (RuntimeException)outputlist__OMP_ParallelRegion_6.get("re");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_6);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_6_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#6) -- END */
 
         if (re != null) {
@@ -734,7 +736,7 @@ static class _OMP_ParallelRegion_6{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         RuntimeException re = null;
@@ -821,8 +823,6 @@ public void runParallelCode() {
     } catch (Exception e) {
         e.printStackTrace();
     }
-    RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-    if (OMP_ee != null) {throw OMP_ee;}
 }
 }
 
@@ -839,6 +839,8 @@ public void runParallelCode() {
         _OMP_ParallelRegion_7 _OMP_ParallelRegion_7_in = new _OMP_ParallelRegion_7(_threadNum__OMP_ParallelRegion_7,icv__OMP_ParallelRegion_7,inputlist__OMP_ParallelRegion_7,outputlist__OMP_ParallelRegion_7);
         _OMP_ParallelRegion_7_in.runParallelCode();
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_7);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_7_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#7) -- END */
 
     }
@@ -849,7 +851,7 @@ static class _OMP_ParallelRegion_7{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -961,8 +963,6 @@ static class _OMP_ParallelRegion_7{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 
@@ -979,6 +979,8 @@ static class _OMP_ParallelRegion_7{
         _OMP_ParallelRegion_8 _OMP_ParallelRegion_8_in = new _OMP_ParallelRegion_8(_threadNum__OMP_ParallelRegion_8,icv__OMP_ParallelRegion_8,inputlist__OMP_ParallelRegion_8,outputlist__OMP_ParallelRegion_8);
         _OMP_ParallelRegion_8_in.runParallelCode();
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_8);
+        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_8_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee != null) {throw OMP_ee;}
         /*OpenMP Parallel region (#8) -- END */
 
     }
@@ -989,7 +991,7 @@ static class _OMP_ParallelRegion_8{
         private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
         private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
         private ReentrantLock OMP_lock;
-        private AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
+        public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
         //#END shared variables defined here
@@ -1068,8 +1070,6 @@ static class _OMP_ParallelRegion_8{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeException OMP_ee = (RuntimeException) OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
     }
 }
 

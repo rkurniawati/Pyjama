@@ -111,6 +111,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			// if directive is normal parallel directive, recovery data from PRClass
 			DataClausesHandler.processDataClausesAfterPRClassInvocation(currentPRClass, printer);
 			printer.printLn("PjRuntime.recoverParentICV(" + previous_icv + ");");
+			printer.printLn("RuntimeException OMP_ee = (RuntimeException) " + currentPRClass.className + "_in.OMP_CurrentParallelRegionExceptionSlot.get();");
+			printer.printLn("if (OMP_ee != null) {throw OMP_ee;}");
 		}else if (n.isFreegui()) {
 			// if directive is freeguithread property, return after region, following code is invoked in region.
 			printer.printLn("if (PjRuntime.getCurrentThreadICV() != null) {", -1);
