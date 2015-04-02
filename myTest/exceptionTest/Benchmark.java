@@ -18,7 +18,7 @@ import pj.pr.exceptions.OmpParallelRegionLocalCancellationException;
 public class Benchmark {
 
     public static void main(String[] args) {{
-        recordTime("new", 1000);
+        recordTime("new1", 1000);
     }
     }
 
@@ -33,7 +33,6 @@ public class Benchmark {
         for (int i = 0; i < n; i++) {
             double value = test_new();
             writer.println(value);
-            System.out.println("========================");
         }
         writer.close();
     }
@@ -158,8 +157,10 @@ static class _OMP_ParallelRegion_0{
             int _threadNum__OMP_ParallelRegion_1 = icv__OMP_ParallelRegion_1.nthreads_var.get(icv__OMP_ParallelRegion_1.levels_var);
             ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
             ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
+            inputlist__OMP_ParallelRegion_1.put("start",start);
             _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
             _OMP_ParallelRegion_1_in.runParallelCode();
+            start = (Long)outputlist__OMP_ParallelRegion_1.get("start");
             PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
             RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_1_in.OMP_CurrentParallelRegionExceptionSlot.get();
             if (OMP_ee != null) {throw OMP_ee;}
@@ -181,6 +182,7 @@ static class _OMP_ParallelRegion_1{
         public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
+        long start = 0L;
         //#END shared variables defined here
         public _OMP_ParallelRegion_1(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
             this.icv = icv;
@@ -194,11 +196,13 @@ static class _OMP_ParallelRegion_1{
             icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             icv.OMP_CurrentParallelRegionBarrier = new PjCyclicBarrier(this.OMP_threadNumber);
             //#BEGIN shared variables initialised here
+            start = (Long)OMP_inputList.get("start");
             //#END shared variables initialised here
         }
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
+            OMP_outputList.put("start",start);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
@@ -221,6 +225,7 @@ static class _OMP_ParallelRegion_1{
                     /****User Code BEGIN***/
                     {
                         if (Pyjama.omp_get_thread_num() == 1) {
+                            start = System.nanoTime();
                             throw new RuntimeException("A thread throws an exception");
                         }
                         PjRuntime.setBarrier();
@@ -274,9 +279,11 @@ static class _OMP_ParallelRegion_1{
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_2 = new ConcurrentHashMap<String,Object>();
         inputlist__OMP_ParallelRegion_2.put("re",re);
+        inputlist__OMP_ParallelRegion_2.put("start",start);
         _OMP_ParallelRegion_2 _OMP_ParallelRegion_2_in = new _OMP_ParallelRegion_2(_threadNum__OMP_ParallelRegion_2,icv__OMP_ParallelRegion_2,inputlist__OMP_ParallelRegion_2,outputlist__OMP_ParallelRegion_2);
         _OMP_ParallelRegion_2_in.runParallelCode();
         re = (RuntimeException)outputlist__OMP_ParallelRegion_2.get("re");
+        start = (Long)outputlist__OMP_ParallelRegion_2.get("start");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_2);
         RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_2_in.OMP_CurrentParallelRegionExceptionSlot.get();
         if (OMP_ee != null) {throw OMP_ee;}
@@ -298,6 +305,7 @@ static class _OMP_ParallelRegion_2{
         public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);
 
         //#BEGIN shared variables defined here
+        long start = 0L;
         RuntimeException re = null;
         //#END shared variables defined here
         public _OMP_ParallelRegion_2(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
@@ -312,6 +320,7 @@ static class _OMP_ParallelRegion_2{
             icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;
             icv.OMP_CurrentParallelRegionBarrier = new PjCyclicBarrier(this.OMP_threadNumber);
             //#BEGIN shared variables initialised here
+            start = (Long)OMP_inputList.get("start");
             re = (RuntimeException)OMP_inputList.get("re");
             //#END shared variables initialised here
         }
@@ -319,6 +328,7 @@ static class _OMP_ParallelRegion_2{
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
             OMP_outputList.put("re",re);
+            OMP_outputList.put("start",start);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
@@ -343,6 +353,7 @@ static class _OMP_ParallelRegion_2{
                         try {
                             if (Pyjama.omp_get_thread_num() == 1) {
                                 re = new RuntimeException("A thread throws an exception");
+                                start = System.nanoTime();
                             }
                         } catch (RuntimeException e) {
                             PjRuntime.OMP_lock.lock();

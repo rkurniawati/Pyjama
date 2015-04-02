@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 
 public class Benchmark{
 	public static void main (String[] args) {
-		recordTime("new", 1000);
+		recordTime("new1", 1000);
 	}
 
 	public static void recordTime(String fileName, int n) {
@@ -43,12 +43,13 @@ public class Benchmark{
 		long start = System.nanoTime();
 		try {
 
-			//#omp parallel
+			//#omp parallel shared(start)
 			{
 				//System.out.println("first Stage");
 
 
 				if (Pyjama.omp_get_thread_num() == 1) {
+					start = System.nanoTime();
 					throw new RuntimeException("A thread throws an exception");
 				} 
 				//#omp barrier
@@ -70,11 +71,12 @@ public class Benchmark{
 		long end = 0;
     	long start = System.nanoTime();
 
-		//#omp parallel shared(re)
+		//#omp parallel shared(re, start)
 		{
 			try{
 				if (Pyjama.omp_get_thread_num() == 1) {
 					re = new RuntimeException("A thread throws an exception");
+					start = System.nanoTime();
 				}
 			}catch (RuntimeException e){
 				//#omp critical 
