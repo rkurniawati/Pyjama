@@ -21,19 +21,30 @@ public class HexaBench {
         String fname = "default";
         int iteration = 1000;
         int threadnum = 4;
-        recordTime(fname, iteration, threadnum);
+        if (args.length > 1) {
+            if (null != args[0]) {
+                fname = args[0];
+            }
+            if (args.length > 2 && null != args[1]) {
+                iteration = Integer.parseInt(args[1]);
+            }
+            if (args.length > 3 && null != args[2]) {
+                threadnum = Integer.parseInt(args[2]);
+            }
+        }
+        if (args.length > 4 && args[3].equals("B")) {
+            recordTimeBare(fname, iteration, threadnum);
+        } else {
+            recordTime(fname, iteration, threadnum);
+        }
     }
     }
 
 
-    public static void recordTime(String fileName, int n, int num) {{
+    public static void recordTimeBare(String fileName, int n, int num) {{
         PrintWriter writer_bare = null;
-        PrintWriter writer_guarding = null;
-        PrintWriter writer_checking = null;
         try {
             writer_bare = new PrintWriter("./" + fileName + "_bare_t" + Integer.toString(num) + ".txt", "UTF-8");
-            writer_guarding = new PrintWriter("./" + fileName + "_guarding_t" + Integer.toString(num) + ".txt", "UTF-8");
-            writer_checking = new PrintWriter("./" + fileName + "_checking_t" + Integer.toString(num) + ".txt", "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,6 +56,19 @@ public class HexaBench {
             writer_bare.println(value);
         }
         writer_bare.close();
+    }
+    }
+
+
+    public static void recordTime(String fileName, int n, int num) {{
+        PrintWriter writer_guarding = null;
+        PrintWriter writer_checking = null;
+        try {
+            writer_guarding = new PrintWriter("./" + fileName + "_guarding_t" + Integer.toString(num) + ".txt", "UTF-8");
+            writer_checking = new PrintWriter("./" + fileName + "_checking_t" + Integer.toString(num) + ".txt", "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         for (int i = 0; i < (n / 10); i++) {
             double value = test_guarding(num);
         }
@@ -369,6 +393,8 @@ static class _OMP_ParallelRegion_2{
                     {
                         for (int i = 0; i < 100; i++) {
                             PjRuntime.setBarrier();
+
+                            PjRuntime.checkParallelCancellationPoint();
 
                         }
                     }

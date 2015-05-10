@@ -21,6 +21,17 @@ public class CompareBench {
         String fname = "default";
         int iteration = 1000;
         int threadnum = 4;
+        if (args.length > 1) {
+            if (null != args[0]) {
+                fname = args[0];
+            }
+            if (args.length > 2 && null != args[1]) {
+                iteration = Integer.parseInt(args[1]);
+            }
+            if (args.length > 3 && null != args[2]) {
+                threadnum = Integer.parseInt(args[2]);
+            }
+        }
         recordTime(fname, iteration, threadnum);
     }
     }
@@ -133,7 +144,7 @@ static class _OMP_ParallelRegion_0{
                 try {
                     /****User Code BEGIN***/
                     {
-                        if (Pyjama.omp_get_thread_num() % 2 == 1) {
+                        if (Pyjama.omp_get_thread_num() == 1) {
                             start = System.nanoTime();
                             throw new RuntimeException("A thread throws an exception");
                         }
@@ -261,7 +272,7 @@ static class _OMP_ParallelRegion_1{
                     /****User Code BEGIN***/
                     {
                         try {
-                            if (Pyjama.omp_get_thread_num() % 2 == 1) {
+                            if (Pyjama.omp_get_thread_num() == 1) {
                                 start = System.nanoTime();
                                 re = new RuntimeException("A thread throws an exception");
                             }
