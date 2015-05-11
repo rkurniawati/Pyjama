@@ -20,22 +20,22 @@ public class HexaBench {
     public static void main(String[] args) {{
         String fname = "default";
         int iteration = 1000;
-        int threadnum = 4;
-        if (args.length > 1) {
+        if (args.length > 0) {
             if (null != args[0]) {
                 fname = args[0];
             }
-            if (args.length > 2 && null != args[1]) {
+            if (args.length > 1 && null != args[1]) {
                 iteration = Integer.parseInt(args[1]);
             }
-            if (args.length > 3 && null != args[2]) {
-                threadnum = Integer.parseInt(args[2]);
-            }
         }
-        if (args.length > 4 && args[3].equals("B")) {
-            recordTimeBare(fname, iteration, threadnum);
+        if (args.length > 2 && args[2].equals("B")) {
+            for (int i = 1; i <= 16; i++) {
+                recordTimeBare(fname, iteration, i);
+            }
         } else {
-            recordTime(fname, iteration, threadnum);
+            for (int i = 1; i <= 16; i++) {
+                recordTime(fname, iteration, i);
+            }
         }
     }
     }
