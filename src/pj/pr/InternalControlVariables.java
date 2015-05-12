@@ -110,6 +110,7 @@ public class InternalControlVariables {
 		this.place_partition_var = icv.place_partition_var;
 		this.cancel_var = icv.cancel_var;
 		this.default_device_var = icv.default_device_var;
+		this.currentParallelRegionThreadNumber = icv.currentParallelRegionThreadNumber;
 		
 		//references redefine
 		this.OMP_CurrentParallelRegionCancellationFlag =  icv.OMP_CurrentParallelRegionCancellationFlag;
