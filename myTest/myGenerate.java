@@ -9,7 +9,7 @@ public class myGenerate extends Object{
 			//pj.PyjamaToJavaParser.parse(new File("myTest/squares/Squares.pj"));
 			pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/CompareBench.pj"));
 			pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/HexaBench.pj"));
-			
+			pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/SyncBenchPar.pj"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -157,7 +157,7 @@ static class _OMP_ParallelRegion_0{
                 try {
                     /****User Code BEGIN***/
                     {
-                        for (int i = 0; i < 100; i++) {
+                        for (int i = 0; i < 10000; i++) {
                             PjRuntime.setBarrier();
 
                         }
@@ -274,7 +274,7 @@ static class _OMP_ParallelRegion_1{
                 try {
                     /****User Code BEGIN***/
                     {
-                        for (int i = 0; i < 100; i++) {
+                        for (int i = 0; i < 10000; i++) {
                             PjRuntime.setBarrier();
 
                         }
@@ -391,7 +391,7 @@ static class _OMP_ParallelRegion_2{
                 try {
                     /****User Code BEGIN***/
                     {
-                        for (int i = 0; i < 100; i++) {
+                        for (int i = 0; i < 10000; i++) {
                             PjRuntime.setBarrier();
 
                             PjRuntime.checkParallelCancellationPoint();

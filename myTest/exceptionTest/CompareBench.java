@@ -199,12 +199,12 @@ static class _OMP_ParallelRegion_0{
         int _threadNum__OMP_ParallelRegion_1 = icv__OMP_ParallelRegion_1.nthreads_var.get(icv__OMP_ParallelRegion_1.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_1 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_1.put("re",re);
         inputlist__OMP_ParallelRegion_1.put("start",start);
+        inputlist__OMP_ParallelRegion_1.put("re",re);
         _OMP_ParallelRegion_1 _OMP_ParallelRegion_1_in = new _OMP_ParallelRegion_1(_threadNum__OMP_ParallelRegion_1,icv__OMP_ParallelRegion_1,inputlist__OMP_ParallelRegion_1,outputlist__OMP_ParallelRegion_1);
         _OMP_ParallelRegion_1_in.runParallelCode();
-        re = (RuntimeException)outputlist__OMP_ParallelRegion_1.get("re");
         start = (Long)outputlist__OMP_ParallelRegion_1.get("start");
+        re = (RuntimeException)outputlist__OMP_ParallelRegion_1.get("re");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
         RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_1_in.OMP_CurrentParallelRegionExceptionSlot.get();
         if (OMP_ee != null) {throw OMP_ee;}
@@ -248,8 +248,8 @@ static class _OMP_ParallelRegion_1{
 
         private void updateOutputListForSharedVars() {
             //BEGIN update outputlist
-            OMP_outputList.put("re",re);
             OMP_outputList.put("start",start);
+            OMP_outputList.put("re",re);
             //END update outputlist
         }
         class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {
