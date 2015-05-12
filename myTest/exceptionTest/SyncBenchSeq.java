@@ -48,7 +48,7 @@ public class SyncBenchSeq {
 		for (int nthreads = 1; nthreads <= maxthread; nthreads++) {
 			for (int j=0; j<iter; j++) {
 				double value = testbar(nthreads, 5);
-				writer_pr.println(nthreads + ", " + value);
+				writer_bar.println(nthreads + ", " + value);
 				System.out.println(nthreads + ", " + value);
 			}
 		}

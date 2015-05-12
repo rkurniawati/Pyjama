@@ -1,8 +1,8 @@
-/bin/
+bin/
 .project
 .class
 *~
-/JsonResult/
-/Report/
-/test/PyjamaCode/*.java
-/ScopeTable.txt
+JsonResult/
+Report/
+test/PyjamaCode/*.java
+ScopeTable.txt
