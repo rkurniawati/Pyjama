@@ -1,6 +1,5 @@
-
 import java.io.File;
-
+import pj.PyjamaToJavaParser;
 
 public class Generate {
 	
@@ -16,7 +15,7 @@ public class Generate {
 			if (envFlag.equalsIgnoreCase("A")) {
 				//PyjamaToAndroidParser.parse(start);
 			}else {
-				//PyjamaToJavaParser.parse(start); 
+				PyjamaToJavaParser.parse(start); 
 			}
 		} catch(Exception e) { 			
 			System.err.println("*** Failed to process: "+start.getName()+" ****"); 
