@@ -1,6 +1,7 @@
 bin/
 .project
 .class
+.settings
 *~
 JsonResult/
 Report/

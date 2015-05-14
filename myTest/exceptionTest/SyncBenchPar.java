@@ -19,14 +19,15 @@ public class SyncBenchPar {
 
     public static void main(String[] args) {{
         String fname = "hexa";
-        int iteration = 10;
+        int iteration = 15;
+        int warmup = 5;
         int maxthread = 16;
-        recordTimePar(fname, iteration, maxthread);
+        recordTimePar(fname, iteration, warmup, maxthread);
     }
     }
 
 
-    public static void recordTimePar(String fileName, int iter, int maxthreads) {{
+    public static void recordTimePar(String fileName, int iter, int warmup, int maxthreads) {{
         PrintWriter writer_pr = null;
         PrintWriter writer_ws = null;
         PrintWriter writer_bar = null;
@@ -38,59 +39,77 @@ public class SyncBenchPar {
             e.printStackTrace();
         }
         writer_pr.println("\"nthreads\", \"type\", \"time\"");
-        for (int nthreads = 2; nthreads <= maxthreads; nthreads++) {
+        for (int nthreads = 1; nthreads <= maxthreads; nthreads++) {
             for (int j = 0; j < iter; j++) {
                 double value = testpr_bare(nthreads);
-                writer_pr.println(nthreads + ", bare, " + value);
-                System.out.println(nthreads + ", bare, " + value);
+                if (j >= warmup) {
+                    writer_pr.println(nthreads + ",bare," + value);
+                    System.out.println(nthreads + ",bare," + value);
+                }
             }
             for (int j = 0; j < iter; j++) {
                 double value = testpr_guarding(nthreads);
-                writer_pr.println(nthreads + ", guarding, " + value);
-                System.out.println(nthreads + ", guarding, " + value);
+                if (j >= warmup) {
+                    writer_pr.println(nthreads + ",guarding," + value);
+                    System.out.println(nthreads + ",guarding," + value);
+                }
             }
             for (int j = 0; j < iter; j++) {
                 double value = testpr_checking(nthreads);
-                writer_pr.println(nthreads + ", checking, " + value);
-                System.out.println(nthreads + ", checking, " + value);
+                if (j >= warmup) {
+                    writer_pr.println(nthreads + ",checking," + value);
+                    System.out.println(nthreads + ",checking," + value);
+                }
             }
         }
         writer_pr.close();
         writer_ws.println("\"nthreads\", \"type\", \"time\"");
-        for (int nthreads = 2; nthreads <= maxthreads; nthreads++) {
+        for (int nthreads = 1; nthreads <= maxthreads; nthreads++) {
             for (int j = 0; j < iter; j++) {
-                double value = testfor_bare(64, nthreads);
-                writer_ws.println(nthreads + ", bare, " + value);
-                System.out.println(nthreads + ", bare, " + value);
+                double value = testfor_bare(16, nthreads);
+                if (j >= warmup) {
+                    writer_ws.println(nthreads + ",bare," + value);
+                    System.out.println(nthreads + ",bare," + value);
+                }
             }
             for (int j = 0; j < iter; j++) {
-                double value = testfor_guarding(64, nthreads);
-                writer_ws.println(nthreads + ", guarding, " + value);
-                System.out.println(nthreads + ", guarding, " + value);
+                double value = testfor_guarding(16, nthreads);
+                if (j >= warmup) {
+                    writer_ws.println(nthreads + ",guarding," + value);
+                    System.out.println(nthreads + ",guarding," + value);
+                }
             }
             for (int j = 0; j < iter; j++) {
-                double value = testfor_checking(64, nthreads);
-                writer_ws.println(nthreads + ", checking, " + value);
-                System.out.println(nthreads + ", checking, " + value);
+                double value = testfor_checking(16, nthreads);
+                if (j >= warmup) {
+                    writer_ws.println(nthreads + ",checking," + value);
+                    System.out.println(nthreads + ",checking," + value);
+                }
             }
         }
         writer_ws.close();
         writer_bar.println("\"nthreads\", \"type\", \"time\"");
-        for (int nthreads = 2; nthreads <= maxthreads; nthreads++) {
+        for (int nthreads = 1; nthreads <= maxthreads; nthreads++) {
             for (int j = 0; j < iter; j++) {
-                double value = testbar_bare(5, nthreads);
-                writer_bar.println(nthreads + ", bare, " + value);
-                System.out.println(nthreads + ", bare, " + value);
+                double value = testbar_bare(1, nthreads);
+                if (j >= warmup) {
+                    writer_bar.println(nthreads + ",bare," + value);
+                    System.out.println(nthreads + ",bare," + value);
+                }
             }
             for (int j = 0; j < iter; j++) {
-                double value = testbar_guarding(5, nthreads);
-                writer_bar.println(nthreads + ", guarding, " + value);
-                System.out.println(nthreads + ", guarding, " + value);
+                double value = testbar_guarding(1, nthreads);
+                if (j >= warmup) {
+                    writer_bar.println(nthreads + ",guarding," + value);
+                    System.out.println(nthreads + ",guarding," + value);
+                }
             }
             for (int j = 0; j < iter; j++) {
-                double value = testbar_checking(5, nthreads);
-                writer_bar.println(nthreads + ", checking, " + value);
-                System.out.println(nthreads + ", checking, " + value);
+                double value = testbar_checking(1, nthreads);
+                if (j >= warmup) {
+                    writer_bar.println(nthreads + ",checking," + value);
+                    System.out.println(nthreads + ",checking," + value);
+                }
             }
         }
         writer_bar.close();
@@ -167,7 +186,7 @@ static class _OMP_ParallelRegion_0{
                 try {
                     /****User Code BEGIN***/
                     {
-                        delay(1);
+                        delay(10);
                     }
                     /****User Code END***/
                     //BEGIN reduction procedure
@@ -277,7 +296,7 @@ static class _OMP_ParallelRegion_1{
                 try {
                     /****User Code BEGIN***/
                     {
-                        delay(1);
+                        delay(10);
                     }
                     /****User Code END***/
                     //BEGIN reduction procedure
@@ -387,7 +406,7 @@ static class _OMP_ParallelRegion_2{
                 try {
                     /****User Code BEGIN***/
                     {
-                        delay(1);
+                        delay(10);
                         PjRuntime.checkParallelCancellationPoint();
 
                     }
@@ -524,7 +543,7 @@ static class _OMP_ParallelRegion_3{
                         for (OMP_local_iterator=OMP_Chunk_Starting_point; OMP_local_iterator<OMP_Chunk_Starting_point+OMP_Default_chunkSize_autoGenerated && OMP_Default_chunkSize_autoGenerated>0; ++OMP_local_iterator) {
                             i = 0 + OMP_local_iterator * (1);
                             {
-                                delay(1);
+                                delay(10);
                             }if (OMP_end == OMP_local_iterator) {
                                 //BEGIN lastprivate variables value set
                                 //END lastprivate variables value set
@@ -678,7 +697,7 @@ static class _OMP_ParallelRegion_4{
                         for (OMP_local_iterator=OMP_Chunk_Starting_point; OMP_local_iterator<OMP_Chunk_Starting_point+OMP_Default_chunkSize_autoGenerated && OMP_Default_chunkSize_autoGenerated>0; ++OMP_local_iterator) {
                             i = 0 + OMP_local_iterator * (1);
                             {
-                                delay(1);
+                                delay(10);
                             }if (OMP_end == OMP_local_iterator) {
                                 //BEGIN lastprivate variables value set
                                 //END lastprivate variables value set
@@ -832,7 +851,7 @@ static class _OMP_ParallelRegion_5{
                         for (OMP_local_iterator=OMP_Chunk_Starting_point; OMP_local_iterator<OMP_Chunk_Starting_point+OMP_Default_chunkSize_autoGenerated && OMP_Default_chunkSize_autoGenerated>0; ++OMP_local_iterator) {
                             i = 0 + OMP_local_iterator * (1);
                             {
-                                delay(1);
+                                delay(10);
                                 PjRuntime.checkParallelCancellationPoint();
 
                             }if (OMP_end == OMP_local_iterator) {
@@ -961,7 +980,7 @@ static class _OMP_ParallelRegion_6{
                     /****User Code BEGIN***/
                     {
                         for (int j = 0; j < barrierNum; j++) {
-                            delay(1);
+                            delay(10);
                             PjRuntime.setBarrier();
 
                         }
@@ -1080,7 +1099,7 @@ static class _OMP_ParallelRegion_7{
                     /****User Code BEGIN***/
                     {
                         for (int j = 0; j < barrierNum; j++) {
-                            delay(1);
+                            delay(10);
                             PjRuntime.setBarrier();
 
                         }
@@ -1199,7 +1218,7 @@ static class _OMP_ParallelRegion_8{
                     /****User Code BEGIN***/
                     {
                         for (int j = 0; j < barrierNum; j++) {
-                            delay(1);
+                            delay(10);
                             PjRuntime.setBarrier();
 
                             PjRuntime.checkParallelCancellationPoint();

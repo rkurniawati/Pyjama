@@ -7,16 +7,19 @@ public class SyncBenchSeq {
 	
 	public static void main(String[] args) {
         String fname = "hexa";
-        int iteration = 10;
+        int iteration = 15;
+        int warmup = 5;
         int maxthread = 16;
-        recordTimeSeq(fname, iteration, maxthread);
+        recordTimeSeq(fname, iteration, warmup, maxthread);
     
     }
 
-	public static void recordTimeSeq(String fileName, int iter, int maxthread) {
+	public static void recordTimeSeq(String fileName, int iter, int warmup, int maxthread) {
 		PrintWriter writer_pr = null;
 		PrintWriter writer_ws = null;
 		PrintWriter writer_bar = null;
+		
+		int nthreads = 1;
 
 		try {
 			writer_pr = new PrintWriter("./" + fileName + "_SEQ_PR" + ".csv", "UTF-8");
@@ -27,31 +30,33 @@ public class SyncBenchSeq {
 		}
 		/*************************************/
 		writer_pr.println("\"nthreads\",\"time\"");
-		for (int nthreads = 1; nthreads <= maxthread; nthreads++) {
 			for (int j=0; j<iter; j++) {
 				double value = testpr(nthreads);
-				writer_pr.println(nthreads + ", " + value);
-				System.out.println(nthreads + ", " + value);
+				if (j >= warmup) {
+					writer_pr.println(nthreads + ", " + value);
+					System.out.println(nthreads + ", " + value);
+				}
 			}
-			
-		}
 		writer_pr.close();
 		/*************************************/
+		writer_bar.println("\"time\"");
 		for (int j = 0; j < iter; j++) {
-			double value = testfor(64);
-			writer_ws.println(value);
-			System.out.println(value);
+			double value = testfor(16);
+			if (j >= warmup) {
+				writer_ws.println(value);
+				System.out.println(value);
+			}
 		}
 		writer_ws.close();
 		/*************************************/
 		writer_bar.println("\"nthreads\",\"time\"");
-		for (int nthreads = 1; nthreads <= maxthread; nthreads++) {
 			for (int j=0; j<iter; j++) {
-				double value = testbar(nthreads, 5);
-				writer_bar.println(nthreads + ", " + value);
-				System.out.println(nthreads + ", " + value);
+				double value = testbar(nthreads, 1);
+				if (j >= warmup) {
+					writer_bar.println(nthreads + ", " + value);
+					System.out.println(nthreads + ", " + value);
+				}
 			}
-		}
 		writer_bar.close();
 	}
 	
@@ -62,7 +67,7 @@ public class SyncBenchSeq {
 	    for (int i = 1; i <= nthreads; i++) {
 	    //#omp parallel
 		{
-			    delay(1);	
+			    delay(10);	
 		}
 	    }
 	    end = System.nanoTime() - start;
@@ -75,7 +80,7 @@ public class SyncBenchSeq {
 	    long start = System.nanoTime();
 	    //#omp parallel for num_threads(nthreads)
 		for (int i = 0; i < workload; i++) {
-			 delay(1);
+			 delay(10);
 		}
 	    end = System.nanoTime() - start;
         return (double) (end) / 1000000;
@@ -90,7 +95,7 @@ public class SyncBenchSeq {
 	    //#omp parallel shared(barrierNum)
 	    {
 		    for (int j = 0; j < barrierNum; j++) {
-		        delay(1);
+		        delay(10);
 	            //#omp barrier
 		    }
 	    }
