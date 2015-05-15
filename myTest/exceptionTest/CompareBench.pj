@@ -4,10 +4,11 @@ import pj.*;
 import java.io.PrintWriter;
 
 public class CompareBench{
-	public static void main (String[] args) {
-       	String fname = "default";
-		int iteration = 1000;
-		int threadnum = 4; 
+	    public static void main(String[] args) {
+        String fname = "hexa";
+        int iteration = 1100;
+        int warmup = 100;
+        int maxthread = 16;
         if (args.length > 0) {
             if (null != args[0]) {
                 fname = args[0];
@@ -16,48 +17,65 @@ public class CompareBench{
                 iteration = Integer.parseInt(args[1]);
             }
             if (args.length > 2 && null != args[2]) {
-                threadnum = Integer.parseInt(args[2]);
+            	maxthread = Integer.parseInt(args[2]);
             }
         }
-		recordTime(fname, iteration, threadnum);
-	}
+        recordTime(fname, iteration, warmup, maxthread);
+    }
+    
 
-	public static void recordTime(String fileName, int n, int num) {
-		PrintWriter writer_new = null;
-        PrintWriter writer_old = null;
-		try {
-			writer_new = new PrintWriter("./" + fileName + "_new_t" + Integer.toString(num) + ".txt", "UTF-8");
-            writer_old = new PrintWriter("./" + fileName + "_old_t" + Integer.toString(num) + ".txt", "UTF-8");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
-        //warmup n/10 times
-        for (int i=0; i<(n/10); i++) {
-			double value = test_old(num);
-		}
-        //OLD
-		for (int i=0; i<n; i++) {
-			double value = test_old(num);
-			writer_old.println(value);
-		}
-		writer_old.close();
-
-        //warmup n/10 times
-        for (int i=0; i<(n/10); i++) {
-			double value = test_new(num);
-		}
-        //NEW
-		for (int i=0; i<n; i++) {
-			double value = test_new(num);
-			writer_new.println(value);
-		}
-		writer_new.close();
-
-	}
+    public static void recordTime(String fileName, int iter, int warmup, int maxthreads) {
+        PrintWriter writer_pr = null;
+        PrintWriter writer_ws = null;
+        try {
+            writer_pr = new PrintWriter("./" + fileName + "COMP_PR.txt", "UTF-8");
+            writer_ws = new PrintWriter("./" + fileName + "COMP_WS.txt", "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*************************************/
+        writer_pr.println("\"nthreads\",\"type\",\"time\"");
+        for (int nthreads = 1; nthreads <= maxthreads; nthreads++) {
+            for (int j = 0; j < iter; j++) {
+                double value = test_old_pr(nthreads);
+                if (j >= warmup) {
+                    writer_pr.println(nthreads + ",old," + value);
+                    System.out.println(nthreads + ",old," + value);
+                }
+            }
+            for (int j = 0; j < iter; j++) {
+                double value = test_new_pr(nthreads);
+                if (j >= warmup) {
+                    writer_pr.println(nthreads + ",new," + value);
+                    System.out.println(nthreads + ",new," + value);
+                }
+            }
+        }
+        writer_pr.close();
+        /*************************************/
+        writer_ws.println("\"nthreads\",\"type\",\"time\"");
+        for (int nthreads = 1; nthreads <= maxthreads; nthreads++) {
+            for (int j = 0; j < iter; j++) {
+                double value = test_old_ws(nthreads);
+                if (j >= warmup) {
+                	writer_ws.println(nthreads + ",old," + value);
+                    System.out.println(nthreads + ",old," + value);
+                }
+            }
+            for (int j = 0; j < iter; j++) {
+                double value = test_new_ws(nthreads);
+                if (j >= warmup) {
+                	writer_ws.println(nthreads + ",new," + value);
+                    System.out.println(nthreads + ",new," + value);
+                }
+            }
+        }
+        writer_ws.close();
+    }
 	
-	// souround parallel region with try-catch block
-	public static double test_new(int num) {
+	// souround parallel region with try-catch block (omp parallel)
+	public static double test_new_pr(int num) {
 		long end = 0;
 		long start = System.nanoTime();
 		try {
@@ -80,14 +98,72 @@ public class CompareBench{
 		return (double)(end)/1000000; //nanoseconds-> microseconds-> miliseconds
 	}
 
-//does not handle locally, stop entire parallel region, using conventional programming style
-	public static double test_old(int num) {
+//does not handle locally, stop entire parallel region, using conventional programming style (omp parallel)
+	public static double test_old_pr(int num) {
 		RuntimeException re = new RuntimeException("null");
 		RuntimeException reNull = re;
 		long end = 0;
     	long start = System.nanoTime();
     	Pyjama.omp_set_num_threads(num);
 		//#omp parallel shared(re, start) 
+		{
+			try{
+				if (Pyjama.omp_get_thread_num() == 1) {
+	                start = System.nanoTime();
+					re = new RuntimeException("A thread throws an exception");
+				}
+			}catch (RuntimeException e){
+				//#omp critical 
+				{
+					re = e;
+					//#omp cancel parallel global
+				} 
+			}	
+				//#omp barrier
+				System.out.println("second stage");
+		}
+
+		if (re != reNull) {
+			System.out.println("Old Handling thread outside parallel region " + re);
+		}
+		end = System.nanoTime()-start;
+		return (double)(end)/1000000; //nanoseconds-> microseconds-> miliseconds
+	}
+	//------------------------------------------------------------------------------------------------------
+	// souround parallel region with try-catch block (omp parallel for)
+	public static double test_new_ws(int num) {
+		long end = 0;
+		long start = System.nanoTime();
+		try {
+			Pyjama.omp_set_num_threads(num);
+			//#omp parallel for shared(start,num)
+			for(int i=0; i<num; i++) 
+			{
+				if (Pyjama.omp_get_thread_num() == 1) {
+					start = System.nanoTime();
+					throw new RuntimeException("A thread throws an exception");
+				} 
+				//#omp barrier
+				System.out.println("second stage");
+
+			}
+			
+		} catch (RuntimeException e) {
+			System.out.println("new Handling thread outside parallel region " + e);
+		} 
+		end = System.nanoTime()-start;
+		return (double)(end)/1000000; //nanoseconds-> microseconds-> miliseconds
+	}
+
+//does not handle locally, stop entire parallel region, using conventional programming style (omp parallel for)
+	public static double test_old_ws(int num) {
+		RuntimeException re = new RuntimeException("null");
+		RuntimeException reNull = re;
+		long end = 0;
+    	long start = System.nanoTime();
+    	Pyjama.omp_set_num_threads(num);
+		//#omp parallel shared(re, start, num)
+		for (int i=0; i<num; i++) 
 		{
 			try{
 				if (Pyjama.omp_get_thread_num() == 1) {

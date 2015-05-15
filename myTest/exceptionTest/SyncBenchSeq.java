@@ -39,7 +39,7 @@ public class SyncBenchSeq {
 			}
 		writer_pr.close();
 		/*************************************/
-		writer_bar.println("\"time\"");
+		writer_ws.println("\"time\"");
 		for (int j = 0; j < iter; j++) {
 			double value = testfor(16);
 			if (j >= warmup) {
