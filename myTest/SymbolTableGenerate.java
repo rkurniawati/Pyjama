@@ -60,9 +60,9 @@ public class SymbolTableGenerate {
 
 		DumpVisitor translationVisitor = new DumpVisitor();
 		ast.accept(translationVisitor, null);
-		String paraTaskCode = translationVisitor.getSource();
-		File paraTaskFile = new File(file.getParent(), file.getName().substring(0,file.getName().lastIndexOf("."))+".java"); 
-		writeToFile(paraTaskFile, paraTaskCode);
+		String javaCode = translationVisitor.getSource();
+		File javaCodeFile = new File(file.getParent(), file.getName().substring(0,file.getName().lastIndexOf("."))+".java"); 
+		writeToFile(javaCodeFile, javaCode);
 		showMsg("-----------------------------------------------------");
 		showMsg("Processing Done");
 	}

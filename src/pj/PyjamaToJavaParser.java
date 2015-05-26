@@ -67,7 +67,7 @@ public class PyjamaToJavaParser {
 		showMsg("Processing 2nd Phase: Symbol scoping visiting");
 		SymbolScopingVisitor symbolVisitor = new SymbolScopingVisitor();
 		ast.accept(symbolVisitor, null);
-		symbolVisitor.printSymbolTable(); //log info print
+		//symbolVisitor.printSymbolTable(); //log info print
 		SymbolTable symbolTable = symbolVisitor.getSymbolTable();
 		
 		showMsg("Processing 3rd Phase: Pyjama code translation visiting");
@@ -76,8 +76,8 @@ public class PyjamaToJavaParser {
 		
 		showMsg("Processing 4th Phase: Generating java code");
 		String targetCode = pyjamaVisitor.getSource();
-		File paraTaskFile = new File(file.getParent(), file.getName().substring(0,file.getName().lastIndexOf("."))+".java"); 
-		writeToFile(paraTaskFile, targetCode);
+		File javaCodeFile = new File(file.getParent(), file.getName().substring(0,file.getName().lastIndexOf("."))+".java"); 
+		writeToFile(javaCodeFile, targetCode);
 		showMsg("-----------------------------------------------------");
 		showMsg("Processing Done");
 	}
