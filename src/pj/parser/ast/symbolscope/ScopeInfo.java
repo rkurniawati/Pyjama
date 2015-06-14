@@ -68,6 +68,13 @@ public class ScopeInfo {
 		this.childernScopes.add(child);
 	}
 	
+	public Symbol getSymbolByName(String symbolName) {
+		if (!symbolsDeclared.containsKey(symbolName)) {
+			return this.getParent().getSymbolByName(symbolName);
+		}
+		return symbolsDeclared.get(symbolName);
+	}
+	
 	public void addSymbolUse(String symbolName, Symbol symbol) {
 		if (this.symbolsUsed.containsKey(symbolName)) {
 			return;

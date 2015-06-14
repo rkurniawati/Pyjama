@@ -13,10 +13,16 @@ package pj.parser.ast.visitor.constructwrappers;
  */
 
 import java.util.HashMap;
+
+import pi.ParIterator;
+import pi.ParIteratorFactory;
+import pj.PjRuntime;
+import pj.Pyjama;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.AssignExpr;
 import pj.parser.ast.expr.BinaryExpr;
 import pj.parser.ast.expr.Expression;
+import pj.parser.ast.expr.MethodCallExpr;
 import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
@@ -25,6 +31,9 @@ import pj.parser.ast.omp.OmpScheduleClause;
 import pj.parser.ast.stmt.ForStmt;
 import pj.parser.ast.stmt.ForeachStmt;
 import pj.parser.ast.stmt.Statement;
+import pj.parser.ast.symbolscope.ScopeInfo;
+import pj.parser.ast.symbolscope.Symbol;
+import pj.parser.ast.symbolscope.SymbolTable;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.SymbolSubstitutionVisitor;
@@ -34,6 +43,8 @@ import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 public class WorkShareBlockBuilder extends ConstructWrapper{
 	
+	enum LoopType {Numerical, Iterator};
+	
 	private SourcePrinter printer;
 	private PyjamaToJavaVisitor visitor;
 	private OmpForConstruct ompForConstruct;
@@ -41,6 +52,13 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	private int workshareId;
 	public HashMap<String, String> varSubstitutionSet = new HashMap<String, String>();
 	
+	//To indicate whether this loop is number based or iterator based
+	LoopType loopType = null;
+	
+	//This field is only used for iterator for-loops (The collection the iterator works on)
+	private Expression iterOnCollection  = null;
+	
+	//These fields are used for numerical for-loops 
 	private boolean iteratorDeclaration = false; // whether identifier is declared in for loop
 	private Expression identifier = null; //the flag variable name in for statement
 	private Expression init_expression = null; //the starting number of the iterations
@@ -79,23 +97,66 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	public String getSource()
 	{
 		this.parseForLoop();
-		this.generateMethod();
+		this.generateBlock();
 		return printer.getSource();
 	}
 	
 	private void parseForLoop() {
 		Statement forStmt = this.ompForConstruct.getForStmt();
-		
 		if (forStmt instanceof ForStmt) {
 			parseSimpleForStmt(forStmt);
 		} else if (forStmt instanceof ForeachStmt) {
-			throw new RuntimeException("Pyjama currently cannot support for-each loop parallisation");
+			parseForEachStmt(forStmt);
+		} else {
+			throw new RuntimeException("Encountering for-loop that is not an instance of ForStmt or ForeachStmt");
 		}
 	}
 	
+	private void parseForEachStmt(Statement forStmt) {
+		
+		ForeachStmt foreachStmt = (ForeachStmt) forStmt;
+		
+		forBody = foreachStmt.getBody();
+		
+		SymbolTable symbolTable = visitor.getSymbolTable();
+		ScopeInfo scope = symbolTable.getScopeOfNode(forStmt);
+		
+		Expression iterExpr = foreachStmt.getIterable();
+		
+		if (iterExpr instanceof NameExpr) {
+			Symbol symbol = scope.getSymbolByName(((NameExpr)iterExpr).getName());
+			String symbolName = symbol.getName();
+			String symbolDataType = symbol.getSymbolDataType();
+			if (symbolDataType.contains("[]")) {
+				//Iteration on an array, so this for-each is a numerical loop				
+				VariableDeclarationExpr varDeclExpr = foreachStmt.getVariable();
+				VariableDeclarator declarator = ((VariableDeclarationExpr)varDeclExpr).getVars().get(0);
+				//Iterator always declared in for-each title
+				iteratorDeclaration = true;
+				identifier = new NameExpr(declarator.getId().getName());
+				
+				/* The loop of for-each statement always starts from '0', end to "array.length", stride is "1"*/
+				init_expression = new NameExpr("0");
+				end_expression = new NameExpr(symbolName + ".length");
+				compareOperator = BinaryExpr.Operator.less;
+				stride = new NameExpr("1");
+
+				loopType = LoopType.Numerical;
+				return;
+			} else {
+				//This is a iterator loop
+				loopType = LoopType.Iterator;
+				// e.g. for(String x : list) 
+				this.iterOnCollection = iterExpr;
+				return;
+			}	
+		} else {
+			throw new RuntimeException("Pyjama cannot parse the for-each loop in omp for");
+		}
+	}
+		
 	private void parseSimpleForStmt(Statement forStmt) {
-		ForStmt forSimpleStmt = null;
-		forSimpleStmt = (ForStmt)forStmt;
+		ForStmt forSimpleStmt = (ForStmt)forStmt;
 		
 		forBody = forSimpleStmt.getBody();
 		
@@ -110,6 +171,27 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			init_expression = ((AssignExpr)firstInitExpr).getValue();
 		} else {
 			throw new RuntimeException("Pyjama cannot parse the init expression in omp for");
+		}
+		
+		
+		/*If in a simple for-loop, the second expression(compare expression) is a method call,
+		 * then we say this for-loop uses iterator, so don't parse it as an integer-based loop. 
+		 * (This may cause problem, but it's temporarily enough for Pyjama, 2015.6.14)
+		 */
+		if (forSimpleStmt.getCompare() instanceof MethodCallExpr) {
+			/*If in a standard for-loop, the second expression is a method call, such as 
+		 	 *=> for (Iterator<String> iter = list.iterator(); iter.hasNext();)
+		 	 *Then call this for-loop is an iterator for-loop 
+			 */
+			Expression hasNextExpr = forSimpleStmt.getCompare();
+			if (null == hasNextExpr) {
+				throw new RuntimeException("Pyjama cannot parse the iterator hasNext expression in omp for");
+			}
+			this.iterOnCollection = ((MethodCallExpr)init_expression).getScope();
+			loopType = LoopType.Iterator;
+			return;
+		} else {
+			loopType = LoopType.Numerical;
 		}
 		
 		BinaryExpr compareExpr = (BinaryExpr)forSimpleStmt.getCompare();
@@ -181,6 +263,76 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	}
 	
 	private void generateLoop() {
+		switch(this.loopType) {
+		case Numerical:
+			generateNumericalLoop();
+			break;
+		case Iterator:
+			generateIteratorLoop();
+			break;
+		}
+	}
+	
+	private void generateIteratorLoop() {
+
+		this.varSubstitution();
+		
+		OmpScheduleClause schClause = this.ompForConstruct.getScheduleClause();
+		//For iterators, we set default schedule type as dynamic, and default chunkSize is 1.
+		OmpScheduleClause.Type schType = OmpScheduleClause.Type.Dynamic;
+		Expression chunkSize = new NameExpr("1");
+		
+		if (null != schClause) {
+			schType = schClause.getScheduleType();
+			if (schClause.getChunkSize() != null) {
+				chunkSize = schClause.getChunkSize();
+			}
+		}
+		
+		String chunkSizeStr = chunkSize.toString();
+		String schTypeStr = null;
+		switch (schType) {
+		case Static:
+			schTypeStr = "STATIC";
+			break;
+		case Dynamic:
+			schTypeStr = "DYNAMIC";
+			break;
+		case Guided:
+			schTypeStr = "GUIDED";
+			break;
+		default:
+		}
+
+		/*
+		 * using Parallel Iterator to ensure thread-safety
+		 */
+		
+		/*
+		 * Master thread is responsible for creating Parallel Iterator
+		 * iter = ParIteratorFactory.createParIterator(list, this.OMP_threadNumber, ParIterator.Schedule.STATIC, 3);
+		 */
+		printer.printLn("if (0 == Pyjama.omp_get_thread_num()) {");
+		printer.indent();
+		printer.printLn("ParIterator<?> " + identifier + " = ParIteratorFactory.createParIterator("
+					+ this.iterOnCollection + ", Pyjama.omp_get_num_threads(), ParIterator.Schedule." 
+					+ schTypeStr + ","
+					+ chunkSizeStr + ");");
+		printer.unindent();
+		printer.printLn("}");
+		printer.printLn("PjRuntime.setBarrier();");
+		///////////
+		printer.printLn();
+		printer.printLn("while (" + identifier + ".hasNext()) {");
+		printer.indent();
+		//BEGIN user code 
+		this.forBody.accept(visitor, printer);
+		//END user code
+		printer.unindent();
+		printer.printLn("}");
+	}
+	
+	private void generateNumericalLoop() {
 		
 		this.varSubstitution();
 		
@@ -362,7 +514,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			
 		}	
 	}
-	private void generateMethod() {
+	private void generateBlock() {
 		printer.printLn();
 		printer.indent();printer.indent();printer.indent();printer.indent();
 		//////////////////////////////////////////////
