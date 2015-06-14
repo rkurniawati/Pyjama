@@ -5,7 +5,7 @@ import pj.*;
 import pj.pr.*;
 import pj.PjRuntime;
 import pj.Pyjama;
-import pi.ParIterator;
+import pi.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -251,12 +251,13 @@ static class _OMP_ParallelRegion_1{
                     PjRuntime.setBarrier();
                     //#END firstprivate lastprivate reduction variables defined and initialized here
                     try{
+                        ParIterator<String> x = null;
                         if (0 == Pyjama.omp_get_thread_num()) {
-                            ParIterator<?> null = ParIteratorFactory.createParIterator(list, Pyjama.omp_get_num_threads(), ParIterator.Schedule.DYNAMIC,1);
+                            x = ParIteratorFactory.createParIterator(list, Pyjama.omp_get_num_threads(), ParIterator.Schedule.DYNAMIC,1);
                         }
                         PjRuntime.setBarrier();
 
-                        while (null.hasNext()) {
+                        while (x.hasNext()) {
                             {
                                 System.out.println("Hello world from Pyjama foreach " + x);
                             }}
@@ -361,8 +362,9 @@ static class _OMP_ParallelRegion_2{
                     PjRuntime.setBarrier();
                     //#END firstprivate lastprivate reduction variables defined and initialized here
                     try{
+                        ParIterator<String> iter = null;
                         if (0 == Pyjama.omp_get_thread_num()) {
-                            ParIterator<?> iter = ParIteratorFactory.createParIterator(list, Pyjama.omp_get_num_threads(), ParIterator.Schedule.STATIC,3);
+                            iter = ParIteratorFactory.createParIterator(list, Pyjama.omp_get_num_threads(), ParIterator.Schedule.STATIC,3);
                         }
                         PjRuntime.setBarrier();
 

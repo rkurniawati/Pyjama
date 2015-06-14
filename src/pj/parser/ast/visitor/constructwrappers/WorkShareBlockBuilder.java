@@ -13,6 +13,8 @@ package pj.parser.ast.visitor.constructwrappers;
  */
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import pi.ParIterator;
 import pi.ParIteratorFactory;
@@ -34,6 +36,7 @@ import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.symbolscope.SymbolTable;
+import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.SymbolSubstitutionVisitor;
@@ -55,8 +58,9 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	//To indicate whether this loop is number based or iterator based
 	LoopType loopType = null;
 	
-	//This field is only used for iterator for-loops (The collection the iterator works on)
+	//These fields are only used for iterator for-loops (The collection the iterator works on)
 	private Expression iterOnCollection  = null;
+	private String iteratorType = null;
 	
 	//These fields are used for numerical for-loops 
 	private boolean iteratorDeclaration = false; // whether identifier is declared in for loop
@@ -122,20 +126,21 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		ScopeInfo scope = symbolTable.getScopeOfNode(forStmt);
 		
 		Expression iterExpr = foreachStmt.getIterable();
+		VariableDeclarationExpr varDeclExpr = foreachStmt.getVariable();
+		VariableDeclarator declarator = ((VariableDeclarationExpr)varDeclExpr).getVars().get(0);
+		//Iterator always declared in for-each title
+		iteratorDeclaration = true;
+		iteratorType = varDeclExpr.getType().toString();
+		identifier = new NameExpr(declarator.getId().getName());
 		
 		if (iterExpr instanceof NameExpr) {
 			Symbol symbol = scope.getSymbolByName(((NameExpr)iterExpr).getName());
 			String symbolName = symbol.getName();
 			String symbolDataType = symbol.getSymbolDataType();
 			if (symbolDataType.contains("[]")) {
-				//Iteration on an array, so this for-each is a numerical loop				
-				VariableDeclarationExpr varDeclExpr = foreachStmt.getVariable();
-				VariableDeclarator declarator = ((VariableDeclarationExpr)varDeclExpr).getVars().get(0);
-				//Iterator always declared in for-each title
-				iteratorDeclaration = true;
-				identifier = new NameExpr(declarator.getId().getName());
-				
-				/* The loop of for-each statement always starts from '0', end to "array.length", stride is "1"*/
+				/*Iteration on an array, so this for-each is a numerical loop				
+				 * The loop of for-each statement always starts from '0', 
+				 * end to "array.length", stride is "1"*/
 				init_expression = new NameExpr("0");
 				end_expression = new NameExpr(symbolName + ".length");
 				compareOperator = BinaryExpr.Operator.less;
@@ -164,9 +169,25 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		if (firstInitExpr instanceof VariableDeclarationExpr) {
 			VariableDeclarator declarator = ((VariableDeclarationExpr) firstInitExpr).getVars().get(0);
 			iteratorDeclaration = true;
+			String initType = ((VariableDeclarationExpr) firstInitExpr).getType().toString();
+			Pattern pattern = Pattern.compile("<(.*?)>");
+			Matcher matcher = pattern.matcher(initType);
+			if (matcher.find()) {
+				iteratorType = matcher.group(1);
+			}
 			identifier = new NameExpr(declarator.getId().getName());
 			init_expression = declarator.getInit();
 		} else if (firstInitExpr instanceof AssignExpr){
+			SymbolTable symbolTable = visitor.getSymbolTable();
+			ScopeInfo scope = symbolTable.getScopeOfNode(forStmt);
+			Symbol iteratorSymbol = scope.getSymbolByName(((AssignExpr)firstInitExpr).getTarget().toString());
+			String initType = iteratorSymbol.getSymbolDataType();
+			Pattern pattern = Pattern.compile("<(.*?)>");
+			Matcher matcher = pattern.matcher(initType);
+			if (matcher.find()) {
+				iteratorType = matcher.group(1);
+			}
+
 			identifier = ((AssignExpr)firstInitExpr).getTarget();
 			init_expression = ((AssignExpr)firstInitExpr).getValue();
 		} else {
@@ -312,9 +333,10 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		 * Master thread is responsible for creating Parallel Iterator
 		 * iter = ParIteratorFactory.createParIterator(list, this.OMP_threadNumber, ParIterator.Schedule.STATIC, 3);
 		 */
+		printer.printLn("ParIterator<" + this.iteratorType + "> " + identifier + " = null;");
 		printer.printLn("if (0 == Pyjama.omp_get_thread_num()) {");
 		printer.indent();
-		printer.printLn("ParIterator<?> " + identifier + " = ParIteratorFactory.createParIterator("
+		printer.printLn(identifier + " = ParIteratorFactory.createParIterator("
 					+ this.iterOnCollection + ", Pyjama.omp_get_num_threads(), ParIterator.Schedule." 
 					+ schTypeStr + ","
 					+ chunkSizeStr + ");");
