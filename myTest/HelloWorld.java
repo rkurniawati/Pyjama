@@ -33,8 +33,8 @@ public class HelloWorld {
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
-        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_0_in.OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
+        RuntimeException OMP_ee_0 = (RuntimeException) _OMP_ParallelRegion_0_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee_0 != null) {throw OMP_ee_0;}
         /*OpenMP Parallel region (#0) -- END */
 
         /*OpenMP Parallel region (#1) -- START */
@@ -48,8 +48,8 @@ public class HelloWorld {
         _OMP_ParallelRegion_1_in.runParallelCode();
         list = (ArrayList)outputlist__OMP_ParallelRegion_1.get("list");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_1);
-        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_1_in.OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
+        RuntimeException OMP_ee_1 = (RuntimeException) _OMP_ParallelRegion_1_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee_1 != null) {throw OMP_ee_1;}
         /*OpenMP Parallel region (#1) -- END */
 
         /*OpenMP Parallel region (#2) -- START */
@@ -63,8 +63,8 @@ public class HelloWorld {
         _OMP_ParallelRegion_2_in.runParallelCode();
         list = (ArrayList)outputlist__OMP_ParallelRegion_2.get("list");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_2);
-        RuntimeException OMP_ee = (RuntimeException) _OMP_ParallelRegion_2_in.OMP_CurrentParallelRegionExceptionSlot.get();
-        if (OMP_ee != null) {throw OMP_ee;}
+        RuntimeException OMP_ee_2 = (RuntimeException) _OMP_ParallelRegion_2_in.OMP_CurrentParallelRegionExceptionSlot.get();
+        if (OMP_ee_2 != null) {throw OMP_ee_2;}
         /*OpenMP Parallel region (#2) -- END */
 
         long duration = (System.currentTimeMillis() - startTime);
