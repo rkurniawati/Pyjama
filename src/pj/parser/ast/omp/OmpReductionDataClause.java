@@ -85,7 +85,7 @@ public class OmpReductionDataClause extends OmpDataClause{
 			boolean findVarName = false;
 			for (Symbol s: symbols) {
 				if (s.isVariableNameAs(varName)) {
-					String varType = s.getSymbolDataType();
+					String varType = s.getSymbolDataType().toString();
 					varTypes.put(varName, varType);
 					findVarName = true;
 					break;

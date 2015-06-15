@@ -136,7 +136,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		if (iterExpr instanceof NameExpr) {
 			Symbol symbol = scope.getSymbolByName(((NameExpr)iterExpr).getName());
 			String symbolName = symbol.getName();
-			String symbolDataType = symbol.getSymbolDataType();
+			String symbolDataType = symbol.getSymbolDataType().toString();
 			if (symbolDataType.contains("[]")) {
 				/*Iteration on an array, so this for-each is a numerical loop				
 				 * The loop of for-each statement always starts from '0', 
@@ -181,7 +181,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			SymbolTable symbolTable = visitor.getSymbolTable();
 			ScopeInfo scope = symbolTable.getScopeOfNode(forStmt);
 			Symbol iteratorSymbol = scope.getSymbolByName(((AssignExpr)firstInitExpr).getTarget().toString());
-			String initType = iteratorSymbol.getSymbolDataType();
+			String initType = iteratorSymbol.getSymbolDataType().toString();
 			Pattern pattern = Pattern.compile("<(.*?)>");
 			Matcher matcher = pattern.matcher(initType);
 			if (matcher.find()) {
@@ -336,13 +336,14 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		printer.printLn("ParIterator<" + this.iteratorType + "> " + identifier + " = null;");
 		printer.printLn("if (0 == Pyjama.omp_get_thread_num()) {");
 		printer.indent();
-		printer.printLn(identifier + " = ParIteratorFactory.createParIterator("
+		printer.printLn("OMP__ParIteratorCreator = " + "ParIteratorFactory.createParIterator("
 					+ this.iterOnCollection + ", Pyjama.omp_get_num_threads(), ParIterator.Schedule." 
-					+ schTypeStr + ","
+					+ schTypeStr + ", "
 					+ chunkSizeStr + ");");
 		printer.unindent();
 		printer.printLn("}");
 		printer.printLn("PjRuntime.setBarrier();");
+		printer.printLn(identifier + " = (ParIterator<" + this.iteratorType + ">)" + "OMP__ParIteratorCreator;");
 		///////////
 		printer.printLn();
 		printer.printLn("while (" + identifier + ".hasNext()) {");

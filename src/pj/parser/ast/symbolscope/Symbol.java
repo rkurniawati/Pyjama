@@ -1,9 +1,10 @@
 package pj.parser.ast.symbolscope;
 
+import pj.parser.ast.type.Type;
 
 public class Symbol {
 	
-	public static enum SymbolType {ClassMemberField, ClassMemberMethod, MethodParameter, ScopeLocalParameter};
+	public static enum SymbolType {Constructor, ClassMemberField, ClassMemberMethod, MethodParameter, ScopeLocalParameter};
 
 	private static int nextID = 0;
 	
@@ -20,7 +21,10 @@ public class Symbol {
 	private String name = null;
 	
 	//the data type of this symbol, e.g. int, double, Object, List...
-	private String dataType = null;
+	/* The data type of this symbol, in the form of Type class, not only a String. e.g. int, double, Object, ArrayList<E>...
+	 * this is mainly for the argument type of collections like HashMap<String, Integer>, ArrayList<Boolean>
+	 */
+	private Type dataType = null;
 	
 	//what the symbol is indicating for, a variable or a method name, etc.
 	private SymbolType symbolType  = null;
@@ -29,7 +33,7 @@ public class Symbol {
 	private boolean readonly; 
 	
 	
-	public Symbol(String name, ScopeInfo scope, String dataType, SymbolType symbolType) {
+	public Symbol(String name, ScopeInfo scope, Type dataType, SymbolType symbolType) {
 		this.id = nextID++;
 		this.name = name;
 		this.scope = scope;
@@ -46,7 +50,7 @@ public class Symbol {
 		return this.name;
 	}
 	
-	public String getSymbolDataType() {
+	public Type getSymbolDataType() {
 		return this.dataType;
 	}
 	

@@ -15,6 +15,7 @@ public class HelloWorld {
 		}
 
 		long startTime = System.currentTimeMillis();
+/*
 		//#omp parallel for 
 		for(int i=0; i<10; i++){
 			System.out.println("Hello world from Pyjama simple for " + i);
@@ -25,7 +26,7 @@ public class HelloWorld {
 			//SimulateWork.work(100);
 			System.out.println("Hello world from Pyjama foreach " + x);
 		}
-
+*/
 		//#omp parallel for shared(list) schedule(static,3)
 		for (Iterator<String> iter = list.iterator(); iter.hasNext(); ) {
 			String x = iter.next();

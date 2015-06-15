@@ -16,6 +16,7 @@ package pj.parser.ast.visitor.constructwrappers;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import pi.ParIterator;
 import pj.PjRuntime;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
@@ -99,6 +100,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ReentrantLock OMP_lock;");
+		printer.printLn("private ParIterator<?> OMP__ParIteratorCreator;");
 		printer.printLn("public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);");
 		printer.printLn();
 		//#BEGIN shared variables defined here

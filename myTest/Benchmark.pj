@@ -1,0 +1,208 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Scanner;
+
+import pj.*;
+
+public class Benchmark {
+
+	public static int SIZE = 128;
+	public static int WORK = 100;
+	public static double WORK_RANDOMNESS = 20.0; //the max amount of work to randomly add or subtract. 
+
+	public static void main(String[] arg){
+		// set up
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		int[] simpleArray = new int[SIZE];
+
+		for(int i=0; i<SIZE; i++){
+			int work = WORK + (int)(Math.random()*WORK_RANDOMNESS*2 - WORK_RANDOMNESS);
+			list.add(work);
+			simpleArray[i] = work;
+		}
+
+		while(true){
+			//get user selection
+			int selection = -1;
+		
+			while(selection == -1){
+				System.out.println("Select what to run and press enter:");
+				System.out.println("1: omp simple for loop ");
+				System.out.println("2: sequential simple for loop ");
+				System.out.println("3: omp foreach loop array");
+				System.out.println("4: omp foreach loop list");
+				System.out.println("5: sequential foreach loop array");
+				System.out.println("6: omp iterator loop list");
+				System.out.println("7: sequential iterator loop list");
+				System.out.println("0: EXIT");
+				int numberPressed = PromptForUserSelection();
+				if(numberPressed >= 0 || numberPressed <= 5){
+					selection = numberPressed;
+				}
+			}
+
+			if(selection == 0){
+				return;
+			}else if(selection == 1){
+				// simple loop with omp
+				pressAnyKeyToContinue("starting simple loop array");
+				doSimpleLoopParallel(simpleArray);
+			}else if(selection == 2) {
+				// sequential simple for loop
+				pressAnyKeyToContinue("starting sequential simple loop array");
+				doSimpleLoopSequential(simpleArray);
+			}else if(selection == 3){
+				// for each loop with omp using array
+				pressAnyKeyToContinue("starting foreach array");
+				doForEachLoopParallel(simpleArray);
+			}else if(selection == 4){
+				// for each loop with omp using list
+				pressAnyKeyToContinue("starting foreach list");
+				doForEachLoopParallel(list);
+			}else if(selection == 5){
+				// sequential
+				pressAnyKeyToContinue("starting sequential foreach array");
+				doForEachLoopArraySequential(simpleArray);
+			}else if(selection == 6){
+				// iterator loop with omp using list
+				pressAnyKeyToContinue("starting iterator list");
+				doIteratorLoopParallel(list);
+			}else if(selection == 7){
+				// sequential iterator loop using list
+				pressAnyKeyToContinue("starting sequential iterator list");
+				doIteratorLoopSequential(list);
+			}
+		}
+	}
+
+	private static void doSimpleLoopParallel(int[] simpleArray){
+		long startTime = System.currentTimeMillis();
+
+		//#omp parallel for shared(simpleArray)
+		for(int i=0;i<SIZE;i++) {
+			SimulateWork.work(simpleArray[i]);
+		}
+
+		long duration = (System.currentTimeMillis() - startTime);
+		double seconds = duration/1000.0;
+		System.out.print("simple loop array ");
+		System.out.println("done " + seconds + " seconds");
+	}
+
+	private static void doSimpleLoopSequential(int[] simpleArray){
+		long startTime = System.currentTimeMillis();
+
+		// #omp parallel for shared(simpleArray)
+		for(int i=0;i<SIZE;i++) {
+			SimulateWork.work(simpleArray[i]);
+		}
+
+		long duration = (System.currentTimeMillis() - startTime);
+		double seconds = duration/1000.0;
+		System.out.print("simple loop array sequential");
+		System.out.println("done " + seconds + " seconds");
+	}
+
+	private static void doForEachLoopParallel(int[] simpleArray){
+		long startTime = System.currentTimeMillis();
+
+		//#omp parallel for shared(simpleArray)
+		for(int amount: simpleArray) {
+			SimulateWork.work(amount);
+		}
+
+		long duration = (System.currentTimeMillis() - startTime);
+		double seconds = duration/1000.0;
+		//print stats
+		System.out.print("foreach array ");
+		System.out.println("done " + seconds + " seconds");
+	}
+
+	private static void doForEachLoopParallel(ArrayList<Integer> list){
+		long startTime = System.currentTimeMillis();
+
+		//#omp parallel for shared(list)
+		for(int amount: list) {
+			SimulateWork.work(amount);
+		}
+
+		long duration = (System.currentTimeMillis() - startTime);
+		double seconds = duration/1000.0;
+		//print stats
+		System.out.print("foreach list ");
+		System.out.println("done " + seconds + " seconds");
+	}
+
+	private static void doIteratorLoopParallel(ArrayList<Integer> list){
+		long startTime = System.currentTimeMillis();
+
+		//#omp parallel for shared(list) schedule(dynamic,2)
+		for (Iterator<Integer> iter = list.iterator(); iter.hasNext(); ) {
+			SimulateWork.work(iter.next());
+		}
+
+		long duration = (System.currentTimeMillis() - startTime);
+		double seconds = duration/1000.0;
+		//print stats
+		System.out.print("iterator list ");
+		System.out.println("done " + seconds + " seconds");
+	}
+
+	private static void doIteratorLoopSequential(ArrayList<Integer> list){
+		long startTime = System.currentTimeMillis();
+
+		// #omp parallel for shared(list) schedule(dynamic,2)
+		for (Iterator<Integer> iter = list.iterator(); iter.hasNext(); ) {
+			SimulateWork.work(iter.next());
+		}
+
+		long duration = (System.currentTimeMillis() - startTime);
+		double seconds = duration/1000.0;
+		//print stats
+		System.out.print("iterator list sequential");
+		System.out.println("done " + seconds + " seconds");
+	}
+
+	private static void doForEachLoopArraySequential(int[] simpleArray){
+		long startTime = System.currentTimeMillis();
+
+		// #omp parallel for shared(simpleArray)
+		for(int amount: simpleArray) {
+			SimulateWork.work(amount);
+		}
+
+		long duration = (System.currentTimeMillis() - startTime);
+		double seconds = duration/1000.0;
+		//print stats
+		System.out.print("foreach array sequential ");
+		System.out.println("done " + seconds + " seconds");
+	}
+
+	private static void pressAnyKeyToContinue(String msg){ 
+		System.out.println(msg);
+        System.out.println("Press enter to continue...");
+        Scanner keyboard = new Scanner(System.in);
+        keyboard.nextLine();
+        System.out.println("Starting...");
+	}
+
+	private static int PromptForUserSelection(){ 
+		String input = "";
+		int selection;
+
+		while(true){
+			System.out.println("Selection: ");
+			Scanner keyboard = new Scanner(System.in);
+			input = keyboard.nextLine();
+			try{
+				selection = Integer.parseInt(input);
+				return selection;
+			}catch(NumberFormatException e){
+				System.out.println("Invalid selection...");
+			}
+		}
+	}
+
+}
+
+

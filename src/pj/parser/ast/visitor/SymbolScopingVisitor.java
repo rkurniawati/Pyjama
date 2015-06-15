@@ -53,9 +53,8 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 	public void printSymbolTable() {
 		this.symbolTable.printOut();
 	}
-	////////////////////////Normal Scope visitings//////////////////////////////////
-	private byte scopeVisiting;
 	
+	////////////////////////Normal Scope visitings//////////////////////////////////
 	public String visit(BlockStmt n, Object arg) {
 		this.symbolTable.enterNewScope(n, "normalBlock", ScopeInfo.Type.StatementScope);
 		if (n.getStmts() != null) {
@@ -107,9 +106,9 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		 * Firstly add method name symbol to parent scope
 		 */
 		Type type = n.getType();
-		String methodReturnType = type.accept(this, arg);
+		//String methodReturnType = type.accept(this, arg);
 		String methodName = n.getName();
-		Symbol symbol = new Symbol(methodName,  this.symbolTable.getCurrentScope(), methodReturnType, SymbolType.ClassMemberField);
+		Symbol symbol = new Symbol(methodName,  this.symbolTable.getCurrentScope(), type, SymbolType.ClassMemberField);
 		this.symbolTable.addSymbolDeclaration(methodName, symbol);
 		/*
 		 * secondly enter new scope which this method holds
@@ -139,9 +138,8 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		/*
 		 * Firstly add method name symbol to parent scope
 		 */
-		String ReturnType = "Constructor";
 		String constructorName = n.getName();
-		Symbol symbol = new Symbol(constructorName,  this.symbolTable.getCurrentScope(), ReturnType, SymbolType.ClassMemberField);
+		Symbol symbol = new Symbol(constructorName,  this.symbolTable.getCurrentScope(), null, SymbolType.Constructor);
 		this.symbolTable.addSymbolDeclaration(constructorName, symbol);
 		/*
 		 * secondly enter new scope which this method holds
@@ -292,7 +290,6 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
         return null;
     }
     
-    private byte symbolVisiting;
 	////////////////////Symbol visiting//////////////////////////////
 	
     public String visit(NameExpr n, Object arg) {
@@ -313,20 +310,20 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 	public String visit(Parameter n, Object arg) {
 		String varName = n.getId().getName();
 		Type varType = n.getType();
-		String typeName = varType.accept(this, arg);
-		Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), typeName, SymbolType.MethodParameter);
+		//String typeName = varType.accept(this, arg);
+		Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), varType, SymbolType.MethodParameter);
 		this.symbolTable.addSymbolDeclaration(varName, symbol);
 		return null;
 	}
 	
 	public String visit(VariableDeclarationExpr n, Object arg) {
 		Type varType = n.getType();
-		String typeName = varType.accept(this, arg);
+		//String typeName = varType.accept(this, arg);
 
 		for (Iterator<VariableDeclarator> i = n.getVars().iterator(); i.hasNext();) {
 			VariableDeclarator v = i.next();
 			String varName = v.getId().getName();
-			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), typeName, SymbolType.ScopeLocalParameter);
+			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), varType, SymbolType.ScopeLocalParameter);
 			this.symbolTable.addSymbolDeclaration(varName, symbol);
 			if (null != v.getInit()) {
 				v.getInit().accept(this, arg);
@@ -337,12 +334,12 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 
 	public String visit(FieldDeclaration n, Object arg) {
 		Type varType = n.getType();
-		String typeName = varType.accept(this, arg);
+		//String typeName = varType.accept(this, arg);
 		
 		for (Iterator<VariableDeclarator> i = n.getVariables().iterator(); i.hasNext();) {
 			VariableDeclarator var = i.next();
 			String varName = var.getId().getName();
-			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), typeName, SymbolType.ClassMemberField);
+			Symbol symbol = new Symbol(varName,  this.symbolTable.getCurrentScope(), varType, SymbolType.ClassMemberField);
 			this.symbolTable.addSymbolDeclaration(varName, symbol);
 			if (null != var.getInit()) {
 				var.getInit().accept(this, arg);
@@ -351,7 +348,6 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		return null;
 	}
 	////////////////////////Type visiting///////////////////////////////////////////
-	private byte dataTypeVisiting;
 	
     public String visit(ClassOrInterfaceType n, Object arg) {
         if (n.getScope() != null) {
@@ -398,7 +394,6 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
     	return "?";
     }
 	////////////////////////OpenMP visiting/////////////////////////////////////////
-	private byte openmpVisiting;
 	
 	public String visit(OmpParallelConstruct n, Object arg) {
 		this.symbolTable.enterNewScope(n, "OmpParallel", ScopeInfo.Type.OpenMPConstructScope);

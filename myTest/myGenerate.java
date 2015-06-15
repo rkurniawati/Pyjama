@@ -6,6 +6,7 @@ public class myGenerate extends Object{
 		// TODO Auto-generated method stub
 		try {
 			pj.PyjamaToJavaParser.parse(new File("myTest/HelloWorld.pj"));
+			pj.PyjamaToJavaParser.parse(new File("myTest/Benchmark.pj"));
 			//pj.PyjamaToJavaParser.parse(new File("myTest/squares/Squares.pj"));
 			//pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/CompareBench.pj"));
 			//pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/HexaBench.pj"));

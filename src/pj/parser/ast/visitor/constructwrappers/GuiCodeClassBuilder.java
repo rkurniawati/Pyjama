@@ -142,7 +142,7 @@ public class GuiCodeClassBuilder extends ConstructWrapper {
 			String varType = null;
 			for(Symbol s: symbolDeclarations) {
 				if (varName.equals(s.getName())) {
-					varType = s.getSymbolDataType();
+					varType = s.getSymbolDataType().toString();
 					break;
 				}
 			}
