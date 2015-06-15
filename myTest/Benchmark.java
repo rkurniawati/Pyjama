@@ -474,13 +474,13 @@ static class _OMP_ParallelRegion_2{
                     PjRuntime.setBarrier();
                     //#END firstprivate lastprivate reduction variables defined and initialized here
                     try{
-                        int amount = null;
-                        ParIterator<int> amount_OMP_ParIterator = null;
+                        int amount = 0;
+                        ParIterator<Integer> amount_OMP_ParIterator = null;
                         if (0 == Pyjama.omp_get_thread_num()) {
                             OMP__ParIteratorCreator = ParIteratorFactory.createParIterator(list, Pyjama.omp_get_num_threads(), ParIterator.Schedule.DYNAMIC, 1);
                         }
                         PjRuntime.setBarrier();
-                        amount_OMP_ParIterator = (ParIterator<int>)OMP__ParIteratorCreator;
+                        amount_OMP_ParIterator = (ParIterator<Integer>)OMP__ParIteratorCreator;
                         while (amount_OMP_ParIterator.hasNext()) {
                             amount = amount_OMP_ParIterator.next();
                             {
@@ -614,7 +614,6 @@ static class _OMP_ParallelRegion_3{
                     PjRuntime.setBarrier();
                     //#END firstprivate lastprivate reduction variables defined and initialized here
                     try{
-                        
                         ParIterator<Integer> iter = null;
                         if (0 == Pyjama.omp_get_thread_num()) {
                             OMP__ParIteratorCreator = ParIteratorFactory.createParIterator(list, Pyjama.omp_get_num_threads(), ParIterator.Schedule.DYNAMIC, 2);

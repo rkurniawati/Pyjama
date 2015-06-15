@@ -368,7 +368,6 @@ static class _OMP_ParallelRegion_2{
                     PjRuntime.setBarrier();
                     //#END firstprivate lastprivate reduction variables defined and initialized here
                     try{
-                        
                         ParIterator<String> iter = null;
                         if (0 == Pyjama.omp_get_thread_num()) {
                             OMP__ParIteratorCreator = ParIteratorFactory.createParIterator(list, Pyjama.omp_get_num_threads(), ParIterator.Schedule.STATIC, 3);

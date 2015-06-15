@@ -15,6 +15,7 @@ package pj.parser.ast.visitor.constructwrappers;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.AssignExpr;
 import pj.parser.ast.expr.BinaryExpr;
@@ -34,6 +35,7 @@ import pj.parser.ast.symbolscope.SymbolTable;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.SymbolSubstitutionVisitor;
+import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 
@@ -338,8 +340,17 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		 * Master thread is responsible for creating Parallel Iterator
 		 * iter = ParIteratorFactory.createParIterator(list, this.OMP_threadNumber, ParIterator.Schedule.STATIC, 3);
 		 */
-		printer.printLn((this.loopStyle == LoopStyle.Foreach && this.iteratorDeclaration) ? this.iteratorType + " " + identifier + " = null;" : "");
-		printer.printLn("ParIterator<" + this.iteratorType + "> " + identifier + ParIteratorSufix + " = null;");
+		boolean iteratorIsPrimitiveType = false;
+		if (this.loopStyle == LoopStyle.Foreach && this.iteratorDeclaration) {
+			iteratorIsPrimitiveType = DataClauseHandlerUtils.isPrimitiveType(iteratorType);
+			printer.printLn(this.iteratorType + " " + identifier + " = " +
+							(iteratorIsPrimitiveType ? 
+							 DataClauseHandlerUtils.getDefaultValuesForPrimitiveType(iteratorType)
+							 :"null") + ";");
+		}
+		printer.printLn("ParIterator<"  
+						+ (iteratorIsPrimitiveType ? DataClauseHandlerUtils.autoBox(iteratorType): this.iteratorType) 
+						+ "> " + identifier + ParIteratorSufix + " = null;");
 		printer.printLn("if (0 == Pyjama.omp_get_thread_num()) {");
 		printer.indent();
 		printer.printLn("OMP__ParIteratorCreator = " + "ParIteratorFactory.createParIterator("
@@ -350,7 +361,9 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		printer.printLn("}");
 		printer.printLn("PjRuntime.setBarrier();");
 		///////////
-		printer.printLn(identifier + ParIteratorSufix +" = (ParIterator<" + this.iteratorType + ">)" + "OMP__ParIteratorCreator;");
+		printer.printLn(identifier + ParIteratorSufix +" = (ParIterator<" 
+						+ (iteratorIsPrimitiveType ? DataClauseHandlerUtils.autoBox(iteratorType): this.iteratorType) 
+						+ ">)" + "OMP__ParIteratorCreator;");
 		printer.printLn("while (" + identifier + ParIteratorSufix + ".hasNext()) {");
 		printer.indent();
 		if (this.loopStyle == LoopStyle.Foreach) {
