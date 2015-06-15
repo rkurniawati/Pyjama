@@ -474,17 +474,19 @@ static class _OMP_ParallelRegion_2{
                     PjRuntime.setBarrier();
                     //#END firstprivate lastprivate reduction variables defined and initialized here
                     try{
-                        ParIterator<int> amount = null;
+                        int amount = null;
+                        ParIterator<int> amount_OMP_ParIterator = null;
                         if (0 == Pyjama.omp_get_thread_num()) {
                             OMP__ParIteratorCreator = ParIteratorFactory.createParIterator(list, Pyjama.omp_get_num_threads(), ParIterator.Schedule.DYNAMIC, 1);
                         }
                         PjRuntime.setBarrier();
-                        amount = (ParIterator<int>)OMP__ParIteratorCreator;
-
-                        while (amount.hasNext()) {
+                        amount_OMP_ParIterator = (ParIterator<int>)OMP__ParIteratorCreator;
+                        while (amount_OMP_ParIterator.hasNext()) {
+                            amount = amount_OMP_ParIterator.next();
                             {
                                 SimulateWork.work(amount);
-                            }}
+                            }
+                        }
                     } catch (pj.pr.exceptions.OmpWorksharingLocalCancellationException wse){
                     } catch (Exception e){throw e;}
                     //BEGIN  reduction
@@ -612,17 +614,18 @@ static class _OMP_ParallelRegion_3{
                     PjRuntime.setBarrier();
                     //#END firstprivate lastprivate reduction variables defined and initialized here
                     try{
+                        
                         ParIterator<Integer> iter = null;
                         if (0 == Pyjama.omp_get_thread_num()) {
                             OMP__ParIteratorCreator = ParIteratorFactory.createParIterator(list, Pyjama.omp_get_num_threads(), ParIterator.Schedule.DYNAMIC, 2);
                         }
                         PjRuntime.setBarrier();
                         iter = (ParIterator<Integer>)OMP__ParIteratorCreator;
-
                         while (iter.hasNext()) {
                             {
                                 SimulateWork.work(iter.next());
-                            }}
+                            }
+                        }
                     } catch (pj.pr.exceptions.OmpWorksharingLocalCancellationException wse){
                     } catch (Exception e){throw e;}
                     //BEGIN  reduction

@@ -15,11 +15,6 @@ package pj.parser.ast.visitor.constructwrappers;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import pi.ParIterator;
-import pi.ParIteratorFactory;
-import pj.PjRuntime;
-import pj.Pyjama;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.AssignExpr;
 import pj.parser.ast.expr.BinaryExpr;
@@ -36,7 +31,6 @@ import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.symbolscope.SymbolTable;
-import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.SymbolSubstitutionVisitor;
@@ -47,6 +41,7 @@ import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 public class WorkShareBlockBuilder extends ConstructWrapper{
 	
 	enum LoopType {Numerical, Iterator};
+	enum LoopStyle {Foreach, SimpleFor};
 	
 	private SourcePrinter printer;
 	private PyjamaToJavaVisitor visitor;
@@ -57,6 +52,9 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	
 	//To indicate whether this loop is number based or iterator based
 	LoopType loopType = null;
+	
+	//To indicate whether this loop is for-each loop or simple three-expression loop
+	LoopStyle loopStyle = null;
 	
 	//These fields are only used for iterator for-loops (The collection the iterator works on)
 	private Expression iterOnCollection  = null;
@@ -108,8 +106,10 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 	private void parseForLoop() {
 		Statement forStmt = this.ompForConstruct.getForStmt();
 		if (forStmt instanceof ForStmt) {
+			this.loopStyle = LoopStyle.SimpleFor;
 			parseSimpleForStmt(forStmt);
 		} else if (forStmt instanceof ForeachStmt) {
+			this.loopStyle = LoopStyle.Foreach;
 			parseForEachStmt(forStmt);
 		} else {
 			throw new RuntimeException("Encountering for-loop that is not an instance of ForStmt or ForeachStmt");
@@ -298,6 +298,11 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 
 		this.varSubstitution();
 		
+		String ParIteratorSufix = "";
+		if (this.loopStyle == LoopStyle.Foreach) {
+			ParIteratorSufix = "_OMP_ParIterator";
+		}
+		
 		OmpScheduleClause schClause = this.ompForConstruct.getScheduleClause();
 		//For iterators, we set default schedule type as dynamic, and default chunkSize is 1.
 		OmpScheduleClause.Type schType = OmpScheduleClause.Type.Dynamic;
@@ -333,7 +338,8 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		 * Master thread is responsible for creating Parallel Iterator
 		 * iter = ParIteratorFactory.createParIterator(list, this.OMP_threadNumber, ParIterator.Schedule.STATIC, 3);
 		 */
-		printer.printLn("ParIterator<" + this.iteratorType + "> " + identifier + " = null;");
+		printer.printLn((this.loopStyle == LoopStyle.Foreach && this.iteratorDeclaration) ? this.iteratorType + " " + identifier + " = null;" : "");
+		printer.printLn("ParIterator<" + this.iteratorType + "> " + identifier + ParIteratorSufix + " = null;");
 		printer.printLn("if (0 == Pyjama.omp_get_thread_num()) {");
 		printer.indent();
 		printer.printLn("OMP__ParIteratorCreator = " + "ParIteratorFactory.createParIterator("
@@ -343,14 +349,18 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		printer.unindent();
 		printer.printLn("}");
 		printer.printLn("PjRuntime.setBarrier();");
-		printer.printLn(identifier + " = (ParIterator<" + this.iteratorType + ">)" + "OMP__ParIteratorCreator;");
 		///////////
-		printer.printLn();
-		printer.printLn("while (" + identifier + ".hasNext()) {");
+		printer.printLn(identifier + ParIteratorSufix +" = (ParIterator<" + this.iteratorType + ">)" + "OMP__ParIteratorCreator;");
+		printer.printLn("while (" + identifier + ParIteratorSufix + ".hasNext()) {");
 		printer.indent();
+		if (this.loopStyle == LoopStyle.Foreach) {
+			//If this is a for-each style loop, we need using x = x_OMP_ParIterator.next() to get next element
+			printer.printLn(identifier + " = " + identifier + ParIteratorSufix + ".next();");
+		}
 		//BEGIN user code 
 		this.forBody.accept(visitor, printer);
 		//END user code
+		printer.printLn();
 		printer.unindent();
 		printer.printLn("}");
 	}
