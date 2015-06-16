@@ -12,40 +12,67 @@ import pj.parser.ast.visitor.VoidVisitor;
 
 public class OmpTargetConstruct extends OpenMPStatement{
 	
-	enum ExecutionType {Await, NoWait, Wait};
+	public enum ExecutionType {Await, NoWait, Wait};
 	private OmpIfClause ifExpr = null;
 	private Statement body = null;
 	private List<OmpDataClause> dataClauseList;
 	private ExecutionType waitType = null;
+	private boolean virtualTarget = true;
+	private String targetName;
+	private String taskName;
 	
 	//this symbol is true when default(shared) data clause happens. Default is none.
 	private boolean defaultShared = false;
 	
 	public OmpTargetConstruct(
-			Statement statement,  
+			Statement statement, 
+			boolean isVirtual,
+			NameExpr targetName,
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
-			ExecutionType executionType){
+			ExecutionType executionType,
+			NameExpr taskName){
 		this.body = statement;
+		this.virtualTarget = isVirtual;
+		this.targetName = targetName.toString();
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.waitType = executionType;
+		this.taskName = taskName.toString();
 	}
 	
 	public OmpTargetConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
-			Statement statement,  
+			Statement statement, 
+			boolean isVirtual,
+			NameExpr targetName,
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
-			ExecutionType executionType){
+			ExecutionType executionType,
+			NameExpr taskName){
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.body = statement;
+		this.virtualTarget = isVirtual;
+		this.targetName = targetName.toString();
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.waitType = executionType;
+		this.taskName = taskName.toString();
 	}
 	
 	public Statement getBody() {
 		return body;
+	}
+	
+	public String getTargetName() {
+		return this.targetName;
+	}
+	
+	public String getTaskName() {
+		return this.taskName;
+	}
+	
+	public boolean isVirtual() {
+		return this.virtualTarget;
 	}
 	
 	public boolean isAwait() {
