@@ -141,177 +141,185 @@ public interface ASTParserConstants {
   /** RegularExpression Id. */
   int GUI = 73;
   /** RegularExpression Id. */
-  int SCHEDULE = 74;
+  int TARGET = 74;
   /** RegularExpression Id. */
-  int DYNAMIC = 75;
+  int VIRTUAL = 75;
   /** RegularExpression Id. */
-  int GUIDED = 76;
+  int SCHEDULE = 76;
   /** RegularExpression Id. */
-  int RUNTIME = 77;
+  int DYNAMIC = 77;
   /** RegularExpression Id. */
-  int AUTO = 78;
+  int GUIDED = 78;
   /** RegularExpression Id. */
-  int ORDERED = 79;
+  int RUNTIME = 79;
   /** RegularExpression Id. */
-  int SECTIONS = 80;
+  int AUTO = 80;
   /** RegularExpression Id. */
-  int SECTION = 81;
+  int ORDERED = 81;
   /** RegularExpression Id. */
-  int SINGLE = 82;
+  int SECTIONS = 82;
   /** RegularExpression Id. */
-  int MASTER = 83;
+  int SECTION = 83;
   /** RegularExpression Id. */
-  int CRITICAL = 84;
+  int SINGLE = 84;
   /** RegularExpression Id. */
-  int ATOMIC = 85;
+  int MASTER = 85;
   /** RegularExpression Id. */
-  int FLUSH = 86;
+  int CRITICAL = 86;
   /** RegularExpression Id. */
-  int BARRIER = 87;
+  int ATOMIC = 87;
   /** RegularExpression Id. */
-  int NOWAIT = 88;
+  int FLUSH = 88;
   /** RegularExpression Id. */
-  int NUMTHREADS = 89;
+  int BARRIER = 89;
   /** RegularExpression Id. */
-  int COPYPRIVATE = 90;
+  int NOWAIT = 90;
   /** RegularExpression Id. */
-  int CANCELLATION_POINT = 91;
+  int AWAIT = 91;
   /** RegularExpression Id. */
-  int CANCEL = 92;
+  int NUMTHREADS = 92;
   /** RegularExpression Id. */
-  int TASKGROUP = 93;
+  int COPYPRIVATE = 93;
   /** RegularExpression Id. */
-  int LOCAL = 94;
+  int CANCELLATION_POINT = 94;
   /** RegularExpression Id. */
-  int GLOBAL = 95;
+  int CANCEL = 95;
   /** RegularExpression Id. */
-  int TAG = 96;
+  int TASKGROUP = 96;
   /** RegularExpression Id. */
-  int LONG_LITERAL = 97;
+  int LOCAL = 97;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 98;
+  int GLOBAL = 98;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 99;
+  int TAG = 99;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 100;
+  int ASTASK = 100;
   /** RegularExpression Id. */
-  int OCTAL_LITERAL = 101;
+  int LONG_LITERAL = 101;
   /** RegularExpression Id. */
-  int FLOATING_POINT_LITERAL = 102;
+  int INTEGER_LITERAL = 102;
   /** RegularExpression Id. */
-  int DECIMAL_FLOATING_POINT_LITERAL = 103;
+  int DECIMAL_LITERAL = 103;
   /** RegularExpression Id. */
-  int DECIMAL_EXPONENT = 104;
+  int HEX_LITERAL = 104;
   /** RegularExpression Id. */
-  int HEXADECIMAL_FLOATING_POINT_LITERAL = 105;
+  int OCTAL_LITERAL = 105;
   /** RegularExpression Id. */
-  int HEXADECIMAL_EXPONENT = 106;
+  int FLOATING_POINT_LITERAL = 106;
   /** RegularExpression Id. */
-  int CHARACTER_LITERAL = 107;
+  int DECIMAL_FLOATING_POINT_LITERAL = 107;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 108;
+  int DECIMAL_EXPONENT = 108;
   /** RegularExpression Id. */
-  int IDENTIFIER = 109;
+  int HEXADECIMAL_FLOATING_POINT_LITERAL = 109;
   /** RegularExpression Id. */
-  int LETTER = 110;
+  int HEXADECIMAL_EXPONENT = 110;
   /** RegularExpression Id. */
-  int PART_LETTER = 111;
+  int CHARACTER_LITERAL = 111;
   /** RegularExpression Id. */
-  int LPAREN = 112;
+  int STRING_LITERAL = 112;
   /** RegularExpression Id. */
-  int RPAREN = 113;
+  int IDENTIFIER = 113;
   /** RegularExpression Id. */
-  int LBRACE = 114;
+  int LETTER = 114;
   /** RegularExpression Id. */
-  int RBRACE = 115;
+  int PART_LETTER = 115;
   /** RegularExpression Id. */
-  int LBRACKET = 116;
+  int LPAREN = 116;
   /** RegularExpression Id. */
-  int RBRACKET = 117;
+  int RPAREN = 117;
   /** RegularExpression Id. */
-  int SEMICOLON = 118;
+  int LBRACE = 118;
   /** RegularExpression Id. */
-  int COMMA = 119;
+  int RBRACE = 119;
   /** RegularExpression Id. */
-  int DOT = 120;
+  int LBRACKET = 120;
   /** RegularExpression Id. */
-  int AT = 121;
+  int RBRACKET = 121;
   /** RegularExpression Id. */
-  int ASSIGN = 122;
+  int SEMICOLON = 122;
   /** RegularExpression Id. */
-  int LT = 123;
+  int COMMA = 123;
   /** RegularExpression Id. */
-  int BANG = 124;
+  int DOT = 124;
   /** RegularExpression Id. */
-  int TILDE = 125;
+  int AT = 125;
   /** RegularExpression Id. */
-  int HOOK = 126;
+  int ASSIGN = 126;
   /** RegularExpression Id. */
-  int COLON = 127;
+  int LT = 127;
   /** RegularExpression Id. */
-  int EQ = 128;
+  int BANG = 128;
   /** RegularExpression Id. */
-  int LE = 129;
+  int TILDE = 129;
   /** RegularExpression Id. */
-  int GE = 130;
+  int HOOK = 130;
   /** RegularExpression Id. */
-  int NE = 131;
+  int COLON = 131;
   /** RegularExpression Id. */
-  int SC_OR = 132;
+  int EQ = 132;
   /** RegularExpression Id. */
-  int SC_AND = 133;
+  int LE = 133;
   /** RegularExpression Id. */
-  int INCR = 134;
+  int GE = 134;
   /** RegularExpression Id. */
-  int DECR = 135;
+  int NE = 135;
   /** RegularExpression Id. */
-  int PLUS = 136;
+  int SC_OR = 136;
   /** RegularExpression Id. */
-  int MINUS = 137;
+  int SC_AND = 137;
   /** RegularExpression Id. */
-  int STAR = 138;
+  int INCR = 138;
   /** RegularExpression Id. */
-  int SLASH = 139;
+  int DECR = 139;
   /** RegularExpression Id. */
-  int BIT_AND = 140;
+  int PLUS = 140;
   /** RegularExpression Id. */
-  int BIT_OR = 141;
+  int MINUS = 141;
   /** RegularExpression Id. */
-  int XOR = 142;
+  int STAR = 142;
   /** RegularExpression Id. */
-  int REM = 143;
+  int SLASH = 143;
   /** RegularExpression Id. */
-  int LSHIFT = 144;
+  int BIT_AND = 144;
   /** RegularExpression Id. */
-  int PLUSASSIGN = 145;
+  int BIT_OR = 145;
   /** RegularExpression Id. */
-  int MINUSASSIGN = 146;
+  int XOR = 146;
   /** RegularExpression Id. */
-  int STARASSIGN = 147;
+  int REM = 147;
   /** RegularExpression Id. */
-  int SLASHASSIGN = 148;
+  int LSHIFT = 148;
   /** RegularExpression Id. */
-  int ANDASSIGN = 149;
+  int PLUSASSIGN = 149;
   /** RegularExpression Id. */
-  int ORASSIGN = 150;
+  int MINUSASSIGN = 150;
   /** RegularExpression Id. */
-  int XORASSIGN = 151;
+  int STARASSIGN = 151;
   /** RegularExpression Id. */
-  int REMASSIGN = 152;
+  int SLASHASSIGN = 152;
   /** RegularExpression Id. */
-  int LSHIFTASSIGN = 153;
+  int ANDASSIGN = 153;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFTASSIGN = 154;
+  int ORASSIGN = 154;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFTASSIGN = 155;
+  int XORASSIGN = 155;
   /** RegularExpression Id. */
-  int ELLIPSIS = 156;
+  int REMASSIGN = 156;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFT = 157;
+  int LSHIFTASSIGN = 157;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFT = 158;
+  int RSIGNEDSHIFTASSIGN = 158;
   /** RegularExpression Id. */
-  int GT = 159;
+  int RUNSIGNEDSHIFTASSIGN = 159;
+  /** RegularExpression Id. */
+  int ELLIPSIS = 160;
+  /** RegularExpression Id. */
+  int RUNSIGNEDSHIFT = 161;
+  /** RegularExpression Id. */
+  int RSIGNEDSHIFT = 162;
+  /** RegularExpression Id. */
+  int GT = 163;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -396,6 +404,8 @@ public interface ASTParserConstants {
     "\"reduction\"",
     "\"freeguithread\"",
     "\"gui\"",
+    "\"target\"",
+    "\"virtual\"",
     "\"schedule\"",
     "\"dynamic\"",
     "\"guided\"",
@@ -411,6 +421,7 @@ public interface ASTParserConstants {
     "\"flush\"",
     "\"barrier\"",
     "\"nowait\"",
+    "\"await\"",
     "\"num_threads\"",
     "\"copyprivate\"",
     "\"cancellation point\"",
@@ -419,6 +430,7 @@ public interface ASTParserConstants {
     "\"local\"",
     "\"global\"",
     "\"tag\"",
+    "\"astask\"",
     "<LONG_LITERAL>",
     "<INTEGER_LITERAL>",
     "<DECIMAL_LITERAL>",
