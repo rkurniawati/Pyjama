@@ -1042,6 +1042,17 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 	}
 	
 	public R visit(OmpTargetConstruct n, A arg) {
+		if (n.getIfClause() != null) {
+			n.accept(this, arg);
+		}
+
+		if (n.getDataClauseList() != null) {
+			for (OmpDataClause clause: n.getDataClauseList()) {
+				clause.accept(this, arg);
+			}
+		}
+		n.getBody().accept(this, arg);
 		return null;
 	}
+		
 }
