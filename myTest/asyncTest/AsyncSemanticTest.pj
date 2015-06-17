@@ -1,0 +1,14 @@
+package asyncTest;
+
+import pj.*;
+
+public class AsyncSemanticTest{
+	
+	static void main(String[] s) {
+		//#omp target virtual(worker) await
+		{
+			System.out.println("Async execution");
+		}
+	}
+	
+}
