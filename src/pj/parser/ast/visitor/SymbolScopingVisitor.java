@@ -18,6 +18,7 @@ import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpParallelConstruct;
+import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.CatchClause;
 import pj.parser.ast.stmt.ForStmt;
@@ -420,6 +421,15 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 	
 	public String visit(OmpGuiConstruct n, Object arg) {
 		this.symbolTable.enterNewScope(n, "OmpGui", ScopeInfo.Type.OpenMPConstructScope);
+		if (n.getBody() != null) {
+            n.getBody().accept(this, arg);
+        }
+        this.symbolTable.exitScope();
+        return null;
+	}
+	
+	public String visit(OmpTargetConstruct n, Object arg) {
+		this.symbolTable.enterNewScope(n, "OmpTarget", ScopeInfo.Type.OpenMPConstructScope);
 		if (n.getBody() != null) {
             n.getBody().accept(this, arg);
         }
