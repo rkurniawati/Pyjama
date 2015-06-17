@@ -107,6 +107,7 @@ import pj.parser.ast.omp.OmpSectionConstruct;
 import pj.parser.ast.omp.OmpSectionsConstruct;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpSingleConstruct;
+import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
 import pj.parser.ast.stmt.BlockStmt;
@@ -1675,6 +1676,43 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		}
 		printer.printLn();
 		printer.printLn();
+	}
+
+	@Override
+	public void visit(OmpTargetConstruct n, Object arg) {
+		printer.print("//#omp target");
+		
+		if (n.isVirtual()) {
+			printer.print(" virtual");
+		}
+		
+		printer.print("(" + n.getTargetName() + ") ");
+		
+		if (n.isAwait()) {
+			printer.printLn("await ");
+		} else if (n.isNoWait()) {
+			printer.printLn("nowait ");
+		} else if (n.isSync()) {
+			printer.printLn("astask(" + n.getTaskName() + ") ");
+		}
+		
+		if (n.getIfClause() != null) {
+			n.accept(this, arg);
+		}
+
+		if (n.getDataClauseList() != null) {
+			for (OmpDataClause clause: n.getDataClauseList()) {
+				clause.accept(this, arg);
+			}
+		}
+		
+		printer.printLn();
+		printer.printLn("{");
+		printer.indent();
+		n.getBody().accept(this, arg);
+		printer.printLn();
+		printer.unindent();
+		printer.print("}");
 	}	
 
 }

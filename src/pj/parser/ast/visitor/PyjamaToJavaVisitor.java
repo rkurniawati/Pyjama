@@ -316,6 +316,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			throw new RuntimeException("Pyjama does not support omp task yet!");
 		}
 	}
+	
+	public void visit(OmpTargetConstruct n, SourcePrinter printer) {
+		//TODO: implement this
+	}
 	    
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {

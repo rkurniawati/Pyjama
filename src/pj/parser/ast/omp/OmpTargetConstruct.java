@@ -38,7 +38,9 @@ public class OmpTargetConstruct extends OpenMPStatement{
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.waitType = executionType;
-		this.taskName = taskName.toString();
+		if (null != taskName) {
+			this.taskName = taskName.toString();
+		}
 	}
 	
 	public OmpTargetConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
@@ -56,7 +58,9 @@ public class OmpTargetConstruct extends OpenMPStatement{
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.waitType = executionType;
-		this.taskName = taskName.toString();
+		if (null != taskName) {
+			this.taskName = taskName.toString();
+		}
 	}
 	
 	public Statement getBody() {
