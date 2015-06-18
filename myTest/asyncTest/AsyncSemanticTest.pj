@@ -9,6 +9,7 @@ public class AsyncSemanticTest{
 		{
 			System.out.println("Async execution");
 		}
+		System.out.println("after Async execution");
 	}
 	
 }

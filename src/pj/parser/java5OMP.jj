@@ -3480,8 +3480,8 @@ OmpTargetConstruct OmpTargetConstruct():
 	(	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
 	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
-	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
-	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in omp target directive");}
+	|	dataClause = OmpReductionDataClause() 	{throw new ParseException("Pyjama Parsing Error: Reduction data clause cannot appear in omp target directive");}
 	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
 	| 	<NOWAIT>{ waitType = OmpTargetConstruct.ExecutionType.NoWait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
 	| 	<AWAIT> { waitType = OmpTargetConstruct.ExecutionType.Await; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}

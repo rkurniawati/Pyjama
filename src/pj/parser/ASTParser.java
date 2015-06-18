@@ -5063,11 +5063,11 @@ public final class ASTParser implements ASTParserConstants {
         break;
       case LASTPRIVATE:
         dataClause = OmpLastprivateDataClause();
-                                                         {if (true) throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
+                                                         {if (true) throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in omp target directive");}
         break;
       case REDUCTION:
         dataClause = OmpReductionDataClause();
-                                                         dataClauseList.add(dataClause);
+                                                         {if (true) throw new ParseException("Pyjama Parsing Error: Reduction data clause cannot appear in omp target directive");}
         break;
       case _DEFAULT:
         dataClause = OmpDefaultDataClause();

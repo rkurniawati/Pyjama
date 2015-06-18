@@ -32,6 +32,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected int nextWorkShareID = 0;
 	protected int nextGuiCodeID = 0;
 	protected final String prefixTaskNameForParallelRegion = "_OMP_ParallelRegion_";
+	protected final String prefixTaskNameForTargetTaskRegion = "_OMP_TargetTaskRegion_";
 	protected final String prefixTaskNameForWorkShare = "_OMP_WorkShare_";
 	protected final String prefixTaskNameForGuiCode = "_OMP_GuiCode_";
 	
@@ -318,7 +319,34 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	
 	public void visit(OmpTargetConstruct n, SourcePrinter printer) {
-		//TODO: implement this
+
+	 	//get current OmpTargetConstruct's scope info from symbolTable
+    	n.scope = this.symbolTable.getScopeOfNode(n);
+    	n.processAllReachableVariablesIfNecessary();
+    	
+		int uniqueOpenMPRegionID = nextOpenMPRegionUniqueID++;
+
+		TargetTaskCodeClassBuilder currentTTClass = new TargetTaskCodeClassBuilder(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
+		currentTTClass.className = prefixTaskNameForTargetTaskRegion + uniqueOpenMPRegionID;
+
+		
+		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- START */");
+
+		//Print Target Task code Class Code
+		//TODO: Not finished, change printer name
+		this.PrinterForPRClass.printLn(currentTTClass.getSource());
+		
+		String inputlist = "inputlist_" + currentTTClass.className;
+		String outputlist = "outputlist_" + currentTTClass.className;
+		printer.printLn("ConcurrentHashMap<String, Object> " + inputlist + " = new ConcurrentHashMap<String,Object>();");
+		printer.printLn("ConcurrentHashMap<String, Object> " + outputlist + " = new ConcurrentHashMap<String,Object>();");
+		
+		DataClausesHandler.processDataClausesBeforeTTClassInvocation(currentTTClass, printer);
+		
+		printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
+		printer.printLn(currentTTClass.className + "_in" + ".runTaskCode();");
+		
+		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- END */");
 	}
 	    
 	//OpenMP add END*********************************************************************************OpenMP add END//
