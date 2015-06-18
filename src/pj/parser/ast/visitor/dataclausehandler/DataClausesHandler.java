@@ -15,6 +15,7 @@ import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
 import pj.parser.ast.omp.OmpReductionOperator;
 import pj.parser.ast.omp.OmpSharedDataClause;
+import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.ScopeInfo;
@@ -22,6 +23,7 @@ import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.SymbolScopingVisitor;
 import pj.parser.ast.visitor.constructwrappers.GuiCodeClassBuilder;
 import pj.parser.ast.visitor.constructwrappers.ParallelRegionClassBuilder;
+import pj.parser.ast.visitor.constructwrappers.TargetTaskCodeClassBuilder;
 import pj.parser.ast.visitor.constructwrappers.WorkShareBlockBuilder;
 
 public class DataClausesHandler {
@@ -89,7 +91,6 @@ public class DataClausesHandler {
 				throw new RuntimeException("Find unexpected Data clause:" + dataClause.DataClauseType().toString());	
 			}
 		}
-		
 	}
 	
 	public static void processDataClausesAfterPRClassInvocation(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
@@ -176,8 +177,93 @@ public class DataClausesHandler {
 		}
 	}
 	
+	public static void processDataClausesBeforeTTClassInvocation(TargetTaskCodeClassBuilder targetWrapper, SourcePrinter printer) {
+		List<OmpDataClause> dataClauseList = targetWrapper.targetConstruct.getDataClauseList();
+		if (null == dataClauseList) {
+			return;
+		}
+		
+		for (OmpDataClause dataClause: dataClauseList) {
+			switch (dataClause.DataClauseType()) {
+			case Shared:
+				for(Expression varExpression: dataClause.getArgumentSet()) {
+					String varName = varExpression.toString();
+					printer.printLn(targetWrapper.get_inputlist() + ".put(\"" + varName + "\"," + varName + ");");
+					//e.g. inputlist.put("sp", sp);
+				}
+				break;
+			case Private:
+				for(Expression varExpression: dataClause.getArgumentSet()) {
+					String varName = varExpression.toString();
+					printer.printLn(targetWrapper.get_inputlist() + ".put(\"" + varName + "\"," + varName + ");");
+					//e.g. inputlist.put("sp", sp);
+				}
+				break;
+			default:
+				throw new RuntimeException("Find unexpected Data clause:" + dataClause.DataClauseType().toString());	
+			}
+		}
+	}
+	
+	public static void processDataClausesAfterTTClassInvocation(TargetTaskCodeClassBuilder targetWrapper, SourcePrinter printer) {
+		OmpTargetConstruct targetConstruct = targetWrapper.targetConstruct;
+		List<OmpDataClause> dataClauseList = targetConstruct.getDataClauseList();
+		if (null == dataClauseList) {
+			return;
+		}
+		
+		for (OmpDataClause dataClause: dataClauseList) {
+			switch (dataClause.DataClauseType()) {
+			
+			case Shared:
+				HashMap<String, String> sharedArgs = ((OmpSharedDataClause)dataClause).getArgsTypes(targetConstruct);
+				for(Expression varExpression: dataClause.getArgumentSet()) {
+					String varName = varExpression.toString();
+					String varType = sharedArgs.get(varName);
+					if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
+						printer.printLn(varName + " = " + "(" + DataClauseHandlerUtils.autoBox(varType) + ")" 
+								+ targetWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
+						//e.g. i = (Integer)outputList.get("i");
+					}
+					else {
+						printer.printLn(varName + " = " + "(" + varType + ")" 
+								+ targetWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
+						//e.g. sp = (Point)outputList.get("sp");
+						//e.g. sp1 = (String)outputList.get("sp1");
+					}
+				}
+				break;
+				
+			case Private:
+				/*
+				 * private variables needn't do anything after invocation
+				 */
+				break;
+			default:
+				throw new RuntimeException("Find unexpected Data clause");	
+			}
+		}
+	}
+	
 	public static void updateOutputlistForSharedVariablesInPRClass(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
 		List<OmpDataClause> dataClauseList = parallelWrapper.parallelConstruct.getDataClauseList();
+		if (null == dataClauseList) {
+			return;
+		} else {
+			for (OmpDataClause dataClause: dataClauseList) {
+				if (dataClause instanceof OmpSharedDataClause) {
+					for(Expression varExpression: dataClause.getArgumentSet()) {
+						String varName = varExpression.toString();
+						printer.printLn("OMP_outputList.put(\"" + varName + "\"," + varName + ");");
+						//e.g. this.outputList.put("sp", sp);
+					}
+				}
+			}
+		}
+	}
+	
+	public static void updateOutputlistForSharedVariablesInTTClass(TargetTaskCodeClassBuilder targetWrapper, SourcePrinter printer) {
+		List<OmpDataClause> dataClauseList = targetWrapper.targetConstruct.getDataClauseList();
 		if (null == dataClauseList) {
 			return;
 		} else {
