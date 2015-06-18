@@ -8,6 +8,10 @@ package pj.parser.ast.visitor.constructwrappers;
 
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import pj.PjRuntime;
@@ -146,7 +150,7 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		printer.printLn("//#END private/firstprivate reduction variables  defined here");
 		//#END firstprivate reduction variables defined for each thread here
 		
-		printer.printLn("MyCallable(int id, ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){");
+		printer.printLn("MyCallable(ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){");
 		printer.indent();
 		printer.printLn("this.OMP_inputList = inputlist;");
 		printer.printLn("this.OMP_outputList = outputlist;");
@@ -205,37 +209,12 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 	}	
 	
 	private void generateRunnable() {
-		/*
-		 * If current directive is //#omp freeguithread, free edt thread and make another more thread
-		 * to substitute edt thread.
-		 */
-		if (true) {
-			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
-			printer.printLn("PjRuntime.submit(i, slaveThread, icv);");
-		}
-		/*
-		 * else the current directive is //#omp parallel, master thread is current thread, doesn't escape
-		 * from parallel region.
-		 */
-		else {
-			printer.printLn("for (int i = 1; i <= this.OMP_threadNumber-1; i++) {");
-			printer.indent();
-			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
-			printer.printLn("PjRuntime.submit(i, slaveThread, icv);");
-			printer.unindent();
-			printer.printLn("}");
-			printer.printLn("Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
-			printer.printLn("PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;");
-			printer.printLn("try {");
-			printer.indent();
-			printer.printLn("masterThread.call();");
-			printer.unindent();
-			printer.printLn("} catch (Exception e) {");
-			printer.indent();
-			printer.printLn("e.printStackTrace();");
-			printer.unindent();
-			printer.printLn("}");
-		}
+
+		printer.printLn("Callable<ConcurrentHashMap<String,Object>> targetTask = new MyCallable(OMP_inputList, OMP_outputList);");
+		//printer.printLn("PjRuntime.submit(i, slaveThread, icv);");
+		printer.printLn("ExecutorService threadPoolExecutor = new ThreadPoolExecutor(1, 2, 3, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());");
+		printer.printLn("threadPoolExecutor.submit(targetTask);");
+	
 	}
 
 }
