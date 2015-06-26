@@ -7,42 +7,19 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class TargetExecutor {
 
-	private final ConcurrentLinkedDeque<WorkerThread> workers = new ConcurrentLinkedDeque<WorkerThread>();
+	private String targetName = null;
+	private final ConcurrentLinkedDeque<TargetWorkerThread> workers = new ConcurrentLinkedDeque<TargetWorkerThread>();
 	private BlockingQueue<TargetTask> taskQueue;
 	
-	class WorkerThread extends Thread {
-		
-		TargetTask firstTask = null;
-		
-		public WorkerThread(TargetTask firstTask) {
-			this.firstTask = firstTask;
-		}
-		
-		@Override
-		public void run() {
-			TargetTask task = firstTask;
-	        this.firstTask = null;
-	        while (task != null || (task = getTask()) != null) {
-	        	try {
-	        		Throwable thrown = null;
-	                try {
-	                	task.call();
-	                } catch (RuntimeException x) {
-	                	thrown = x; throw x;
-	                } catch (Error x) {
-	                	thrown = x; throw x;
-	                } catch (Throwable x) {
-	                	thrown = x; 
-	                	throw new Error(x);
-	                }
-	        	} finally {
-	        		task = null;
-	            }
-	        }
-		}
+	public TargetExecutor(String name) {
+		this.targetName = name;
 	}
-		
-	private TargetTask getTask() {
+	
+	
+	public String getTargetName() {
+		return this.targetName;
+	}
+	protected TargetTask getTask() {
 		return null;
 	}
 	
@@ -50,6 +27,7 @@ public class TargetExecutor {
 		 if (task == null) {
 			 throw new NullPointerException();
 		 }
+		 task.setCaller(this);
 	        /*
 	         * Proceed in 3 steps:
 	         *
@@ -72,9 +50,9 @@ public class TargetExecutor {
 
 	private void createWorker(TargetTask task) {
 		// TODO 
-		WorkerThread worker = new WorkerThread(task);
+		TargetWorkerThread worker = new TargetWorkerThread(this, task);
 		workers.add(worker);
 		worker.start();
 	}
-	
+		
 }

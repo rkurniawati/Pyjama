@@ -23,11 +23,11 @@ public class AsyncSemanticTest {
         /*OpenMP Target region (#0) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_0.put("b",b);
         inputlist__OMP_TargetTaskRegion_0.put("a",a);
         inputlist__OMP_TargetTaskRegion_0.put("c",c);
+        inputlist__OMP_TargetTaskRegion_0.put("b",b);
         _OMP_TargetTaskRegion_0 _OMP_TargetTaskRegion_0_in = new _OMP_TargetTaskRegion_0(inputlist__OMP_TargetTaskRegion_0,outputlist__OMP_TargetTaskRegion_0);
-        _OMP_TargetTaskRegion_0_in.submitTo("worker");
+        PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_0_in);
         /*OpenMP Target region (#0) -- END */
 
         System.out.println("after Async execution c=" + c);
@@ -59,9 +59,9 @@ static class _OMP_TargetTaskRegion_0 extends pj.pr.target.TargetTask{
 
     private void updateOutputListForSharedVars() {
         //BEGIN update outputlist
-        OMP_outputList.put("b",b);
         OMP_outputList.put("a",a);
         OMP_outputList.put("c",c);
+        OMP_outputList.put("b",b);
         //END update outputlist
     }
     @Override
@@ -70,7 +70,7 @@ static class _OMP_TargetTaskRegion_0 extends pj.pr.target.TargetTask{
             /****User Code BEGIN***/
             {
                 int c = a + b;
-                System.out.println("Async execution");
+                System.out.println("Async execution c=" + c);
             }
             /****User Code END***/
         } catch (OmpParallelRegionLocalCancellationException e) {

@@ -11,7 +11,7 @@ public class AsyncSemanticTest{
 		//#omp target virtual(worker) shared(a,b,c) await
 		{
 			int c = a + b;
-			System.out.println("Async execution");
+			System.out.println("Async execution c=" + c);
 		}
 		System.out.println("after Async execution c=" + c);
 	}
