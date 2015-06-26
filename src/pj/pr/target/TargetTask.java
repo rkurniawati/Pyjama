@@ -3,18 +3,56 @@ package pj.pr.target;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TargetTask implements Callable<ConcurrentHashMap<String,Object>>{
+public abstract class TargetTask implements Callable<ConcurrentHashMap<String,Object>>{
+	private TargetExecutor caller = null;
+	private Callable<ConcurrentHashMap<String,Object>> task;
+	private CallbackInfo callWhenFinish;
+	private boolean isFinished = false;
 	
-	
-	public void submitTo(String targetName) {
-		
+	class CallbackInfo {
+		TargetTask callback;
+		TargetExecutor caller;
+		CallbackInfo(TargetTask t, TargetExecutor e) {
+			this.callback = t;
+			this.caller = e;
+		}
+		void trigger() {
+			this.caller.submit(callback);
+		}
 	}
-	public void submitTo(TargetExecutor target){
-		
+	
+	
+	public abstract ConcurrentHashMap<String, Object> call() throws Exception;
+	
+	public void setCaller(TargetExecutor targetExecutor) {
+		this.caller = targetExecutor;
+	}
+	
+	public TargetExecutor getCaller() {
+		return this.caller;
+	}
+	
+	
+	public Object getResult(String varName){
+		return null;
 	}
 	public void getResult(){
 		
 	}
+		
+	public boolean isFinished() {
+		return this.isFinished;
+	}
 
-	public ConcurrentHashMap<String, Object> call() throws Exception { return null;}
+	public void setCallbackWhenFinish(TargetTask finishtask, TargetExecutor whocall) {
+		this.callWhenFinish = new CallbackInfo(finishtask, whocall);
+	}
+	
+	protected void run() throws Exception {
+		this.task.call();
+		this.isFinished = true;
+		if (null != this.callWhenFinish) {
+			this.callWhenFinish.trigger();
+		}
+	}
 }

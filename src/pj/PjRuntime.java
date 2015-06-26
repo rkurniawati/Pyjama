@@ -1,6 +1,8 @@
 package pj;
 
 import pj.pr.*;
+import pj.pr.target.TargetExecutor;
+import pj.pr.target.TargetTask;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,6 +24,9 @@ public class PjRuntime {
 
 	/*Xing added this to substitute critical region, using as lock 2014.4.30*/
 	public static ReentrantLock OMP_lock = new ReentrantLock();
+	
+	/*Xing added this to store the map from target executor's name and its executor 2015.6.22*/
+	private static ConcurrentHashMap<String, TargetExecutor> targetExecutorMap = new ConcurrentHashMap<String, TargetExecutor>();
 	
 //	private static int ThreadsBusy;
 //	private static int ActiveParRegions;
@@ -171,4 +176,23 @@ public class PjRuntime {
 		icv.OMP_orderCursor.set(0);
 	}
 	
+	/*
+	 * Following methods are used for Pyjama's asycTask approach(//#omp target virtual)
+	 */
+	
+	public static void submitTask(Thread source, String targetName, TargetTask task) {
+		TargetExecutor targetExecutor = targetExecutorMap.get(targetName);
+		if (null == targetExecutor) {
+			targetExecutor = new TargetExecutor(targetName);
+			targetExecutorMap.put(targetName, targetExecutor);
+		}
+		targetExecutor.submit(task);
+	}
+	
+	public static boolean checkFinish(TargetTask task) {
+		if(task.isFinished()) {
+			return true;
+		}
+		return false;
+	}
  }
