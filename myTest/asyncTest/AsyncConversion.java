@@ -128,23 +128,31 @@ public class AsyncConversion {
 		
 	}
 	
-	public static void useSqure() {
+	public  void useSqure() {
 		SqureIn s = new SqureIn();
 		s.add(0, 0);
-	}
-	
-	public static void main(String[] args) {
-		Class<?> cls = null;
-		try {
-			cls = Class.forName("squares.SqureIn$add");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (null != cls) {
+		Class<?> cls[] = null;
+		Class<?> targetClass = null;
+		SqureIn.add(0,0);
+			cls = SqureIn.class.getClasses();
+			for (Class<?> c: cls) {
+				System.out.println(c.getName());
+				if (c.getName().endsWith("SqureIn$add")) {
+					targetClass = c;
+					
+				}
+			}
+		
+		if (null != targetClass) {
 			System.out.println("find");
 		} else {
 			System.out.println("not find");
 		}
+	}
+	
+	public static void main(String[] args) {
+		AsyncConversion a = new AsyncConversion();
+		a.useSqure();
+		
 	}
 }

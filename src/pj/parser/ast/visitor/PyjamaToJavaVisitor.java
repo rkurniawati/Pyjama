@@ -341,7 +341,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		
 		printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
-		 
+		if (n.isAwait()) {
+			printer.printLn("PjRuntime.waitTaskForFinish(" + currentTTClass.className + "_in);");
+		}
 		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- END */");
 	}
 	    

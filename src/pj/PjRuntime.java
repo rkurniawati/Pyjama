@@ -195,4 +195,9 @@ public class PjRuntime {
 		}
 		return false;
 	}
+	
+	public static void waitTaskForFinish(TargetTask task) {
+		while(!task.isFinished()) {
+		}
+	}
  }
