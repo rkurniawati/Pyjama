@@ -3,15 +3,21 @@ package pj.parser.ast.visitor.constructwrappers;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import pj.parser.ast.body.MethodDeclaration;
 import pj.parser.ast.body.Parameter;
+import pj.parser.ast.body.VariableDeclarator;
+import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.NameExpr;
+import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
+import pj.parser.ast.stmt.ExpressionStmt;
 import pj.parser.ast.stmt.Statement;
+import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.DumpVisitor;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
@@ -23,6 +29,8 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	private SourcePrinter printer = new SourcePrinter();
 	
 	private HashMap<OmpTargetConstruct, StringBuffer> targetSourceTable = null;
+	
+	private LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
 
 	private MethodDeclaration method;
 
@@ -105,13 +113,43 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 					printer.printLn("case " + stateCounter + ":");
 					printer.indent();
 				}
+			} else if(s instanceof ExpressionStmt) {
+				Expression expr = ((ExpressionStmt) s).getExpression();
+				if (expr instanceof VariableDeclarationExpr) {
+					/*
+					 * We find all VariableDeclarationExpr in this method,
+					 * and declare all variables in state machine class as
+					 * field member. Because we prohibit midway variable 
+					 * declarations.  --Xing 2015.6.29
+					 */
+					VariableDeclarationExpr varDeclExpr = (VariableDeclarationExpr) expr;
+					this.variableDeclarations.add(varDeclExpr);
+					for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {
+				           VariableDeclarator v = i.next();
+				           DumpVisitor codeDumper = new DumpVisitor();
+				           v.accept(codeDumper, null);
+				           printer.printLn(codeDumper.getSource() + ";");   
+				    }
+				}
 			} else {
 				DumpVisitor codeDumper = new DumpVisitor();
                 s.accept(codeDumper, null);
                 printer.printLn(codeDumper.getSource());
 			}
-		}
 			
+		}		
+	}
+	
+	private void genreateVariableDeclaration() {
+		for(VariableDeclarationExpr varDeclExpr: this.variableDeclarations) {
+			Type type = varDeclExpr.getType();
+			for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {
+		           VariableDeclarator v = i.next();
+		           DumpVisitor codeDumper = new DumpVisitor();
+		           v.accept(codeDumper, null);
+		           printer.printLn("private " + type.toString() + " " + v.getId() + ";");   
+		    }
+		}
 	}
 	
 	private void generateClass() {
@@ -132,6 +170,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		printer.printLn("return null;");
 		printer.unindent();
 		printer.printLn("}");
+		genreateVariableDeclaration();
 		printer.unindent();
 		printer.printLn("}");
 	}
