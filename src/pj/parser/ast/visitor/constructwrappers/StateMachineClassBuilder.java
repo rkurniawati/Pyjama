@@ -47,6 +47,10 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	public int getEndLine() {
 		return method.getEndLine();
 	}
+	
+	public void setPrinterIndentLevel(int level) {
+		this.printer.setIndentLevel(level);
+	}
 			
 	public String getSource()
 	{
@@ -118,6 +122,8 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		printer.indent();
 		this.generateStates();
 		printer.printLn("default:");
+		printer.printLn("}");
+		printer.unindent();
 		printer.printLn("}");
 		printer.unindent();
 		printer.printLn("}");
