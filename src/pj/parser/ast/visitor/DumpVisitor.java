@@ -1689,11 +1689,11 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		printer.print("(" + n.getTargetName() + ") ");
 		
 		if (n.isAwait()) {
-			printer.printLn("await ");
+			printer.print("await ");
 		} else if (n.isNoWait()) {
-			printer.printLn("nowait ");
+			printer.print("nowait ");
 		} else if (n.isSync()) {
-			printer.printLn("astask(" + n.getTaskName() + ") ");
+			printer.print("astask(" + n.getTaskName() + ") ");
 		}
 		
 		if (n.getIfClause() != null) {

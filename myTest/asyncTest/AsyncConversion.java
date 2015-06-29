@@ -21,27 +21,27 @@ public class AsyncConversion {
 	}
 	
 
-
+	class _OMP_TargetTaskRegion_0 extends pj.pr.target.TargetTask{
+		public ConcurrentHashMap<String,Object> call() {
+			System.out.println("Stage 1");
+			return null;
+		}
+		
+	}
+	class _OMP_TargetTaskRegion_1 extends pj.pr.target.TargetTask{
+		public ConcurrentHashMap<String,Object> call() {
+			System.out.println("Stage 1");
+			return null;
+		}
+		
+	}
 	class asyncMethod extends pj.pr.target.TargetTask{
 		
 		asyncMethod(int a) {
 			
 		}
 		
-		class _OMP_TargetTaskRegion_0 extends pj.pr.target.TargetTask{
-			public ConcurrentHashMap<String,Object> call() {
-				System.out.println("Stage 1");
-				return null;
-			}
-			
-		}
-		class _OMP_TargetTaskRegion_1 extends pj.pr.target.TargetTask{
-			public ConcurrentHashMap<String,Object> call() {
-				System.out.println("Stage 1");
-				return null;
-			}
-			
-		}
+
 		int state;
 		
 		@Override
