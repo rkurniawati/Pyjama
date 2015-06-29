@@ -23,9 +23,9 @@ public class AsyncSemanticTest {
         /*OpenMP Target region (#0) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
+        inputlist__OMP_TargetTaskRegion_0.put("b",b);
         inputlist__OMP_TargetTaskRegion_0.put("a",a);
         inputlist__OMP_TargetTaskRegion_0.put("c",c);
-        inputlist__OMP_TargetTaskRegion_0.put("b",b);
         _OMP_TargetTaskRegion_0 _OMP_TargetTaskRegion_0_in = new _OMP_TargetTaskRegion_0(inputlist__OMP_TargetTaskRegion_0,outputlist__OMP_TargetTaskRegion_0);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_0_in);
         /*OpenMP Target region (#0) -- END */
@@ -33,9 +33,9 @@ public class AsyncSemanticTest {
         /*OpenMP Target region (#1) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_1.put("b",b);
         inputlist__OMP_TargetTaskRegion_1.put("a",a);
         inputlist__OMP_TargetTaskRegion_1.put("d",d);
+        inputlist__OMP_TargetTaskRegion_1.put("b",b);
         _OMP_TargetTaskRegion_1 _OMP_TargetTaskRegion_1_in = new _OMP_TargetTaskRegion_1(inputlist__OMP_TargetTaskRegion_1,outputlist__OMP_TargetTaskRegion_1);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_1_in);
         PjRuntime.waitTaskForFinish(_OMP_TargetTaskRegion_1_in);
@@ -81,9 +81,9 @@ public class AsyncSemanticTest {
 
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
+                OMP_outputList.put("b",b);
                 OMP_outputList.put("a",a);
                 OMP_outputList.put("c",c);
-                OMP_outputList.put("b",b);
                 //END update outputlist
             }
             @Override
@@ -133,9 +133,9 @@ public class AsyncSemanticTest {
 
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
-                OMP_outputList.put("b",b);
                 OMP_outputList.put("a",a);
                 OMP_outputList.put("d",d);
+                OMP_outputList.put("b",b);
                 //END update outputlist
             }
             @Override
@@ -218,15 +218,17 @@ class main extends pj.pr.target.TargetTask{
     public ConcurrentHashMap<String,Object> call() {
         switch(state) {
         case 0:
-            int a = 5;
-            int b = 4;
-            int c = 0, d = 0, e = 0;
+            a = 5;
+            b = 4;
+            c = 0;
+            d = 0;
+            e = 0;
                     /*OpenMP Target region (#0) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
+        inputlist__OMP_TargetTaskRegion_0.put("b",b);
         inputlist__OMP_TargetTaskRegion_0.put("a",a);
         inputlist__OMP_TargetTaskRegion_0.put("c",c);
-        inputlist__OMP_TargetTaskRegion_0.put("b",b);
         _OMP_TargetTaskRegion_0 _OMP_TargetTaskRegion_0_in = new _OMP_TargetTaskRegion_0(inputlist__OMP_TargetTaskRegion_0,outputlist__OMP_TargetTaskRegion_0);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_0_in);
         /*OpenMP Target region (#0) -- END */
@@ -234,9 +236,9 @@ class main extends pj.pr.target.TargetTask{
                     /*OpenMP Target region (#1) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_1.put("b",b);
         inputlist__OMP_TargetTaskRegion_1.put("a",a);
         inputlist__OMP_TargetTaskRegion_1.put("d",d);
+        inputlist__OMP_TargetTaskRegion_1.put("b",b);
         _OMP_TargetTaskRegion_1 _OMP_TargetTaskRegion_1_in = new _OMP_TargetTaskRegion_1(inputlist__OMP_TargetTaskRegion_1,outputlist__OMP_TargetTaskRegion_1);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_1_in);
         PjRuntime.waitTaskForFinish(_OMP_TargetTaskRegion_1_in);
@@ -246,19 +248,22 @@ class main extends pj.pr.target.TargetTask{
                     /*OpenMP Target region (#2) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_2 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_2 = new ConcurrentHashMap<String,Object>();
-        //inputlist__OMP_TargetTaskRegion_2.put("e",e);
-        //inputlist__OMP_TargetTaskRegion_2.put("b",b);
-        //inputlist__OMP_TargetTaskRegion_2.put("a",a);
+        inputlist__OMP_TargetTaskRegion_2.put("e",e);
+        inputlist__OMP_TargetTaskRegion_2.put("b",b);
+        inputlist__OMP_TargetTaskRegion_2.put("a",a);
         _OMP_TargetTaskRegion_2 _OMP_TargetTaskRegion_2_in = new _OMP_TargetTaskRegion_2(inputlist__OMP_TargetTaskRegion_2,outputlist__OMP_TargetTaskRegion_2);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_2_in);
         /*OpenMP Target region (#2) -- END */
 
-            //System.out.println("after Async execution c=" + c);
-            System.out.println("Done");
             default:
             }
             return null;
         }
+        private int a;
+        private int b;
+        private int c;
+        private int d;
+        private int e;
     }
 
 
