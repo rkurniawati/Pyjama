@@ -4,7 +4,6 @@ package pj.parser.ast.visitor;
  * @version 1.0
  */
 
-import pj.PjRuntime;
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
 import pj.parser.ast.expr.*;
@@ -37,9 +36,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected final String prefixTaskNameForGuiCode = "_OMP_GuiCode_";
 	
 	protected SourcePrinter CodePrinter = new SourcePrinter();
-	protected SourcePrinter PrinterForPRClass = new SourcePrinter();
-//	public SourcePrinter PrinterForWSMethod = new SourcePrinter();
+	protected SourcePrinter PrinterForAuxiliaryClasses = new SourcePrinter();
 	
+	//keep track of current method node 2015.6.29
+	protected MethodDeclaration currentMehodNode = null;
 	//keep track of current method whether is static, used for the generate of parallel region class, and work share method
 	protected boolean currentMethodIsStatic = false; 
 	//keep track of current method or constructor's statements, this statements may used in freeguithread visitor
@@ -93,7 +93,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		String numThreadsClause = "";
 
 		//Print Parallel Region Class Code
-		this.PrinterForPRClass.printLn(currentPRClass.getSource());
+		this.PrinterForAuxiliaryClasses.printLn(currentPRClass.getSource());
 		
 		String previous_icv = "icv_previous_" + currentPRClass.className;
 		String new_icv = "icv_" + currentPRClass.className;
@@ -333,8 +333,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- START */");
 
 		//Print Target Task code Class Code
-		//TODO: Not finished, change printer name
-		this.PrinterForPRClass.printLn(currentTTClass.getSource());
+		this.PrinterForAuxiliaryClasses.printLn(currentTTClass.getSource());
 		
 		String inputlist = "inputlist_" + currentTTClass.className;
 		String outputlist = "outputlist_" + currentTTClass.className;
@@ -347,6 +346,14 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
 		if (n.isAwait()) {
 			printer.printLn("PjRuntime.waitTaskForFinish(" + currentTTClass.className + "_in);");
+			//TODO: Not finished, change printer name
+			/*
+			 * If this is an await target block, the method which contains this target block need 
+			 * an auxiliary state machine class. So hereby we create this kind of class, and print
+			 *  this auxiliary state machine class to "PrinterForAuxiliaryClasses".
+			 */
+			StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(this.currentMehodNode, this);
+			this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
 		}
 		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- END */");
 	}
@@ -955,6 +962,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        printMemberAnnotations(n.getAnnotations(), printer);
 	        printModifiers(n.getModifiers(), printer);
 	        //Xing added for keep track of current method's all statements
+	        this.currentMehodNode = n;
 	        this.currentMethodOrConstructorStmts = new ArrayList<Statement>();
 	        this.currentMethodOrConstructorStmts = n.getBody().getStmts();
 	        this.currentMethodType = n.getType();
@@ -1017,12 +1025,17 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 //				}
 				printer.print("}");
 	        }
-	        ///Xing added to print Auxilary parallel region class if current method have PR region.
-			printer.printLn(this.PrinterForPRClass.getSource());
-			this.PrinterForPRClass.clear();
+	        /*Xing added to print Auxiliary parallel region class
+	         *if current method has PR regions or await Target regions.
+	         */
+			printer.printLn(this.PrinterForAuxiliaryClasses.getSource());
+			this.PrinterForAuxiliaryClasses.clear();
+			// reset current method to null
+			this.currentMehodNode = null;
 			this.currentMethodOrConstructorStmts = null;
 			this.currentMethodType = null;
-			///Xing added
+			///Xing added end
+			
 	    }
 
 	    public void visit(Parameter n, SourcePrinter printer) {
