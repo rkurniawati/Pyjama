@@ -83,6 +83,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
 		ParallelRegionClassBuilder currentPRClass = new ParallelRegionClassBuilder(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
 		currentPRClass.className = prefixTaskNameForParallelRegion + uniqueOpenMPRegionID;
+		currentPRClass.setPrinterIndentLevel(printer.getIndentLevel());
 
 		
 		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- START */");
@@ -324,7 +325,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
 		TargetTaskCodeClassBuilder currentTTClass = new TargetTaskCodeClassBuilder(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
 		currentTTClass.className = prefixTaskNameForTargetTaskRegion + uniqueOpenMPRegionID;
-
+		currentTTClass.setPrinterIndentLevel(printer.getIndentLevel());
 		
 		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- START */");
 
@@ -342,7 +343,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
 		if (n.isAwait()) {
 			printer.printLn("PjRuntime.waitTaskForFinish(" + currentTTClass.className + "_in);");
-			//TODO: Not finished, change printer name
+			//TODO: Not finished
 			/*
 			 * If this is an await target block, the method which contains this target block need 
 			 * an auxiliary state machine class. So hereby we create this kind of class, and print

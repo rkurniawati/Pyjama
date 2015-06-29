@@ -47,6 +47,10 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		this.visitor = visitor;
 		this.currentMethodOrConstructorStmts = stmts;
 	}
+	
+	public void setPrinterIndentLevel(int level) {
+		this.printer.setIndentLevel(level);
+	}
 
 	private Statement getUserCode() {
 		return targetConstruct.getBody();

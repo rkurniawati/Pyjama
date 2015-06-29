@@ -81,6 +81,10 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	public String get_outputlist() {
 		return "outputlist_" + this.className;
 	}
+	
+	public void setPrinterIndentLevel(int level) {
+		this.printer.setIndentLevel(level);
+	}
 		
 	public String getSource()
 	{

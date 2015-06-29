@@ -10,7 +10,7 @@ public class AsyncSemanticTest{
 		int c=0, d=0, e=0;
 		//#omp target virtual(worker) shared(a,b,c) nowait
 		{
-			int c = a + b;
+			c = a + b;
 			System.out.println("Async nowait execution c=" + c);
 		}
 
