@@ -158,39 +158,6 @@ public class AsyncSemanticTest {
             }
         }
 
-class main extends pj.pr.target.TargetTask{
-    public main(String[] s) {
-    }
-    int state;
-    @Override
-    public ConcurrentHashMap<String,Object> call() {
-        switch(state) {
-        case 0:
-            int a = 5;
-            int b = 4;
-            int c = 0, d = 0, e = 0;
-            //#omp target virtual(worker) nowait shared(a, c, b) 
-{
-    {
-        c = a + b;
-        System.out.println("Async nowait execution c=" + c);
-    }
-}
-        case 1:
-            //#omp target virtual(worker) astask(axing) shared(e, b, a) 
-{
-    {
-        e = a + b;
-        System.out.println("Async execution 2 c=" + e);
-    }
-}
-            System.out.println("after Async execution c=" + c);
-            System.out.println("Done");
-            default:
-            }
-        }
-    }
-
 
         static class _OMP_TargetTaskRegion_2 extends pj.pr.target.TargetTask{
             private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();
@@ -242,6 +209,57 @@ class main extends pj.pr.target.TargetTask{
                 return null;
             }
         }
+
+class main extends pj.pr.target.TargetTask{
+    public main(String[] s) {
+    }
+    int state;
+    @Override
+    public ConcurrentHashMap<String,Object> call() {
+        switch(state) {
+        case 0:
+            int a = 5;
+            int b = 4;
+            int c = 0, d = 0, e = 0;
+                    /*OpenMP Target region (#0) -- START */
+        ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
+        inputlist__OMP_TargetTaskRegion_0.put("a",a);
+        inputlist__OMP_TargetTaskRegion_0.put("c",c);
+        inputlist__OMP_TargetTaskRegion_0.put("b",b);
+        _OMP_TargetTaskRegion_0 _OMP_TargetTaskRegion_0_in = new _OMP_TargetTaskRegion_0(inputlist__OMP_TargetTaskRegion_0,outputlist__OMP_TargetTaskRegion_0);
+        PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_0_in);
+        /*OpenMP Target region (#0) -- END */
+
+                    /*OpenMP Target region (#1) -- START */
+        ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
+        inputlist__OMP_TargetTaskRegion_1.put("b",b);
+        inputlist__OMP_TargetTaskRegion_1.put("a",a);
+        inputlist__OMP_TargetTaskRegion_1.put("d",d);
+        _OMP_TargetTaskRegion_1 _OMP_TargetTaskRegion_1_in = new _OMP_TargetTaskRegion_1(inputlist__OMP_TargetTaskRegion_1,outputlist__OMP_TargetTaskRegion_1);
+        PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_1_in);
+        PjRuntime.waitTaskForFinish(_OMP_TargetTaskRegion_1_in);
+        /*OpenMP Target region (#1) -- END */
+
+        case 1:
+                    /*OpenMP Target region (#2) -- START */
+        ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_2 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_2 = new ConcurrentHashMap<String,Object>();
+        //inputlist__OMP_TargetTaskRegion_2.put("e",e);
+        //inputlist__OMP_TargetTaskRegion_2.put("b",b);
+        //inputlist__OMP_TargetTaskRegion_2.put("a",a);
+        _OMP_TargetTaskRegion_2 _OMP_TargetTaskRegion_2_in = new _OMP_TargetTaskRegion_2(inputlist__OMP_TargetTaskRegion_2,outputlist__OMP_TargetTaskRegion_2);
+        PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_2_in);
+        /*OpenMP Target region (#2) -- END */
+
+            //System.out.println("after Async execution c=" + c);
+            System.out.println("Done");
+            default:
+            }
+            return null;
+        }
+    }
 
 
 

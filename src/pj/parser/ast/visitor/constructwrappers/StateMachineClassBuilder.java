@@ -1,6 +1,7 @@
 package pj.parser.ast.visitor.constructwrappers;
 
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,17 +22,18 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	
 	private SourcePrinter printer = new SourcePrinter();
 	
-	//private DumpVisitor codeDumper = new DumpVisitor();
+	private HashMap<OmpTargetConstruct, StringBuffer> targetSourceTable = null;
 
 	private MethodDeclaration method;
 
 	public PyjamaToJavaVisitor visitor;
 
 		
-	public StateMachineClassBuilder(MethodDeclaration methodConstruct, PyjamaToJavaVisitor visitor)
+	public StateMachineClassBuilder(MethodDeclaration methodConstruct, PyjamaToJavaVisitor visitor, HashMap<OmpTargetConstruct, StringBuffer> table)
 	{	
 		this.method = methodConstruct;
 		this.visitor = visitor;
+		this.targetSourceTable = table;
 	}
 
 	private Statement getUserCode() {
@@ -93,12 +95,16 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		Statement s;
 		while (iter.hasNext()) {
 			s = iter.next();
-			if ((s instanceof OmpTargetConstruct) && ((OmpTargetConstruct)s).isAwait()) {
-				//if current statement is an await target construct, then, this statement is a seperator
-				stateCounter++;
-				printer.unindent();
-				printer.printLn("case " + stateCounter + ":");
-				printer.indent();
+			if (s instanceof OmpTargetConstruct) {
+				StringBuffer targetCode = this.targetSourceTable.get(s);
+				printer.printLn(targetCode.toString());
+				if (((OmpTargetConstruct)s).isAwait()) {
+					//if current statement is an await target construct, then, this statement is a separator
+					stateCounter++;
+					printer.unindent();
+					printer.printLn("case " + stateCounter + ":");
+					printer.indent();
+				}
 			} else {
 				DumpVisitor codeDumper = new DumpVisitor();
                 s.accept(codeDumper, null);
@@ -123,6 +129,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		this.generateStates();
 		printer.printLn("default:");
 		printer.printLn("}");
+		printer.printLn("return null;");
 		printer.unindent();
 		printer.printLn("}");
 		printer.unindent();

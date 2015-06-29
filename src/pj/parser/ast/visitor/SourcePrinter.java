@@ -172,4 +172,14 @@ public final class SourcePrinter {
     public String toString() {
         return getSource();
     }
+    
+    
+    //Xing added this two methods, in service of OmpTargetConstruct visiting
+    public int getPrinterBufferEndCursor() {
+    	return this.buf.length();
+    }
+    
+    public StringBuffer getCodeFromIndex(int index) {
+    	return new StringBuffer(this.buf.substring(index));
+    }
 }
