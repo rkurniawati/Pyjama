@@ -46,16 +46,24 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected List<Statement> currentMethodOrConstructorStmts = null;
 	//keep track of current method return type
 	protected Type currentMethodType = null;
+	//keep track of current method whether should be async (containing //#omp target virtual await directives)
+	protected boolean currentMethodIsAsync = false;
 	//keep track of current type of declaration of variables 2014.7.14
 	protected Type currentVarDeclarationType = null;
 	//if current var declaration is in foreach header, do not give initial value 2014.7.4 => 2014.10.27
 	protected boolean needNotVarInit = false;
 	//keep track of current worksharing block's private variables, including firstprivate, lastprivate, and reduction
-	/*
+	/* 2015.6.29
 	 * currentPrivateVariableInOMPWorksharingBlock: contain all variable name inside current //#omp for or //#omp sections
 	 * need to be renamed. This is used in NameExpr visitor.
 	 */
 	protected HashMap<String,String>  currentPrivateVariableInOMPWorksharingBlock = new HashMap<String,String>();
+	
+	/*
+	 * ompTargetVisitingCode: this is a hashmap contains all OmpTargetConstructs and their generated code used in PyjamaVisitor.
+	 *  This is used for rewriting state machine class code for methods which contains omp target await construct
+	 */
+	public HashMap<OmpTargetConstruct, StringBuffer> ompTargetVisitingCode = new HashMap<OmpTargetConstruct, StringBuffer>();
 	
 	private SymbolTable symbolTable = null;
 	
@@ -325,6 +333,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	n.scope = this.symbolTable.getScopeOfNode(n);
     	n.processAllReachableVariablesIfNecessary();
     	
+    	//get current printer's index, for further use
+    	int currentPrinterindex = printer.getPrinterBufferEndCursor();
+    	
 		int uniqueOpenMPRegionID = nextOpenMPRegionUniqueID++;
 
 		TargetTaskCodeClassBuilder currentTTClass = new TargetTaskCodeClassBuilder(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
@@ -347,16 +358,13 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
 		if (n.isAwait()) {
 			printer.printLn("PjRuntime.waitTaskForFinish(" + currentTTClass.className + "_in);");
-			//TODO: Not finished
-			/*
-			 * If this is an await target block, the method which contains this target block need 
-			 * an auxiliary state machine class. So hereby we create this kind of class, and print
-			 *  this auxiliary state machine class to "PrinterForAuxiliaryClasses".
-			 */
-			StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(this.currentMehodNode, this);
-			this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
+			this.currentMethodIsAsync = true;		
 		}
 		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- END */");
+		
+		//put visiting code to hashmap, for state machine builder to use
+		StringBuffer targetVisitingCodeBuf = printer.getCodeFromIndex(currentPrinterindex);
+		this.ompTargetVisitingCode.put(n, targetVisitingCodeBuf);
 	}
 	    
 	//OpenMP add END*********************************************************************************OpenMP add END//
@@ -1026,15 +1034,28 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 //				}
 				printer.print("}");
 	        }
+	        ///Xing added begin
+	        /*
+			 * If this method contains at least one //#omp target virtual await, we call this method is async.
+			 * Then this method needs an auxiliary state machine class. 
+			 * So hereby we create this kind of class, and print this auxiliary state machine class 
+			 * to "PrinterForAuxiliaryClasses".
+			 */
+	        if (this.currentMethodIsAsync) {
+				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(this.currentMehodNode, this, this.ompTargetVisitingCode);
+				this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
+	        }
 	        /*Xing added to print Auxiliary parallel region class
 	         *if current method has PR regions or await Target regions.
 	         */
 			printer.printLn(this.PrinterForAuxiliaryClasses.getSource());
 			this.PrinterForAuxiliaryClasses.clear();
-			// reset current method to null
+			
+			// reset all flags to default, for next method visiting
 			this.currentMehodNode = null;
 			this.currentMethodOrConstructorStmts = null;
 			this.currentMethodType = null;
+			this.currentMethodIsAsync = false;
 			///Xing added end
 			
 	    }
