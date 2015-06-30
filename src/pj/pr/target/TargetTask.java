@@ -5,9 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class TargetTask implements Callable<ConcurrentHashMap<String,Object>>{
 	private TargetExecutor caller = null;
-	private Callable<ConcurrentHashMap<String,Object>> task;
 	private CallbackInfo callWhenFinish;
-	private boolean isFinished = false;
+	private volatile boolean isFinished = false;
 	
 	class CallbackInfo {
 		TargetTask callback;
@@ -49,7 +48,7 @@ public abstract class TargetTask implements Callable<ConcurrentHashMap<String,Ob
 	}
 	
 	protected void run() throws Exception {
-		this.task.call();
+		this.call();
 		this.isFinished = true;
 		if (null != this.callWhenFinish) {
 			this.callWhenFinish.trigger();

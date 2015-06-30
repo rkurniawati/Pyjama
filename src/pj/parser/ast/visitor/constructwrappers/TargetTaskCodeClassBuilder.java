@@ -88,7 +88,6 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		printer.indent();
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
-		printer.printLn("public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);");
 		printer.printLn();
 		//#BEGIN shared variables defined here
 		printer.printLn("//#BEGIN shared variables defined here");
@@ -155,23 +154,12 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		printer.printLn("@Override");
 		printer.printLn("public ConcurrentHashMap<String,Object> call() {");
 		printer.indent();
-		printer.printLn("try {");
-		printer.indent();
 		//BEGIN get construct user code
 		printer.printLn("/****User Code BEGIN***/");
 		this.getUserCode().accept(visitor, printer);
 		printer.printLn();
 		printer.printLn("/****User Code END***/");
 		printer.unindent();
-		printer.printLn("} catch (OmpParallelRegionLocalCancellationException e) {");
-		printer.printLn(" 	PjRuntime.decreaseBarrierCount();");
-		printer.printLn("} catch (Exception e) {");
-		printer.indent();
-		printer.printLn("PjRuntime.decreaseBarrierCount();");
-		printer.printLn("PjExecutor.cancelCurrentThreadGroup();");
-		printer.printLn("OMP_CurrentParallelRegionExceptionSlot.compareAndSet(null, e);");
-		printer.unindent();
-		printer.printLn("}");
 		//END get construct user code
 		printer.printLn("return null;");
 		printer.unindent();

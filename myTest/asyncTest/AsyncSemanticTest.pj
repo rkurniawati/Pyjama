@@ -1,33 +1,61 @@
 package asyncTest;
 
 import pj.*;
+import utils.SimulateWork;
 
 public class AsyncSemanticTest{
 	
 	public static void main(String[] s) {
+		System.out.println("Start");
+		//#omp target virtual(worker) nowait 
+		{
+			System.out.println("task before");
+			asyncTest();
+			System.out.println("task after");
+		}
+		System.out.println("Done");
+	}
+
+	public static void test() {
+
 		int a = 5;
 		int b = 4;
 		int c=0, d=0, e=0;
 		//#omp target virtual(worker) shared(a,b,c) nowait
 		{
 			c = a + b;
+			SimulateWork.work(100);
 			System.out.println("Async nowait execution c=" + c);
 		}
-
-		//#omp target virtual(worker) shared(a,b,d) await
+		System.out.println("1------------");
+		//#omp target virtual(worker1) shared(a,b,d) await
 		{
 			d = a + b;
+			SimulateWork.work(100);
 			System.out.println("Async await execution c=" + d);
 		}
-
-		//#omp target virtual(worker) shared(a,b,e) astask(axing)
+		System.out.println("2------------");
+		//#omp target virtual(worker2) shared(a,b,e) astask(axing)
 		{
 			e = a + b;
+			SimulateWork.work(100);
 			System.out.println("Async execution 2 c=" + e);
 		}
 		System.out.println("after Async execution c=" + c);
 		///#omp wait(axing)
-		System.out.println("Done");
 	}
+
+	public static void asyncTest() {
+		System.out.println("Async before");
+		//#omp target virtual(worker) await
+		{
+			SimulateWork.work(100);
+			System.out.println("Async await");
+		}
+		System.out.println("Async after");
+	}
+
+
+
 	
 }
