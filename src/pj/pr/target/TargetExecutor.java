@@ -3,13 +3,15 @@ package pj.pr.target;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 
 
 public class TargetExecutor {
 
 	private String targetName = null;
 	private final ConcurrentLinkedDeque<TargetWorkerThread> workers = new ConcurrentLinkedDeque<TargetWorkerThread>();
-	private BlockingQueue<TargetTask> taskQueue;
+	private BlockingQueue<TargetTask> taskQueue = new  LinkedBlockingDeque<TargetTask>();
 	
 	public TargetExecutor(String name) {
 		this.targetName = name;
@@ -20,6 +22,12 @@ public class TargetExecutor {
 		return this.targetName;
 	}
 	protected TargetTask getTask() {
+		try {
+			return this.taskQueue.poll(1000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
