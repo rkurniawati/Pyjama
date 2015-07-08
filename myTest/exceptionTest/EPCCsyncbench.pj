@@ -1,0 +1,229 @@
+package exceptionTest;
+
+public class EPCCsyncbench {
+	
+	static final double DEFAULT_DELAY_TIME = 0.1;
+	static long innerreps = 0;
+	static enum testType {PR, WS, BAR};
+	static double targettesttime = 1000;  //mcro secs
+	static int outerreps  = 20;
+	static int delaylength = -1;
+	static double delaytime = 0.1;
+	
+	static double[] times;
+	
+	public static void main(String[] args) {
+		
+		int nthreads = 1;
+    	if (args.length > 2) {
+    		nthreads = Integer.parseInt(args[1]);
+    	}
+				
+		times = new double[outerreps];
+		benchmark(nthreads, "PARALLEL", testType.PR);
+		benchmark(nthreads, "FOR", testType.WS);
+		benchmark(nthreads, "BARRIER", testType.BAR);
+		
+	}
+	public static void pr(int nthreads) {
+		int j;
+		Pyjama.omp_set_num_threads(nthreads);
+	    for (j = 0; j < innerreps; j++) {
+	    	//#omp parallel
+	    	{
+	    		delay(delaylength);
+	    	}
+	    }
+	}
+	
+	public static void ws(int nthreads) {
+		 int j;
+		 Pyjama.omp_set_num_threads(nthreads);
+		 //#omp parallel private(j) shared(nthreads)
+		     {
+		 	for (j = 0; j < innerreps; j++) {
+		 		//#omp for
+		 	    for (int i = 0; i < nthreads; i++) {
+		 		delay(delaylength);
+		 	    }
+		 	}
+		     }
+	}
+	
+	public static void bar(int nthreads) {
+	    int j;
+	    Pyjama.omp_set_num_threads(nthreads);
+	    //#omp parallel private(j)
+	    {
+	    	for (j = 0; j < innerreps; j++) {
+	    	    delay(delaylength);
+	    	    //#omp barrier
+	    	}
+	    }
+	}
+	
+	
+	static void benchmark(int nthreads, String name, EPCCsyncbench.testType type) {
+	    int k;
+	    double start;
+
+	    // Calculate the required number of innerreps
+	    innerreps = getinnerreps(nthreads, type);
+
+	    printheader(name);
+
+	    for (k=0; k<=outerreps; k++) {
+		start = getclock();
+		switch(type) {
+    	case PR:
+    		pr(nthreads);
+    		break;
+    	case WS:
+    		ws(nthreads);
+    		break;
+    	case BAR:
+    		bar(nthreads);
+    		break;
+    	default:		
+    	}
+		times[k] = (getclock() - start) * 1000000 / (double) innerreps;
+	    }
+
+	    stats();
+
+	}
+	
+	static long getinnerreps(int nthreads, EPCCsyncbench.testType type) {
+	    long innerreps = 10L;  // some initial value
+	    double time = 0.0;
+
+	    while (time < targettesttime) {
+	    	double start  = getclock();
+	    	switch(type) {
+	    	case PR:
+	    		pr(nthreads);
+	    		break;
+	    	case WS:
+	    		ws(nthreads);
+	    		break;
+	    	case BAR:
+	    		bar(nthreads);
+	    		break;
+	    	default:		
+	    	}
+	    	time = (getclock() - start) * 1000000;
+	    	innerreps *=2;
+	    	if (innerreps > (targettesttime*1.0e15)) {
+	    	    throw new RuntimeException("wrong");
+	    	}
+	    }
+		// Test to stop code if compiler is optimising reference time expressions away
+		return innerreps;
+	}
+  
+
+
+	private static void delay(int delaylength) {
+		int i;
+		float a = 0;
+
+		for (i = 0; i < delaylength; i++) {
+			a += i;
+			if (a < 0) {
+				System.out.println(a);
+			}
+		}
+	}
+	
+	static void printheader(String name) {
+	    System.out.println();
+	    System.out.println("--------------------------------------------------------\n");
+	    System.out.println("Computing " + name  + " time using " + innerreps + " reps\n");
+	}
+	
+	static void printfooter(String name, double testtime, double testsd,
+			 double referencetime, double refsd) {
+		System.out.printf("%s time     = %f microseconds +/- %f\n",
+		   name, testtime, testsd);
+//		System.out.printf("%s overhead = %f microseconds +/- %f\n",
+//		   name, testtime-referencetime, (testsd+referencesd));
+
+	}
+	
+	static int getdelaylengthfromtime(double delaytime) {
+	    int i, reps;
+	    double lapsedtime, starttime; // seconds
+
+	    reps = 1000;
+	    lapsedtime = 0.0;
+
+	    delaytime = delaytime/1.0E6; // convert from microseconds to seconds
+
+	    // Note: delaytime is local to this function and thus the conversion
+	    // does not propagate to the main code. 
+
+	    // Here we want to use the delaytime in microseconds to find the 
+	    // delaylength in iterations. We start with delaylength=0 and 
+	    // increase until we get a large enough delaytime, return delaylength 
+	    // in iterations. 
+
+	    int delaylength = 0;
+	    delay(delaylength);
+
+	    while (lapsedtime < delaytime) {
+	    	delaylength = (int) (delaylength * 1.1 + 1);
+	    	starttime = getclock();
+	    	for (i = 0; i < reps; i++) {
+	    		delay(delaylength);
+	    	}
+	    	lapsedtime = (getclock() - starttime) / (double) reps;
+	    }
+	    return delaylength;
+
+	}
+	
+	private static double getclock() {
+		return System.nanoTime()/ 1000000000;
+		//return secs
+	}
+	
+	static void stats() {
+
+	    double meantime, totaltime, sumsq, mintime, maxtime, sd, cutoff;
+
+	    int i, nr;
+
+	    mintime = 1.0e10;
+	    maxtime = 0.;
+	    totaltime = 0.;
+
+	    for (i = 1; i <= outerreps; i++) {
+		mintime = (mintime < times[i]) ? mintime : times[i];
+		maxtime = (maxtime > times[i]) ? maxtime : times[i];
+		totaltime += times[i];
+	    }
+
+	    meantime = totaltime / outerreps;
+	    sumsq = 0;
+
+	    for (i = 1; i <= outerreps; i++) {
+		sumsq += (times[i] - meantime) * (times[i] - meantime);
+	    }
+	    sd = Math.sqrt(sumsq / (outerreps - 1));
+
+	    cutoff = 3.0 * sd;
+
+	    nr = 0;
+
+	    for (i = 1; i <= outerreps; i++) {
+		if (Math.abs(times[i] - meantime) > cutoff)
+		    nr++;
+	    }
+
+	    System.out.printf("\n");
+	    System.out.printf("Sample_size       Average     Min         Max          S.D.          Outliers\n");
+	    System.out.printf(" %d                %f   %f   %f    %f      %d\n",
+		   outerreps, meantime, mintime, maxtime, sd, nr);
+	    System.out.printf("\n");
+	}
+}
