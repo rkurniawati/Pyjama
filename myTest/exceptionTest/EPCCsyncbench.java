@@ -1,5 +1,7 @@
 package exceptionTest;
 
+import java.io.PrintWriter;
+
 import pj.pr.*;
 import pj.PjRuntime;
 import pj.Pyjama;
@@ -39,12 +41,20 @@ public class EPCCsyncbench {
 
     static double[] times = null;
 
-    static int warmup = 10000;
+    static int warmup = 1000;
+
+    static PrintWriter filePrinter = null;
 
     public static void main(String[] args) {{
         int nthreads = 4;
         if (args.length > 0) {
             nthreads = Integer.parseInt(args[0]);
+        }
+        try {
+            filePrinter = new PrintWriter("./syncbench_nthreads_" + nthreads + ".csv", "UTF-8");
+            filePrinter.println("type,time");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         delaylength = getdelaylengthfromtime(delaytime);
         System.out.println("Running OpenMP benchmark Java version 3.0");
@@ -58,6 +68,7 @@ public class EPCCsyncbench {
         benchmark(nthreads, "PARALLEL", testType.PR);
         benchmark(nthreads, "FOR", testType.WS);
         benchmark(nthreads, "BARRIER", testType.BAR);
+        filePrinter.close();
     }
     }
 
@@ -489,6 +500,7 @@ public class EPCCsyncbench {
                 default:
             }
             times[k] = (getclock() - start) * 1e6 / (double) innerreps;
+            filePrinter.println(type + "," + times[k]);
         }
         finalise(name, true);
     }
