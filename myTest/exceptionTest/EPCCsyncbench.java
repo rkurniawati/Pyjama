@@ -20,30 +20,52 @@ public class EPCCsyncbench {
 
     static enum testType {
 
-        PR, WS, BAR
+        PR, WS, BAR, REF
     }
 
     ;
 
-    static double targettesttime = 1000;
+    static double targettesttime = 1e3;
 
-    static int outerreps = 20;
+    static int outerreps = 100;
 
     static int delaylength = -1;
 
     static double delaytime = 0.1;
 
+    static double reftime = 0;
+
+    static double refsd = 0;
+
     static double[] times = null;
 
+    static int warmup = 10000;
+
     public static void main(String[] args) {{
-        int nthreads = 1;
-        if (args.length > 2) {
-            nthreads = Integer.parseInt(args[1]);
+        int nthreads = 4;
+        if (args.length > 0) {
+            nthreads = Integer.parseInt(args[0]);
         }
+        delaylength = getdelaylengthfromtime(delaytime);
+        System.out.println("Running OpenMP benchmark Java version 3.0");
+        System.out.println("\t" + nthreads + " thread(s)");
+        System.out.println("\t" + outerreps + " outer repetitions)");
+        System.out.println("\t" + targettesttime + " test time (microseconds)");
+        System.out.println("\t" + delaylength + " delay length (iterations)");
+        System.out.println("\t" + delaytime + " delay time (microseconds)");
         times = new double[outerreps];
+        reference();
         benchmark(nthreads, "PARALLEL", testType.PR);
         benchmark(nthreads, "FOR", testType.WS);
         benchmark(nthreads, "BARRIER", testType.BAR);
+    }
+    }
+
+
+    private static void refer() {{
+        for (int j = 0; j < innerreps; j++) {
+            delay(delaylength);
+        }
     }
     }
 
@@ -417,12 +439,42 @@ public class EPCCsyncbench {
 
 
 
+    private static void reference() {{
+        int k = 0;
+        double start = 0.0d;
+        innerreps = getinnerreps(1, testType.REF);
+        printheader("REFERENCE");
+        for (k = 0; k < outerreps; k++) {
+            start = getclock();
+            refer();
+            times[k] = (getclock() - start) * 1.0e6 / (double) innerreps;
+        }
+        finalise("REFERENCE", false);
+    }
+    }
+
+
     static void benchmark(int nthreads, String name, EPCCsyncbench.testType type) {{
         int k = 0;
         double start = 0.0d;
+        for (k = 0; k < warmup; k++) {
+            innerreps = 1;
+            switch(type) {
+                case PR:
+                    pr(nthreads);
+                    break;
+                case WS:
+                    ws(nthreads);
+                    break;
+                case BAR:
+                    bar(nthreads);
+                    break;
+                default:
+            }
+        }
         innerreps = getinnerreps(nthreads, type);
         printheader(name);
-        for (k = 0; k <= outerreps; k++) {
+        for (k = 0; k < outerreps; k++) {
             start = getclock();
             switch(type) {
                 case PR:
@@ -436,15 +488,15 @@ public class EPCCsyncbench {
                     break;
                 default:
             }
-            times[k] = (getclock() - start) * 1000000 / (double) innerreps;
+            times[k] = (getclock() - start) * 1e6 / (double) innerreps;
         }
-        stats();
+        finalise(name, true);
     }
     }
 
 
     static long getinnerreps(int nthreads, EPCCsyncbench.testType type) {{
-        long innerreps = 10L;
+        innerreps = 10L;
         double time = 0.0;
         while (time < targettesttime) {
             double start = getclock();
@@ -458,6 +510,8 @@ public class EPCCsyncbench {
                 case BAR:
                     bar(nthreads);
                     break;
+                case REF:
+                    refer();
                 default:
             }
             time = (getclock() - start) * 1000000;
@@ -492,12 +546,6 @@ public class EPCCsyncbench {
     }
 
 
-    static void printfooter(String name, double testtime, double testsd, double referencetime, double refsd) {{
-        System.out.printf("%s time     = %f microseconds +/- %f\n", name, testtime, testsd);
-    }
-    }
-
-
     static int getdelaylengthfromtime(double delaytime) {{
         int i = 0, reps = 0;
         double lapsedtime = 0.0d, starttime = 0.0d;
@@ -520,37 +568,59 @@ public class EPCCsyncbench {
 
 
     private static double getclock() {{
-        return System.nanoTime() / 1000000000;
+        return System.nanoTime() / (double) 1000000000;
     }
     }
 
 
-    static void stats() {{
+    static void finalise(String name, boolean benchmark) {{
+        printfooter(name, stats(benchmark), benchmark);
+    }
+    }
+
+
+    static void printfooter(String name, double time, boolean benchmark) {{
+        System.out.println(name + " time     = " + time + " microseconds");
+        if (benchmark) {
+            System.out.println(name + " overhead     = " + (time - reftime) + " microseconds");
+        }
+    }
+    }
+
+
+    private static double stats(boolean benchmark) {{
         double meantime = 0.0d, totaltime = 0.0d, sumsq = 0.0d, mintime = 0.0d, maxtime = 0.0d, sd = 0.0d, cutoff = 0.0d;
         int i = 0, nr = 0;
         mintime = 1.0e10;
-        maxtime = 0.;
-        totaltime = 0.;
-        for (i = 1; i <= outerreps; i++) {
+        maxtime = 0;
+        totaltime = 0;
+        for (i = 0; i < outerreps; i++) {
             mintime = (mintime < times[i]) ? mintime : times[i];
             maxtime = (maxtime > times[i]) ? maxtime : times[i];
             totaltime += times[i];
         }
         meantime = totaltime / outerreps;
         sumsq = 0;
-        for (i = 1; i <= outerreps; i++) {
+        for (i = 0; i < outerreps; i++) {
             sumsq += (times[i] - meantime) * (times[i] - meantime);
         }
-        sd = Math.sqrt(sumsq / (outerreps - 1));
+        sd = Math.sqrt(sumsq / (double) outerreps);
         cutoff = 3.0 * sd;
         nr = 0;
-        for (i = 1; i <= outerreps; i++) {
-            if (Math.abs(times[i] - meantime) > cutoff) nr++;
+        for (i = 0; i < outerreps; i++) {
+            if (Math.abs(times[i] - meantime) > cutoff) {
+                nr++;
+            }
         }
         System.out.printf("\n");
-        System.out.printf("Sample_size       Average     Min         Max          S.D.          Outliers\n");
-        System.out.printf(" %d                %f   %f   %f    %f      %d\n", outerreps, meantime, mintime, maxtime, sd, nr);
+        System.out.printf("Sample_size       Average             Min         Max          S.D.          Outliers\n");
+        System.out.printf("%d                %f         %f          %f           %f            %d\n", outerreps, meantime, mintime, maxtime, sd, nr);
         System.out.printf("\n");
+        if (!benchmark) {
+            reftime = meantime;
+            refsd = sd;
+        }
+        return meantime;
     }
     }
 
