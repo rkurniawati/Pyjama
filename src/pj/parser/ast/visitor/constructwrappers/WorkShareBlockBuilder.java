@@ -9,7 +9,10 @@ package pj.parser.ast.visitor.constructwrappers;
  * normalised into the elementary ones.
  * 
  * @author Xing Fan
- * @version 0.9
+ * @author Xiaohe Zhang
+ * @author Luman Wang
+ * @author Michael Li
+ * @version 1.0
  */
 
 import java.util.HashMap;
