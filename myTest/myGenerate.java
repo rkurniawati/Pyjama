@@ -6,9 +6,8 @@ public class myGenerate extends Object{
 		// TODO Auto-generated method stub
 		try {
 			pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/EPCCsyncbench.pj"));
-			//pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/CompareBench.pj"));
-			//pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/HexaBench.pj"));
-			//pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/SyncBenchPar.pj"));
+			//pj.PyjamaToJavaParser.parse(new File("myTest/asyncTest/AsyncSemanticTest.pj"));
+			//pj.PyjamaToJavaParser.parse(new File("myTest/squares/Squares.pj"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
