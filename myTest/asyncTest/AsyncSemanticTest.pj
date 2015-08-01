@@ -19,6 +19,12 @@ public class AsyncSemanticTest{
 			asyncTest();
 			System.out.println("task2 after");
 		}
+		//#omp target virtual(worker) async 
+		{
+			System.out.println("task2 before");
+			asyncTest();
+			System.out.println("task2 after");
+		}
 		System.out.println("Done");
 	}
 

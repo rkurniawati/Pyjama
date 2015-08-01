@@ -331,6 +331,8 @@ TOKEN :
 | < REDUCTION: "reduction" >
 | < FREEGUI: "freeguithread" >
 | < GUI: "gui" >
+| < TARGET: "target" >
+| < VIRTUAL: "virtual" >
 | < SCHEDULE: "schedule" >
 | < DYNAMIC: "dynamic" >
 | < GUIDED: "guided" >
@@ -346,6 +348,8 @@ TOKEN :
 | < FLUSH: "flush" >
 | < BARRIER: "barrier" >
 | < NOWAIT: "nowait" >
+| < ASYNC: "async" >
+| < AWAIT: "await" >
 | < NUMTHREADS: "num_threads">
 | < COPYPRIVATE: "copyprivate" >
 | < CANCELLATION_POINT: "cancellation point" >
@@ -354,6 +358,7 @@ TOKEN :
 | < LOCAL: "local" >
 | < GLOBAL: "global" >
 | < TAG: "tag" >
+| < ASTASK: "astask" >
 //§§ Pyjama Depricated; Xing Fan added at 2014.9.25
 //| < COPYIN: "copyin" >
 //| < THREADPRIVATE: "threadprivate" >
@@ -2597,7 +2602,9 @@ EmptyStmt EmptyStatement():
 {
   ";"
   { return new EmptyStmt(token.beginLine, token.beginColumn, token.endLine, token.endColumn); }
+
 }
+
 
 ExpressionStmt StatementExpression():
 /*
@@ -3107,6 +3114,8 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpOrderedConstruct()
 	|	ret = OmpCancellationPointDirective()
 	|	ret = OmpCancelDirective()
+	|	ret = OmpTargetConstruct()
+	|	ret = OmpAwaitDirective()
 	)
 	{return ret;}
 }
@@ -3173,6 +3182,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 {
 	OmpSectionConstruct sectionBlock = null;
+
 	ArrayList<OmpSectionConstruct> sectionList = new ArrayList<OmpSectionConstruct>();
 	OmpDataClause dataClause = null;
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
@@ -3447,6 +3457,53 @@ OmpCancelDirective OmpCancelDirective():
 	(<IF>	"(" ifStmt = Expression() ")")?
 	(<TAG>  "(" tag = Name() ")")?
 	{return new OmpCancelDirective(line, column, token.endLine, token.endColumn, region, affiliate, ifStmt, tag);}
+}
+
+//§§Followings are Pyjama extionsion of OpenMP for asynchronous execution of task, using virtual target; Xing Fan added at 2015.6.16
+OmpTargetConstruct OmpTargetConstruct():
+{
+	int line;
+	int column;
+	int waitTypeClauseCount = 0;
+	int IfClauseCount = 0;
+	int defaultDataClauseCount = 0;
+	OmpTargetConstruct.ExecutionType waitType = null;
+	OmpDataClause dataClause = null;
+	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
+	OmpIfClause ifExpr = null; 
+	boolean isVirtual = true;
+	NameExpr targetName = null;
+	NameExpr taskName = null;
+	Statement body = null;
+}
+{	
+	<TARGET> {line=token.beginLine; column=token.beginColumn;} 
+	<VIRTUAL> "(" targetName = Name() ")"		//currently we only support virtual target ;-)
+	(	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in omp target directive");}
+	|	dataClause = OmpReductionDataClause() 	{throw new ParseException("Pyjama Parsing Error: Reduction data clause cannot appear in omp target directive");}
+	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
+	| 	<NOWAIT>{ waitType = OmpTargetConstruct.ExecutionType.NoWait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
+	| 	<ASYNC> { waitType = OmpTargetConstruct.ExecutionType.Async; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
+	| 	<ASTASK> "(" taskName = Name() ")"
+			{ waitType = OmpTargetConstruct.ExecutionType.Wait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
+	)*
+	body = Statement()
+	{ return new OmpTargetConstruct(line, column, token.endLine, token.endColumn, body, isVirtual, targetName, dataClauseList, ifExpr, waitType, taskName); }
+}
+
+OmpAwaitDirective OmpAwaitDirective():
+{
+	int line;
+	int column;
+	NameExpr tag = null;
+}
+{
+	<AWAIT> {line=token.beginLine; column=token.beginColumn;}
+	"(" tag = Name() ")"
+	{return new OmpAwaitDirective(line, column, token.endLine, token.endColumn, tag.toString());}
 }
 
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25

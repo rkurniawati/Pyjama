@@ -356,7 +356,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		
 		printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
-		if (n.isAwait()) {
+		if (n.isAsync()) {
 			printer.printLn("PjRuntime.waitTaskForFinish(" + currentTTClass.className + "_in);");
 			this.currentMethodIsAsync = true;		
 		}
@@ -367,6 +367,11 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		this.ompTargetVisitingCode.put(n, targetVisitingCodeBuf);
 	}
 	    
+	@Override
+	public void visit(OmpAwaitDirective n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+		
+	}
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
 	        if (n.getPackage() != null) {
@@ -1612,4 +1617,5 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		return CodePrinter.getSource();
 	}
 	/********************************************************************************************************************************/
+
 }

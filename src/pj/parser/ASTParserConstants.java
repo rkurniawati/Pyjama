@@ -175,151 +175,153 @@ public interface ASTParserConstants {
   /** RegularExpression Id. */
   int NOWAIT = 90;
   /** RegularExpression Id. */
-  int AWAIT = 91;
+  int ASYNC = 91;
   /** RegularExpression Id. */
-  int NUMTHREADS = 92;
+  int AWAIT = 92;
   /** RegularExpression Id. */
-  int COPYPRIVATE = 93;
+  int NUMTHREADS = 93;
   /** RegularExpression Id. */
-  int CANCELLATION_POINT = 94;
+  int COPYPRIVATE = 94;
   /** RegularExpression Id. */
-  int CANCEL = 95;
+  int CANCELLATION_POINT = 95;
   /** RegularExpression Id. */
-  int TASKGROUP = 96;
+  int CANCEL = 96;
   /** RegularExpression Id. */
-  int LOCAL = 97;
+  int TASKGROUP = 97;
   /** RegularExpression Id. */
-  int GLOBAL = 98;
+  int LOCAL = 98;
   /** RegularExpression Id. */
-  int TAG = 99;
+  int GLOBAL = 99;
   /** RegularExpression Id. */
-  int ASTASK = 100;
+  int TAG = 100;
   /** RegularExpression Id. */
-  int LONG_LITERAL = 101;
+  int ASTASK = 101;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 102;
+  int LONG_LITERAL = 102;
   /** RegularExpression Id. */
-  int DECIMAL_LITERAL = 103;
+  int INTEGER_LITERAL = 103;
   /** RegularExpression Id. */
-  int HEX_LITERAL = 104;
+  int DECIMAL_LITERAL = 104;
   /** RegularExpression Id. */
-  int OCTAL_LITERAL = 105;
+  int HEX_LITERAL = 105;
   /** RegularExpression Id. */
-  int FLOATING_POINT_LITERAL = 106;
+  int OCTAL_LITERAL = 106;
   /** RegularExpression Id. */
-  int DECIMAL_FLOATING_POINT_LITERAL = 107;
+  int FLOATING_POINT_LITERAL = 107;
   /** RegularExpression Id. */
-  int DECIMAL_EXPONENT = 108;
+  int DECIMAL_FLOATING_POINT_LITERAL = 108;
   /** RegularExpression Id. */
-  int HEXADECIMAL_FLOATING_POINT_LITERAL = 109;
+  int DECIMAL_EXPONENT = 109;
   /** RegularExpression Id. */
-  int HEXADECIMAL_EXPONENT = 110;
+  int HEXADECIMAL_FLOATING_POINT_LITERAL = 110;
   /** RegularExpression Id. */
-  int CHARACTER_LITERAL = 111;
+  int HEXADECIMAL_EXPONENT = 111;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 112;
+  int CHARACTER_LITERAL = 112;
   /** RegularExpression Id. */
-  int IDENTIFIER = 113;
+  int STRING_LITERAL = 113;
   /** RegularExpression Id. */
-  int LETTER = 114;
+  int IDENTIFIER = 114;
   /** RegularExpression Id. */
-  int PART_LETTER = 115;
+  int LETTER = 115;
   /** RegularExpression Id. */
-  int LPAREN = 116;
+  int PART_LETTER = 116;
   /** RegularExpression Id. */
-  int RPAREN = 117;
+  int LPAREN = 117;
   /** RegularExpression Id. */
-  int LBRACE = 118;
+  int RPAREN = 118;
   /** RegularExpression Id. */
-  int RBRACE = 119;
+  int LBRACE = 119;
   /** RegularExpression Id. */
-  int LBRACKET = 120;
+  int RBRACE = 120;
   /** RegularExpression Id. */
-  int RBRACKET = 121;
+  int LBRACKET = 121;
   /** RegularExpression Id. */
-  int SEMICOLON = 122;
+  int RBRACKET = 122;
   /** RegularExpression Id. */
-  int COMMA = 123;
+  int SEMICOLON = 123;
   /** RegularExpression Id. */
-  int DOT = 124;
+  int COMMA = 124;
   /** RegularExpression Id. */
-  int AT = 125;
+  int DOT = 125;
   /** RegularExpression Id. */
-  int ASSIGN = 126;
+  int AT = 126;
   /** RegularExpression Id. */
-  int LT = 127;
+  int ASSIGN = 127;
   /** RegularExpression Id. */
-  int BANG = 128;
+  int LT = 128;
   /** RegularExpression Id. */
-  int TILDE = 129;
+  int BANG = 129;
   /** RegularExpression Id. */
-  int HOOK = 130;
+  int TILDE = 130;
   /** RegularExpression Id. */
-  int COLON = 131;
+  int HOOK = 131;
   /** RegularExpression Id. */
-  int EQ = 132;
+  int COLON = 132;
   /** RegularExpression Id. */
-  int LE = 133;
+  int EQ = 133;
   /** RegularExpression Id. */
-  int GE = 134;
+  int LE = 134;
   /** RegularExpression Id. */
-  int NE = 135;
+  int GE = 135;
   /** RegularExpression Id. */
-  int SC_OR = 136;
+  int NE = 136;
   /** RegularExpression Id. */
-  int SC_AND = 137;
+  int SC_OR = 137;
   /** RegularExpression Id. */
-  int INCR = 138;
+  int SC_AND = 138;
   /** RegularExpression Id. */
-  int DECR = 139;
+  int INCR = 139;
   /** RegularExpression Id. */
-  int PLUS = 140;
+  int DECR = 140;
   /** RegularExpression Id. */
-  int MINUS = 141;
+  int PLUS = 141;
   /** RegularExpression Id. */
-  int STAR = 142;
+  int MINUS = 142;
   /** RegularExpression Id. */
-  int SLASH = 143;
+  int STAR = 143;
   /** RegularExpression Id. */
-  int BIT_AND = 144;
+  int SLASH = 144;
   /** RegularExpression Id. */
-  int BIT_OR = 145;
+  int BIT_AND = 145;
   /** RegularExpression Id. */
-  int XOR = 146;
+  int BIT_OR = 146;
   /** RegularExpression Id. */
-  int REM = 147;
+  int XOR = 147;
   /** RegularExpression Id. */
-  int LSHIFT = 148;
+  int REM = 148;
   /** RegularExpression Id. */
-  int PLUSASSIGN = 149;
+  int LSHIFT = 149;
   /** RegularExpression Id. */
-  int MINUSASSIGN = 150;
+  int PLUSASSIGN = 150;
   /** RegularExpression Id. */
-  int STARASSIGN = 151;
+  int MINUSASSIGN = 151;
   /** RegularExpression Id. */
-  int SLASHASSIGN = 152;
+  int STARASSIGN = 152;
   /** RegularExpression Id. */
-  int ANDASSIGN = 153;
+  int SLASHASSIGN = 153;
   /** RegularExpression Id. */
-  int ORASSIGN = 154;
+  int ANDASSIGN = 154;
   /** RegularExpression Id. */
-  int XORASSIGN = 155;
+  int ORASSIGN = 155;
   /** RegularExpression Id. */
-  int REMASSIGN = 156;
+  int XORASSIGN = 156;
   /** RegularExpression Id. */
-  int LSHIFTASSIGN = 157;
+  int REMASSIGN = 157;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFTASSIGN = 158;
+  int LSHIFTASSIGN = 158;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFTASSIGN = 159;
+  int RSIGNEDSHIFTASSIGN = 159;
   /** RegularExpression Id. */
-  int ELLIPSIS = 160;
+  int RUNSIGNEDSHIFTASSIGN = 160;
   /** RegularExpression Id. */
-  int RUNSIGNEDSHIFT = 161;
+  int ELLIPSIS = 161;
   /** RegularExpression Id. */
-  int RSIGNEDSHIFT = 162;
+  int RUNSIGNEDSHIFT = 162;
   /** RegularExpression Id. */
-  int GT = 163;
+  int RSIGNEDSHIFT = 163;
+  /** RegularExpression Id. */
+  int GT = 164;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -421,6 +423,7 @@ public interface ASTParserConstants {
     "\"flush\"",
     "\"barrier\"",
     "\"nowait\"",
+    "\"async\"",
     "\"await\"",
     "\"num_threads\"",
     "\"copyprivate\"",

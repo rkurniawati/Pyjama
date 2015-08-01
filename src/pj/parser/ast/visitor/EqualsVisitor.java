@@ -58,6 +58,7 @@ import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
+import pj.parser.ast.omp.OmpAwaitDirective;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -1540,6 +1541,12 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Node> {
 
 	@Override
 	public Boolean visit(OmpTargetConstruct n, Node arg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean visit(OmpAwaitDirective n, Node arg) {
 		// TODO Auto-generated method stub
 		return null;
 	}

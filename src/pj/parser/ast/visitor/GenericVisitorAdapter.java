@@ -81,6 +81,7 @@ import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
+import pj.parser.ast.omp.OmpAwaitDirective;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -1052,6 +1053,10 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 			}
 		}
 		n.getBody().accept(this, arg);
+		return null;
+	}
+	
+	public R visit(OmpAwaitDirective n, A arg) {
 		return null;
 	}
 		

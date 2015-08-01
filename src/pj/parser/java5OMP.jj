@@ -348,6 +348,7 @@ TOKEN :
 | < FLUSH: "flush" >
 | < BARRIER: "barrier" >
 | < NOWAIT: "nowait" >
+| < ASYNC: "async" >
 | < AWAIT: "await" >
 | < NUMTHREADS: "num_threads">
 | < COPYPRIVATE: "copyprivate" >
@@ -3114,6 +3115,7 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpCancellationPointDirective()
 	|	ret = OmpCancelDirective()
 	|	ret = OmpTargetConstruct()
+	|	ret = OmpAwaitDirective()
 	)
 	{return ret;}
 }
@@ -3484,12 +3486,24 @@ OmpTargetConstruct OmpTargetConstruct():
 	|	dataClause = OmpReductionDataClause() 	{throw new ParseException("Pyjama Parsing Error: Reduction data clause cannot appear in omp target directive");}
 	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
 	| 	<NOWAIT>{ waitType = OmpTargetConstruct.ExecutionType.NoWait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
-	| 	<AWAIT> { waitType = OmpTargetConstruct.ExecutionType.Await; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
+	| 	<ASYNC> { waitType = OmpTargetConstruct.ExecutionType.Async; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
 	| 	<ASTASK> "(" taskName = Name() ")"
 			{ waitType = OmpTargetConstruct.ExecutionType.Wait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
 	)*
 	body = Statement()
 	{ return new OmpTargetConstruct(line, column, token.endLine, token.endColumn, body, isVirtual, targetName, dataClauseList, ifExpr, waitType, taskName); }
+}
+
+OmpAwaitDirective OmpAwaitDirective():
+{
+	int line;
+	int column;
+	NameExpr tag = null;
+}
+{
+	<AWAIT> {line=token.beginLine; column=token.beginColumn;}
+	"(" tag = Name() ")"
+	{return new OmpAwaitDirective(line, column, token.endLine, token.endColumn, tag.toString());}
 }
 
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25

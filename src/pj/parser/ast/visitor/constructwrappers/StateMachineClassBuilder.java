@@ -106,7 +106,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 			if (s instanceof OmpTargetConstruct) {
 				StringBuffer targetCode = this.targetSourceTable.get(s);
 				printer.printLn(targetCode.toString());
-				if (((OmpTargetConstruct)s).isAwait()) {
+				if (((OmpTargetConstruct)s).isAsync()) {
 					//if current statement is an await target construct, then, this statement is a separator
 					stateCounter++;
 					printer.unindent();

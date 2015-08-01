@@ -80,6 +80,7 @@ import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
+import pj.parser.ast.omp.OmpAwaitDirective;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -1688,8 +1689,8 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		
 		printer.print("(" + n.getTargetName() + ") ");
 		
-		if (n.isAwait()) {
-			printer.print("await ");
+		if (n.isAsync()) {
+			printer.print("async ");
 		} else if (n.isNoWait()) {
 			printer.print("nowait ");
 		} else if (n.isSync()) {
@@ -1713,6 +1714,15 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		printer.printLn();
 		printer.unindent();
 		printer.print("}");
+	}
+
+	@Override
+	public void visit(OmpAwaitDirective n, Object arg) {
+		printer.print("//omp await");
+		printer.print("(");
+		printer.print(n.getTaskName());
+		printer.printLn(")");
+		
 	}	
 
 }
