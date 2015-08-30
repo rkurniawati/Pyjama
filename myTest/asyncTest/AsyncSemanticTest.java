@@ -196,9 +196,9 @@ class main extends pj.pr.target.TargetTask{
         /*OpenMP Target region (#3) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_3 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_3 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_3.put("b",b);
-        inputlist__OMP_TargetTaskRegion_3.put("a",a);
         inputlist__OMP_TargetTaskRegion_3.put("c",c);
+        inputlist__OMP_TargetTaskRegion_3.put("a",a);
+        inputlist__OMP_TargetTaskRegion_3.put("b",b);
         _OMP_TargetTaskRegion_3 _OMP_TargetTaskRegion_3_in = new _OMP_TargetTaskRegion_3(inputlist__OMP_TargetTaskRegion_3,outputlist__OMP_TargetTaskRegion_3);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_3_in);
         /*OpenMP Target region (#3) -- END */
@@ -218,8 +218,8 @@ class main extends pj.pr.target.TargetTask{
         /*OpenMP Target region (#5) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_5 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_5 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_5.put("a",a);
         inputlist__OMP_TargetTaskRegion_5.put("e",e);
+        inputlist__OMP_TargetTaskRegion_5.put("a",a);
         inputlist__OMP_TargetTaskRegion_5.put("b",b);
         _OMP_TargetTaskRegion_5 _OMP_TargetTaskRegion_5_in = new _OMP_TargetTaskRegion_5(inputlist__OMP_TargetTaskRegion_5,outputlist__OMP_TargetTaskRegion_5);
         PjRuntime.submitTask(Thread.currentThread(), "worker2", _OMP_TargetTaskRegion_5_in);
@@ -254,9 +254,9 @@ class main extends pj.pr.target.TargetTask{
 
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
-                OMP_outputList.put("b",b);
-                OMP_outputList.put("a",a);
                 OMP_outputList.put("c",c);
+                OMP_outputList.put("a",a);
+                OMP_outputList.put("b",b);
                 //END update outputlist
             }
             @Override
@@ -342,8 +342,8 @@ class main extends pj.pr.target.TargetTask{
 
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
-                OMP_outputList.put("a",a);
                 OMP_outputList.put("e",e);
+                OMP_outputList.put("a",a);
                 OMP_outputList.put("b",b);
                 //END update outputlist
             }
