@@ -40,7 +40,7 @@ public class AsyncSemanticTest{
 			System.out.println("Async nowait execution c=" + c);
 		}
 		System.out.println("1------------");
-		//#omp target virtual(worker1) shared(a,b,d) await
+		//#omp target virtual(worker1) shared(a,b,d) 
 		{
 			d = a + b;
 			SimulateWork.work(100);
@@ -54,12 +54,12 @@ public class AsyncSemanticTest{
 			System.out.println("Async execution 2 c=" + e);
 		}
 		System.out.println("after Async execution c=" + c);
-		///#omp wait(axing)
+		//#omp await(axing)
 	}
 
 	public static void asyncTest() {
 		System.out.println("Async before");
-		//#omp target virtual(worker1) await
+		//#omp target virtual(worker1) 
 		{
 			SimulateWork.work(100);
 			System.out.println("Async await");

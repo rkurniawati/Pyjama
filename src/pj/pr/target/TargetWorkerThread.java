@@ -31,5 +31,9 @@ public class TargetWorkerThread extends Thread {
         		task = null;
             }
         }
+        /*
+         * remove this from executor's thread pool
+         */
+        this.executor.removeWorker(this);
 	}
 }

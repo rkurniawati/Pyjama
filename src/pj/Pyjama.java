@@ -1,6 +1,7 @@
 package pj;
 
 import pj.pr.*;
+import pj.pr.target.TargetExecutor;
 /**
  * This is the main class which implements the OpenMP 2.5
  * specific runtime routines.
@@ -387,5 +388,22 @@ public class Pyjama {
 		return System.nanoTime();
 	}
 	/**XING TRs (Time Routines) definition END*/
+	
+	/**
+	 * Pyjama executor model supports
+	 * Xing Fan 2015.8.31 
+	 */
+	
+	public static void omp_register_as_virtual_target(String targetName) {
+		PjRuntime.registerSingleThreadVirtualTarget(Thread.currentThread(), targetName);
+	}
+	
+	public static void omp_create_virtual_target(String targetName) {
+		PjRuntime.createVirtualTarget(targetName, 0);
+	}
+	
+	public static void omp_create_virtual_target(String targetName, int workerLimit) {
+		PjRuntime.createVirtualTarget(targetName, workerLimit);
+	}
 	
 }

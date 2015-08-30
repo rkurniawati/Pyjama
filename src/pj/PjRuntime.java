@@ -1,8 +1,10 @@
 package pj;
 
 import pj.pr.*;
+import pj.pr.target.SingleThreadVirtualTarget;
 import pj.pr.target.TargetExecutor;
 import pj.pr.target.TargetTask;
+import pj.pr.target.VirtualTarget;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,7 +28,7 @@ public class PjRuntime {
 	public static ReentrantLock OMP_lock = new ReentrantLock();
 	
 	/*Xing added this to store the map from target executor's name and its executor 2015.6.22*/
-	private static ConcurrentHashMap<String, TargetExecutor> targetExecutorMap = new ConcurrentHashMap<String, TargetExecutor>();
+	private static ConcurrentHashMap<String, VirtualTarget> targetExecutorMap = new ConcurrentHashMap<String, VirtualTarget>();
 	
 //	private static int ThreadsBusy;
 //	private static int ActiveParRegions;
@@ -179,14 +181,38 @@ public class PjRuntime {
 	/*
 	 * Following methods are used for Pyjama's asycTask approach(//#omp target virtual)
 	 */
+	public static void registerSingleThreadVirtualTarget(Thread thread, String targetName) {
+		VirtualTarget virtualTarget = targetExecutorMap.get(targetName);
+		if (null == virtualTarget) {
+			virtualTarget = new SingleThreadVirtualTarget(targetName, thread);
+			targetExecutorMap.put(targetName, virtualTarget);
+		} else {
+			throw new RuntimeException("Virtual target " + targetName + " has been registered before");
+		}
+	}
+	
+	public static void createVirtualTarget(String targetName, int workerLimit) {
+		VirtualTarget virtualTarget = targetExecutorMap.get(targetName);
+		if (null == virtualTarget) {
+			if (workerLimit <=0) {
+				virtualTarget = new TargetExecutor(targetName);
+			} else {
+				virtualTarget = new TargetExecutor(targetName, workerLimit);
+			}
+			targetExecutorMap.put(targetName, virtualTarget);
+		} else {
+			throw new RuntimeException("Virtual target " + targetName + " has been created before");
+		}
+	}
 	
 	public static void submitTask(Thread source, String targetName, TargetTask task) {
-		TargetExecutor targetExecutor = targetExecutorMap.get(targetName);
-		if (null == targetExecutor) {
-			targetExecutor = new TargetExecutor(targetName);
-			targetExecutorMap.put(targetName, targetExecutor);
+		VirtualTarget virtualTarget = targetExecutorMap.get(targetName);
+		if (null == virtualTarget) {
+			System.err.println("Virtual target " + targetName + "is not predefined, create this virtual target on-the-fly");
+			virtualTarget = new TargetExecutor(targetName);
+			targetExecutorMap.put(targetName, virtualTarget);
 		}
-		targetExecutor.submit(task);
+		virtualTarget.submit(task);
 	}
 	
 	public static boolean checkFinish(TargetTask task) {
