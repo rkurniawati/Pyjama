@@ -11,7 +11,7 @@ import java.util.concurrent.FutureTask;
 import java.util.ArrayList;
 import utils.SimulateWork;
 import javax.swing.*;
-public class AsyncGuiTest extends JFrame implements ActionListener
+public class SeqAsyncGuiTest extends JFrame implements ActionListener
 {
   /**
 	 * 
@@ -29,7 +29,7 @@ public class AsyncGuiTest extends JFrame implements ActionListener
   JPanel pane = new JPanel(); // create pane object
   JButton task1_button = new JButton("Task1");
   JButton task2_button = new JButton("Task2");
-  AsyncGuiTest()   // the constructor
+  SeqAsyncGuiTest()   // the constructor
   {
     super("Event Handler Demo"); setBounds(100,100,300,200);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,8 +48,8 @@ public class AsyncGuiTest extends JFrame implements ActionListener
     this.executionStartTimeStamp = new ArrayList<Long>(this.iteration);
     this.executionEndTimeStamp = new ArrayList<Long>(this.iteration);
     
-    Pyjama.omp_register_as_virtual_target("edt");
-    Pyjama.omp_create_virtual_target("worker");
+    //Pyjama.omp_register_as_virtual_target("edt");
+    //Pyjama.omp_create_virtual_target("worker");
 
   }
 
@@ -102,8 +102,8 @@ public class AsyncGuiTest extends JFrame implements ActionListener
   }
   
   public static void main(String args[]) {
-	    AsyncGuiTest a = new AsyncGuiTest();
-        EventPostingThread ept = new EventPostingThread(a, a.iteration, a.eventTriggeringTimeStamp);
+	  	SeqAsyncGuiTest a = new SeqAsyncGuiTest();
+        SeqEventPostingThread ept = new SeqEventPostingThread(a, a.iteration, a.eventTriggeringTimeStamp);
         ept.start();
         System.out.println("Done from thread num:" + Thread.currentThread().getId()); 
   }
