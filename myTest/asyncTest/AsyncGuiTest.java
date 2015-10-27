@@ -70,7 +70,7 @@ public class AsyncGuiTest extends JFrame implements ActionListener {
         this.executionStartTimeStamp = new ArrayList<Long>(this.iteration);
         this.executionEndTimeStamp = new ArrayList<Long>(this.iteration);
         Pyjama.omp_register_as_virtual_target("edt");
-        Pyjama.omp_create_virtual_target("worker",4);
+        Pyjama.omp_create_virtual_target("worker");
     }
 
     public void actionPerformed(ActionEvent event) {{

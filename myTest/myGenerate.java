@@ -7,7 +7,7 @@ public class myGenerate extends Object{
 		try {
 			pj.PyjamaToJavaParser.parse(new File("myTest/asyncTest/AsyncSemanticTest.pj"));
 			pj.PyjamaToJavaParser.parse(new File("myTest/asyncTest/AsyncGuiTest.pj"));
-			pj.PyjamaToJavaParser.parse(new File("myTest/eventdrivenTest/AsyncGuiTest.pj"));
+			pj.PyjamaToJavaParser.parse(new File("myTest/eventdrivenTest/ParCptOffloadingTest.pj"));
 			//pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/EPCCsyncbench.pj"));
 			//pj.PyjamaToJavaParser.parse(new File("myTest/asyncTest/AsyncSemanticTest.pj"));
 			//pj.PyjamaToJavaParser.parse(new File("myTest/squares/Squares.pj"));
