@@ -33,8 +33,10 @@ public class PjRuntime {
 	
 	/*Xing added this to store the map from target executor's name and its executor 2015.6.22*/
 	private static ConcurrentHashMap<String, VirtualTarget> targetExecutorMap = new ConcurrentHashMap<String, VirtualTarget>();
-	/*Xing added this to store all target blocks with taskas property, the task name is the key, and the value is the list contains all target task block named with this name. 2015.12.1*/
-	private static HashMap<String, HashSet<TargetTask>> targetTaskNameDictionary = new HashMap<String, HashSet<TargetTask>>();
+	/*Xing added this to store all target blocks with taskas property, the task name is the key, and the value is the list contains all target task block named with this name. 
+	 * In the hash table, the keys are strings' hashcodes instead of string themselves. 
+	 * 2015.12.1*/
+	private static HashMap<Integer, HashSet<TargetTask>> targetTaskNameDictionary = new HashMap<Integer, HashSet<TargetTask>>();
 //	private static int ThreadsBusy;
 //	private static int ActiveParRegions;
 	
@@ -213,7 +215,7 @@ public class PjRuntime {
 	public static void submitTask(Thread source, String targetName, TargetTask task) {
 		VirtualTarget virtualTarget = targetExecutorMap.get(targetName);
 		if (null == virtualTarget) {
-			System.err.println("Virtual target " + targetName + "is not predefined, create this virtual target on-the-fly");
+			//System.err.println("Virtual target " + targetName + " is not predefined, create this virtual target on-the-fly");
 			virtualTarget = new TargetExecutor(targetName);
 			targetExecutorMap.put(targetName, virtualTarget);
 		}
@@ -235,7 +237,7 @@ public class PjRuntime {
 	public static void waitTargetBlocksWithTaskNameUntilFinish(String taskName) {
 		HashSet<TargetTask> targetSet = null;
 		synchronized(targetTaskNameDictionary) {
-			targetSet = targetTaskNameDictionary.get(taskName);
+			targetSet = targetTaskNameDictionary.get(taskName.hashCode());
 		} 
 		if(null == targetSet) {
 			throw new RuntimeException("Fatal Error(//#omp await): Pyajam cannot find the target task name:" + taskName);
@@ -244,17 +246,20 @@ public class PjRuntime {
 			waitTaskTillFinish(task);
 		}
 		synchronized(targetTaskNameDictionary) {
-			targetTaskNameDictionary.remove(taskName);
+			targetTaskNameDictionary.remove(taskName.hashCode());
 		}
 	}
 	
 	public static void storeTargetHandlerByName(TargetTask task, String taskName) {
 		synchronized(targetTaskNameDictionary) {
-			HashSet<TargetTask> targetSet = targetTaskNameDictionary.get(taskName);
-			if(null == targetSet) {
+			HashSet<TargetTask> targetSet = targetTaskNameDictionary.get(taskName.hashCode());
+			if (null == targetSet) {
 				targetSet = new HashSet<TargetTask>();
+				targetSet.add(task);
+				targetTaskNameDictionary.put(taskName.hashCode(), targetSet);
+			} else {
+				targetSet.add(task);
 			}
-			targetSet.add(task);
 		}
 	}
  }
