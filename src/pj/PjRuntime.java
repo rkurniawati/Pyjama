@@ -6,6 +6,10 @@ import pj.pr.target.TargetExecutor;
 import pj.pr.target.TargetTask;
 import pj.pr.target.VirtualTarget;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,7 +33,8 @@ public class PjRuntime {
 	
 	/*Xing added this to store the map from target executor's name and its executor 2015.6.22*/
 	private static ConcurrentHashMap<String, VirtualTarget> targetExecutorMap = new ConcurrentHashMap<String, VirtualTarget>();
-	
+	/*Xing added this to store all target blocks with taskas property, the task name is the key, and the value is the list contains all target task block named with this name. 2015.12.1*/
+	private static HashMap<String, HashSet<TargetTask>> targetTaskNameDictionary = new HashMap<String, HashSet<TargetTask>>();
 //	private static int ThreadsBusy;
 //	private static int ActiveParRegions;
 	
@@ -222,8 +227,34 @@ public class PjRuntime {
 		return false;
 	}
 	
-	public static void waitTaskForFinish(TargetTask task) {
+	public static void waitTaskTillFinish(TargetTask task) {
 		while(!task.isFinished()) {
+		}
+	}
+	
+	public static void waitTargetBlocksWithTaskNameUntilFinish(String taskName) {
+		HashSet<TargetTask> targetSet = null;
+		synchronized(targetTaskNameDictionary) {
+			targetSet = targetTaskNameDictionary.get(taskName);
+		} 
+		if(null == targetSet) {
+			throw new RuntimeException("Fatal Error(//#omp await): Pyajam cannot find the target task name:" + taskName);
+		}
+		for(TargetTask task: targetSet) {
+			waitTaskTillFinish(task);
+		}
+		synchronized(targetTaskNameDictionary) {
+			targetTaskNameDictionary.remove(taskName);
+		}
+	}
+	
+	public static void storeTargetHandlerByName(TargetTask task, String taskName) {
+		synchronized(targetTaskNameDictionary) {
+			HashSet<TargetTask> targetSet = targetTaskNameDictionary.get(taskName);
+			if(null == targetSet) {
+				targetSet = new HashSet<TargetTask>();
+			}
+			targetSet.add(task);
 		}
 	}
  }

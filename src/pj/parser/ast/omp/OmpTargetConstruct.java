@@ -79,11 +79,19 @@ public class OmpTargetConstruct extends OpenMPStatement{
 		return this.virtualTarget;
 	}
 	
-	public boolean isAsync() {
+	public boolean isEventYield() {
 		if(this.waitType == ExecutionType.EventYield) {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean isTaskAs() {
+		if (null == this.taskName) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	public boolean isNoWait() {

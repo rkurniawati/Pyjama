@@ -13,7 +13,7 @@ public class AsyncSemanticTest{
 			asyncTest();
 			System.out.println("nowait after");
 		}
-		//#omp target virtual(worker)  eventyield
+		//#omp target virtual(worker)  
 		{
 			System.out.println("eventyield before");
 			asyncTest();

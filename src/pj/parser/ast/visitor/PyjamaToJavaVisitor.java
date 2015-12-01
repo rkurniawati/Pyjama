@@ -356,9 +356,24 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		
 		printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
-		if (n.isAsync()) {
-			printer.printLn("PjRuntime.waitTaskForFinish(" + currentTTClass.className + "_in);");
-			this.currentMethodIsAsync = true;		
+		if (n.isTaskAs()) {
+			printer.printLn("PjRuntime.storeTargetHandlerByName(" + currentTTClass.className + "_in, \"" + n.getTaskName() + "\");");
+		}
+		if (n.isSync()) {
+			/*
+			 *If default policy is applied, the encountering thread waits until the target block is finished. 
+			 */
+			printer.printLn("PjRuntime.waitTaskTillFinish(" + currentTTClass.className + "_in);");
+		} else if (n.isEventYield()) {
+			/*
+			 * If eventyield is applied, the current thread gives up current function execution, backs when target
+			 * block is finished.
+			 */
+			this.currentMethodIsAsync = true;
+		} else if (n.isNoWait()) {
+			/*
+			 * We safely do nothing because we need not care about nowait the finish of the target block.
+			 */
 		}
 		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- END */");
 		
@@ -369,7 +384,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	    
 	@Override
 	public void visit(OmpAwaitDirective n, SourcePrinter printer) {
-		printer.printLn("PjRuntime.waitTaskForFinish(" + n.getTaskName() + "_in);");
+		//TODO
+		printer.printLn("PjRuntime.waitTargetBlocksWithTaskNameUntilFinish(\"" + n.getTaskName() + "\");");
 		
 	}
 	//OpenMP add END*********************************************************************************OpenMP add END//
