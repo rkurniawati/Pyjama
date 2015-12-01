@@ -25,6 +25,7 @@ import pj.parser.ast.visitor.SourcePrinter;
 
 public class StateMachineClassBuilder extends ConstructWrapper {
 
+	private static final String stateMachineIdentifier = "_OmpStateMachine_"; 
 	
 	private SourcePrinter printer = new SourcePrinter();
 	
@@ -71,7 +72,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	
 	private void generateConstructor() {
 	        printer.print("public ");
-	        printer.print(method.getName());
+	        printer.print(method.getName() + stateMachineIdentifier);
 
 	        printer.print("(");
 	        if (method.getParameters() != null) {
@@ -153,7 +154,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	}
 	
 	private void generateClass() {
-		printer.printLn("class " + this.method.getName() + " extends pj.pr.target.TargetTask{");
+		printer.printLn("class " + this.method.getName() + stateMachineIdentifier + " extends pj.pr.target.TargetTask{");
 		printer.indent();
 		//printer class constructor, with same method parameter
 		this.generateConstructor();

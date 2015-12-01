@@ -46,7 +46,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected List<Statement> currentMethodOrConstructorStmts = null;
 	//keep track of current method return type
 	protected Type currentMethodType = null;
-	//keep track of current method whether should be async (containing //#omp target virtual await directives)
+	//keep track of current method whether should be async (containing //#omp target virtual eventyield directives)
 	protected boolean currentMethodIsAsync = false;
 	//keep track of current type of declaration of variables 2014.7.14
 	protected Type currentVarDeclarationType = null;
@@ -384,7 +384,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	    
 	@Override
 	public void visit(OmpAwaitDirective n, SourcePrinter printer) {
-		//TODO
 		printer.printLn("PjRuntime.waitTargetBlocksWithTaskNameUntilFinish(\"" + n.getTaskName() + "\");");
 		
 	}

@@ -32,7 +32,6 @@ public class AsyncSemanticTest {
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
         _OMP_TargetTaskRegion_1 _OMP_TargetTaskRegion_1_in = new _OMP_TargetTaskRegion_1(inputlist__OMP_TargetTaskRegion_1,outputlist__OMP_TargetTaskRegion_1);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_1_in);
-        PjRuntime.waitTaskTillFinish(_OMP_TargetTaskRegion_1_in);
         /*OpenMP Target region (#1) -- END */
 
         /*OpenMP Target region (#2) -- START */
@@ -152,6 +151,45 @@ public class AsyncSemanticTest {
         }
     }
 
+class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
+    public main_OmpStateMachine_(String[] s) {
+    }
+    int state;
+    @Override
+    public ConcurrentHashMap<String,Object> call() {
+        switch(state) {
+        case 0:
+                    /*OpenMP Target region (#0) -- START */
+        ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_0 = new ConcurrentHashMap<String,Object>();
+        _OMP_TargetTaskRegion_0 _OMP_TargetTaskRegion_0_in = new _OMP_TargetTaskRegion_0(inputlist__OMP_TargetTaskRegion_0,outputlist__OMP_TargetTaskRegion_0);
+        PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_0_in);
+        /*OpenMP Target region (#0) -- END */
+
+                    /*OpenMP Target region (#1) -- START */
+        ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
+        _OMP_TargetTaskRegion_1 _OMP_TargetTaskRegion_1_in = new _OMP_TargetTaskRegion_1(inputlist__OMP_TargetTaskRegion_1,outputlist__OMP_TargetTaskRegion_1);
+        PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_1_in);
+        /*OpenMP Target region (#1) -- END */
+
+        case 1:
+                    /*OpenMP Target region (#2) -- START */
+        ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_2 = new ConcurrentHashMap<String,Object>();
+        ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_2 = new ConcurrentHashMap<String,Object>();
+        _OMP_TargetTaskRegion_2 _OMP_TargetTaskRegion_2_in = new _OMP_TargetTaskRegion_2(inputlist__OMP_TargetTaskRegion_2,outputlist__OMP_TargetTaskRegion_2);
+        PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_2_in);
+        PjRuntime.storeTargetHandlerByName(_OMP_TargetTaskRegion_2_in, "aa");
+        /*OpenMP Target region (#2) -- END */
+
+            //omp await(aa)
+
+            default:
+            }
+            return null;
+        }
+    }
+
 
 
 
@@ -163,8 +201,8 @@ public class AsyncSemanticTest {
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_3 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_3 = new ConcurrentHashMap<String,Object>();
         inputlist__OMP_TargetTaskRegion_3.put("c",c);
-        inputlist__OMP_TargetTaskRegion_3.put("a",a);
         inputlist__OMP_TargetTaskRegion_3.put("b",b);
+        inputlist__OMP_TargetTaskRegion_3.put("a",a);
         _OMP_TargetTaskRegion_3 _OMP_TargetTaskRegion_3_in = new _OMP_TargetTaskRegion_3(inputlist__OMP_TargetTaskRegion_3,outputlist__OMP_TargetTaskRegion_3);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_3_in);
         /*OpenMP Target region (#3) -- END */
@@ -173,9 +211,9 @@ public class AsyncSemanticTest {
         /*OpenMP Target region (#4) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_4 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_4 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_4.put("a",a);
-        inputlist__OMP_TargetTaskRegion_4.put("d",d);
         inputlist__OMP_TargetTaskRegion_4.put("b",b);
+        inputlist__OMP_TargetTaskRegion_4.put("d",d);
+        inputlist__OMP_TargetTaskRegion_4.put("a",a);
         _OMP_TargetTaskRegion_4 _OMP_TargetTaskRegion_4_in = new _OMP_TargetTaskRegion_4(inputlist__OMP_TargetTaskRegion_4,outputlist__OMP_TargetTaskRegion_4);
         PjRuntime.submitTask(Thread.currentThread(), "worker1", _OMP_TargetTaskRegion_4_in);
         PjRuntime.waitTaskTillFinish(_OMP_TargetTaskRegion_4_in);
@@ -185,8 +223,8 @@ public class AsyncSemanticTest {
         /*OpenMP Target region (#5) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_5 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_5 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_5.put("e",e);
         inputlist__OMP_TargetTaskRegion_5.put("a",a);
+        inputlist__OMP_TargetTaskRegion_5.put("e",e);
         inputlist__OMP_TargetTaskRegion_5.put("b",b);
         _OMP_TargetTaskRegion_5 _OMP_TargetTaskRegion_5_in = new _OMP_TargetTaskRegion_5(inputlist__OMP_TargetTaskRegion_5,outputlist__OMP_TargetTaskRegion_5);
         PjRuntime.submitTask(Thread.currentThread(), "worker2", _OMP_TargetTaskRegion_5_in);
@@ -203,9 +241,9 @@ public class AsyncSemanticTest {
             private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
 
             //#BEGIN shared variables defined here
-            int a = 0;
             int b = 0;
             int c = 0;
+            int a = 0;
             //#END shared variables defined here
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
@@ -213,9 +251,9 @@ public class AsyncSemanticTest {
                 this.OMP_inputList = inputlist;
                 this.OMP_outputList = outputlist;
                 //#BEGIN shared variables initialised here
-                a = (Integer)OMP_inputList.get("a");
                 b = (Integer)OMP_inputList.get("b");
                 c = (Integer)OMP_inputList.get("c");
+                a = (Integer)OMP_inputList.get("a");
                 //#END shared variables initialised here
                 //#BEGIN firstprivate reduction variables initialised here
                 //#END firstprivate reduction variables initialised here
@@ -224,8 +262,8 @@ public class AsyncSemanticTest {
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
                 OMP_outputList.put("c",c);
-                OMP_outputList.put("a",a);
                 OMP_outputList.put("b",b);
+                OMP_outputList.put("a",a);
                 //END update outputlist
             }
             @Override
@@ -247,9 +285,9 @@ public class AsyncSemanticTest {
             private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
 
             //#BEGIN shared variables defined here
-            int a = 0;
-            int b = 0;
             int d = 0;
+            int b = 0;
+            int a = 0;
             //#END shared variables defined here
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
@@ -257,9 +295,9 @@ public class AsyncSemanticTest {
                 this.OMP_inputList = inputlist;
                 this.OMP_outputList = outputlist;
                 //#BEGIN shared variables initialised here
-                a = (Integer)OMP_inputList.get("a");
-                b = (Integer)OMP_inputList.get("b");
                 d = (Integer)OMP_inputList.get("d");
+                b = (Integer)OMP_inputList.get("b");
+                a = (Integer)OMP_inputList.get("a");
                 //#END shared variables initialised here
                 //#BEGIN firstprivate reduction variables initialised here
                 //#END firstprivate reduction variables initialised here
@@ -267,9 +305,9 @@ public class AsyncSemanticTest {
 
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
-                OMP_outputList.put("a",a);
-                OMP_outputList.put("d",d);
                 OMP_outputList.put("b",b);
+                OMP_outputList.put("d",d);
+                OMP_outputList.put("a",a);
                 //END update outputlist
             }
             @Override
@@ -291,9 +329,9 @@ public class AsyncSemanticTest {
             private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
 
             //#BEGIN shared variables defined here
-            int a = 0;
-            int b = 0;
             int e = 0;
+            int b = 0;
+            int a = 0;
             //#END shared variables defined here
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
@@ -301,9 +339,9 @@ public class AsyncSemanticTest {
                 this.OMP_inputList = inputlist;
                 this.OMP_outputList = outputlist;
                 //#BEGIN shared variables initialised here
-                a = (Integer)OMP_inputList.get("a");
-                b = (Integer)OMP_inputList.get("b");
                 e = (Integer)OMP_inputList.get("e");
+                b = (Integer)OMP_inputList.get("b");
+                a = (Integer)OMP_inputList.get("a");
                 //#END shared variables initialised here
                 //#BEGIN firstprivate reduction variables initialised here
                 //#END firstprivate reduction variables initialised here
@@ -311,8 +349,8 @@ public class AsyncSemanticTest {
 
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
-                OMP_outputList.put("e",e);
                 OMP_outputList.put("a",a);
+                OMP_outputList.put("e",e);
                 OMP_outputList.put("b",b);
                 //END update outputlist
             }
