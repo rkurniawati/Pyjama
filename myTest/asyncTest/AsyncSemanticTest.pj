@@ -9,23 +9,24 @@ public class AsyncSemanticTest{
 		System.out.println("Start");
 		//#omp target virtual(worker) nowait 
 		{
-			System.out.println("task1 before");
+			System.out.println("nowait before");
 			asyncTest();
-			System.out.println("task1 after");
+			System.out.println("nowait after");
 		}
-		//#omp target virtual(worker) nowait 
+		//#omp target virtual(worker)  eventyield
 		{
-			System.out.println("task2 before");
+			System.out.println("eventyield before");
 			asyncTest();
-			System.out.println("task2 after");
+			System.out.println("eventyield after");
 		}
-		//#omp target virtual(worker) async 
+		//#omp target virtual(worker) taskas(aa) 
 		{
-			System.out.println("task2 before");
+			System.out.println("taskas before");
 			asyncTest();
-			System.out.println("task2 after");
+			System.out.println("taskas after");
 		}
 		System.out.println("Done");
+		//#omp await(aa)
 	}
 
 	public static void test() {
@@ -47,7 +48,7 @@ public class AsyncSemanticTest{
 			System.out.println("Async await execution c=" + d);
 		}
 		System.out.println("2------------");
-		//#omp target virtual(worker2) shared(a,b,e) astask(axing)
+		//#omp target virtual(worker2) shared(a,b,e) taskas(axing)
 		{
 			e = a + b;
 			SimulateWork.work(100);

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import utils.SimulateWork;
 
 import javax.swing.*;
-public class SeqCptOffloadingTest extends JFrame implements ActionListener
+public class SWCptOffloadingTest extends JFrame implements ActionListener
 {
 
 	/**
@@ -24,7 +24,7 @@ public class SeqCptOffloadingTest extends JFrame implements ActionListener
 	public JButton task_button = new JButton("Task");
 	private long responseCounting = 0;
 	
-	SeqCptOffloadingTest()   // the constructor
+	SWCptOffloadingTest()   // the constructor
 	{
 		super("Event Handler Test");
 		setBounds(100,100,300,200);
@@ -45,8 +45,7 @@ public class SeqCptOffloadingTest extends JFrame implements ActionListener
 	{
 		Object source = event.getSource();
 		if (source == task_button) {
-			computeTask();
-			plusEventFinishCount();
+			new TaskWorker().execute();
 		}
   }
 	
@@ -57,18 +56,35 @@ public class SeqCptOffloadingTest extends JFrame implements ActionListener
 	public long getResponsesAccumulated() {
 		return this.responseCounting;
 	}
+	
+	class TaskWorker extends SwingWorker<Integer, Integer>
+	{
+	    protected Integer doInBackground() 
+	    {
+	    	System.out.println("thread num:" + Thread.currentThread().getId());
+	    	computeTask();
+			plusEventFinishCount();
+			return null;
+
+	    }
+
+	    protected void done()
+	    {
+	    	//do nothing
+	    }
+	}
   
    private int computeTask() {
 
-	   SimulateWork.work(100);
+	   SimulateWork.work(10);
 	   System.out.println("task finished");
 	   return 1;
   }
   
   public static void main(String args[]) {
 	  
-	  SeqCptOffloadingTest a = new SeqCptOffloadingTest();
-	  EventPostingThread ept= new EventPostingThread(5, a, 5);
+	  SWCptOffloadingTest a = new SWCptOffloadingTest();
+	  EventPostingThread ept= new EventPostingThread(1000, a, 10);
       ept.start();
       try {
 		ept.join();

@@ -175,27 +175,27 @@ public interface ASTParserConstants {
   /** RegularExpression Id. */
   int NOWAIT = 90;
   /** RegularExpression Id. */
-  int ASYNC = 91;
+  int EVENTYIELD = 91;
   /** RegularExpression Id. */
-  int AWAIT = 92;
+  int TASKAS = 92;
   /** RegularExpression Id. */
-  int NUMTHREADS = 93;
+  int AWAIT = 93;
   /** RegularExpression Id. */
-  int COPYPRIVATE = 94;
+  int NUMTHREADS = 94;
   /** RegularExpression Id. */
-  int CANCELLATION_POINT = 95;
+  int COPYPRIVATE = 95;
   /** RegularExpression Id. */
-  int CANCEL = 96;
+  int CANCELLATION_POINT = 96;
   /** RegularExpression Id. */
-  int TASKGROUP = 97;
+  int CANCEL = 97;
   /** RegularExpression Id. */
-  int LOCAL = 98;
+  int TASKGROUP = 98;
   /** RegularExpression Id. */
-  int GLOBAL = 99;
+  int LOCAL = 99;
   /** RegularExpression Id. */
-  int TAG = 100;
+  int GLOBAL = 100;
   /** RegularExpression Id. */
-  int ASTASK = 101;
+  int TAG = 101;
   /** RegularExpression Id. */
   int LONG_LITERAL = 102;
   /** RegularExpression Id. */
@@ -423,7 +423,8 @@ public interface ASTParserConstants {
     "\"flush\"",
     "\"barrier\"",
     "\"nowait\"",
-    "\"async\"",
+    "\"eventyield\"",
+    "\"taskas\"",
     "\"await\"",
     "\"num_threads\"",
     "\"copyprivate\"",
@@ -433,7 +434,6 @@ public interface ASTParserConstants {
     "\"local\"",
     "\"global\"",
     "\"tag\"",
-    "\"astask\"",
     "<LONG_LITERAL>",
     "<INTEGER_LITERAL>",
     "<DECIMAL_LITERAL>",

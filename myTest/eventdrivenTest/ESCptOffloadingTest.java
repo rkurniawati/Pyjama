@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import utils.SimulateWork;
 
 import javax.swing.*;
-public class SeqCptOffloadingTest extends JFrame implements ActionListener
+public class ESCptOffloadingTest extends JFrame implements ActionListener
 {
 
 	/**
@@ -24,7 +24,9 @@ public class SeqCptOffloadingTest extends JFrame implements ActionListener
 	public JButton task_button = new JButton("Task");
 	private long responseCounting = 0;
 	
-	SeqCptOffloadingTest()   // the constructor
+	private final ExecutorService pool;
+	
+	ESCptOffloadingTest()   // the constructor
 	{
 		super("Event Handler Test");
 		setBounds(100,100,300,200);
@@ -35,6 +37,8 @@ public class SeqCptOffloadingTest extends JFrame implements ActionListener
 		setVisible(true); // make frame visible
 		System.out.println("In myFrame, running constructor, main thread num" + Thread.currentThread().getId());
     
+		
+		pool = Executors.newFixedThreadPool(5);
 		//Pyjama.omp_register_as_virtual_target("edt");
 		//Pyjama.omp_create_virtual_target("worker");
 
@@ -45,8 +49,12 @@ public class SeqCptOffloadingTest extends JFrame implements ActionListener
 	{
 		Object source = event.getSource();
 		if (source == task_button) {
-			computeTask();
-			plusEventFinishCount();
+			pool.execute(new Runnable() {
+				public void run() {
+					computeTask();
+					plusEventFinishCount();
+				}
+			});
 		}
   }
 	
@@ -67,8 +75,8 @@ public class SeqCptOffloadingTest extends JFrame implements ActionListener
   
   public static void main(String args[]) {
 	  
-	  SeqCptOffloadingTest a = new SeqCptOffloadingTest();
-	  EventPostingThread ept= new EventPostingThread(5, a, 5);
+	  ESCptOffloadingTest a = new ESCptOffloadingTest();
+	  EventPostingThread ept= new EventPostingThread(10, a, 10);
       ept.start();
       try {
 		ept.join();

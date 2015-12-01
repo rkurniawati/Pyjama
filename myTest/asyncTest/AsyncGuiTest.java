@@ -233,8 +233,6 @@ public class AsyncGuiTest extends JFrame implements ActionListener {
 
     public static void main(String args[]) {{
         AsyncGuiTest a = new AsyncGuiTest();
-        EventPostingThread ept = new EventPostingThread(a, a.iteration, a.eventTriggeringTimeStamp);
-        ept.start();
         System.out.println("Done from thread num:" + Thread.currentThread().getId());
     }
     }

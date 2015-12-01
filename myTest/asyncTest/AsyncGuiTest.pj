@@ -28,7 +28,7 @@ public class AsyncGuiTest extends JFrame implements ActionListener
   JLabel task2_answer = new JLabel("");
   JPanel pane = new JPanel(); // create pane object
   JButton task1_button = new JButton("Task1");
-  JButton task2_button = new JButton("Task2");
+  JButton task2_button = new JButton("Task2")async;
   AsyncGuiTest()   // the constructor
   {
     super("Event Handler Demo"); setBounds(100,100,300,200);
@@ -103,8 +103,6 @@ public class AsyncGuiTest extends JFrame implements ActionListener
   
   public static void main(String args[]) {
 	    AsyncGuiTest a = new AsyncGuiTest();
-        EventPostingThread ept = new EventPostingThread(a, a.iteration, a.eventTriggeringTimeStamp);
-        ept.start();
         System.out.println("Done from thread num:" + Thread.currentThread().getId()); 
   }
 }

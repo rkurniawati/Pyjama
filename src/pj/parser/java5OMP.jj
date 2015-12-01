@@ -348,7 +348,8 @@ TOKEN :
 | < FLUSH: "flush" >
 | < BARRIER: "barrier" >
 | < NOWAIT: "nowait" >
-| < ASYNC: "async" >
+| < EVENTYIELD: "eventyield" >
+| < TASKAS: "taskas" >
 | < AWAIT: "await" >
 | < NUMTHREADS: "num_threads">
 | < COPYPRIVATE: "copyprivate" >
@@ -358,7 +359,6 @@ TOKEN :
 | < LOCAL: "local" >
 | < GLOBAL: "global" >
 | < TAG: "tag" >
-| < ASTASK: "astask" >
 //§§ Pyjama Depricated; Xing Fan added at 2014.9.25
 //| < COPYIN: "copyin" >
 //| < THREADPRIVATE: "threadprivate" >
@@ -3467,7 +3467,8 @@ OmpTargetConstruct OmpTargetConstruct():
 	int waitTypeClauseCount = 0;
 	int IfClauseCount = 0;
 	int defaultDataClauseCount = 0;
-	OmpTargetConstruct.ExecutionType waitType = null;
+	//waitType: we set the default is wait, which means encoutering thread blocks until the target code is finished. //Xing Fan at 2015.12.1
+	OmpTargetConstruct.ExecutionType waitType = OmpTargetConstruct.ExecutionType.Wait; 
 	OmpDataClause dataClause = null;
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
 	OmpIfClause ifExpr = null; 
@@ -3486,9 +3487,9 @@ OmpTargetConstruct OmpTargetConstruct():
 	|	dataClause = OmpReductionDataClause() 	{throw new ParseException("Pyjama Parsing Error: Reduction data clause cannot appear in omp target directive");}
 	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
 	| 	<NOWAIT>{ waitType = OmpTargetConstruct.ExecutionType.NoWait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
-	| 	<ASYNC> { waitType = OmpTargetConstruct.ExecutionType.Async; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
-	| 	<ASTASK> "(" taskName = Name() ")"
-			{ waitType = OmpTargetConstruct.ExecutionType.Wait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
+	| 	<EVENTYIELD> { waitType = OmpTargetConstruct.ExecutionType.EventYield; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
+	| 	<TASKAS> "(" taskName = Name() ")"
+			{ waitType = OmpTargetConstruct.ExecutionType.NoWait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
 	)*
 	body = Statement()
 	{ return new OmpTargetConstruct(line, column, token.endLine, token.endColumn, body, isVirtual, targetName, dataClauseList, ifExpr, waitType, taskName); }

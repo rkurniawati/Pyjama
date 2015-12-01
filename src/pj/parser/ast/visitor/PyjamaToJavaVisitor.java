@@ -368,8 +368,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	    
 	@Override
-	public void visit(OmpAwaitDirective n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
+	public void visit(OmpAwaitDirective n, SourcePrinter printer) {
+		printer.printLn("PjRuntime.waitTaskForFinish(" + n.getTaskName() + "_in);");
 		
 	}
 	//OpenMP add END*********************************************************************************OpenMP add END//

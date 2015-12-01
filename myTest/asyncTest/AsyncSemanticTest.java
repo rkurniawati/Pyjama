@@ -32,6 +32,7 @@ public class AsyncSemanticTest {
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
         _OMP_TargetTaskRegion_1 _OMP_TargetTaskRegion_1_in = new _OMP_TargetTaskRegion_1(inputlist__OMP_TargetTaskRegion_1,outputlist__OMP_TargetTaskRegion_1);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_1_in);
+        PjRuntime.waitTaskForFinish(_OMP_TargetTaskRegion_1_in);
         /*OpenMP Target region (#1) -- END */
 
         /*OpenMP Target region (#2) -- START */
@@ -39,10 +40,10 @@ public class AsyncSemanticTest {
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_2 = new ConcurrentHashMap<String,Object>();
         _OMP_TargetTaskRegion_2 _OMP_TargetTaskRegion_2_in = new _OMP_TargetTaskRegion_2(inputlist__OMP_TargetTaskRegion_2,outputlist__OMP_TargetTaskRegion_2);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_2_in);
-        PjRuntime.waitTaskForFinish(_OMP_TargetTaskRegion_2_in);
         /*OpenMP Target region (#2) -- END */
 
         System.out.println("Done");
+
     }
     }
         static class _OMP_TargetTaskRegion_0 extends pj.pr.target.TargetTask{
@@ -70,9 +71,9 @@ public class AsyncSemanticTest {
             public ConcurrentHashMap<String,Object> call() {
                 /****User Code BEGIN***/
                 {
-                    System.out.println("task1 before");
+                    System.out.println("nowait before");
                     asyncTest();
-                    System.out.println("task1 after");
+                    System.out.println("nowait after");
                 }
                 /****User Code END***/
             return null;
@@ -105,9 +106,9 @@ public class AsyncSemanticTest {
             public ConcurrentHashMap<String,Object> call() {
                 /****User Code BEGIN***/
                 {
-                    System.out.println("task2 before");
+                    System.out.println("eventyield before");
                     asyncTest();
-                    System.out.println("task2 after");
+                    System.out.println("eventyield after");
                 }
                 /****User Code END***/
             return null;
@@ -140,9 +141,9 @@ public class AsyncSemanticTest {
             public ConcurrentHashMap<String,Object> call() {
                 /****User Code BEGIN***/
                 {
-                    System.out.println("task2 before");
+                    System.out.println("taskas before");
                     asyncTest();
-                    System.out.println("task2 after");
+                    System.out.println("taskas after");
                 }
                 /****User Code END***/
             return null;
@@ -169,17 +170,19 @@ class main extends pj.pr.target.TargetTask{
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_1 = new ConcurrentHashMap<String,Object>();
         _OMP_TargetTaskRegion_1 _OMP_TargetTaskRegion_1_in = new _OMP_TargetTaskRegion_1(inputlist__OMP_TargetTaskRegion_1,outputlist__OMP_TargetTaskRegion_1);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_1_in);
+        PjRuntime.waitTaskForFinish(_OMP_TargetTaskRegion_1_in);
         /*OpenMP Target region (#1) -- END */
 
+        case 1:
                     /*OpenMP Target region (#2) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_2 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_2 = new ConcurrentHashMap<String,Object>();
         _OMP_TargetTaskRegion_2 _OMP_TargetTaskRegion_2_in = new _OMP_TargetTaskRegion_2(inputlist__OMP_TargetTaskRegion_2,outputlist__OMP_TargetTaskRegion_2);
         PjRuntime.submitTask(Thread.currentThread(), "worker", _OMP_TargetTaskRegion_2_in);
-        PjRuntime.waitTaskForFinish(_OMP_TargetTaskRegion_2_in);
         /*OpenMP Target region (#2) -- END */
 
-        case 1:
+            //omp await(aa)
+
             default:
             }
             return null;

@@ -48,7 +48,7 @@ public class ParCptOffloadingTest extends JFrame implements ActionListener {
         setVisible(true);
         System.out.println("In myFrame, running constructor, main thread num" + Thread.currentThread().getId());
         Pyjama.omp_register_as_virtual_target("edt");
-        Pyjama.omp_create_virtual_target("worker");
+        Pyjama.omp_create_virtual_target("worker", 5);
     }
 
     public void actionPerformed(ActionEvent event) {{
@@ -122,7 +122,7 @@ public class ParCptOffloadingTest extends JFrame implements ActionListener {
 
     public static void main(String args[]) {{
         ParCptOffloadingTest a = new ParCptOffloadingTest();
-        EventPostingThread ept = new EventPostingThread(9, a, 10);
+        EventPostingThread ept = new EventPostingThread(5, a, 5);
         ept.start();
         try {
             ept.join();

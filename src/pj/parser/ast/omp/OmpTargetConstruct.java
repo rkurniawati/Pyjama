@@ -12,7 +12,7 @@ import pj.parser.ast.visitor.VoidVisitor;
 
 public class OmpTargetConstruct extends OpenMPStatement{
 	
-	public enum ExecutionType {Async, NoWait, Wait};
+	public enum ExecutionType {EventYield, NoWait, Wait};
 	private OmpIfClause ifExpr = null;
 	private Statement body = null;
 	private List<OmpDataClause> dataClauseList;
@@ -80,7 +80,7 @@ public class OmpTargetConstruct extends OpenMPStatement{
 	}
 	
 	public boolean isAsync() {
-		if(this.waitType == ExecutionType.Async) {
+		if(this.waitType == ExecutionType.EventYield) {
 			return true;
 		}
 		return false;
