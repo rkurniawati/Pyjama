@@ -47,11 +47,18 @@ public abstract class TargetTask implements Callable<ConcurrentHashMap<String,Ob
 		this.callWhenFinish = new CallbackInfo(finishtask, whocall);
 	}
 	
-	protected void run() throws Exception {
-		this.call();
-		this.isFinished = true;
-		if (null != this.callWhenFinish) {
-			this.callWhenFinish.trigger();
+	public void run(){
+		try {
+			this.call();
+			this.isFinished = true;
+			if (null != this.callWhenFinish) {
+				this.callWhenFinish.trigger();
+			}
+		} catch (Exception e) {
+			//TODO: Pyjama support for the Exception handling in the midway of target block 
+			e.printStackTrace();
 		}
+
 	}
+	
 }

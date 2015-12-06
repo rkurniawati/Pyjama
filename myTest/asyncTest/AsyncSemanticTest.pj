@@ -10,10 +10,10 @@ public class AsyncSemanticTest{
 		//#omp target virtual(worker) nowait 
 		{
 			System.out.println("nowait before");
-			asyncTest();
+			//asyncTest();
 			System.out.println("nowait after");
 		}
-		//#omp target virtual(worker)  eventyield
+		//#omp target virtual(worker)  
 		{
 			System.out.println("eventyield before");
 			asyncTest();
@@ -60,7 +60,7 @@ public class AsyncSemanticTest{
 
 	public static void asyncTest() {
 		System.out.println("Async before");
-		//#omp target virtual(worker1) 
+		//#omp target virtual(gui) eventyield
 		{
 			SimulateWork.work(100);
 			System.out.println("Async await");

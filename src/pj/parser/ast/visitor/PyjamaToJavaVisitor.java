@@ -4,6 +4,7 @@ package pj.parser.ast.visitor;
  * @version 1.0
  */
 
+import pj.PjRuntime;
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
 import pj.parser.ast.expr.*;
@@ -355,6 +356,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		DataClausesHandler.processDataClausesBeforeTTClassInvocation(currentTTClass, printer);
 		
 		printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
+		printer.printLn("if (PjRuntime.currentThreadIsTheTarget(\"" + n.getTargetName() + "\")) {");
+		printer.indent();
+		printer.printLn(currentTTClass.className + "_in.run();");
+		printer.unindent();
+		printer.printLn("} else {");
+		printer.indent();
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
 		if (n.isTaskAs()) {
 			printer.printLn("PjRuntime.storeTargetHandlerByName(" + currentTTClass.className + "_in, \"" + n.getTaskName() + "\");");
@@ -375,6 +382,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			 * We safely do nothing because we need not care about nowait the finish of the target block.
 			 */
 		}
+		printer.unindent();
+		printer.printLn("}");
 		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- END */");
 		
 		//put visiting code to hashmap, for state machine builder to use
@@ -1060,13 +1069,16 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			 * Then this method needs an auxiliary state machine class. 
 			 * So hereby we create this kind of class, and print this auxiliary state machine class 
 			 * to "PrinterForAuxiliaryClasses".
+			 * <2015.12.6> Actually this state machine class is not currently used by Pyjama.
+			 * Instead, the encountering thread simply does an IHP (Irrelevant handling processing), until the
+			 * target block is finished. 
 			 */
 	        if (this.currentMethodIsAsync) {
 				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(this.currentMehodNode, this, this.ompTargetVisitingCode);
 				this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
 	        }
 	        /*Xing added to print Auxiliary parallel region class
-	         *if current method has PR regions or await Target regions.
+	         *if current method has PR regions or eventyield Target regions.
 	         */
 			printer.printLn(this.PrinterForAuxiliaryClasses.getSource());
 			this.PrinterForAuxiliaryClasses.clear();

@@ -20,11 +20,7 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 		Runnable taskCode = new Runnable() {
 			@Override
 			public void run() {
-				try {
-					task.run();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				task.run();
 			}
 		};
 		SwingUtilities.invokeLater(taskCode);
@@ -32,6 +28,10 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 	
 	public Thread getThread() {
 		return this.thread;
+	}
+	
+	public String targetName() {
+		return this.targetName;
 	}
 
 }

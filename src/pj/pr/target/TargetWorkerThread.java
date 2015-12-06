@@ -36,4 +36,8 @@ public class TargetWorkerThread extends Thread {
          */
         this.executor.removeWorker(this);
 	}
+	
+	public String targetName() {
+		return this.executor.getTargetName();
+	}
 }

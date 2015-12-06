@@ -4,6 +4,7 @@ import pj.pr.*;
 import pj.pr.target.SingleThreadVirtualTarget;
 import pj.pr.target.TargetExecutor;
 import pj.pr.target.TargetTask;
+import pj.pr.target.TargetWorkerThread;
 import pj.pr.target.VirtualTarget;
 
 import java.util.Collection;
@@ -232,6 +233,28 @@ public class PjRuntime {
 	public static void waitTaskTillFinish(TargetTask task) {
 		while(!task.isFinished()) {
 		}
+	}
+	
+	public static boolean currentThreadIsTheTarget(String targetName) {
+		//Test if current thread is a Pyjama worker thread
+		if (Thread.currentThread() instanceof TargetWorkerThread) {
+			if (((TargetWorkerThread)(Thread.currentThread())).targetName().equals(targetName)) {
+				return true;
+			}
+		}
+		//Test if current thread is a registered Single Thread Virtual Target
+		for (VirtualTarget target: targetExecutorMap.values()) {
+			if (target instanceof SingleThreadVirtualTarget) {
+				if (((SingleThreadVirtualTarget)target).targetName().equals(targetName)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static void IrrelevantHandlingProcessing() {
+		//TODO
 	}
 	
 	public static void waitTargetBlocksWithTaskNameUntilFinish(String taskName) {

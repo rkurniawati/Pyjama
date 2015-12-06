@@ -3479,7 +3479,7 @@ OmpTargetConstruct OmpTargetConstruct():
 }
 {	
 	<TARGET> {line=token.beginLine; column=token.beginColumn;} 
-	<VIRTUAL> "(" targetName = Name() ")"		//currently we only support virtual target ;-)
+	<VIRTUAL> "(" (targetName = Name() | <GUI>  {targetName = new NameExpr("gui");}) ")"		//currently we only support virtual target ;-)
 	(	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
 	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
