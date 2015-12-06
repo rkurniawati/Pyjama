@@ -7,13 +7,19 @@ public class AsyncSemanticTest{
 	
 	public static void main(String[] s) {
 		System.out.println("Start");
-		//#omp target virtual(worker) nowait 
+		//#omp target virtual(gui) nowait 
 		{
 			System.out.println("nowait before");
 			//asyncTest();
 			System.out.println("nowait after");
 		}
-		//#omp target virtual(worker)  
+		//#omp target virtual(worker) 
+		{
+			System.out.println("waiting before");
+			asyncTest();
+			System.out.println("waiting after");
+		}
+		//#omp target virtual(worker) eventyield  
 		{
 			System.out.println("eventyield before");
 			asyncTest();

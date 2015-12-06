@@ -235,14 +235,7 @@ public class PjRuntime {
 		}
 	}
 	
-	public static boolean currentThreadIsTheTarget(String targetName) {
-		//Test if current thread is a Pyjama worker thread
-		if (Thread.currentThread() instanceof TargetWorkerThread) {
-			if (((TargetWorkerThread)(Thread.currentThread())).targetName().equals(targetName)) {
-				return true;
-			}
-		}
-		//Test if current thread is a registered Single Thread Virtual Target
+	public static boolean currentThreadIsSingleThreadTarget(String targetName) {
 		for (VirtualTarget target: targetExecutorMap.values()) {
 			if (target instanceof SingleThreadVirtualTarget) {
 				if (((SingleThreadVirtualTarget)target).targetName().equals(targetName)) {
@@ -253,8 +246,30 @@ public class PjRuntime {
 		return false;
 	}
 	
-	public static void IrrelevantHandlingProcessing() {
-		//TODO
+	public static boolean currentThreadIsTheTarget(String targetName) {
+		//Test if current thread is a Pyjama worker thread
+		if (Thread.currentThread() instanceof TargetWorkerThread) {
+			if (((TargetWorkerThread)(Thread.currentThread())).targetName().equals(targetName)) {
+				return true;
+			}
+		}
+		//Test if current thread is a registered Single Thread Virtual Target
+		return currentThreadIsSingleThreadTarget(targetName);
+	}
+	
+	public static void IrrelevantHandlingProcessing(TargetTask currentWaitingTask) {
+		//Test if current thread is a Pyjama worker thread, the worker thread process next target task in working queue.
+		if (Thread.currentThread() instanceof TargetWorkerThread) {
+			TargetWorkerThread thread = (TargetWorkerThread)Thread.currentThread();
+			thread.IrrelevantHandlingProcessing(currentWaitingTask);
+		}
+		//Else the current thread should be a non-Pyjama thread, which means we cannot directly control its event-loop.
+		//TODO: By default, if current thread is gui target, we do DispatchNextEvent() by modifying rt.jar
+		if (currentThreadIsSingleThreadTarget("gui")) {
+			while (!currentWaitingTask.isFinished()) {
+				//busy waiting
+			}
+		}
 	}
 	
 	public static void waitTargetBlocksWithTaskNameUntilFinish(String taskName) {
@@ -263,7 +278,7 @@ public class PjRuntime {
 			targetSet = targetTaskNameDictionary.get(taskName.hashCode());
 		} 
 		if(null == targetSet) {
-			throw new RuntimeException("Fatal Error(//#omp await): Pyajam cannot find the target task name:" + taskName);
+			throw new RuntimeException("Fatal Error(//#omp await): Pyjama cannot find the target task name:" + taskName);
 		}
 		for(TargetTask task: targetSet) {
 			waitTaskTillFinish(task);

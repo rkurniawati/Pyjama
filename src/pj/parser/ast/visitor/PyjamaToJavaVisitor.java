@@ -358,6 +358,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
 		printer.printLn("if (PjRuntime.currentThreadIsTheTarget(\"" + n.getTargetName() + "\")) {");
 		printer.indent();
+		/*
+		 * If current thread is already the target, we needn't submit the target task.
+		 * Instead, we execute the target task in current thread.
+		 */
 		printer.printLn(currentTTClass.className + "_in.run();");
 		printer.unindent();
 		printer.printLn("} else {");
@@ -374,8 +378,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		} else if (n.isEventYield()) {
 			/*
 			 * If eventyield is applied, the current thread gives up current function execution, backs when target
-			 * block is finished.
+			 * block is finished. For current implementation, we simply adopt an IHP (Irrelevant Handling Processing).
 			 */
+			printer.printLn("PjRuntime.IrrelevantHandlingProcessing(" + currentTTClass.className + "_in);");
 			this.currentMethodIsAsync = true;
 		} else if (n.isNoWait()) {
 			/*
