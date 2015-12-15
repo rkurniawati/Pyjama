@@ -2,6 +2,8 @@ package asyncTest;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
@@ -28,7 +30,7 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 	private double ymax = MandelbrotDefault.ymax;
 	
 	private final int zoomScale = 10;
-	enum ZoomType {zoomIn, zoomOut};
+	enum ZoomType {zoomIn, zoomOut, noZoom};
 	
 	class MandelbrotDefault {
 		static final double xmin = -2.5;     
@@ -43,7 +45,7 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		setResizable(true);
 		
-		Component graphics = new Component() {			
+		final Component graphics = new Component() {			
 			private static final long serialVersionUID = 1L;
 			public void paint(Graphics g) {
 				g.drawImage(display, 0,0, null);
@@ -53,6 +55,15 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		raster = display.getRaster();
 		
 		graphics.addMouseListener(this);
+		graphics.addMouseWheelListener(this);
+		graphics.addComponentListener(new ComponentAdapter() 
+		{  
+		        public void componentResized(ComponentEvent e) {
+		            frameWidth = graphics.getWidth();
+		            frameHight = graphics.getHeight();
+		            updatePosition(ZoomType.noZoom);
+		        }
+		});
 		getContentPane().add(graphics);
 		updateRaster(this.xmax, this.ymax, this.xmin, this.ymin, this.frameWidth, this.frameHight);
 		this.repaint();
@@ -72,6 +83,8 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		double scale = zoomScale;
 		if (zoomType == ZoomType.zoomOut) {
 			scale = 1 / scale;
+		} else if (zoomType == ZoomType.noZoom) {
+			scale = 1;
 		}
 		this.xmax = centreX + this.frameWidth / 2 * xScale / scale;
 		this.xmin = centreX - this.frameWidth / 2 * xScale / scale;
@@ -144,8 +157,7 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		}
 		
 		this.repaint();
-		System.out.println("done");
-		
+		System.out.println("done");	
 	}
 
 	@Override
@@ -175,15 +187,18 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		String message;
-	       int notches = e.getWheelRotation();
-	       if (notches < 0) {
-	           message = "Mouse wheel moved UP ";
-	       } else {
-	           message = "Mouse wheel moved DOWN ";
-	       }
-	       System.out.println(message);
-		
+		this.mouseX = e.getX();
+		this.mouseY = e.getY();
+		int notches = e.getWheelRotation();
+		if (notches < 0) {
+			System.out.println("Zoom in");
+			this.updatePosition(ZoomType.zoomIn);
+		} else if (notches > 0){
+			System.out.println("Zoom out");
+			this.updatePosition(ZoomType.zoomOut);
+		}
+		this.repaint();
+		System.out.println("done");         
 	}
 }
 
