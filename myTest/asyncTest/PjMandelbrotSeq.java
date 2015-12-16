@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
@@ -14,10 +16,10 @@ import java.awt.image.WritableRaster;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelListener{
+public class PjMandelbrotSeq extends JFrame implements MouseListener, MouseWheelListener, KeyListener{
 
 	private static final long serialVersionUID = -7311452299949615843L;
-	private static final int iterationDept = 255;
+	private static final int iterationDept = 2550;
 	private BufferedImage display;
 	private WritableRaster raster;
 	private int frameWidth = 1360;
@@ -39,7 +41,7 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		static final double ymax = 1.25;
 	}
 	
-	public PjMandelbrot () {
+	public PjMandelbrotSeq() {
 		super("Mandelbrot");
 		setSize(this.frameWidth, this.frameHight);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
@@ -56,6 +58,7 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		
 		graphics.addMouseListener(this);
 		graphics.addMouseWheelListener(this);
+		this.addKeyListener(this);
 		graphics.addComponentListener(new ComponentAdapter() 
 		{  
 		        public void componentResized(ComponentEvent e) {
@@ -66,7 +69,6 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		});
 		getContentPane().add(graphics);
 		updateRaster(this.xmax, this.ymax, this.xmin, this.ymin, this.frameWidth, this.frameHight);
-		this.repaint();
 		this.setVisible(true);	
 	}
 
@@ -78,7 +80,7 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		double centreX = this.xmin + (this.xmax - this.xmin) * this.mouseX / this.frameWidth;
 		double centreY = this.ymin + (this.ymax - this.ymin) * this.mouseY / this.frameHight;
 		
-		System.out.println("mouseX"+this.mouseX+"mouseY"+this.mouseY+"centre"+centreX+ " "+ centreY);
+		//System.out.println("mouseX"+this.mouseX+"mouseY"+this.mouseY+"centre"+centreX+ " "+ centreY);
 		
 		double scale = zoomScale;
 		if (zoomType == ZoomType.zoomOut) {
@@ -91,7 +93,7 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		this.ymax = centreY + this.frameHight / 2 * yScale / scale;
 		this.ymin = centreY - this.frameHight / 2 * yScale / scale;
 		
-		System.out.println("xmax"+this.xmax+"xmin"+this.xmin+"ymax"+this.ymax+"ymin"+this.ymin);
+		//System.out.println("xmax"+this.xmax+"xmin"+this.xmin+"ymax"+this.ymax+"ymin"+this.ymin);
 
 		updateRaster(this.xmax, this.ymax, this.xmin, this.ymin, this.frameWidth, this.frameHight);
 	}
@@ -102,13 +104,14 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		
 		double x = xmin;
 		double y = ymin;
-
+		//#omp parallel for
 		for (int i=0; i<hight; i++) {
 			x = xmin;
 			for (int j=0; j<width; j++) {
 				drawPixel(j, i, x, y);
 				x += xTick;
 			}
+			this.repaint();
 			y += yTick;
 		}
 	}
@@ -141,12 +144,12 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
     }	
 	
 	public static void main(String[] s) {
-		new PjMandelbrot();
+		new PjMandelbrotSeq();
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println(e.getX() + " ----" + e.getY());
+		long startTime = System.nanoTime();
 		this.mouseX = e.getX();
 		this.mouseY = e.getY();
 		
@@ -155,9 +158,9 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 		} else if (SwingUtilities.isRightMouseButton(e)){
 			this.updatePosition(ZoomType.zoomOut);
 		}
-		
-		this.repaint();
-		System.out.println("done");	
+		//this.repaint();
+		double timeElapse = (System.nanoTime() - startTime) / 10e6;
+		System.out.println("done within:" + timeElapse + "ms");   
 	}
 
 	@Override
@@ -187,6 +190,7 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
+		long startTime = System.nanoTime();
 		this.mouseX = e.getX();
 		this.mouseY = e.getY();
 		int notches = e.getWheelRotation();
@@ -197,9 +201,42 @@ public class PjMandelbrot extends JFrame implements MouseListener, MouseWheelLis
 			System.out.println("Zoom out");
 			this.updatePosition(ZoomType.zoomOut);
 		}
-		this.repaint();
-		System.out.println("done");         
+		//this.repaint();
+		double timeElapse = (System.nanoTime() - startTime) / 10e6;
+		System.out.println("done within:" + timeElapse + "ms");       
 	}
+
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		long startTime = System.nanoTime();
+		int key = e.getKeyCode();
+		if (key == KeyEvent.VK_SPACE) {
+			this.xmin = MandelbrotDefault.xmin;
+			this.xmax = MandelbrotDefault.xmax;
+			this.ymin = MandelbrotDefault.ymin;
+			this.ymax = MandelbrotDefault.ymax;
+			this.mouseX = (int) this.frameWidth / 2;
+			this.mouseY = (int) this.frameHight / 2;
+			this.updatePosition(ZoomType.noZoom);
+			//this.repaint();
+			double timeElapse = (System.nanoTime() - startTime) / 10e6;
+			System.out.println("reset within:" + timeElapse + "ms"); 
+		}
+	}
+
+
+
 }
 
 
