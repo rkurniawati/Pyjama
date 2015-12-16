@@ -105,14 +105,13 @@ public class PjMandelbrotSeq extends JFrame implements MouseListener, MouseWheel
 		double x = xmin;
 		double y = ymin;
 		//#omp parallel for
-		for (int i=0; i<hight; i++) {
-			x = xmin;
+		for (int i=0; i<hight; i++) {	
 			for (int j=0; j<width; j++) {
+				x = xmin + xTick * j;
+				y = ymin + yTick * i;
 				drawPixel(j, i, x, y);
-				x += xTick;
 			}
 			this.repaint();
-			y += yTick;
 		}
 	}
 	
