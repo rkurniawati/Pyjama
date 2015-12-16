@@ -125,8 +125,11 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 	            }
 	     }
 		 if (n.getBody() != null) {
-			 for(Statement s: n.getBody().getStmts())
-	            s.accept(this, arg);
+			 if (null != n.getBody().getStmts()) {
+				 for(Statement s: n.getBody().getStmts()) {
+			            s.accept(this, arg); 
+				 }
+			 }
 	     }
 		 /*
 		  * finally exit current method scope

@@ -69,6 +69,7 @@ public class PjMandelbrotPar extends JFrame implements MouseListener, MouseWheel
 		});
 		getContentPane().add(graphics);
 		updateRaster(this.xmax, this.ymax, this.xmin, this.ymin, this.frameWidth, this.frameHight);
+		this.repaint();
 		this.setVisible(true);	
 	}
 
@@ -104,14 +105,14 @@ public class PjMandelbrotPar extends JFrame implements MouseListener, MouseWheel
 		
 		double x = xmin;
 		double y = ymin;
-		//#omp parallel for
+		//#omp parallel for shared(x,y,hight,width,xTick,yTick)
 		for (int i=0; i<hight; i++) {
 			x = xmin;
 			for (int j=0; j<width; j++) {
 				drawPixel(j, i, x, y);
 				x += xTick;
 			}
-			this.repaint();
+			//repaint();
 			y += yTick;
 		}
 	}
@@ -166,6 +167,7 @@ public class PjMandelbrotPar extends JFrame implements MouseListener, MouseWheel
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
+		int a=3;
 		
 	}
 
