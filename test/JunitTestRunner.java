@@ -40,6 +40,7 @@ import org.junit.runner.JUnitCore;
 
 import Utility.ResultReportHelper.GenerateReport;
 
+
 public class JunitTestRunner {
 	//
 	private static int CompileRunCount = 0;
@@ -89,12 +90,12 @@ public class JunitTestRunner {
 
 		// /////////////////////////////////////////////////////////////////////////////////////////
 		Class<?>[] directiveClasses_CPUandMemory = {
-//				LoopFor_Group1_MacTest.class, LoopFor_Group2_MacTest.class,
-//				LoopFor_Group3_MacTest.class, LoopFor_Group4_MacTest.class,
-//				Parallel_MacTest.class, Schedule_Group3_MacTest.class,
-//				Schedule_Group5_MacTest.class, Schedule_Group1_MacTest.class,
-//				Schedule_Group2_MacTest.class, Schedule_Group4_MacTest.class,
-//				Schedule_Group6_MacTest.class 
+				LoopFor_Group1_MacTest.class, LoopFor_Group2_MacTest.class,
+				LoopFor_Group3_MacTest.class, LoopFor_Group4_MacTest.class,
+				Parallel_MacTest.class, Schedule_Group3_MacTest.class,
+				Schedule_Group5_MacTest.class, Schedule_Group1_MacTest.class,
+				Schedule_Group2_MacTest.class, Schedule_Group4_MacTest.class,
+				Schedule_Group6_MacTest.class 
 				};
 
 		org.junit.runner.Result DirectiveResult_MaC = JUnitCore
@@ -105,14 +106,14 @@ public class JunitTestRunner {
 		MaCFailureCount = DirectiveResult_MaC.getFailureCount();
 
 		Class<?>[] directiveClasses_RunningTime = {
-//				LoopFor_Group1_RtTest.class, LoopFor_Group2_RtTest.class,
-//				LoopFor_Group3_RtTest.class, LoopFor_Group4_RtTest.class,
-//				LoopFor_Group5_RtTest.class, LoopFor_Group6_RtTest.class,
-//				Parallel_Group1_RtTest.class, Parallel_Group2_RtTest.class,
-//				Parallel_Group3_RtTest.class, Schedule_Group1_RtTest.class,
-//				Schedule_Group2_RtTest.class, Schedule_Group3_RtTest.class,
-//				Schedule_Group4_RtTest.class, Schedule_Group5_RtTest.class,
-//				Schedule_Group6_RtTest.class 
+				LoopFor_Group1_RtTest.class, LoopFor_Group2_RtTest.class,
+				LoopFor_Group3_RtTest.class, LoopFor_Group4_RtTest.class,
+				LoopFor_Group5_RtTest.class, LoopFor_Group6_RtTest.class,
+				Parallel_Group1_RtTest.class, Parallel_Group2_RtTest.class,
+				Parallel_Group3_RtTest.class, Schedule_Group1_RtTest.class,
+				Schedule_Group2_RtTest.class, Schedule_Group3_RtTest.class,
+				Schedule_Group4_RtTest.class, Schedule_Group5_RtTest.class,
+				Schedule_Group6_RtTest.class 
 				};
 		
 		org.junit.runner.Result DirectiveResult_RT = JUnitCore

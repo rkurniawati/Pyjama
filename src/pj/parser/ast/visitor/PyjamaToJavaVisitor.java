@@ -164,6 +164,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn(currentWSBlock.getSource());
 		
 		printer.printLn("PjRuntime.setBarrier();");
+		printer.printLn("PjRuntime.reset_OMP_orderCursor();");
 	
     	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- END */");
     }
