@@ -142,20 +142,20 @@ public class PjMandelbrotPar extends JFrame implements MouseListener, MouseWheel
         int _threadNum__OMP_ParallelRegion_0 = icv__OMP_ParallelRegion_0.nthreads_var.get(icv__OMP_ParallelRegion_0.levels_var);
         ConcurrentHashMap<String, Object> inputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_ParallelRegion_0 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_ParallelRegion_0.put("x",x);
-        inputlist__OMP_ParallelRegion_0.put("xTick",xTick);
-        inputlist__OMP_ParallelRegion_0.put("yTick",yTick);
-        inputlist__OMP_ParallelRegion_0.put("y",y);
         inputlist__OMP_ParallelRegion_0.put("hight",hight);
+        inputlist__OMP_ParallelRegion_0.put("yTick",yTick);
+        inputlist__OMP_ParallelRegion_0.put("x",x);
         inputlist__OMP_ParallelRegion_0.put("width",width);
+        inputlist__OMP_ParallelRegion_0.put("xTick",xTick);
+        inputlist__OMP_ParallelRegion_0.put("y",y);
         _OMP_ParallelRegion_0 _OMP_ParallelRegion_0_in = new _OMP_ParallelRegion_0(_threadNum__OMP_ParallelRegion_0,icv__OMP_ParallelRegion_0,inputlist__OMP_ParallelRegion_0,outputlist__OMP_ParallelRegion_0);
         _OMP_ParallelRegion_0_in.runParallelCode();
-        x = (Double)outputlist__OMP_ParallelRegion_0.get("x");
-        xTick = (Double)outputlist__OMP_ParallelRegion_0.get("xTick");
-        yTick = (Double)outputlist__OMP_ParallelRegion_0.get("yTick");
-        y = (Double)outputlist__OMP_ParallelRegion_0.get("y");
         hight = (Integer)outputlist__OMP_ParallelRegion_0.get("hight");
+        yTick = (Double)outputlist__OMP_ParallelRegion_0.get("yTick");
+        x = (Double)outputlist__OMP_ParallelRegion_0.get("x");
         width = (Integer)outputlist__OMP_ParallelRegion_0.get("width");
+        xTick = (Double)outputlist__OMP_ParallelRegion_0.get("xTick");
+        y = (Double)outputlist__OMP_ParallelRegion_0.get("y");
         PjRuntime.recoverParentICV(icv_previous__OMP_ParallelRegion_0);
         RuntimeException OMP_ee_0 = (RuntimeException) _OMP_ParallelRegion_0_in.OMP_CurrentParallelRegionExceptionSlot.get();
         if (OMP_ee_0 != null) {throw OMP_ee_0;}
@@ -174,11 +174,11 @@ public class PjMandelbrotPar extends JFrame implements MouseListener, MouseWheel
 
                 //#BEGIN shared variables defined here
                 double yTick = 0.0d;
+                int width = 0;
+                int hight = 0;
+                double y = 0.0d;
                 double xTick = 0.0d;
                 double x = 0.0d;
-                int hight = 0;
-                int width = 0;
-                double y = 0.0d;
                 //#END shared variables defined here
                 public _OMP_ParallelRegion_0(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {
                     this.icv = icv;
@@ -193,22 +193,22 @@ public class PjMandelbrotPar extends JFrame implements MouseListener, MouseWheel
                     icv.OMP_CurrentParallelRegionBarrier = new PjCyclicBarrier(this.OMP_threadNumber);
                     //#BEGIN shared variables initialised here
                     yTick = (Double)OMP_inputList.get("yTick");
+                    width = (Integer)OMP_inputList.get("width");
+                    hight = (Integer)OMP_inputList.get("hight");
+                    y = (Double)OMP_inputList.get("y");
                     xTick = (Double)OMP_inputList.get("xTick");
                     x = (Double)OMP_inputList.get("x");
-                    hight = (Integer)OMP_inputList.get("hight");
-                    width = (Integer)OMP_inputList.get("width");
-                    y = (Double)OMP_inputList.get("y");
                     //#END shared variables initialised here
                 }
 
                 private void updateOutputListForSharedVars() {
                     //BEGIN update outputlist
-                    OMP_outputList.put("x",x);
-                    OMP_outputList.put("xTick",xTick);
-                    OMP_outputList.put("yTick",yTick);
-                    OMP_outputList.put("y",y);
                     OMP_outputList.put("hight",hight);
+                    OMP_outputList.put("yTick",yTick);
+                    OMP_outputList.put("x",x);
                     OMP_outputList.put("width",width);
+                    OMP_outputList.put("xTick",xTick);
+                    OMP_outputList.put("y",y);
                     //END update outputlist
                 }
                 class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {

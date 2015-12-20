@@ -12,6 +12,8 @@ public class myGenerate extends Object{
 			//pj.PyjamaToJavaParser.parse(new File("myTest/exceptionTest/EPCCsyncbench.pj"));
 			//pj.PyjamaToJavaParser.parse(new File("myTest/asyncTest/AsyncSemanticTest.pj"));
 			//pj.PyjamaToJavaParser.parse(new File("myTest/squares/Squares.pj"));
+			pj.PyjamaToJavaParser.parse(new File("myTest/HelloWorld.pj"));
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

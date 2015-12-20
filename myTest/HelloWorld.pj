@@ -10,14 +10,14 @@ public class HelloWorld {
 		System.out.println("Hello world from sequential code");
 
 		ArrayList<String> list = new ArrayList<String>();
-		for(int i=0; i<10; i++){
+		for(int i=0; i<10; i+=1){
 			list.add("test"+i);
 		}
 
 		long startTime = System.currentTimeMillis();
 
 		//#omp parallel for 
-		for(int i=0; i<10; i++){
+		for(int i=0; i<=10; i+=1){
 			System.out.println("Hello world from Pyjama simple for " + i);
 		}
 
@@ -38,9 +38,9 @@ public class HelloWorld {
 		double seconds = duration/1000.0;
 		//print stats
 		System.out.println("done " + seconds + "seconds");
+
 	}
 	
-
 }
 
 

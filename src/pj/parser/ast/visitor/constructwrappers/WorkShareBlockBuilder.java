@@ -226,7 +226,7 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 			  || (opt == BinaryExpr.Operator.greaterEquals)
 			  || (opt == BinaryExpr.Operator.less)
 			  || (opt == BinaryExpr.Operator.lessEquals) )) {
-			throw new RuntimeException("illegal compare operator '" + opt.toString() + "' in omp for");
+			throw new RuntimeException("Pyjama: illegal compare operator '" + opt.toString() + "' in omp for");
 		}
 		compareOperator = compareExpr.getOperator();
 		end_expression = compareExpr.getRight();
@@ -245,17 +245,25 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		} else if (firstUpdateExpr instanceof AssignExpr) {
 
 			AssignExpr.Operator binaryOpt = ((AssignExpr)firstUpdateExpr).getOperator();
+			/*
+			 * If the binary operator is * or /, this for-loop does not conform with OpenMP 
+			 * standard, because the update only accepts +/-.
+			 * We throw a parsing exception when this happens.
+			 */
+			if (AssignExpr.Operator.star == binaryOpt || AssignExpr.Operator.slash == binaryOpt) {
+				throw new RuntimeException("Pyjama does not accept for-loop with mul/div updates");
+			}
 			if (AssignExpr.Operator.plus == binaryOpt) {
 				/*
 				 * Parse updates such like i+=stride;
 				 */
-				Expression strideNum = ((AssignExpr)firstUpdateExpr).getTarget();
+				Expression strideNum = ((AssignExpr)firstUpdateExpr).getValue();
 				stride = new NameExpr(strideNum.toString());
 			} else if (AssignExpr.Operator.minus == binaryOpt) {
 				/*
 				 * Parse updates such like i-=stride;
 				 */
-				Expression strideNum = ((AssignExpr)firstUpdateExpr).getTarget();
+				Expression strideNum = ((AssignExpr)firstUpdateExpr).getValue();
 				stride = new NameExpr("-"+strideNum.toString());
 			} else if (AssignExpr.Operator.assign == binaryOpt) {
 				/*

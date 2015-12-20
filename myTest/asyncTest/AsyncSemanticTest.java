@@ -284,9 +284,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
         /*OpenMP Target region (#4) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_4 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_4 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_4.put("c",c);
         inputlist__OMP_TargetTaskRegion_4.put("a",a);
         inputlist__OMP_TargetTaskRegion_4.put("b",b);
+        inputlist__OMP_TargetTaskRegion_4.put("c",c);
         _OMP_TargetTaskRegion_4 _OMP_TargetTaskRegion_4_in = new _OMP_TargetTaskRegion_4(inputlist__OMP_TargetTaskRegion_4,outputlist__OMP_TargetTaskRegion_4);
         if (PjRuntime.currentThreadIsTheTarget("worker")) {
             _OMP_TargetTaskRegion_4_in.run();
@@ -299,8 +299,8 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
         /*OpenMP Target region (#5) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_5 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_5 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_5.put("a",a);
         inputlist__OMP_TargetTaskRegion_5.put("d",d);
+        inputlist__OMP_TargetTaskRegion_5.put("a",a);
         inputlist__OMP_TargetTaskRegion_5.put("b",b);
         _OMP_TargetTaskRegion_5 _OMP_TargetTaskRegion_5_in = new _OMP_TargetTaskRegion_5(inputlist__OMP_TargetTaskRegion_5,outputlist__OMP_TargetTaskRegion_5);
         if (PjRuntime.currentThreadIsTheTarget("worker1")) {
@@ -315,9 +315,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
         /*OpenMP Target region (#6) -- START */
         ConcurrentHashMap<String, Object> inputlist__OMP_TargetTaskRegion_6 = new ConcurrentHashMap<String,Object>();
         ConcurrentHashMap<String, Object> outputlist__OMP_TargetTaskRegion_6 = new ConcurrentHashMap<String,Object>();
-        inputlist__OMP_TargetTaskRegion_6.put("e",e);
-        inputlist__OMP_TargetTaskRegion_6.put("a",a);
         inputlist__OMP_TargetTaskRegion_6.put("b",b);
+        inputlist__OMP_TargetTaskRegion_6.put("a",a);
+        inputlist__OMP_TargetTaskRegion_6.put("e",e);
         _OMP_TargetTaskRegion_6 _OMP_TargetTaskRegion_6_in = new _OMP_TargetTaskRegion_6(inputlist__OMP_TargetTaskRegion_6,outputlist__OMP_TargetTaskRegion_6);
         if (PjRuntime.currentThreadIsTheTarget("worker2")) {
             _OMP_TargetTaskRegion_6_in.run();
@@ -337,9 +337,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
             private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
 
             //#BEGIN shared variables defined here
-            int a = 0;
             int b = 0;
             int c = 0;
+            int a = 0;
             //#END shared variables defined here
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
@@ -347,9 +347,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
                 this.OMP_inputList = inputlist;
                 this.OMP_outputList = outputlist;
                 //#BEGIN shared variables initialised here
-                a = (Integer)OMP_inputList.get("a");
                 b = (Integer)OMP_inputList.get("b");
                 c = (Integer)OMP_inputList.get("c");
+                a = (Integer)OMP_inputList.get("a");
                 //#END shared variables initialised here
                 //#BEGIN firstprivate reduction variables initialised here
                 //#END firstprivate reduction variables initialised here
@@ -357,9 +357,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
 
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
-                OMP_outputList.put("c",c);
                 OMP_outputList.put("a",a);
                 OMP_outputList.put("b",b);
+                OMP_outputList.put("c",c);
                 //END update outputlist
             }
             @Override
@@ -381,9 +381,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
             private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
 
             //#BEGIN shared variables defined here
-            int a = 0;
-            int b = 0;
             int d = 0;
+            int b = 0;
+            int a = 0;
             //#END shared variables defined here
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
@@ -391,9 +391,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
                 this.OMP_inputList = inputlist;
                 this.OMP_outputList = outputlist;
                 //#BEGIN shared variables initialised here
-                a = (Integer)OMP_inputList.get("a");
-                b = (Integer)OMP_inputList.get("b");
                 d = (Integer)OMP_inputList.get("d");
+                b = (Integer)OMP_inputList.get("b");
+                a = (Integer)OMP_inputList.get("a");
                 //#END shared variables initialised here
                 //#BEGIN firstprivate reduction variables initialised here
                 //#END firstprivate reduction variables initialised here
@@ -401,8 +401,8 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
 
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
-                OMP_outputList.put("a",a);
                 OMP_outputList.put("d",d);
+                OMP_outputList.put("a",a);
                 OMP_outputList.put("b",b);
                 //END update outputlist
             }
@@ -425,9 +425,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
             private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();
 
             //#BEGIN shared variables defined here
-            int a = 0;
-            int b = 0;
             int e = 0;
+            int b = 0;
+            int a = 0;
             //#END shared variables defined here
             //#BEGIN private/firstprivate reduction variables defined here
             //#END private/firstprivate reduction variables  defined here
@@ -435,9 +435,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
                 this.OMP_inputList = inputlist;
                 this.OMP_outputList = outputlist;
                 //#BEGIN shared variables initialised here
-                a = (Integer)OMP_inputList.get("a");
-                b = (Integer)OMP_inputList.get("b");
                 e = (Integer)OMP_inputList.get("e");
+                b = (Integer)OMP_inputList.get("b");
+                a = (Integer)OMP_inputList.get("a");
                 //#END shared variables initialised here
                 //#BEGIN firstprivate reduction variables initialised here
                 //#END firstprivate reduction variables initialised here
@@ -445,9 +445,9 @@ class main_OmpStateMachine_ extends pj.pr.target.TargetTask{
 
             private void updateOutputListForSharedVars() {
                 //BEGIN update outputlist
-                OMP_outputList.put("e",e);
-                OMP_outputList.put("a",a);
                 OMP_outputList.put("b",b);
+                OMP_outputList.put("a",a);
+                OMP_outputList.put("e",e);
                 //END update outputlist
             }
             @Override
