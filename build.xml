@@ -21,15 +21,17 @@
 
 	<property name="target.name" value="${ant.project.name}-${version}"/>
 
-
-	<property name="lib.dir" location="lib" />
-	<property name="lib.test.dir" location="lib/test" />
 	<property name="lib.main.dir" location="lib/" />
+	<property name="lib.test.dir" location="lib/test" />
+	<property name="lib.dependency.dir" location="lib/depend" />
 
 	<!-- Dependencies that cannot be fetched from central repository -->
 	<path id="build.class.path">
 		<fileset dir="${lib.main.dir}">
 			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${lib.dependency.dir}">
+					<include name="*.jar" />
 		</fileset>
 	</path>
 
@@ -67,7 +69,7 @@
 
 	</target>
 
-	<!-- Output is XML, could also be plain
+	<!-- Output is XML, could also be plain	
 	<target name="test" depends="compile" description="Run the JUnit Tests.">
 		<junit printsummary="yes" fork="true" haltonfailure="yes">
 			<classpath refid="junit.class.path" />
@@ -87,6 +89,7 @@
 			<manifest>
 				<attribute name="Main-Class" value="Generate"/>
 			</manifest>
+			<zipgroupfileset dir="${lib.dependency.dir}" includes="**/*.jar" />
 		</jar>
 	</target>
 
