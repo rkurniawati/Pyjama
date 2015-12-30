@@ -1008,7 +1008,16 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        //Xing added for keep track of current method's all statements
 	        this.currentMehodNode = n;
 	        this.currentMethodOrConstructorStmts = new ArrayList<Statement>();
-	        this.currentMethodOrConstructorStmts = n.getBody().getStmts();
+	        if (n.getBody() != null) {
+	        	/*
+	        	 * We do null pointer check because it is possible current method
+	        	 * does not have body (e.g. abstract method); or current method 
+	        	 * does not have any statement (e.g.empty method).
+	        	 */
+	        	if (n.getBody().getStmts() != null) {
+	    	        this.currentMethodOrConstructorStmts = n.getBody().getStmts();
+	        	}
+	        }
 	        this.currentMethodType = n.getType();
 	        //Xing added for checking current method is static or not
 	        if (ModifierSet.isStatic(n.getModifiers())) {
