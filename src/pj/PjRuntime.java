@@ -264,12 +264,18 @@ public class PjRuntime {
 			thread.IrrelevantHandlingProcessing(currentWaitingTask);
 		}
 		//Else the current thread should be a non-Pyjama thread, which means we cannot directly control its event-loop.
-		//TODO: By default, if current thread is gui target, we do DispatchNextEvent() by modifying rt.jar
+		//TODO: By default, if current thread is gui target, we do PjDispatchNextEvent() by modifying rt.jar
 		if (currentThreadIsSingleThreadTarget("gui")) {
 			while (!currentWaitingTask.isFinished()) {
 				//busy waiting
 			}
 		}
+		//TODO: By default, if current thread is web target, we do PjRunNextJob() by modifying Jetty's QueuedThreadPool
+		if (currentThreadIsSingleThreadTarget("web")) {
+			while (!currentWaitingTask.isFinished()) {
+				//busy waiting
+			}
+		}				
 	}
 	
 	public static void waitTargetBlocksWithTaskNameUntilFinish(String taskName) {

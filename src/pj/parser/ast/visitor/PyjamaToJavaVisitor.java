@@ -1080,7 +1080,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        }
 	        ///Xing added begin
 	        /*
-			 * If this method contains at least one //#omp target virtual await, we call this method is async.
+			 * If this method contains at least one //#omp target virtual eventyield, we call this method is async.
 			 * Then this method needs an auxiliary state machine class. 
 			 * So hereby we create this kind of class, and print this auxiliary state machine class 
 			 * to "PrinterForAuxiliaryClasses".
@@ -1089,8 +1089,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			 * target block is finished. 
 			 */
 	        if (this.currentMethodIsAsync) {
-				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(this.currentMehodNode, this, this.ompTargetVisitingCode);
-				this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
+				//StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(this.currentMehodNode, this, this.ompTargetVisitingCode);
+				//this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
 	        }
 	        /*Xing added to print Auxiliary parallel region class
 	         *if current method has PR regions or eventyield Target regions.
