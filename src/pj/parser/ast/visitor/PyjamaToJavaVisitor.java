@@ -404,6 +404,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
+		   //print the compiler information at the beginning of the file.
+		   this.CodePrinter.printLn("//Pyjama compiler version:" + pj.Version.getCompilerVersion());
 	        if (n.getPackage() != null) {
 	            n.getPackage().accept(this, this.CodePrinter);
 	        }
