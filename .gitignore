@@ -1,9 +1,21 @@
+# Java IDE files
 bin/
 .project
 .class
 .settings
 *~
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# Benchmark results files
 JsonResult/
 Report/
 test/PyjamaCode/*.java
+
+# Debug mode files
+myTest/
 ScopeTable.txt
+
+# Testing libs
+lib/test 
