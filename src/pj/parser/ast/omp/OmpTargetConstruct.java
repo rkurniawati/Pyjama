@@ -12,7 +12,7 @@ import pj.parser.ast.visitor.VoidVisitor;
 
 public class OmpTargetConstruct extends OpenMPStatement{
 	
-	public enum ExecutionType {EventYield, NoWait, Wait};
+	public enum ExecutionType {Await, NoWait, Wait};
 	private OmpIfClause ifExpr = null;
 	private Statement body = null;
 	private List<OmpDataClause> dataClauseList;
@@ -79,8 +79,8 @@ public class OmpTargetConstruct extends OpenMPStatement{
 		return this.virtualTarget;
 	}
 	
-	public boolean isEventYield() {
-		if(this.waitType == ExecutionType.EventYield) {
+	public boolean isAwait() {
+		if(this.waitType == ExecutionType.Await) {
 			return true;
 		}
 		return false;

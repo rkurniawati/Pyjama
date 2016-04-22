@@ -376,9 +376,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			 *If default policy is applied, the encountering thread waits until the target block is finished. 
 			 */
 			printer.printLn("PjRuntime.waitTaskTillFinish(" + currentTTClass.className + "_in);");
-		} else if (n.isEventYield()) {
+		} else if (n.isAwait()) {
 			/*
-			 * If eventyield is applied, the current thread gives up current function execution, backs when target
+			 * If await is applied, the current thread gives up current function execution, backs when target
 			 * block is finished. For current implementation, we simply adopt an IHP (Irrelevant Handling Processing).
 			 */
 			printer.printLn("PjRuntime.IrrelevantHandlingProcessing(" + currentTTClass.className + "_in);");
@@ -398,10 +398,20 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	    
 	@Override
-	public void visit(OmpAwaitDirective n, SourcePrinter printer) {
+	public void visit(OmpWaitDirective n, SourcePrinter printer) {
 		printer.printLn("PjRuntime.waitTargetBlocksWithTaskNameUntilFinish(\"" + n.getTaskName() + "\");");
-		
 	}
+	
+	@Override
+	public void visit(OmpAwaitConstruct n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void visit(OmpAsyncFunction n, SourcePrinter arg) {
+		// TODO Auto-generated method stub		
+	}
+
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
 		   //print the compiler information at the beginning of the file.
@@ -1661,5 +1671,4 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		return CodePrinter.getSource();
 	}
 	/********************************************************************************************************************************/
-
 }

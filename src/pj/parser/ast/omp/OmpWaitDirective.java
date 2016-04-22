@@ -3,15 +3,15 @@ package pj.parser.ast.omp;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
 
-public class OmpAwaitDirective extends OpenMPStatement{
+public class OmpWaitDirective extends OpenMPStatement{
 	
 	private String taskName;
 	
-	public OmpAwaitDirective(String tag) {
+	public OmpWaitDirective(String tag) {
 		this.taskName = tag;
 	}
 	
-	public OmpAwaitDirective(int beginLine, int beginColumn, int endLine, int endColumn, String tag) {
+	public OmpWaitDirective(int beginLine, int beginColumn, int endLine, int endColumn, String tag) {
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.taskName = tag;
 	}

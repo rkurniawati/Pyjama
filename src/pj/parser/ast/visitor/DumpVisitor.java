@@ -80,7 +80,9 @@ import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
-import pj.parser.ast.omp.OmpAwaitDirective;
+import pj.parser.ast.omp.OmpAsyncFunction;
+import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -1689,8 +1691,8 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		
 		printer.print("(" + n.getTargetName() + ") ");
 		
-		if (n.isEventYield()) {
-			printer.print("eventyield ");
+		if (n.isAwait()) {
+			printer.print("await ");
 		} else if (n.isNoWait()) {
 			printer.print("nowait ");
 		} else if (n.isSync()) {
@@ -1715,14 +1717,25 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		printer.unindent();
 		printer.print("}");
 	}
-
+	
 	@Override
-	public void visit(OmpAwaitDirective n, Object arg) {
-		printer.print("//omp await");
+	public void visit(OmpWaitDirective n, Object arg) {
+		printer.print("//omp wait");
 		printer.print("(");
 		printer.print(n.getTaskName());
 		printer.printLn(")");
-		
-	}	
+	}
+
+	@Override
+	public void visit(OmpAwaitConstruct n, Object arg) {
+		printer.print("//#omp await ");
+		printer.printLn();
+		n.getStatement().accept(this, arg);
+	}
+
+	@Override
+	public void visit(OmpAsyncFunction n, Object arg) {
+		// TODO Auto-generated method stub
+	}
 
 }

@@ -15,10 +15,13 @@ import pj.parser.ast.expr.FieldAccessExpr;
 import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.expr.ObjectCreationExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
+import pj.parser.ast.omp.OmpAsyncFunction;
+import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
+import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.CatchClause;
 import pj.parser.ast.stmt.ForStmt;
@@ -433,6 +436,21 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
         }
         this.symbolTable.exitScope();
         return null;
+	}
+
+	@Override
+	public String visit(OmpWaitDirective n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(OmpAwaitConstruct n, Object arg) {
+		return null;
+	}
+
+	@Override
+	public String visit(OmpAsyncFunction n, Object arg) {
+		return null;	
 	}
 
 }
