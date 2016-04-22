@@ -4,7 +4,6 @@ package pj.parser.ast.visitor;
  * @version 1.0
  */
 
-import pj.PjRuntime;
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
 import pj.parser.ast.expr.*;

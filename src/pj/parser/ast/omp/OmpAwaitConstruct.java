@@ -27,7 +27,7 @@ public class OmpAwaitConstruct extends OpenMPStatement{
 		return this.functionList;
 	}
 	
-	public Statement getStatement() {
+	public Statement getBody() {
 		return this.statement;
 	}
 	

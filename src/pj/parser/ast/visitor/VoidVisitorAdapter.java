@@ -941,15 +941,18 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
     }
     
     public void visit(OmpTargetConstruct n, A arg) {
+    	n.getBody().accept(this, arg);
     }
     
     public void visit(OmpWaitDirective n, A arg) {
     }
     
     public void visit(OmpAwaitConstruct n, A arg) {
+    	n.getBody().accept(this, arg);
     }
     
     public void visit(OmpAsyncFunction n, A arg) {	
+    	n.getFunction().accept(this, arg);
     }
 
 }

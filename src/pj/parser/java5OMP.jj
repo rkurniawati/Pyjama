@@ -3106,7 +3106,6 @@ OpenMPStatement OpenMPStatement():
 	|{OmpSingleConstruct singleConstruct;} //#omp single needs normalisation; Xing Fan at 2014.9.29
 		singleConstruct = OmpSingleConstruct()
 	 {ret = singleConstruct.normalisation();}
-	|	ret = OmpAwaitConstruct()
 	|	ret = OmpMasterConstruct()
 	|	ret = OmpCriticalConstruct()
 	|	ret = OmpAtomicConstruct()
@@ -3117,6 +3116,8 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpCancelDirective()
 	|	ret = OmpTargetConstruct()
 	|	ret = OmpWaitDirective()
+	|	ret = OmpAsyncFunction()
+	|	ret = OmpAwaitConstruct()
 	)
 	{return ret;}
 }
@@ -3496,6 +3497,19 @@ OmpTargetConstruct OmpTargetConstruct():
 	{ return new OmpTargetConstruct(line, column, token.endLine, token.endColumn, body, isVirtual, targetName, dataClauseList, ifExpr, waitType, taskName); }
 }
 
+OmpWaitDirective OmpWaitDirective():
+{
+	int line;
+	int column;
+	NameExpr tag = null;
+}
+{
+	<WAIT> {line=token.beginLine; column=token.beginColumn;}
+	"(" tag = Name() ")"
+	{return new OmpWaitDirective(line, column, token.endLine, token.endColumn, tag.toString());}
+}
+
+//§§Followings are Pyjama extionsion of OpenMP for asynchronous function call; Xing Fan added at 2015.4.22
 OmpAwaitConstruct OmpAwaitConstruct():
 {
 	int line;
@@ -3514,16 +3528,18 @@ OmpAwaitConstruct OmpAwaitConstruct():
 	{return new OmpAwaitConstruct(line, column, token.endLine, token.endColumn, functionList, body);}
 }
 
-OmpWaitDirective OmpWaitDirective():
+OmpAsyncFunction OmpAsyncFunction():
 {
 	int line;
 	int column;
-	NameExpr tag = null;
+	Modifier modifier;
+   	MethodDeclaration function;
 }
 {
-	<WAIT> {line=token.beginLine; column=token.beginColumn;}
-	"(" tag = Name() ")"
-	{return new OmpWaitDirective(line, column, token.endLine, token.endColumn, tag.toString());}
+	<ASYNC> {line=token.beginLine; column=token.beginColumn;}
+	modifier = Modifiers()
+	function = MethodDeclaration(modifier)
+	{return new OmpAsyncFunction(line, column, token.endLine, token.endColumn, function);}
 }
 
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25

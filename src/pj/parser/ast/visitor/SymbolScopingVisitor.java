@@ -21,7 +21,6 @@ import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
-import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.CatchClause;
 import pj.parser.ast.stmt.ForStmt;
@@ -58,7 +57,7 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		this.symbolTable.printOut();
 	}
 	
-	////////////////////////Normal Scope visitings//////////////////////////////////
+	////////////////////////Normal Scope visit//////////////////////////////////
 	public String visit(BlockStmt n, Object arg) {
 		this.symbolTable.enterNewScope(n, "normalBlock", ScopeInfo.Type.StatementScope);
 		if (n.getStmts() != null) {
@@ -107,7 +106,7 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 	public String visit(MethodDeclaration n, Object arg) {
 		
 		/*
-		 * Firstly add method name symbol to parent scope
+		 * First: add method name symbol to parent scope
 		 */
 		Type type = n.getType();
 		//String methodReturnType = type.accept(this, arg);
@@ -115,11 +114,11 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		Symbol symbol = new Symbol(methodName,  this.symbolTable.getCurrentScope(), type, SymbolType.ClassMemberField);
 		this.symbolTable.addSymbolDeclaration(methodName, symbol);
 		/*
-		 * secondly enter new scope which this method holds
+		 * second: enter new scope which this method holds
 		 */
 		this.symbolTable.enterNewScope(n, methodName, ScopeInfo.Type.MethodScope);
 		/*
-		 * thirdly visit all parameters and method body
+		 * third: visit all parameters and method body
 		 */
 		 if (n.getParameters() != null) {
 	            for (Iterator<Parameter> i = n.getParameters().iterator(); i.hasNext();) {
@@ -438,19 +437,22 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
         return null;
 	}
 
-	@Override
-	public String visit(OmpWaitDirective n, Object arg) {
-		return null;
-	}
-
-	@Override
 	public String visit(OmpAwaitConstruct n, Object arg) {
+		this.symbolTable.enterNewScope(n, "OmpAwait", ScopeInfo.Type.OpenMPConstructScope);
+		if (n.getBody() != null) {
+            n.getBody().accept(this, arg);
+        }
+        this.symbolTable.exitScope();
 		return null;
 	}
 
-	@Override
 	public String visit(OmpAsyncFunction n, Object arg) {
-		return null;	
+		this.symbolTable.enterNewScope(n, "OmpAsync", ScopeInfo.Type.OpenMPConstructScope);
+		if (n.getFunction() != null) {
+            n.getFunction().accept(this, arg);
+        }
+        this.symbolTable.exitScope();
+        return null;	
 	}
 
 }

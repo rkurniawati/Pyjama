@@ -1730,12 +1730,13 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 	public void visit(OmpAwaitConstruct n, Object arg) {
 		printer.print("//#omp await ");
 		printer.printLn();
-		n.getStatement().accept(this, arg);
+		n.getBody().accept(this, arg);
 	}
 
 	@Override
 	public void visit(OmpAsyncFunction n, Object arg) {
-		// TODO Auto-generated method stub
+		printer.printLn("//#omp async ");
+		n.getFunction().accept(this, arg);
 	}
 
 }

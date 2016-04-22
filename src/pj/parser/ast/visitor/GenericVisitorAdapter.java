@@ -80,7 +80,9 @@ import pj.parser.ast.expr.SuperExpr;
 import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
+import pj.parser.ast.omp.OmpAsyncFunction;
 import pj.parser.ast.omp.OmpAtomicConstruct;
+import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -109,6 +111,7 @@ import pj.parser.ast.omp.OmpSectionsConstruct;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpSingleConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
+import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
 import pj.parser.ast.stmt.BlockStmt;
@@ -1043,7 +1046,7 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 	
 	public R visit(OmpTargetConstruct n, A arg) {
 		if (n.getIfClause() != null) {
-			n.accept(this, arg);
+			n.getIfClause().accept(this, arg);
 		}
 
 		if (n.getDataClauseList() != null) {
@@ -1052,6 +1055,24 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 			}
 		}
 		n.getBody().accept(this, arg);
+		return null;
+	}
+	
+	public R visit(OmpWaitDirective n , A arg) {
+		return null;
+	}
+	    
+	public R visit(OmpAwaitConstruct n, A arg) {
+		if (n.getBody() != null) {
+			n.getBody().accept(this, arg);
+		}
+		return null;
+	}
+	        
+	public R visit(OmpAsyncFunction n, A arg) {
+		if (n.getFunction() != null) {
+			n.getFunction().accept(this, arg);
+		}
 		return null;
 	}
 		
