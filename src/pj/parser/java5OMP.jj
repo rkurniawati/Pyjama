@@ -1506,6 +1506,7 @@ List ClassOrInterfaceBody(boolean isInterface):
 BodyDeclaration ClassOrInterfaceBodyDeclaration(boolean isInterface):
 {
    boolean isNestedInterface = false;
+   boolean isAsyncMethod = false;
    Modifier modifier;
    BodyDeclaration ret;
 }
@@ -1519,6 +1520,7 @@ BodyDeclaration ClassOrInterfaceBodyDeclaration(boolean isInterface):
 	        throwParseException(token, "An interface cannot have initializers");
 	  }
 	|
+          ( <OPENMP_PRAGMA> <ASYNC> {isAsyncMethod = true;} )?  
 	  modifier = Modifiers() // Just get all the modifiers out of the way. If you want to do
 	              // more checks, pass the modifiers down to the member
 	  (
@@ -1534,7 +1536,7 @@ BodyDeclaration ClassOrInterfaceBodyDeclaration(boolean isInterface):
 	      LOOKAHEAD( Type() <IDENTIFIER> ( "[" "]" )* ( "," | "=" | ";" ) )
 	      ret = FieldDeclaration(modifier)
 	    |
-	      ret = MethodDeclaration(modifier)
+	      ret = MethodDeclaration(modifier, isAsyncMethod)
 	  )
 	|
 	  ";" { ret = new EmptyMemberDeclaration(token.beginLine, token.beginColumn, token.endLine, token.endColumn, popJavadoc()); }
@@ -1609,7 +1611,7 @@ ArrayInitializerExpr ArrayInitializer():
   { return new ArrayInitializerExpr(line, column, token.endLine, token.endColumn,values); }
 }
 
-MethodDeclaration MethodDeclaration(Modifier modifier):
+MethodDeclaration MethodDeclaration(Modifier modifier, boolean isOmpAsync):
 {
 	List typeParameters = null;
 	Type type;
@@ -1629,7 +1631,7 @@ MethodDeclaration MethodDeclaration(Modifier modifier):
   [ "throws" throws_ = NameList() ]
   ( block = Block() | ";" )
 
-  { return new MethodDeclaration(line, column, token.endLine, token.endColumn,popJavadoc(), modifier.modifiers, modifier.annotations, typeParameters, type, name, parameters, arrayCount, throws_, block); }
+  { return new MethodDeclaration(line, column, token.endLine, token.endColumn,popJavadoc(), modifier.modifiers, modifier.annotations, typeParameters, type, name, parameters, arrayCount, throws_, block, 	isOmpAsync); }
 }
 
 List FormalParameters():
@@ -3116,7 +3118,6 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpCancelDirective()
 	|	ret = OmpTargetConstruct()
 	|	ret = OmpWaitDirective()
-	|	ret = OmpAsyncFunction()
 	|	ret = OmpAwaitConstruct()
 	)
 	{return ret;}
@@ -3526,20 +3527,6 @@ OmpAwaitConstruct OmpAwaitConstruct():
 	")"
 	body = Statement()
 	{return new OmpAwaitConstruct(line, column, token.endLine, token.endColumn, functionList, body);}
-}
-
-OmpAsyncFunction OmpAsyncFunction():
-{
-	int line;
-	int column;
-	Modifier modifier;
-   	MethodDeclaration function;
-}
-{
-	<ASYNC> {line=token.beginLine; column=token.beginColumn;}
-	modifier = Modifiers()
-	function = MethodDeclaration(modifier)
-	{return new OmpAsyncFunction(line, column, token.endLine, token.endColumn, function);}
 }
 
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25

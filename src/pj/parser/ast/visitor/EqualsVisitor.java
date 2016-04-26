@@ -57,7 +57,6 @@ import pj.parser.ast.expr.SuperExpr;
 import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.omp.OmpAsyncFunction;
 import pj.parser.ast.omp.OmpAtomicConstruct;
 import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpBarrierDirective;
@@ -1555,12 +1554,6 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Node> {
 
 	@Override
 	public Boolean visit(OmpAwaitConstruct n, Node arg) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean visit(OmpAsyncFunction n, Node arg) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -80,7 +80,6 @@ import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
-import pj.parser.ast.omp.OmpAsyncFunction;
 import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.omp.OmpBarrierDirective;
@@ -1731,12 +1730,6 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		printer.print("//#omp await ");
 		printer.printLn();
 		n.getBody().accept(this, arg);
-	}
-
-	@Override
-	public void visit(OmpAsyncFunction n, Object arg) {
-		printer.printLn("//#omp async ");
-		n.getFunction().accept(this, arg);
 	}
 
 }

@@ -80,7 +80,6 @@ import pj.parser.ast.expr.SuperExpr;
 import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.omp.OmpAsyncFunction;
 import pj.parser.ast.omp.OmpAtomicConstruct;
 import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpBarrierDirective;
@@ -1068,12 +1067,5 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 		}
 		return null;
 	}
-	        
-	public R visit(OmpAsyncFunction n, A arg) {
-		if (n.getFunction() != null) {
-			n.getFunction().accept(this, arg);
-		}
-		return null;
-	}
-		
+	        		
 }

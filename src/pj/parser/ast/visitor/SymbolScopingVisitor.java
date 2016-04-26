@@ -15,7 +15,6 @@ import pj.parser.ast.expr.FieldAccessExpr;
 import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.expr.ObjectCreationExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.omp.OmpAsyncFunction;
 import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpGuiConstruct;
@@ -444,15 +443,6 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
         }
         this.symbolTable.exitScope();
 		return null;
-	}
-
-	public String visit(OmpAsyncFunction n, Object arg) {
-		this.symbolTable.enterNewScope(n, "OmpAsync", ScopeInfo.Type.OpenMPConstructScope);
-		if (n.getFunction() != null) {
-            n.getFunction().accept(this, arg);
-        }
-        this.symbolTable.exitScope();
-        return null;	
 	}
 
 }

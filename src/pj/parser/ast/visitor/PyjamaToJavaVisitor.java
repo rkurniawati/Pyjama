@@ -406,11 +406,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void visit(OmpAsyncFunction n, SourcePrinter arg) {
-		// TODO Auto-generated method stub		
-	}
-
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
 		   //print the compiler information at the beginning of the file.
