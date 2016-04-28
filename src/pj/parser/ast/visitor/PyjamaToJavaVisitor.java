@@ -46,8 +46,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected List<Statement> currentMethodOrConstructorStmts = null;
 	//keep track of current method return type
 	protected Type currentMethodType = null;
-	//keep track of current method whether should be async (containing //#omp target virtual eventyield directives)
-	protected boolean currentMethodIsAsync = false;
+
 	//keep track of current type of declaration of variables 2014.7.14
 	protected Type currentVarDeclarationType = null;
 	//if current var declaration is in foreach header, do not give initial value 2014.7.4 => 2014.10.27
@@ -372,7 +371,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		}
 		if (n.isSync()) {
 			/*
-			 *If default policy is applied, the encountering thread waits until the target block is finished. 
+			 * If default policy is applied, the encountering thread waits until the target block is finished. 
 			 */
 			printer.printLn("PjRuntime.waitTaskTillFinish(" + currentTTClass.className + "_in);");
 		} else if (n.isAwait()) {
@@ -381,7 +380,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			 * block is finished. For current implementation, we simply adopt an IHP (Irrelevant Handling Processing).
 			 */
 			printer.printLn("PjRuntime.IrrelevantHandlingProcessing(" + currentTTClass.className + "_in);");
-			this.currentMethodIsAsync = true;
 		} else if (n.isNoWait()) {
 			/*
 			 * We safely do nothing because we need not care about nowait the finish of the target block.
@@ -404,6 +402,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	@Override
 	public void visit(OmpAwaitConstruct n, SourcePrinter arg) {
 		// TODO Auto-generated method stub
+		//
 	}
 
 	//OpenMP add END*********************************************************************************OpenMP add END//
@@ -1075,31 +1074,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 				printer.print("{");
 				n.getBody().accept(this, printer);
 				printer.printLn();
-				//XING add -- shutdown Pyjama runtime at the end of main method
-				//Xing commented at 2015.1.11, needn't shutdown because don't use ThreadPoolExecutor
-//				if (n.getName().equals("main")) {
-//					printer.printLn();
-//					printer.printLn("//Pyjama runtime shutdown at the end of main method");
-//					printer.printLn("PjRuntime.shutdown();");
-//				}
 				printer.print("}");
 	        }
-	        ///Xing added begin
-	        /*
-			 * If this method contains at least one //#omp target virtual eventyield, we call this method is async.
-			 * Then this method needs an auxiliary state machine class. 
-			 * So hereby we create this kind of class, and print this auxiliary state machine class 
-			 * to "PrinterForAuxiliaryClasses".
-			 * <2015.12.6> Actually this state machine class is not currently used by Pyjama.
-			 * Instead, the encountering thread simply does an IHP (Irrelevant handling processing), until the
-			 * target block is finished. 
-			 */
-	        if (this.currentMethodIsAsync) {
-				//StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(this.currentMehodNode, this, this.ompTargetVisitingCode);
-				//this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
-	        }
-	        /*Xing added to print Auxiliary parallel region class
-	         *if current method has PR regions or eventyield Target regions.
+	        /*Xing added to print Auxiliary parallel region classes
+	         *if current method has PR regions or the current method is async.
 	         */
 			printer.printLn(this.PrinterForAuxiliaryClasses.getSource());
 			this.PrinterForAuxiliaryClasses.clear();
@@ -1108,7 +1086,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			this.currentMehodNode = null;
 			this.currentMethodOrConstructorStmts = null;
 			this.currentMethodType = null;
-			this.currentMethodIsAsync = false;
 			///Xing added end
 			
 	    }
