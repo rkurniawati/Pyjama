@@ -10,20 +10,20 @@ public class OmpAwaitConstruct extends OpenMPStatement{
 
 	private Statement statement;
 	
-	private List<String> functionList;
+	private List<OmpAwaitFunctionCallDeclaration> functionList;
 
-	public OmpAwaitConstruct(List<String> functionList, Statement statement) {
+	public OmpAwaitConstruct(List<OmpAwaitFunctionCallDeclaration> functionList, Statement statement) {
 		this.functionList = functionList;
 		this.statement = statement;
 	}
 	
-	public OmpAwaitConstruct(int beginLine, int beginColumn, int endLine, int endColumn, List<String> functionList, Statement statement) {
+	public OmpAwaitConstruct(int beginLine, int beginColumn, int endLine, int endColumn, List<OmpAwaitFunctionCallDeclaration> functionList, Statement statement) {
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.functionList = functionList;
 		this.statement = statement;
 	}
 	
-	public List<String> getAwaitFunctions() {
+	public List<OmpAwaitFunctionCallDeclaration> getAwaitFunctions() {
 		return this.functionList;
 	}
 	

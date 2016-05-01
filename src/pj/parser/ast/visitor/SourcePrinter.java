@@ -173,7 +173,6 @@ public final class SourcePrinter {
         return getSource();
     }
     
-    
     //Xing added this two methods, in service of OmpTargetConstruct visiting
     public int getPrinterBufferEndCursor() {
     	return this.buf.length();

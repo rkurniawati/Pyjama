@@ -1,17 +1,13 @@
 package pj.parser.ast.visitor.constructwrappers;
 
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
 import pj.parser.ast.body.MethodDeclaration;
 import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.Expression;
-import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
@@ -68,7 +64,6 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		this.generateClass();
 		return printer.getSource();
 	}
-	
 	
 	private void generateConstructor() {
 	        printer.print("public ");
@@ -141,7 +136,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		}		
 	}
 	
-	private void genreateVariableDeclaration() {
+	private void generateVariableDeclaration() {
 		for(VariableDeclarationExpr varDeclExpr: this.variableDeclarations) {
 			Type type = varDeclExpr.getType();
 			for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {
@@ -171,7 +166,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		printer.printLn("return null;");
 		printer.unindent();
 		printer.printLn("}");
-		genreateVariableDeclaration();
+		generateVariableDeclaration();
 		printer.unindent();
 		printer.printLn("}");
 	}

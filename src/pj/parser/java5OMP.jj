@@ -3515,18 +3515,33 @@ OmpAwaitConstruct OmpAwaitConstruct():
 {
 	int line;
 	int column;
-	NameExpr tag = null;
+	OmpAwaitFunctionCallDeclaration functionDeclaration = null;
 	Statement body = null;
-	ArrayList<String> functionList = new ArrayList<String>();
+	ArrayList<OmpAwaitFunctionCallDeclaration> functionList = new ArrayList<OmpAwaitFunctionCallDeclaration>();
 }
 {
 	<AWAIT> {line=token.beginLine; column=token.beginColumn;}
 	"("
-	tag = Name() {functionList.add(tag.toString());}
-	( "," tag = Name() {functionList.add(tag.toString());} )*
+	functionDeclaration = OmpAwaitFunctionCallDeclaration() {functionList.add(functionDeclaration);}
+	( "," functionDeclaration = OmpAwaitFunctionCallDeclaration() {functionList.add(functionDeclaration);} )*
 	")"
 	body = Statement()
 	{return new OmpAwaitConstruct(line, column, token.endLine, token.endColumn, functionList, body);}
+}
+
+OmpAwaitFunctionCallDeclaration OmpAwaitFunctionCallDeclaration():
+{
+	Type type;
+	String name;
+	List parameters;
+	int line = token.beginLine;
+	int column = token.beginColumn;
+}
+{
+  type = ResultType() {line=type.getBeginLine(); column=type.getBeginColumn();}
+  <IDENTIFIER> { name = token.image; }
+  parameters = FormalParameters() 
+  { return new OmpAwaitFunctionCallDeclaration(line, column, token.endLine, token.endColumn, type, name, parameters); }
 }
 
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25

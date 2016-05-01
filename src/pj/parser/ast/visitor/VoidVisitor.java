@@ -339,5 +339,7 @@ public interface VoidVisitor<A> {
     public void visit(OmpWaitDirective n , A arg);
     
     public void visit(OmpAwaitConstruct n, A arg);
+    
+    public void visit(OmpAwaitFunctionCallDeclaration n, A arg);
             
 }

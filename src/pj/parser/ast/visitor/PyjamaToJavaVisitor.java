@@ -37,9 +37,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	
 	protected SourcePrinter CodePrinter = new SourcePrinter();
 	protected SourcePrinter PrinterForAuxiliaryClasses = new SourcePrinter();
-	
-	//keep track of current method node 2015.6.29
-	protected MethodDeclaration currentMehodNode = null;
+
 	//keep track of current method whether is static, used for the generate of parallel region class, and work share method
 	protected boolean currentMethodIsStatic = false; 
 	//keep track of current method or constructor's statements, this statements may used in freeguithread visitor
@@ -402,9 +400,14 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	@Override
 	public void visit(OmpAwaitConstruct n, SourcePrinter arg) {
 		// TODO Auto-generated method stub
-		//
+		// This block should be normalised at parsing stage
 	}
-
+	
+	@Override
+	public void visit(OmpAwaitFunctionCallDeclaration n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+		
+	}
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
 		   //print the compiler information at the beginning of the file.
@@ -1010,8 +1013,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        printJavadoc(n.getJavaDoc(), printer);
 	        printMemberAnnotations(n.getAnnotations(), printer);
 	        printModifiers(n.getModifiers(), printer);
-	        //Xing added for keep track of current method's all statements
-	        this.currentMehodNode = n;
+
 	        this.currentMethodOrConstructorStmts = new ArrayList<Statement>();
 	        if (n.getBody() != null) {
 	        	/*
@@ -1079,11 +1081,15 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        /*Xing added to print Auxiliary parallel region classes
 	         *if current method has PR regions or the current method is async.
 	         */
+	        if (n.isAsyncMethod()) {
+				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(n, this, this.ompTargetVisitingCode);
+				this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
+	        }
+	        
 			printer.printLn(this.PrinterForAuxiliaryClasses.getSource());
 			this.PrinterForAuxiliaryClasses.clear();
 			
 			// reset all flags to default, for next method visiting
-			this.currentMehodNode = null;
 			this.currentMethodOrConstructorStmts = null;
 			this.currentMethodType = null;
 			///Xing added end

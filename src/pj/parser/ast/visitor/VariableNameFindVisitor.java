@@ -62,6 +62,7 @@ import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
 import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -955,6 +956,12 @@ public class VariableNameFindVisitor implements VoidVisitor<Object> {
 
 	@Override
 	public void visit(OmpAwaitConstruct n, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpAwaitFunctionCallDeclaration n, Object arg) {
 		// TODO Auto-generated method stub
 		
 	}
