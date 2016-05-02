@@ -35,6 +35,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected final String prefixTaskNameForWorkShare = "_OMP_WorkShare_";
 	protected final String prefixTaskNameForGuiCode = "_OMP_GuiCode_";
 	
+	
+	protected boolean noPrintAuxiliaryClassMode = false;
 	protected SourcePrinter CodePrinter = new SourcePrinter();
 	protected SourcePrinter PrinterForAuxiliaryClasses = new SourcePrinter();
 
@@ -70,6 +72,11 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		this.symbolTable = symbolTable;
 	}
 	
+	public PyjamaToJavaVisitor(SymbolTable symbolTable, boolean noPrintAuxiliaryMode) {
+		this.symbolTable = symbolTable;
+		this.noPrintAuxiliaryClassMode = true;
+	}
+	
 	public SymbolTable getSymbolTable() {
 		return symbolTable;
 	}
@@ -101,7 +108,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		String numThreadsClause = "";
 
 		//Print Parallel Region Class Code
-		this.PrinterForAuxiliaryClasses.printLn(currentPRClass.getSource());
+		if (this.noPrintAuxiliaryClassMode) {
+			//do nothing
+		} else {
+			this.PrinterForAuxiliaryClasses.printLn(currentPRClass.getSource());
+		}
+
 		
 		String previous_icv = "icv_previous_" + currentPRClass.className;
 		String new_icv = "icv_" + currentPRClass.className;
@@ -345,7 +357,11 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn("/*OpenMP Target region (#" + uniqueOpenMPRegionID + ") -- START */");
 
 		//Print Target Task code Class Code
-		this.PrinterForAuxiliaryClasses.printLn(currentTTClass.getSource());
+		if (this.noPrintAuxiliaryClassMode) {
+			//do nothing
+		} else {
+			this.PrinterForAuxiliaryClasses.printLn(currentTTClass.getSource());
+		}
 		
 		String inputlist = "inputlist_" + currentTTClass.className;
 		String outputlist = "outputlist_" + currentTTClass.className;
@@ -403,7 +419,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	
 	@Override
-	public void visit(OmpAwaitConstruct n, SourcePrinter arg) {
+	public void visit(OmpAwaitConstruct n, SourcePrinter printer) {
 		if (!this.currentMethodIsAsync) {
 			throw new RuntimeException("Pyjama parsing error: Using the await block within a non-async method.");
 		} else {
@@ -416,7 +432,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	
 	@Override
-	public void visit(OmpAwaitFunctionCallDeclaration n, SourcePrinter arg) {
+	public void visit(OmpAwaitFunctionCallDeclaration n, SourcePrinter printer) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1102,7 +1118,11 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	         */
 	        if (this.currentMethodIsAsync) {
 				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(n, this, this.ompTargetVisitingCode);
-				this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
+				if (this.noPrintAuxiliaryClassMode) {
+					//do nothing
+				} else {
+					this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
+				}
 	        }
 	        
 			printer.printLn(this.PrinterForAuxiliaryClasses.getSource());
@@ -1661,6 +1681,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		this.file = file;
 		this.compilationFileName = this.file.getName().substring(0,
 				this.file.getName().indexOf(PYJAMA_FILE_EXTENSION));
+	}
+	
+	public SourcePrinter getPriter() {
+		return this.CodePrinter;
 	}
 	
 	public String getSource() {

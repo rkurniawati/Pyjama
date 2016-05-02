@@ -12,12 +12,7 @@ package pj.parser.ast.visitor.constructwrappers;
  * @version 0.9
  */
 
-
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
-import pi.ParIterator;
-import pj.PjRuntime;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
@@ -27,9 +22,6 @@ import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
-import pj.pr.PjExecutor;
-import pj.pr.exceptions.OmpParallelRegionLocalCancellationException;
-
 
 public class ParallelRegionClassBuilder extends ConstructWrapper  {
 

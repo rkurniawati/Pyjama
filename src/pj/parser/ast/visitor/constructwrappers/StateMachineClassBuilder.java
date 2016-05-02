@@ -128,9 +128,9 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 				    }
 				}
 			} else {
-				DumpVisitor codeDumper = new DumpVisitor();
-                s.accept(codeDumper, null);
-                printer.printLn(codeDumper.getSource());
+				PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), true);
+                s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
+                printer.printLn(yetAnotherPjVisitor.getSource());
 			}
 			
 		}		
