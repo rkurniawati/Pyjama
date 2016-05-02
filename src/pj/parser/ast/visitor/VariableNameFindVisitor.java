@@ -6,7 +6,6 @@ import pj.parser.ast.BlockComment;
 import pj.parser.ast.CompilationUnit;
 import pj.parser.ast.ImportDeclaration;
 import pj.parser.ast.LineComment;
-import pj.parser.ast.Node;
 import pj.parser.ast.PackageDeclaration;
 import pj.parser.ast.TypeParameter;
 import pj.parser.ast.body.AnnotationDeclaration;

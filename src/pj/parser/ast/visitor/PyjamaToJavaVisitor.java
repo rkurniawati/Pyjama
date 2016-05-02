@@ -38,6 +38,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected SourcePrinter CodePrinter = new SourcePrinter();
 	protected SourcePrinter PrinterForAuxiliaryClasses = new SourcePrinter();
 
+	//keep track of current method whether is async, used for the generate of state machine class
+	protected boolean currentMethodIsAsync = false; 
 	//keep track of current method whether is static, used for the generate of parallel region class, and work share method
 	protected boolean currentMethodIsStatic = false; 
 	//keep track of current method or constructor's statements, this statements may used in freeguithread visitor
@@ -377,6 +379,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			 * If await is applied, the current thread gives up current function execution, backs when target
 			 * block is finished. For current implementation, we simply adopt an IHP (Irrelevant Handling Processing).
 			 */
+			if (!this.currentMethodIsAsync) {
+				throw new RuntimeException("Pyjama parsing error: Using the await target virtual block within a non-async method.");
+			}
 			printer.printLn("PjRuntime.IrrelevantHandlingProcessing(" + currentTTClass.className + "_in);");
 		} else if (n.isNoWait()) {
 			/*
@@ -399,8 +404,15 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	
 	@Override
 	public void visit(OmpAwaitConstruct n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		// This block should be normalised at parsing stage
+		if (!this.currentMethodIsAsync) {
+			throw new RuntimeException("Pyjama parsing error: Using the await block within a non-async method.");
+		} else {
+			/*for an async function, the prototype of this function still call the await block synchronously;
+			 * So, directly visit this block. The states are used in state machine class.
+			 */
+			n.getBody().accept(this, this.CodePrinter);
+		}
+		// TODO The states should be generated in favor of state machine class building.
 	}
 	
 	@Override
@@ -1033,6 +1045,13 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        else {
 	        	this.currentMethodIsStatic = false;
 	        }
+	        //Xing added for checking current method is omp async method or not
+	        if (n.isAsyncMethod()) {
+	            this.currentMethodIsAsync = true;
+	        }
+	        else {
+	        	this.currentMethodIsAsync = false;
+	        }
 	        
 	        printTypeParameters(n.getTypeParameters(), printer);
 	        if (n.getTypeParameters() != null) {
@@ -1081,7 +1100,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        /*Xing added to print Auxiliary parallel region classes
 	         *if current method has PR regions or the current method is async.
 	         */
-	        if (n.isAsyncMethod()) {
+	        if (this.currentMethodIsAsync) {
 				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(n, this, this.ompTargetVisitingCode);
 				this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
 	        }

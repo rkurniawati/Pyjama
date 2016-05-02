@@ -2,7 +2,7 @@ package pj.parser.ast.visitor;
 
 import java.util.HashMap;
 import pj.parser.ast.expr.NameExpr;
-import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
+
 
 public class SymbolSubstitutionVisitor extends VoidVisitorAdapter<Object>{
 	
