@@ -215,6 +215,8 @@ public class DataClauseHandlerUtils {
 			return "Short";
 		if (type.equals("float") )
 			return "Float";
+		if (type.equals("void") )
+			return "Void";
 		return type;
 	}
 	

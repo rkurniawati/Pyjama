@@ -1151,7 +1151,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	         *if current method has PR regions or the current method is async.
 	         */
 	        if (this.currentMethodIsAsync) {
-				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(n, this);
+				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(n, this.currentMethodIsStatic, this);
 				if (this.stateMachineVisitingMode) {
 					//do nothing
 				} else {

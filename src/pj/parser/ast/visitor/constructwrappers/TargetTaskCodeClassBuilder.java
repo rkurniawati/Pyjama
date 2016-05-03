@@ -84,7 +84,7 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 	private void generateClass() {
 		printer.printLn();
 		//////////////////////////////////////////////
-		printer.printLn(this.staticPrefix +"class " + this.className + " extends pj.pr.target.TargetTask{");
+		printer.printLn(this.staticPrefix +"class " + this.className + " extends pj.pr.target.TargetTask<Void>{");
 		printer.indent();
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
@@ -152,7 +152,7 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		printer.printLn("}");
 	
 		printer.printLn("@Override");
-		printer.printLn("public ConcurrentHashMap<String,Object> call() {");
+		printer.printLn("public Void call() {");
 		printer.indent();
 		//BEGIN get construct user code
 		printer.printLn("/****User Code BEGIN***/");

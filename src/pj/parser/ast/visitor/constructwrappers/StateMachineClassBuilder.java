@@ -24,19 +24,24 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 
 	private static final String stateMachineIdentifier = "_OmpStateMachine"; 
 	
+	private String staticPrefix = "";
+	
 	private SourcePrinter printer = new SourcePrinter();
-		
+	
+	//This list contains all the variables should be declared as field variables in this state machine class.
 	private LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
 
 	private MethodDeclaration method;
 
 	public PyjamaToJavaVisitor visitor;
-
 		
-	public StateMachineClassBuilder(MethodDeclaration methodConstruct, PyjamaToJavaVisitor visitor)
+	public StateMachineClassBuilder(MethodDeclaration methodConstruct, boolean isStatic, PyjamaToJavaVisitor visitor)
 	{	
 		this.method = methodConstruct;
 		this.visitor = visitor;
+		if (isStatic) {
+			this.staticPrefix = "static ";
+		}
 	}
 
 	@Override
@@ -67,6 +72,9 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	        if (method.getParameters() != null) {
 	            for (Iterator<Parameter> i = method.getParameters().iterator(); i.hasNext();) {
 	                Parameter p = i.next();
+	                LinkedList<VariableDeclarator> declarators = new LinkedList<VariableDeclarator>();
+	                declarators.add(new VariableDeclarator(p.getId()));
+	                this.variableDeclarations.add(new VariableDeclarationExpr(p.getType(), declarators));
 	                DumpVisitor codeDumper = new DumpVisitor();
 	                p.accept(codeDumper, null);
 	                printer.print(codeDumper.getSource());
@@ -77,6 +85,12 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	        }
 	        printer.printLn(") {");
 	        printer.indent();
+	        if (method.getParameters() != null) {
+	        	for (Iterator<Parameter> j = method.getParameters().iterator(); j.hasNext();) {
+	        		Parameter p = j.next();
+	        		printer.printLn("this." + p.getId() + " = " + p.getId() + ";");
+	        	};
+	        }
 	        printer.unindent();
 	        printer.printLn("}");
 	       
@@ -114,8 +128,8 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 					/*
 					 * We find all VariableDeclarationExpr in this method,
 					 * and declare all variables in state machine class as
-					 * field member. Because we prohibit midway variable 
-					 * declarations.  --Xing 2015.6.29
+					 * field member. The midway variable declaration becomes
+					 * variable value assignment.   --Xing 2016.5.3
 					 */
 					VariableDeclarationExpr varDeclExpr = (VariableDeclarationExpr) expr;
 					this.variableDeclarations.add(varDeclExpr);
@@ -150,12 +164,11 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	
 	private void generateClass() {
 		String returnType = DataClauseHandlerUtils.autoBox(this.method.getType().toString());
-		printer.printLn("class " + this.method.getName() + stateMachineIdentifier + " extends pj.pr.target.TargetTask<" + returnType + "> {");
+		printer.printLn(this.staticPrefix + "class " + this.method.getName() + stateMachineIdentifier + " extends pj.pr.target.TargetTask<" + returnType + "> {");
 		printer.indent();
 		//printer class constructor, with same method parameter
 		this.generateConstructor();
 		printer.printLn("int OMP_state = 0;");
-		generateVariableDeclaration();
 		printer.printLn("@Override");
 		printer.printLn("public " + returnType  + " call() {");
 		printer.indent();
@@ -171,6 +184,8 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		printer.printLn("return null;");
 		printer.unindent();
 		printer.printLn("}");
+		printer.unindent();
+		generateVariableDeclaration();
 		printer.unindent();
 		printer.printLn("}");
 	}
