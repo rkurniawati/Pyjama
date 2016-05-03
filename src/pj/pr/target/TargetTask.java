@@ -1,9 +1,8 @@
 package pj.pr.target;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class TargetTask<T> implements Callable<ConcurrentHashMap<String,Object>>{
+public abstract class TargetTask<T> implements Callable<T>{
 	private TargetExecutor caller = null;
 	private CallbackInfo callWhenFinish;
 	private volatile boolean isFinished = false;
@@ -21,7 +20,7 @@ public abstract class TargetTask<T> implements Callable<ConcurrentHashMap<String
 		}
 	}
 	
-	public abstract ConcurrentHashMap<String, Object> call() throws Exception;
+	public abstract T call() throws Exception;
 	
 	public void setCaller(TargetExecutor targetExecutor) {
 		this.caller = targetExecutor;
@@ -41,6 +40,10 @@ public abstract class TargetTask<T> implements Callable<ConcurrentHashMap<String
 		
 	public boolean isFinished() {
 		return this.isFinished;
+	}
+	
+	public void setFinish() {
+		this.isFinished = true;
 	}
 
 	public void setOnCompleteCall(TargetTask<?> finishtask, TargetExecutor whocall) {

@@ -1,6 +1,5 @@
 package pj.parser.ast.visitor.constructwrappers;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +8,7 @@ import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.VariableDeclarationExpr;
+import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.ExpressionStmt;
@@ -17,16 +17,15 @@ import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.DumpVisitor;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
+import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
 
 
 public class StateMachineClassBuilder extends ConstructWrapper {
 
-	private static final String stateMachineIdentifier = "_OmpStateMachine_"; 
+	private static final String stateMachineIdentifier = "_OmpStateMachine"; 
 	
 	private SourcePrinter printer = new SourcePrinter();
-	
-	private HashMap<OmpTargetConstruct, StringBuffer> targetSourceTable = null;
-	
+		
 	private LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
 
 	private MethodDeclaration method;
@@ -34,15 +33,10 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	public PyjamaToJavaVisitor visitor;
 
 		
-	public StateMachineClassBuilder(MethodDeclaration methodConstruct, PyjamaToJavaVisitor visitor, HashMap<OmpTargetConstruct, StringBuffer> table)
+	public StateMachineClassBuilder(MethodDeclaration methodConstruct, PyjamaToJavaVisitor visitor)
 	{	
 		this.method = methodConstruct;
 		this.visitor = visitor;
-		this.targetSourceTable = table;
-	}
-
-	private Statement getUserCode() {
-		return this.method.getBody();
 	}
 
 	@Override
@@ -92,16 +86,21 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		int stateCounter = 0;
 		BlockStmt body = this.method.getBody();
 		if (null == body) {
-			throw new RuntimeException("Pyjama unexpected situation: converting an abstract method to state machine");
+			throw new RuntimeException("Pyjama unexpected situation: converting an abstract method to state machine.");
 		}
 		List<Statement> stmts = body.getStmts();
 		Iterator<Statement> iter = stmts.iterator();
 		Statement s;
 		while (iter.hasNext()) {
 			s = iter.next();
-			if (s instanceof OmpTargetConstruct) {
-				StringBuffer targetCode = this.targetSourceTable.get(s);
-				printer.printLn(targetCode.toString());
+			if (s instanceof OmpAwaitConstruct) {
+				//TODO
+				//System.out.println("encoutering await block:"+s.toString());
+			} else if (s instanceof OmpTargetConstruct) {
+				PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), true);
+				yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
+                s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
+                printer.printLn(yetAnotherPjVisitor.getSource());
 				if (((OmpTargetConstruct)s).isAwait()) {
 					//if current statement is an await target construct, then, this statement is a separator
 					stateCounter++;
@@ -109,7 +108,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 					printer.printLn("case " + stateCounter + ":");
 					printer.indent();
 				}
-			} else if(s instanceof ExpressionStmt) {
+			} else if (s instanceof ExpressionStmt) {
 				Expression expr = ((ExpressionStmt) s).getExpression();
 				if (expr instanceof VariableDeclarationExpr) {
 					/*
@@ -129,6 +128,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 				}
 			} else {
 				PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), true);
+				yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
                 s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
                 printer.printLn(yetAnotherPjVisitor.getSource());
 			}
@@ -149,28 +149,30 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	}
 	
 	private void generateClass() {
-		printer.printLn("class " + this.method.getName() + stateMachineIdentifier + " extends pj.pr.target.TargetTask{");
+		String returnType = DataClauseHandlerUtils.autoBox(this.method.getType().toString());
+		printer.printLn("class " + this.method.getName() + stateMachineIdentifier + " extends pj.pr.target.TargetTask<" + returnType + "> {");
 		printer.indent();
 		//printer class constructor, with same method parameter
 		this.generateConstructor();
-		printer.printLn("int state;");
+		printer.printLn("int OMP_state = 0;");
+		generateVariableDeclaration();
 		printer.printLn("@Override");
-		printer.printLn("public ConcurrentHashMap<String,Object> call() {");
+		printer.printLn("public " + returnType  + " call() {");
 		printer.indent();
-		printer.printLn("switch(state) {");
+		printer.printLn("switch(OMP_state) {");
 		printer.printLn("case 0:");
 		printer.indent();
 		this.generateStates();
 		printer.printLn("default:");
+		printer.indent();
+		printer.printLn("this.setFinish();");
+		printer.unindent();
 		printer.printLn("}");
 		printer.printLn("return null;");
 		printer.unindent();
 		printer.printLn("}");
-		generateVariableDeclaration();
 		printer.unindent();
 		printer.printLn("}");
 	}
-	
-	
 	
 }
