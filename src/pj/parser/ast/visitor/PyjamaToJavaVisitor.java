@@ -386,7 +386,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
 		//If this is a state machine building mode, we set completion call back function of current target task.
 		if (n.isAwait() && this.stateMachineVisitingMode) {
-			printer.printLn(currentTTClass.className + "_in.setOnCompleteCall(this, this.getCaller());");
+			printer.printLn(currentTTClass.className + "_in.setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
 		}
 		printer.printLn("if (PjRuntime.currentThreadIsTheTarget(\"" + n.getTargetName() + "\")) {");
 		printer.indent();

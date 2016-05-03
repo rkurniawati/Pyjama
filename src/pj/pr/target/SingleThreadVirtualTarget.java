@@ -10,13 +10,14 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 		this.thread = t;
 	}
 	@Override
-	public void submit(final TargetTask task) {
+	public void submit(final TargetTask<?> task) {
 		// TODO need further implementation
 		/*
 		 * We suppose this singleThreadVirtualTarget is swing edt,
 		 * so using SwingUtilities.invokeLater to put this task at
 		 * the end of EDT callback function queue.
 		 */
+		task.setCaller(this);
 		Runnable taskCode = new Runnable() {
 			@Override
 			public void run() {

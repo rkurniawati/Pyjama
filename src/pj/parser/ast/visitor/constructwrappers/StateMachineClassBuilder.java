@@ -139,14 +139,16 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 				           v.accept(codeDumper, null);
 				           printer.printLn(codeDumper.getSource() + ";");   
 				    }
+				} else {
+					/*
+					 * Simply using PyjamaToJavaVisitor to visit other ExpressionStmts.
+					 */
+					PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), true);
+					yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
+	                s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
+	                printer.printLn(yetAnotherPjVisitor.getSource());
 				}
-			} else {
-				PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), true);
-				yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
-                s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
-                printer.printLn(yetAnotherPjVisitor.getSource());
-			}
-			
+			} 
 		}		
 	}
 	

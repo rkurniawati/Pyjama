@@ -1,17 +1,15 @@
 package pj.pr.target;
 
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
-
 public class TargetExecutor extends VirtualTarget{
 
 	private final int maxWorkerCount;
 	private final ConcurrentLinkedDeque<TargetWorkerThread> workers = new ConcurrentLinkedDeque<TargetWorkerThread>();
-	private BlockingQueue<TargetTask> taskQueue = new LinkedBlockingDeque<TargetTask>();
+	private BlockingQueue<TargetTask<?>> taskQueue = new LinkedBlockingDeque<TargetTask<?>>();
 	
 	public TargetExecutor(String name) {
 		//set default worker number as corenum-1;
@@ -29,7 +27,7 @@ public class TargetExecutor extends VirtualTarget{
 		return this.targetName;
 	}
 	
-	protected TargetTask getTask() {
+	protected TargetTask<?> getTask() {
 		try {
 			return this.taskQueue.poll(1000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
@@ -38,7 +36,7 @@ public class TargetExecutor extends VirtualTarget{
 		return null;
 	}
 	
-	public void submit(TargetTask task) {
+	public void submit(TargetTask<?> task) {
 		 if (task == null) {
 			 throw new NullPointerException("Submitted task is null.");
 		 }
@@ -68,7 +66,7 @@ public class TargetExecutor extends VirtualTarget{
 		return this.workers.size();
 	}
 
-	private void createWorker(TargetTask task) {
+	private void createWorker(TargetTask<?> task) {
 		TargetWorkerThread worker = new TargetWorkerThread(this, task);
 		workers.add(worker);
 		worker.start();

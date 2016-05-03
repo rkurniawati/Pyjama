@@ -1,7 +1,7 @@
 package pj;
 
 import pj.pr.*;
-import pj.pr.target.TargetExecutor;
+
 /**
  * This is the main class which implements the OpenMP 2.5
  * specific runtime routines.

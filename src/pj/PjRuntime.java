@@ -236,6 +236,15 @@ public class PjRuntime {
 		}
 	}
 	
+	public static VirtualTarget getVirtualTargetOfCurrentThread() {
+		for (VirtualTarget target: targetExecutorMap.values()) {
+			if (currentThreadIsTheTarget(target.getName())) {
+				return target;
+			}
+		}
+		return null;
+	}
+	
 	public static boolean currentThreadIsSingleThreadTarget(String targetName) {
 		for (VirtualTarget target: targetExecutorMap.values()) {
 			if (target instanceof SingleThreadVirtualTarget) {

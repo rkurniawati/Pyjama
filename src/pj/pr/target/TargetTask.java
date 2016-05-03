@@ -3,15 +3,15 @@ package pj.pr.target;
 import java.util.concurrent.Callable;
 
 public abstract class TargetTask<T> implements Callable<T>{
-	private TargetExecutor caller = null;
+	private VirtualTarget caller = null;
 	private CallbackInfo callWhenFinish;
 	private volatile boolean isFinished = false;
 	private T result;
 	
 	class CallbackInfo {
 		TargetTask<?> callback;
-		TargetExecutor caller;
-		CallbackInfo(TargetTask<?> t, TargetExecutor e) {
+		VirtualTarget caller;
+		CallbackInfo(TargetTask<?> t, VirtualTarget e) {
 			this.callback = t;
 			this.caller = e;
 		}
@@ -22,11 +22,11 @@ public abstract class TargetTask<T> implements Callable<T>{
 	
 	public abstract T call() throws Exception;
 	
-	public void setCaller(TargetExecutor targetExecutor) {
-		this.caller = targetExecutor;
+	public void setCaller(VirtualTarget target) {
+		this.caller = target;
 	}
 	
-	public TargetExecutor getCaller() {
+	public VirtualTarget getCaller() {
 		return this.caller;
 	}
 	
@@ -46,10 +46,12 @@ public abstract class TargetTask<T> implements Callable<T>{
 		this.isFinished = true;
 	}
 
-	public void setOnCompleteCall(TargetTask<?> finishtask, TargetExecutor whocall) {
+	public void setOnCompleteCall(TargetTask<?> finishtask, VirtualTarget whocall) {
 		this.callWhenFinish = new CallbackInfo(finishtask, whocall);
 		if (this.isFinished) {
-			this.callWhenFinish.trigger();
+			CallbackInfo callNow = this.callWhenFinish;
+			this.callWhenFinish = null;
+			callNow.trigger();
 		}
 	}
 	
@@ -58,7 +60,9 @@ public abstract class TargetTask<T> implements Callable<T>{
 			this.call();
 			this.isFinished = true;
 			if (null != this.callWhenFinish) {
-				this.callWhenFinish.trigger();
+				CallbackInfo callNow = this.callWhenFinish;
+				this.callWhenFinish = null;
+				callNow.trigger();
 			}
 		} catch (Exception e) {
 			//TODO: Pyjama support for the Exception handling in the midway of target block 
