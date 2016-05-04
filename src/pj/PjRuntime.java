@@ -67,7 +67,7 @@ public class PjRuntime {
 		PjThreadPoolExecutor.shutdown();
 	}
 
-	public static void submit(int id, Callable<ConcurrentHashMap<String,Object>> task, InternalControlVariables parent_icv){
+	public static void submit(int id, Callable<Void> task, InternalControlVariables parent_icv){
 //		PjThreadPoolExecutor.submit(task);
 		PjExecutor.submit(id, task, parent_icv);
 		return;

@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PjExecutor {
 	
-	public static void submit(int id, Callable<ConcurrentHashMap<String,Object>> task, InternalControlVariables parent_icv){
+	public static void submit(int id, Callable<Void> task, InternalControlVariables parent_icv){
 		PjWorkerThread workerThread = new PjWorkerThread(id, task, parent_icv);
 		workerThread.start();
 	}

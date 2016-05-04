@@ -149,7 +149,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		//END put shared variables lastprivate(if any, though no available) to outputlist
 		printer.unindent();
 		printer.printLn("}");
-		printer.printLn("class MyCallable implements Callable<ConcurrentHashMap<String,Object>> {");
+		printer.printLn("class MyCallable implements Callable<Void> {");
 		printer.indent();
 		printer.printLn("private int alias_id;");
 		printer.printLn("private ConcurrentHashMap<String, Object> OMP_inputList;");
@@ -193,7 +193,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("}");
 		printer.printLn();
 		printer.printLn("@Override");
-		printer.printLn("public ConcurrentHashMap<String,Object> call() {");
+		printer.printLn("public Void call() {");
 		printer.indent();
 		printer.printLn("try {");
 		printer.indent();
@@ -267,11 +267,11 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		else {
 			printer.printLn("for (int i = 1; i <= this.OMP_threadNumber-1; i++) {");
 			printer.indent();
-			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
+			printer.printLn("Callable<Void> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
 			printer.printLn("PjRuntime.submit(i, slaveThread, icv);");
 			printer.unindent();
 			printer.printLn("}");
-			printer.printLn("Callable<ConcurrentHashMap<String,Object>> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
+			printer.printLn("Callable<Void> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
 			printer.printLn("PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;");
 			printer.printLn("try {");
 			printer.indent();

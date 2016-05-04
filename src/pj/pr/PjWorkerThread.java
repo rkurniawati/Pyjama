@@ -8,9 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PjWorkerThread extends Thread {
 	private int alias_id;
-	private Callable<ConcurrentHashMap<String,Object>> task;
+	private Callable<Void> task;
 
-	public PjWorkerThread(int id, Callable<ConcurrentHashMap<String,Object>> callable, InternalControlVariables parent_icv) {
+	public PjWorkerThread(int id, Callable<Void> callable, InternalControlVariables parent_icv) {
 		this.alias_id = id;
 		InternalControlVariables currentThreadICV = new InternalControlVariables(parent_icv);
         currentThreadICV.currentThreadAliasID = this.alias_id;

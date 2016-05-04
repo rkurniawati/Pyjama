@@ -7,6 +7,7 @@ package pj.parser.ast.visitor.constructwrappers;
  */
 
 
+import java.util.HashMap;
 import java.util.List;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
@@ -18,9 +19,9 @@ import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
-
-
 public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
+	
+	private static HashMap<OmpTargetConstruct, TargetTaskCodeClassBuilder> pairs = new HashMap<OmpTargetConstruct, TargetTaskCodeClassBuilder>();
 
 	public String className = "";
 	
@@ -33,19 +34,34 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 	public PyjamaToJavaVisitor visitor;
 	public OmpTargetConstruct targetConstruct;
 	private List<OmpDataClause> dataClauseList;
-		
-	public TargetTaskCodeClassBuilder(OmpTargetConstruct parallelConstruct, 
+			
+	public static TargetTaskCodeClassBuilder create(OmpTargetConstruct targetConstruct, 
 			boolean isStatic, 
 			PyjamaToJavaVisitor visitor,
-			List<Statement> stmts)
+			List<Statement> stmts,
+			String className) {
+		TargetTaskCodeClassBuilder ttb = pairs.get(targetConstruct);
+		if (null == ttb) {
+			ttb = new TargetTaskCodeClassBuilder(targetConstruct, isStatic, visitor, stmts, className);
+			pairs.put(targetConstruct, ttb);
+		}
+		return ttb;
+	}
+	
+	private TargetTaskCodeClassBuilder(OmpTargetConstruct targetConstruct, 
+			boolean isStatic, 
+			PyjamaToJavaVisitor visitor,
+			List<Statement> stmts,
+			String className)
 	{	
-		this.targetConstruct = parallelConstruct;
-		this.dataClauseList = parallelConstruct.getDataClauseList();
+		this.targetConstruct = targetConstruct;
+		this.dataClauseList = targetConstruct.getDataClauseList();
 		if (isStatic) {
 			this.staticPrefix = "static ";
 		}
 		this.visitor = visitor;
 		this.currentMethodOrConstructorStmts = stmts;
+		this.className = className;
 	}
 	
 	public void setPrinterIndentLevel(int level) {
@@ -159,8 +175,8 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		this.getUserCode().accept(visitor, printer);
 		printer.printLn();
 		printer.printLn("/****User Code END***/");
-		printer.unindent();
 		//END get construct user code
+		printer.printLn("updateOutputListForSharedVars();");
 		printer.printLn("return null;");
 		printer.unindent();
 		printer.printLn("}");

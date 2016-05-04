@@ -4,7 +4,6 @@ package pj.parser.ast.visitor;
  * @version 1.0
  */
 
-import pj.PjRuntime;
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
 import pj.parser.ast.expr.*;
@@ -19,8 +18,10 @@ import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	
@@ -34,6 +35,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	static protected int nextGuiCodeID = 0;
 	//this hashmap stores the id of each generated region, in order to avoid id mismatch for same OpenMP construct. 
 	static HashMap<OpenMPStatement, Integer> OpenMPStatementIDPairing = new HashMap<OpenMPStatement, Integer>();
+	//this hashmap stores the virtual targets with their name_as names. A name may pair multiple target blocks.
+	static HashMap<String, HashSet<TargetTaskCodeClassBuilder>> nameAsTargetBlocks = new HashMap<String, HashSet<TargetTaskCodeClassBuilder>>();
+	
 	
 	protected final String prefixTaskNameForParallelRegion = "_OMP_ParallelRegion_";
 	protected final String prefixTaskNameForTargetTaskRegion = "_OMP_TargetTaskRegion_";
@@ -364,8 +368,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     		uniqueTargetBlockID = OpenMPStatementIDPairing.get(n);
     	}
 
-		TargetTaskCodeClassBuilder currentTTClass = new TargetTaskCodeClassBuilder(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
-		currentTTClass.className = prefixTaskNameForTargetTaskRegion + uniqueTargetBlockID;
+		TargetTaskCodeClassBuilder currentTTClass = TargetTaskCodeClassBuilder.create(n, this.currentMethodIsStatic, 
+														this, this.currentMethodOrConstructorStmts,
+														prefixTaskNameForTargetTaskRegion + uniqueTargetBlockID);
 		
 		printer.printLn("/*OpenMP Target region (#" + uniqueTargetBlockID + ") -- START */");
 
@@ -384,10 +389,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		DataClausesHandler.processDataClausesBeforeTTClassInvocation(currentTTClass, printer);
 		
 		printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
-		//If this is a state machine building mode, we set completion call back function of current target task.
-		if (n.isAwait() && this.stateMachineVisitingMode) {
-			printer.printLn(currentTTClass.className + "_in.setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
-		}
 		printer.printLn("if (PjRuntime.currentThreadIsTheTarget(\"" + n.getTargetName() + "\")) {");
 		printer.indent();
 		/*
@@ -395,11 +396,17 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		 * Instead, we execute the target task in current thread.
 		 */
 		printer.printLn(currentTTClass.className + "_in.run();");
+		DataClausesHandler.processDataClausesAfterTTClassInvocation(currentTTClass, printer);
 		printer.unindent();
 		printer.printLn("} else {");
 		printer.indent();
+		//If this is a state machine building mode, we set completion call back function of current target task.
+		if (n.isAwait() && this.stateMachineVisitingMode) {
+			printer.printLn(currentTTClass.className + "_in.setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
+		}
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
 		if (n.isTaskAs()) {
+			storeTargetClassNameByTaskName(n.getTaskName(), currentTTClass);
 			printer.printLn("PjRuntime.storeTargetHandlerByName(" + currentTTClass.className + "_in, \"" + n.getTaskName() + "\");");
 		}
 		if (n.isSync()) {
@@ -407,6 +414,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			 * If default policy is applied, the encountering thread waits until the target block is finished. 
 			 */
 			printer.printLn("PjRuntime.waitTaskTillFinish(" + currentTTClass.className + "_in);");
+			DataClausesHandler.processDataClausesAfterTTClassInvocation(currentTTClass, printer);
 		} else if (n.isAwait()) {
 			/*
 			 * If await is applied, the current thread gives up current function execution, backs when target
@@ -430,10 +438,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 				printer.printLn("this.OMP_state++;");
 				printer.printLn("return null;");
 				printer.unindent();
-				printer.printLn("} else {");
-				printer.indent();
-				printer.printLn("this.OMP_state++;");
-				printer.unindent();
 				printer.printLn("}");
 			}
 		} else if (n.isNoWait()) {
@@ -443,6 +447,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		}
 		printer.unindent();
 		printer.printLn("}");
+		if (n.isAwait() && this.stateMachineVisitingMode) {
+			printer.printLn("this.OMP_state++;");
+		}
 		printer.printLn("/*OpenMP Target region (#" + uniqueTargetBlockID + ") -- END */");
 		
 	}
@@ -450,6 +457,10 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	@Override
 	public void visit(OmpWaitDirective n, SourcePrinter printer) {
 		printer.printLn("PjRuntime.waitTargetBlocksWithTaskNameUntilFinish(\"" + n.getTaskName() + "\");");
+		Set<TargetTaskCodeClassBuilder> targetBuilders = getTargetClassBuilders(n.getTaskName());
+		for (TargetTaskCodeClassBuilder targetBuilder: targetBuilders) {
+			DataClausesHandler.processDataClausesAfterTTClassInvocation(targetBuilder, printer);
+		}
 	}
 	
 	@Override
@@ -468,7 +479,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	@Override
 	public void visit(OmpAwaitFunctionCallDeclaration n, SourcePrinter printer) {
 		throw new RuntimeException("OmpAwaitFunctionCallDeclaration should not be visited by PyjamaToJavaVisitor.");
-		
 	}
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
@@ -1708,6 +1718,26 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.printLn("import pj.pr.exceptions.OmpParallelRegionLocalCancellationException;");
     	
     	return printer.getSource();
+    }
+    
+    //---OpenMP Target construct visiting helper methods
+    private void storeTargetClassNameByTaskName(String taskName, TargetTaskCodeClassBuilder targetClassBuilder) {
+    	HashSet<TargetTaskCodeClassBuilder> targetBuilders = nameAsTargetBlocks.get(taskName);
+    	if (null == targetBuilders) {
+    		targetBuilders = new HashSet<TargetTaskCodeClassBuilder>();
+    		nameAsTargetBlocks.put(taskName, targetBuilders);
+    	}
+    	targetBuilders.add(targetClassBuilder);
+    }
+    
+    private HashSet<TargetTaskCodeClassBuilder> getTargetClassBuilders(String taskName) {
+    	HashSet<TargetTaskCodeClassBuilder> targetBuilders = nameAsTargetBlocks.get(taskName);
+    	if (null != targetBuilders) {
+    		return targetBuilders;
+    	} else {
+    		//return empty list.
+    		return new HashSet<TargetTaskCodeClassBuilder>();
+    	}
     }
     
     ////////////////////PRIVATE METHODS END////////////////////

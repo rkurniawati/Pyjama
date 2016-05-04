@@ -6,7 +6,6 @@ import java.util.List;
 import pj.parser.ast.body.MethodDeclaration;
 import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
-import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
@@ -110,7 +109,9 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 			if (s instanceof OmpAwaitConstruct) {
 				//TODO
 				//System.out.println("encoutering await block:"+s.toString());
-			} else if (s instanceof OmpTargetConstruct) {
+				continue;
+			}
+			if (s instanceof OmpTargetConstruct) {
 				PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), true);
 				yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
                 s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
@@ -122,33 +123,34 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 					printer.printLn("case " + stateCounter + ":");
 					printer.indent();
 				}
-			} else if (s instanceof ExpressionStmt) {
-				Expression expr = ((ExpressionStmt) s).getExpression();
-				if (expr instanceof VariableDeclarationExpr) {
-					/*
-					 * We find all VariableDeclarationExpr in this method,
-					 * and declare all variables in state machine class as
-					 * field member. The midway variable declaration becomes
-					 * variable value assignment.   --Xing 2016.5.3
-					 */
-					VariableDeclarationExpr varDeclExpr = (VariableDeclarationExpr) expr;
-					this.variableDeclarations.add(varDeclExpr);
-					for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {
-				           VariableDeclarator v = i.next();
-				           DumpVisitor codeDumper = new DumpVisitor();
-				           v.accept(codeDumper, null);
-				           printer.printLn(codeDumper.getSource() + ";");   
-				    }
-				} else {
-					/*
-					 * Simply using PyjamaToJavaVisitor to visit other ExpressionStmts.
-					 */
-					PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), true);
-					yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
-	                s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
-	                printer.printLn(yetAnotherPjVisitor.getSource());
+				continue;
+			}
+			if (s instanceof ExpressionStmt && (((ExpressionStmt) s).getExpression() instanceof VariableDeclarationExpr)) {
+				/*
+				 * We find all VariableDeclarationExpr in this method,
+				 * and declare all variables in state machine class as
+				 * field member. The midway variable declaration becomes
+				 * variable value assignment.   --Xing 2016.5.3
+				 */
+				VariableDeclarationExpr varDeclExpr = (VariableDeclarationExpr) ((ExpressionStmt) s).getExpression();
+				this.variableDeclarations.add(varDeclExpr);
+				for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {
+				VariableDeclarator v = i.next();
+				 	DumpVisitor codeDumper = new DumpVisitor();
+				 	v.accept(codeDumper, null);
+				 	printer.printLn(codeDumper.getSource() + ";");   
+				
 				}
-			} 
+				continue;
+			}
+			/*DEFAULT
+			 * Simply using PyjamaToJavaVisitor to visit other ExpressionStmts.
+			 */
+			PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), true);
+			yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
+	        s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
+	        printer.printLn(yetAnotherPjVisitor.getSource());
+			 
 		}		
 	}
 	
