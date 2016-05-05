@@ -368,8 +368,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     		uniqueTargetBlockID = OpenMPStatementIDPairing.get(n);
     	}
 
-		TargetTaskCodeClassBuilder currentTTClass = TargetTaskCodeClassBuilder.create(n, this.currentMethodIsStatic, 
-														this, this.currentMethodOrConstructorStmts,
+		TargetTaskCodeClassBuilder currentTTClass = TargetTaskCodeClassBuilder.create(n, this.currentMethodIsStatic, this,
 														prefixTaskNameForTargetTaskRegion + uniqueTargetBlockID);
 		
 		printer.printLn("/*OpenMP Target region (#" + uniqueTargetBlockID + ") -- START */");
@@ -422,10 +421,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			printer.printLn(currentTTClass.className + "_in.setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
 		}
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
-		if (n.isTaskAs()) {
-			storeTargetClassNameByTaskName(n.getTaskName(), currentTTClass);
-			printer.printLn("PjRuntime.storeTargetHandlerByName(" + currentTTClass.className + "_in, \"" + n.getTaskName() + "\");");
-		}
+
 		if (n.isSync()) {
 			/*
 			 * If default policy is applied, the encountering thread waits until the target block is finished. 
@@ -464,6 +460,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		}
 		printer.unindent();
 		printer.printLn("}");
+		
+		if (n.isTaskAs()) {
+			storeTargetClassNameByTaskName(n.getTaskName(), currentTTClass);
+			printer.printLn("PjRuntime.storeTargetHandlerByName(" + currentTTClass.className + "_in, \"" + n.getTaskName() + "\");");
+		}
+		
 		if (n.isAwait() && this.stateMachineVisitingMode) {
 			printer.printLn("this.OMP_state++;");
 		}

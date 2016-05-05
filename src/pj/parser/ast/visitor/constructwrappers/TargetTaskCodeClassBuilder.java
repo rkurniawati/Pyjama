@@ -29,20 +29,25 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 	
 	private String staticPrefix = "";
 	
-	public List<Statement> currentMethodOrConstructorStmts = null;
-
 	public PyjamaToJavaVisitor visitor;
 	public OmpTargetConstruct targetConstruct;
 	private List<OmpDataClause> dataClauseList;
+	
+	public static TargetTaskCodeClassBuilder create(OmpTargetConstruct targetConstruct) {
+		TargetTaskCodeClassBuilder ttb = pairs.get(targetConstruct);
+		if (null == ttb) {
+			throw new RuntimeException("Try to create TargetTaskCodeClassBuilder from pre-visited targetConstruct node, but node not found!");
+		}
+		return ttb;
+	}
 			
 	public static TargetTaskCodeClassBuilder create(OmpTargetConstruct targetConstruct, 
 			boolean isStatic, 
 			PyjamaToJavaVisitor visitor,
-			List<Statement> stmts,
 			String className) {
 		TargetTaskCodeClassBuilder ttb = pairs.get(targetConstruct);
 		if (null == ttb) {
-			ttb = new TargetTaskCodeClassBuilder(targetConstruct, isStatic, visitor, stmts, className);
+			ttb = new TargetTaskCodeClassBuilder(targetConstruct, isStatic, visitor, className);
 			pairs.put(targetConstruct, ttb);
 		}
 		return ttb;
@@ -51,7 +56,6 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 	private TargetTaskCodeClassBuilder(OmpTargetConstruct targetConstruct, 
 			boolean isStatic, 
 			PyjamaToJavaVisitor visitor,
-			List<Statement> stmts,
 			String className)
 	{	
 		this.targetConstruct = targetConstruct;
@@ -60,7 +64,6 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 			this.staticPrefix = "static ";
 		}
 		this.visitor = visitor;
-		this.currentMethodOrConstructorStmts = stmts;
 		this.className = className;
 	}
 	

@@ -309,11 +309,9 @@ public class PjRuntime {
 			HashSet<TargetTask<?>> targetSet = targetTaskNameDictionary.get(taskName.hashCode());
 			if (null == targetSet) {
 				targetSet = new HashSet<TargetTask<?>>();
-				targetSet.add(task);
 				targetTaskNameDictionary.put(taskName.hashCode(), targetSet);
-			} else {
-				targetSet.add(task);
-			}
+			} 
+			targetSet.add(task);
 		}
 	}
  }

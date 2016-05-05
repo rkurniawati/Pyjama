@@ -17,6 +17,7 @@ import pj.parser.ast.visitor.DumpVisitor;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
+import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 
 public class StateMachineClassBuilder extends ConstructWrapper {
@@ -125,6 +126,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 					printer.unindent();
 					printer.printLn("case " + stateCounter + ":");
 					printer.indent();
+					DataClausesHandler.processDataClausesAfterTTClassInvocation(TargetTaskCodeClassBuilder.create((OmpTargetConstruct)s), printer);
 				}
 				continue;
 			}
