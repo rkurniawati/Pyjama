@@ -29,18 +29,21 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	
 	//This list contains all the variables should be declared as field variables in this state machine class.
 	private LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
+	
+	private String generatedCodeVarDeclarations;
 
 	private MethodDeclaration method;
 
 	public PyjamaToJavaVisitor visitor;
 		
-	public StateMachineClassBuilder(MethodDeclaration methodConstruct, boolean isStatic, PyjamaToJavaVisitor visitor)
+	public StateMachineClassBuilder(MethodDeclaration methodConstruct, boolean isStatic, PyjamaToJavaVisitor visitor, String generatedCodeVarDeclarations)
 	{	
 		this.method = methodConstruct;
 		this.visitor = visitor;
 		if (isStatic) {
 			this.staticPrefix = "static ";
 		}
+		this.generatedCodeVarDeclarations = generatedCodeVarDeclarations;
 	}
 
 	@Override
@@ -155,6 +158,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	}
 	
 	private void generateVariableDeclaration() {
+		printer.printLn(this.generatedCodeVarDeclarations);
 		for(VariableDeclarationExpr varDeclExpr: this.variableDeclarations) {
 			Type type = varDeclExpr.getType();
 			for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {

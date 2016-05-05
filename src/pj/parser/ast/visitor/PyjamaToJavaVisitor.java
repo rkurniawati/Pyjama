@@ -1,8 +1,8 @@
-package pj.parser.ast.visitor;
 /**
  * @author Xing Fan
  * @version 1.0
  */
+package pj.parser.ast.visitor;
 
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
@@ -48,6 +48,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected boolean stateMachineVisitingMode = false;
 	protected SourcePrinter CodePrinter = new SourcePrinter();
 	protected SourcePrinter PrinterForAuxiliaryClasses = new SourcePrinter();
+	protected SourcePrinter PrinterForStateMachineVariableDeclaration = new SourcePrinter();
 
 	//keep track of current method whether is async, used for the generate of state machine class
 	protected boolean currentMethodIsAsync = false; 
@@ -116,7 +117,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		} else {
 			this.PrinterForAuxiliaryClasses.printLn(currentPRClass.getSource());
 		}
-
 		
 		String previous_icv = "icv_previous_" + currentPRClass.className;
 		String new_icv = "icv_" + currentPRClass.className;
@@ -383,12 +383,29 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		
 		String inputlist = "inputlist_" + currentTTClass.className;
 		String outputlist = "outputlist_" + currentTTClass.className;
-		printer.printLn("ConcurrentHashMap<String, Object> " + inputlist + " = new ConcurrentHashMap<String,Object>();");
-		printer.printLn("ConcurrentHashMap<String, Object> " + outputlist + " = new ConcurrentHashMap<String,Object>();");
-		
+		if (this.stateMachineVisitingMode) {
+			/* If current mode is stateMachineVisiting mode, we don't do midway varialble declarations.
+			 * Instead, we declare all the variables as stateMachine class field variables.
+			 * By doing this way, we keep all variable states when control flow quits in midway.
+			 */
+			printer.printLn(inputlist + " = new ConcurrentHashMap<String,Object>();");
+			printer.printLn(outputlist + " = new ConcurrentHashMap<String,Object>();");
+		} else {
+			this.PrinterForStateMachineVariableDeclaration.printLn("private ConcurrentHashMap<String, Object> " + inputlist + ";");
+			this.PrinterForStateMachineVariableDeclaration.printLn("private ConcurrentHashMap<String, Object> " + outputlist + ";");
+			printer.printLn("ConcurrentHashMap<String, Object> " + inputlist + " = new ConcurrentHashMap<String,Object>();");
+			printer.printLn("ConcurrentHashMap<String, Object> " + outputlist + " = new ConcurrentHashMap<String,Object>();");
+		}
+
 		DataClausesHandler.processDataClausesBeforeTTClassInvocation(currentTTClass, printer);
 		
-		printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
+		if (this.stateMachineVisitingMode) {
+			printer.printLn(currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
+		} else {
+			this.PrinterForStateMachineVariableDeclaration.printLn("private " + currentTTClass.className + " " + currentTTClass.className + "_in;");
+			printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
+		}
+		
 		printer.printLn("if (PjRuntime.currentThreadIsTheTarget(\"" + n.getTargetName() + "\")) {");
 		printer.indent();
 		/*
@@ -1161,11 +1178,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	         *if current method has PR regions or the current method is async.
 	         */
 	        if (this.currentMethodIsAsync) {
-				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(n, this.currentMethodIsStatic, this);
+				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(n, this.currentMethodIsStatic, this, this.PrinterForStateMachineVariableDeclaration.getSource());
 				if (this.stateMachineVisitingMode) {
-					//do nothing
+					//do nothing, when stateMachineBuilder uses PyjamaToJava visitor.
 				} else {
 					this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
+					this.PrinterForStateMachineVariableDeclaration.clear();
 				}
 	        }
 	        
