@@ -8,11 +8,14 @@ import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.ExpressionStmt;
 import pj.parser.ast.stmt.Statement;
+import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.type.Type;
+import pj.parser.ast.visitor.AsyncFunctionCallSubstitutionVisitor;
 import pj.parser.ast.visitor.DumpVisitor;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
@@ -112,7 +115,27 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 			s = iter.next();
 			if (s instanceof OmpAwaitConstruct) {
 				//TODO
-				//System.out.println("encoutering await block:"+s.toString());
+				ScopeInfo currentOmpAwaitConstructScopeInfo = visitor.getSymbolTable().getScopeOfNode(s);
+				List<OmpAwaitFunctionCallDeclaration> functions = ((OmpAwaitConstruct)s).getAwaitFunctions();
+				AsyncFunctionCallSubstitutionVisitor substitutionVisitor = new AsyncFunctionCallSubstitutionVisitor(currentOmpAwaitConstructScopeInfo, functions);
+				((OmpAwaitConstruct)s).getBody().accept(substitutionVisitor, substitutionVisitor.getPriter());
+				for(AsyncFunctionCallSubstitutionVisitor.SubstitutionInfo substitution: substitutionVisitor.getSubstitutionInfos()) {
+					String returnType = substitution.returnType;
+					String subVar = substitution.awaitResult;
+					String methodcall = substitution.methodCall;
+					stateCounter++;
+					printer.unindent();
+					printer.printLn("case " + stateCounter + ":");
+					printer.indent();
+					if (substitution.returnVoid) {
+						printer.printLn(methodcall + ";");
+					} else {
+						printer.printLn(returnType + " " + subVar + " = " + methodcall + ";");
+					}
+
+				}
+				printer.printLn(substitutionVisitor.getSource());
+				//System.err.println("encoutering await block:"+s.toString());
 				continue;
 			}
 			if (s instanceof OmpTargetConstruct) {

@@ -12,6 +12,7 @@ import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.FieldAccessExpr;
+import pj.parser.ast.expr.MethodCallExpr;
 import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.expr.ObjectCreationExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
@@ -20,7 +21,6 @@ import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
-import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.CatchClause;
 import pj.parser.ast.stmt.ForStmt;
 import pj.parser.ast.stmt.ForeachStmt;
@@ -57,16 +57,6 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 	}
 	
 	////////////////////////Normal Scope visit//////////////////////////////////
-	public String visit(BlockStmt n, Object arg) {
-		this.symbolTable.enterNewScope(n, "normalBlock", ScopeInfo.Type.StatementScope);
-		if (n.getStmts() != null) {
-            for (Statement s : n.getStmts()) {
-                s.accept(this, arg);
-            }
-        }
-        this.symbolTable.exitScope();
-        return null;
-	}
 	
 	public String visit(ClassOrInterfaceDeclaration n, Object arg) {		
 		String className = n.getName();
@@ -309,6 +299,14 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
 		Symbol symbol = new Symbol(fieldName);
 		this.symbolTable.addSymbolUse(fieldName,symbol);
 		n.getScope().accept(this, arg);
+		return null;
+	}
+	
+	public String visit(MethodCallExpr n, Object arg) {
+		String methodName = n.getName();
+		Symbol symbol = new Symbol(methodName);
+		this.symbolTable.addSymbolUse(methodName,symbol);
+		//n.getScope().accept(this, arg);
 		return null;
 	}
 

@@ -71,7 +71,7 @@ public class SymbolTable {
 		
 		for(Node node : this.allScopes.keySet()) {
 			ScopeInfo scope = this.allScopes.get(node);
-			out.println("***************Scope Name:" + scope.getName()+"*************");
+			out.println("***************Scope Name:" + scope.getName() + " " + scope.getNode().getBeginLine()+":"+scope.getNode().getBeginColumn()+"******BEGIN");
 			out.println("--------Defined variables--------------");
 			for (Symbol s: scope.getAllDefinedSymbols()) {
 				out.print(s.getName());
@@ -83,7 +83,7 @@ public class SymbolTable {
 			for (String s: scope.getAllUsedSymbolNames()) {
 				out.println(s);
 			}
-			out.println("******************************************************");
+			out.println("***************Scope Name:" + scope.getName() + " " + scope.getNode().getBeginLine()+":"+scope.getNode().getBeginColumn()+"******END");
 		}
 		out.close();
 	}
