@@ -1,12 +1,15 @@
 package pj.parser.ast.visitor;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import pj.parser.ast.body.Parameter;
+import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.MethodCallExpr;
+import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
 import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.symbolscope.Symbol;
@@ -26,16 +29,19 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 	private List<SubstitutionInfo> methodCallSubstitutions = new LinkedList<SubstitutionInfo>();
 	private List<OmpAwaitFunctionCallDeclaration> declaredFunctions;
 	
+	//This list contains all the variables should be declared as field variables in this state machine class.
+	private LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
+	
 	public class SubstitutionInfo {
 		public String methodCall;
 		public String awaitResult;
-		public String returnType;
+		public Type returnType;
 		public boolean returnVoid = false;
 		
 		public SubstitutionInfo(String methodName, String variableName, Type returnType) {
 			this.methodCall = methodName;
 			this.awaitResult = variableName;
-			this.returnType = returnType.toString();
+			this.returnType = returnType;
 			if (this.returnType.toString().equals("void")) {
 				returnVoid = true;
 			} else {
@@ -48,7 +54,6 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 		super(null, true);
 		this.scope = scope;
 		this.declaredFunctions = functionList;
-		//Debug_PrintAllSymbols();
 	}
 	
 	@Override
@@ -57,11 +62,33 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 		String methodCall = dumpMethodCallToString(n);
 		if (null != matchedAsyncFunctionDeclaration) {
 			String substitutionVariable = prefixAwaitFunctionResult + n.getName() + (awaitFunctionResultUniqueID++);
-			this.methodCallSubstitutions.add(new SubstitutionInfo(methodCall, substitutionVariable, matchedAsyncFunctionDeclaration.getType()));
-			printer.print(substitutionVariable);
-			//System.out.println("is declared method:" + n);
+			SubstitutionInfo substitutionInfo = new SubstitutionInfo(methodCall, substitutionVariable, matchedAsyncFunctionDeclaration.getType());
+			this.methodCallSubstitutions.add(substitutionInfo);
+			if (substitutionInfo.returnVoid) {
+				printer.printLn("//" + substitutionVariable);
+			} else {
+				printer.print(substitutionVariable);
+			}
+			//System.out.println("is declared await method:" + n);
 		} else {
-			//System.out.println("NOT declared method:" + n);
+			//If it is not an await function, then normal visit;
+			super.visit(n, printer);
+			//System.out.println("NOT declared await method:" + n);
+		}
+	}
+	
+	@Override
+	public void visit(VariableDeclarationExpr n, SourcePrinter printer) {
+		this.variableDeclarations.add(n);
+		for (Iterator<VariableDeclarator> i = n.getVars().iterator(); i.hasNext();) {
+			VariableDeclarator v = i.next();
+		    if (v.getInit() != null) {
+		    	v.getId().accept(this, printer);
+		    	printer.print(" = ");
+		        v.getInit().accept(this, printer);
+		    } else {
+		    	//If the variable declaration is no initialized value, simply ignore that.
+		    }
 		}
 	}
 	
@@ -94,7 +121,6 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 				return asyncFunction;
 			}
 		}
-
 		return null;
 	}
 	
@@ -136,22 +162,13 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 		}
 		return null;
 	}
-	
-	/*This is only used for Debug*/
-	private void Debug_PrintAllSymbols() {
-		List<Symbol> symbols = this.scope.getAllReachableSymbols();
-		for (Symbol symbol: symbols) {
-			System.err.println(symbol.getName() + " " + symbol.getSymbolDataType());
-		}
-		System.err.println("----");
-		Collection<Symbol> symbols1 = this.scope.getAllDefinedSymbols();
-		for (Symbol symbol: symbols1) {
-			System.err.println(symbol.getName() + " " + symbol.getSymbolDataType());
-		}
-	}
-	
+		
 	public List<SubstitutionInfo> getSubstitutionInfos() {
 		return this.methodCallSubstitutions;
+	}
+	
+	public LinkedList<VariableDeclarationExpr> getVariableDeclarations() {
+		return this.variableDeclarations;
 	}
 
 	

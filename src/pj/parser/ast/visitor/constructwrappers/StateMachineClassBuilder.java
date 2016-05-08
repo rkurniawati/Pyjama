@@ -6,6 +6,7 @@ import java.util.List;
 import pj.parser.ast.body.MethodDeclaration;
 import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
+import pj.parser.ast.body.VariableDeclaratorId;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
@@ -114,26 +115,31 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		while (iter.hasNext()) {
 			s = iter.next();
 			if (s instanceof OmpAwaitConstruct) {
-				//TODO
+
 				ScopeInfo currentOmpAwaitConstructScopeInfo = visitor.getSymbolTable().getScopeOfNode(s);
 				List<OmpAwaitFunctionCallDeclaration> functions = ((OmpAwaitConstruct)s).getAwaitFunctions();
 				AsyncFunctionCallSubstitutionVisitor substitutionVisitor = new AsyncFunctionCallSubstitutionVisitor(currentOmpAwaitConstructScopeInfo, functions);
+				substitutionVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
 				((OmpAwaitConstruct)s).getBody().accept(substitutionVisitor, substitutionVisitor.getPriter());
 				for(AsyncFunctionCallSubstitutionVisitor.SubstitutionInfo substitution: substitutionVisitor.getSubstitutionInfos()) {
-					String returnType = substitution.returnType;
 					String subVar = substitution.awaitResult;
 					String methodcall = substitution.methodCall;
+					if (substitution.returnVoid) {
+						//TODO call statemachine class, not original one
+						printer.printLn(methodcall + ";");
+					} else {
+						//Declare this auxiliary variable as statemachine field variable.
+						LinkedList<VariableDeclarator> declarators = new LinkedList<VariableDeclarator>();
+		                declarators.add(new VariableDeclarator(new VariableDeclaratorId(subVar)));
+		                this.variableDeclarations.add(new VariableDeclarationExpr(substitution.returnType, declarators));
+						printer.printLn(subVar + " = " + methodcall + ";");
+					}
 					stateCounter++;
 					printer.unindent();
 					printer.printLn("case " + stateCounter + ":");
 					printer.indent();
-					if (substitution.returnVoid) {
-						printer.printLn(methodcall + ";");
-					} else {
-						printer.printLn(returnType + " " + subVar + " = " + methodcall + ";");
-					}
-
 				}
+				this.variableDeclarations.addAll(substitutionVisitor.getVariableDeclarations());
 				printer.printLn(substitutionVisitor.getSource());
 				//System.err.println("encoutering await block:"+s.toString());
 				continue;
@@ -163,11 +169,14 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 				VariableDeclarationExpr varDeclExpr = (VariableDeclarationExpr) ((ExpressionStmt) s).getExpression();
 				this.variableDeclarations.add(varDeclExpr);
 				for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {
-				VariableDeclarator v = i.next();
-				 	DumpVisitor codeDumper = new DumpVisitor();
-				 	v.accept(codeDumper, null);
-				 	printer.printLn(codeDumper.getSource() + ";");   
-				
+					VariableDeclarator v = i.next();
+					if (v.getInit() != null) {
+			        	DumpVisitor codeDumper = new DumpVisitor();
+					 	v.accept(codeDumper, null);
+					 	printer.printLn(codeDumper.getSource() + ";");
+			        } else {
+			        	//If the variable declaration is no initialized value, simply ignore that.
+			        }   
 				}
 				continue;
 			}
