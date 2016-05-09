@@ -3,6 +3,8 @@ package pj.parser.ast.visitor.constructwrappers;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import pj.PjRuntime;
 import pj.parser.ast.body.MethodDeclaration;
 import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
@@ -15,6 +17,7 @@ import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.ExpressionStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.ScopeInfo;
+import pj.parser.ast.type.ClassOrInterfaceType;
 import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.AsyncFunctionCallSubstitutionVisitor;
 import pj.parser.ast.visitor.DumpVisitor;
@@ -26,7 +29,7 @@ import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 public class StateMachineClassBuilder extends ConstructWrapper {
 
-	private static final String stateMachineIdentifier = "_OmpStateMachine"; 
+	public static final String stateMachineIdentifier = "OmpStateMachine_"; 
 	
 	private String staticPrefix = "";
 	
@@ -73,7 +76,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	
 	private void generateConstructor() {
 	        printer.print("public ");
-	        printer.print(method.getName() + stateMachineIdentifier);
+	        printer.print(stateMachineIdentifier + method.getName());
 
 	        printer.print("(");
 	        if (method.getParameters() != null) {
@@ -122,18 +125,25 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 				substitutionVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
 				((OmpAwaitConstruct)s).getBody().accept(substitutionVisitor, substitutionVisitor.getPriter());
 				for(AsyncFunctionCallSubstitutionVisitor.SubstitutionInfo substitution: substitutionVisitor.getSubstitutionInfos()) {
-					String subVar = substitution.awaitResult;
-					String methodcall = substitution.methodCall;
-					if (substitution.returnVoid) {
-						//TODO call statemachine class, not original one
-						printer.printLn(methodcall + ";");
-					} else {
-						//Declare this auxiliary variable as statemachine field variable.
-						LinkedList<VariableDeclarator> declarators = new LinkedList<VariableDeclarator>();
-		                declarators.add(new VariableDeclarator(new VariableDeclaratorId(subVar)));
-		                this.variableDeclarations.add(new VariableDeclarationExpr(substitution.returnType, declarators));
-						printer.printLn(subVar + " = " + methodcall + ";");
-					}
+					String stateMachineCall = substitution.resultAwaiter;
+					String methodCall = substitution.methodCall;
+					//Declare this auxiliary awaiter variable as statemachine field variable.
+					LinkedList<VariableDeclarator> declarators = new LinkedList<VariableDeclarator>();
+	                declarators.add(new VariableDeclarator(new VariableDeclaratorId(stateMachineCall)));
+	                this.variableDeclarations.add(new VariableDeclarationExpr(new ClassOrInterfaceType(substitution.returnType), declarators));
+					printer.printLn(stateMachineCall + " = new " + stateMachineIdentifier + methodCall + ";");
+					printer.printLn(stateMachineCall + ".setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
+	                printer.printLn("PjRuntime.runTaskDirectly(" + stateMachineCall + ");");
+					printer.printLn("if (false == PjRuntime.checkFinish(" +stateMachineCall + "))  {");
+					printer.indent();
+					printer.printLn("this.OMP_state++;");
+					printer.printLn("return null;");
+					printer.unindent();
+					printer.printLn("} else {");
+					printer.indent();
+					printer.printLn("this.OMP_state++;");
+					printer.unindent();
+					printer.printLn("}");
 					stateCounter++;
 					printer.unindent();
 					printer.printLn("case " + stateCounter + ":");
@@ -206,7 +216,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	
 	private void generateClass() {
 		String returnType = DataClauseHandlerUtils.autoBox(this.method.getType().toString());
-		printer.printLn(this.staticPrefix + "class " + this.method.getName() + stateMachineIdentifier + " extends pj.pr.target.TargetTask<" + returnType + "> {");
+		printer.printLn(this.staticPrefix + "class " + stateMachineIdentifier + this.method.getName() + " extends pj.pr.target.TargetTask<" + returnType + "> {");
 		printer.indent();
 		//printer class constructor, with same method parameter
 		this.generateConstructor();
@@ -221,6 +231,7 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		printer.printLn("default:");
 		printer.indent();
 		printer.printLn("this.setFinish();");
+		printer.unindent();
 		printer.unindent();
 		printer.printLn("}");
 		printer.printLn("return null;");

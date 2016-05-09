@@ -14,6 +14,7 @@ import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
 import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.type.Type;
+import pj.parser.ast.visitor.constructwrappers.StateMachineClassBuilder;
 
 /*
  * This visitor is used by Pyjama await block visiting. 
@@ -34,19 +35,20 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 	
 	public class SubstitutionInfo {
 		public String methodCall;
-		public String awaitResult;
-		public Type returnType;
-		public boolean returnVoid = false;
-		
-		public SubstitutionInfo(String methodName, String variableName, Type returnType) {
-			this.methodCall = methodName;
-			this.awaitResult = variableName;
-			this.returnType = returnType;
-			if (this.returnType.toString().equals("void")) {
-				returnVoid = true;
+		public String resultAwaiter;
+		public String returnType;
+		public boolean returnVoid() {
+			if (this.returnType.equals("void")) {
+				return true;
 			} else {
-				returnVoid = false;
+				return false;
 			}
+		}
+		public SubstitutionInfo(String methodName, String variableName, String returnType) {
+			this.methodCall = methodName;
+			this.resultAwaiter = variableName;
+			this.returnType = returnType;
+			
 		}
 	}
 
@@ -62,12 +64,13 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 		String methodCall = dumpMethodCallToString(n);
 		if (null != matchedAsyncFunctionDeclaration) {
 			String substitutionVariable = prefixAwaitFunctionResult + n.getName() + (awaitFunctionResultUniqueID++);
-			SubstitutionInfo substitutionInfo = new SubstitutionInfo(methodCall, substitutionVariable, matchedAsyncFunctionDeclaration.getType());
+			SubstitutionInfo substitutionInfo = new SubstitutionInfo(methodCall, substitutionVariable, 
+					StateMachineClassBuilder.stateMachineIdentifier + n.getName());
 			this.methodCallSubstitutions.add(substitutionInfo);
-			if (substitutionInfo.returnVoid) {
+			if (substitutionInfo.returnVoid()) {
 				printer.printLn("//" + substitutionVariable);
 			} else {
-				printer.print(substitutionVariable);
+				printer.print(substitutionVariable + ".getResult()");
 			}
 			//System.out.println("is declared await method:" + n);
 		} else {
