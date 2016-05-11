@@ -72,8 +72,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected SourcePrinter PrinterForAuxiliaryClasses = new SourcePrinter();
 	protected SourcePrinter PrinterForStateMachineVariableDeclaration = new SourcePrinter();
 
-	//keep track of current method whether is async, used for the generate of state machine class
-	protected boolean currentMethodIsAsync = false; 
 	//keep track of current method whether is static, used for the generate of parallel region class, and work share method
 	protected boolean currentMethodIsStatic = false; 
 	//keep track of current method or constructor's statements, this statements may used in freeguithread visitor
@@ -457,13 +455,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			 */
 			if (!this.stateMachineVisitingMode) {
 				/*
-				 * We check if current method uses await but is not declared as //#omp asyn, we throw an exception to
-				 * notice programmer this method should be annotated as async method.
-				 */
-				if (!this.currentMethodIsAsync) {
-					throw new RuntimeException("Pyjama parsing error: Using the await target virtual block within a non-async method.");
-				}
-				/*
 				 * In normal method mode, we simply use IHP, essentially it will do a busy waiting in current implementation.
 				 */
 				printer.printLn("PjRuntime.IrrelevantHandlingProcessing(" + currentTTClass.className + "_in);");
@@ -506,15 +497,13 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	
 	@Override
 	public void visit(OmpAwaitConstruct n, SourcePrinter printer) {
-		if (!this.currentMethodIsAsync) {
-			throw new RuntimeException("Pyjama parsing error: Using the await block within a non-async method.");
-		} else {
-			/*for an async function, the prototype of this function still call the await block synchronously;
-			 * So, directly visit this block. The states are used in state machine class.
-			 */
-			n.getBody().accept(this, this.CodePrinter);
-		}
-		// TODO The states should be generated in favor of state machine class building.
+		/* For an async function, the prototype of this function still call the await block synchronously;
+		 * So, directly visit this block. The states are used in state machine class.
+		 */
+		n.getBody().accept(this, this.CodePrinter);
+		/* The states should be generated in favor of state machine class building. However, this type of 
+		 * visiting is implemented by AsyncFunctionCallSubstitutionVisitor visitor.
+		 */
 	}
 	
 	@Override
@@ -1146,12 +1135,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        else {
 	        	this.currentMethodIsStatic = false;
 	        }
-	        //Xing added for checking current method is omp async method or not
-	        if (n.isAsyncMethod()) {
-	            this.currentMethodIsAsync = true;
-	        }
-	        else {
-	        	this.currentMethodIsAsync = false;
+	        //Xing added for checking if current method should be annotated as an async method.
+	        if (!n.isAsyncMethod() && n.containAwait()) {
+	            throw new RuntimeException("Pyjama parsing error: Using the await block within a non-async method(" + n.getBeginLine() + ":" + n.getBeginColumn() + ").");
 	        }
 	        
 	        printTypeParameters(n.getTypeParameters(), printer);
@@ -1201,7 +1187,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	        /*Xing added to print Auxiliary parallel region classes
 	         *if current method has PR regions or the current method is async.
 	         */
-	        if (this.currentMethodIsAsync) {
+	        if (n.isAsyncMethod()) {
 				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(n, this.currentMethodIsStatic, this, this.PrinterForStateMachineVariableDeclaration.getSource());
 				if (this.stateMachineVisitingMode) {
 					//do nothing, when stateMachineBuilder uses PyjamaToJava visitor.

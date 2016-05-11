@@ -27,6 +27,7 @@ import java.util.List;
 
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.NameExpr;
+import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.visitor.GenericVisitor;
@@ -129,11 +130,43 @@ public class OmpTargetConstruct extends OpenMPStatement{
 		}
 		return false;
 	}
+	
 	public List<OmpDataClause> getDataClauseList() {
 		return this.dataClauseList;
 	}
+	
 	public OmpIfClause getIfClause() {
 		return ifExpr;
+	}
+	
+	/*
+	 * We call a target block contains await if this target block contains one or more:
+	 * 	i) //#omp await construct
+	 * 	ii) //omp target virtual await construct
+	 * If yes, this target block should be refactored as statemachine, instead of normal transforming.
+	 */
+	public boolean containAwait() {
+		Statement body = this.getBody();
+		assert(null != body);
+		
+		if (body instanceof OmpTargetConstruct) {
+			if (((OmpTargetConstruct)body).isAwait()) {
+				return true;
+			}
+		} else if (body instanceof BlockStmt) {
+			for (Statement s: ((BlockStmt)body).getStmts()) {
+				if (s instanceof OmpAwaitConstruct) {
+					return true;
+				} else if (s instanceof OmpTargetConstruct) {
+					if (((OmpTargetConstruct)s).isAwait()) {
+						return true;
+					}
+				} else {
+					continue;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/*

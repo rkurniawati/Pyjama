@@ -46,7 +46,10 @@ package pj.parser.ast.body;
 import pj.parser.ast.TypeParameter;
 import pj.parser.ast.expr.AnnotationExpr;
 import pj.parser.ast.expr.NameExpr;
+import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
+import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
@@ -209,5 +212,36 @@ public final class MethodDeclaration extends BodyDeclaration {
     
     public boolean isAsyncMethod() {
     	return this.isOmpAsync;
+    }
+    
+	/*
+	 * We call a method contains await if this target block contains one or more:
+	 * 	i) //#omp await construct
+	 * 	ii) //omp target virtual await construct
+	 * If a method contains await blocks, it MUST be anotated as //#omp async.
+	 * A method without await block is also can be anotated as //#omp async.
+	 */
+    public boolean containAwait() {
+    	Statement body = this.getBody();
+		assert(null != body);
+		
+		if (body instanceof OmpTargetConstruct) {
+			if (((OmpTargetConstruct)body).isAwait()) {
+				return true;
+			}
+		} else if (body instanceof BlockStmt) {
+			for (Statement s: ((BlockStmt)body).getStmts()) {
+				if (s instanceof OmpAwaitConstruct) {
+					return true;
+				} else if (s instanceof OmpTargetConstruct) {
+					if (((OmpTargetConstruct)s).isAwait()) {
+						return true;
+					}
+				} else {
+					continue;
+				}
+			}
+		}
+		return false;
     }
 }

@@ -191,7 +191,7 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		//END put shared variables lastprivate(if any, though no available) to outputlist
 		printer.unindent();
 		printer.printLn("}");
-	
+		printer.printLn("private int OMP_state = 0;");
 		printer.printLn("@Override");
 		printer.printLn("public Void call() {");
 		printer.indent();

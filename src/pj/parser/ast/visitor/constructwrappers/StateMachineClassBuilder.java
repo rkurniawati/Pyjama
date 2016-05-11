@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import pj.PjRuntime;
 import pj.parser.ast.body.MethodDeclaration;
 import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
@@ -129,6 +128,10 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 	}
 	
 	private void generateStates() {
+		printer.printLn("switch(OMP_state) {");
+		printer.printLn("case 0:");
+		printer.indent();
+		//----------------------------------------------------
 		int stateCounter = 0;
 		BlockStmt body = this.method.getBody();
 		if (null == body) {
@@ -218,9 +221,15 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 			PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), true);
 			yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
 	        s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
-	        printer.printLn(yetAnotherPjVisitor.getSource());
-			 
+	        printer.printLn(yetAnotherPjVisitor.getSource()); 
 		}		
+		//----------------------------------------------------
+		printer.printLn("default:");
+		printer.indent();
+		printer.printLn("this.setFinish();");
+		printer.unindent();
+		printer.unindent();
+		printer.printLn("}");
 	}
 	
 	private void generateVariableDeclaration() {
@@ -242,20 +251,15 @@ public class StateMachineClassBuilder extends ConstructWrapper {
 		printer.indent();
 		//printer class constructor, with same method parameter
 		this.generateConstructor();
-		printer.printLn("int OMP_state = 0;");
+		printer.printLn("private int OMP_state = 0;");
 		printer.printLn("@Override");
 		printer.printLn("public " + returnType  + " call() {");
 		printer.indent();
-		printer.printLn("switch(OMP_state) {");
-		printer.printLn("case 0:");
-		printer.indent();
+		//BEGIN get construct user code
+		printer.printLn("/****User Code BEGIN***/");
 		this.generateStates();
-		printer.printLn("default:");
-		printer.indent();
-		printer.printLn("this.setFinish();");
-		printer.unindent();
-		printer.unindent();
-		printer.printLn("}");
+		printer.printLn("/****User Code END***/");
+		//END get construct user code
 		printer.printLn("return null;");
 		printer.unindent();
 		printer.printLn("}");
