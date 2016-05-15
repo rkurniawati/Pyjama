@@ -28,31 +28,48 @@ package pj.parser.ast.visitor.constructwrappers;
  * @version 0.1
  */
 
-
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import pj.parser.ast.visitor.AsyncFunctionCallSubstitutionVisitor;
+import pj.parser.ast.visitor.DumpVisitor;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
+import pj.parser.ast.body.VariableDeclarator;
+import pj.parser.ast.body.VariableDeclaratorId;
+import pj.parser.ast.expr.VariableDeclarationExpr;
+import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpTargetConstruct;
+import pj.parser.ast.stmt.BlockStmt;
+import pj.parser.ast.stmt.ExpressionStmt;
 import pj.parser.ast.stmt.Statement;
-import pj.parser.ast.visitor.SourcePrinter;
+import pj.parser.ast.symbolscope.ScopeInfo;
+import pj.parser.ast.type.ClassOrInterfaceType;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
-public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
+public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 	
 	private static HashMap<OmpTargetConstruct, TargetTaskCodeClassBuilder> pairs = new HashMap<OmpTargetConstruct, TargetTaskCodeClassBuilder>();
 
+	//This list contains all the variables should be declared as field variables in this state machine class.
+	private LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
+	
 	public String className = "";
 	
-	private SourcePrinter printer = new SourcePrinter();
+	private boolean stateMachineVisitingMode;
 	
-	private String staticPrefix = "";
+	/* This flag indicates whether this auxilary class has been printed once by the PyjamaToJava visitor, if has been printed,
+	 * the getSource() method will return empty string. 
+	 */
+	private boolean hasPrinted = false;
 	
-	public PyjamaToJavaVisitor visitor;
 	public OmpTargetConstruct targetConstruct;
+	
 	private List<OmpDataClause> dataClauseList;
 	
 	public static TargetTaskCodeClassBuilder create(OmpTargetConstruct targetConstruct) {
@@ -66,10 +83,11 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 	public static TargetTaskCodeClassBuilder create(OmpTargetConstruct targetConstruct, 
 			boolean isStatic, 
 			PyjamaToJavaVisitor visitor,
-			String className) {
+			String className,
+			boolean containAwait) {
 		TargetTaskCodeClassBuilder ttb = pairs.get(targetConstruct);
 		if (null == ttb) {
-			ttb = new TargetTaskCodeClassBuilder(targetConstruct, isStatic, visitor, className);
+			ttb = new TargetTaskCodeClassBuilder(targetConstruct, isStatic, visitor, className, containAwait);
 			pairs.put(targetConstruct, ttb);
 		}
 		return ttb;
@@ -78,7 +96,8 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 	private TargetTaskCodeClassBuilder(OmpTargetConstruct targetConstruct, 
 			boolean isStatic, 
 			PyjamaToJavaVisitor visitor,
-			String className)
+			String className,
+			boolean containAwait)
 	{	
 		this.targetConstruct = targetConstruct;
 		this.dataClauseList = targetConstruct.getDataClauseList();
@@ -87,10 +106,15 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		}
 		this.visitor = visitor;
 		this.className = className;
+		this.stateMachineVisitingMode = containAwait;
 	}
 	
 	public void setPrinterIndentLevel(int level) {
 		this.printer.setIndentLevel(level);
+	}
+	
+	public void setFieldDeclarations(String declarations) {
+		this.generatedCodeVarDeclarations = declarations;
 	}
 
 	private Statement getUserCode() {
@@ -118,11 +142,19 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		
 	public String getSource()
 	{
-		this.generateClass();
-		return printer.getSource();
+		/*
+		 * Ensure the auxilary class can only be printed once.
+		 */
+		if (this.hasPrinted) {
+			return "";
+		} else {
+			this.generateClass();
+			this.hasPrinted = true;
+			return printer.getSource();
+		}
 	}
 	
-	private void generateClass() {
+	protected void generateClass() {
 		printer.printLn();
 		//////////////////////////////////////////////
 		printer.printLn(this.staticPrefix +"class " + this.className + " extends pj.pr.target.TargetTask<Void>{");
@@ -197,7 +229,11 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		printer.indent();
 		//BEGIN get construct user code
 		printer.printLn("/****User Code BEGIN***/");
-		this.getUserCode().accept(visitor, printer);
+		if (this.stateMachineVisitingMode) {
+			this.generateStates();
+		} else {
+			this.getUserCode().accept(visitor, printer);
+		}
 		printer.printLn();
 		printer.printLn("/****User Code END***/");
 		//END get construct user code
@@ -209,5 +245,118 @@ public class TargetTaskCodeClassBuilder extends ConstructWrapper  {
 		printer.unindent();
 		printer.printLn("}");
 	}	
+	
+	protected void generateStates() {
+		printer.printLn("switch(OMP_state) {");
+		printer.printLn("case 0:");
+		printer.indent();
+		//----------------------------------------------------
+		int stateCounter = 0;
+		Statement body = this.targetConstruct.getBody();
+		if (null == body) {
+			throw new RuntimeException("Pyjama unexpected situation: converting an abstract method to state machine.");
+		}
+		List<Statement> stmts;
+		if (body instanceof BlockStmt) {
+			stmts = ((BlockStmt)body).getStmts();
+		} else {
+			stmts = new LinkedList<Statement>();
+			stmts.add(body);
+		}
+		
+		Iterator<Statement> iter = stmts.iterator();
+		Statement s;
+		while (iter.hasNext()) {
+			s = iter.next();
+			if (s instanceof OmpAwaitConstruct) {
+
+				ScopeInfo currentOmpAwaitConstructScopeInfo = visitor.getSymbolTable().getScopeOfNode(s);
+				List<OmpAwaitFunctionCallDeclaration> functions = ((OmpAwaitConstruct)s).getAwaitFunctions();
+				AsyncFunctionCallSubstitutionVisitor substitutionVisitor = new AsyncFunctionCallSubstitutionVisitor(currentOmpAwaitConstructScopeInfo, functions);
+				substitutionVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
+				((OmpAwaitConstruct)s).getBody().accept(substitutionVisitor, substitutionVisitor.getPriter());
+				for(AsyncFunctionCallSubstitutionVisitor.SubstitutionInfo substitution: substitutionVisitor.getSubstitutionInfos()) {
+					String stateMachineCall = substitution.resultAwaiter;
+					String methodCall = substitution.methodCall;
+					//Declare this auxiliary awaiter variable as statemachine field variable.
+					LinkedList<VariableDeclarator> declarators = new LinkedList<VariableDeclarator>();
+	                declarators.add(new VariableDeclarator(new VariableDeclaratorId(stateMachineCall)));
+	                this.variableDeclarations.add(new VariableDeclarationExpr(new ClassOrInterfaceType(substitution.returnType), declarators));
+					printer.printLn(stateMachineCall + " = new " + StateMachineClassBuilder.stateMachineIdentifier + methodCall + ";");
+					printer.printLn(stateMachineCall + ".setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
+	                printer.printLn("PjRuntime.runTaskDirectly(" + stateMachineCall + ");");
+					printer.printLn("if (false == PjRuntime.checkFinish(" +stateMachineCall + "))  {");
+					printer.indent();
+					printer.printLn("this.OMP_state++;");
+					printer.printLn("return null;");
+					printer.unindent();
+					printer.printLn("} else {");
+					printer.indent();
+					printer.printLn("this.OMP_state++;");
+					printer.unindent();
+					printer.printLn("}");
+					stateCounter++;
+					printer.unindent();
+					printer.printLn("case " + stateCounter + ":");
+					printer.indent();
+				}
+				this.variableDeclarations.addAll(substitutionVisitor.getVariableDeclarations());
+				printer.printLn(substitutionVisitor.getSource());
+				//System.err.println("encoutering await block:"+s.toString());
+				continue;
+			}
+			if (s instanceof OmpTargetConstruct) {
+				PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(this.visitor.getSymbolTable());
+				yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
+                s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
+                printer.printLn(yetAnotherPjVisitor.getSource());
+                visitor.appendAuxiliaryClassesSource(yetAnotherPjVisitor.getAuxiliaryClassesSource());
+				if (((OmpTargetConstruct)s).isAwait()) {
+					//if current statement is an await target construct, then, this statement is a separator
+					stateCounter++;
+					printer.unindent();
+					printer.printLn("case " + stateCounter + ":");
+					printer.indent();
+					DataClausesHandler.processDataClausesAfterTTClassInvocation(TargetTaskCodeClassBuilder.create((OmpTargetConstruct)s), printer);
+				}
+				continue;
+			}
+			if (s instanceof ExpressionStmt && (((ExpressionStmt) s).getExpression() instanceof VariableDeclarationExpr)) {
+				/*
+				 * We find all VariableDeclarationExpr in this method,
+				 * and declare all variables in state machine class as
+				 * field member. The midway variable declaration becomes
+				 * variable value assignment.   --Xing 2016.5.3
+				 */
+				VariableDeclarationExpr varDeclExpr = (VariableDeclarationExpr) ((ExpressionStmt) s).getExpression();
+				this.variableDeclarations.add(varDeclExpr);
+				for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {
+					VariableDeclarator v = i.next();
+					if (v.getInit() != null) {
+			        	DumpVisitor codeDumper = new DumpVisitor();
+					 	v.accept(codeDumper, null);
+					 	printer.printLn(codeDumper.getSource() + ";");
+			        } else {
+			        	//If the variable declaration is no initialized value, simply ignore that.
+			        }   
+				}
+				continue;
+			}
+			/*DEFAULT
+			 * Simply using PyjamaToJavaVisitor to visit other ExpressionStmts.
+			 */
+			PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(this.visitor.getSymbolTable());
+			yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
+	        s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
+	        printer.printLn(yetAnotherPjVisitor.getSource()); 
+		}		
+		//----------------------------------------------------
+		printer.printLn("default:");
+		printer.indent();
+		printer.printLn("this.setFinish();");
+		printer.unindent();
+		printer.unindent();
+		printer.printLn("}");
+	}
 	
 }

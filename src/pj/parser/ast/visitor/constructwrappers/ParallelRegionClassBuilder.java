@@ -34,6 +34,7 @@ package pj.parser.ast.visitor.constructwrappers;
  * @version 0.9
  */
 
+import java.util.HashMap;
 import java.util.List;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
@@ -46,9 +47,15 @@ import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 public class ParallelRegionClassBuilder extends ConstructWrapper  {
+	
+	private static HashMap<OmpParallelConstruct, ParallelRegionClassBuilder> pairs = new HashMap<OmpParallelConstruct, ParallelRegionClassBuilder>();
 
 	public String className = "";
 	
+	/* This flag indicates whether this auxilary class has been printed once by the PyjamaToJava visitor, if has been printed,
+	 * the getSource() method will return empty string. 
+	 */
+	private boolean hasPrinted = false;
 	private SourcePrinter printer = new SourcePrinter();
 	
 	private String staticPrefix = "";
@@ -58,8 +65,28 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	public PyjamaToJavaVisitor visitor;
 	public OmpParallelConstruct parallelConstruct;
 	private List<OmpDataClause> dataClauseList;
+	
+	public static ParallelRegionClassBuilder create(OmpParallelConstruct parallelConstruct) {
+		ParallelRegionClassBuilder prc = pairs.get(parallelConstruct);
+		if (null == prc) {
+			throw new RuntimeException("Try to create ParallelRegionClassBuilder from pre-visited parallelConstruct node, but node not found!");
+		}
+		return prc;
+	}
+	
+	public static ParallelRegionClassBuilder create(OmpParallelConstruct parallelConstruct, 
+			boolean isStatic, 
+			PyjamaToJavaVisitor visitor,
+			List<Statement> stmts) {
+		ParallelRegionClassBuilder prc = pairs.get(parallelConstruct);
+		if (null == prc) {
+			prc = new ParallelRegionClassBuilder(parallelConstruct, isStatic, visitor, stmts);
+			pairs.put(parallelConstruct, prc);
+		}
+		return prc;
+	}
 		
-	public ParallelRegionClassBuilder(OmpParallelConstruct parallelConstruct, 
+	private ParallelRegionClassBuilder(OmpParallelConstruct parallelConstruct, 
 			boolean isStatic, 
 			PyjamaToJavaVisitor visitor,
 			List<Statement> stmts)
@@ -103,8 +130,16 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		
 	public String getSource()
 	{
-		this.generateClass();
-		return printer.getSource();
+		/*
+		 * Ensure the auxilary class can only be printed once.
+		 */
+		if (this.hasPrinted) {
+			return "";
+		} else {
+			this.generateClass();
+			this.hasPrinted = true;
+			return printer.getSource();
+		}
 	}
 	
 	private void generateClass() {

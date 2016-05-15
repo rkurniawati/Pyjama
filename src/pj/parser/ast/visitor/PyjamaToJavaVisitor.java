@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	
@@ -55,19 +56,18 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	static protected int nextTargetBlockID = 0;
 	static protected int nextWorkShareID = 0;
 	static protected int nextGuiCodeID = 0;
+	protected static final String prefixTaskNameForParallelRegion = "_OMP_ParallelRegion_";
+	protected static final String prefixTaskNameForTargetTaskRegion = "_OMP_TargetTaskRegion_";
+	protected static final String prefixTaskNameForWorkShare = "_OMP_WorkShare_";
+	protected static final String prefixTaskNameForGuiCode = "_OMP_GuiCode_";
+	
 	//this hashmap stores the id of each generated region, in order to avoid id mismatch for same OpenMP construct. 
 	static HashMap<OpenMPStatement, Integer> OpenMPStatementIDPairing = new HashMap<OpenMPStatement, Integer>();
 	//this hashmap stores the virtual targets with their name_as names. A name may pair multiple target blocks.
 	static HashMap<String, HashSet<TargetTaskCodeClassBuilder>> nameAsTargetBlocks = new HashMap<String, HashSet<TargetTaskCodeClassBuilder>>();
 	
+	protected static Stack<Boolean> stateMachineVisitingMode = new Stack<Boolean>();
 	
-	protected final String prefixTaskNameForParallelRegion = "_OMP_ParallelRegion_";
-	protected final String prefixTaskNameForTargetTaskRegion = "_OMP_TargetTaskRegion_";
-	protected final String prefixTaskNameForWorkShare = "_OMP_WorkShare_";
-	protected final String prefixTaskNameForGuiCode = "_OMP_GuiCode_";
-	
-	
-	protected boolean stateMachineVisitingMode = false;
 	protected SourcePrinter CodePrinter = new SourcePrinter();
 	protected SourcePrinter PrinterForAuxiliaryClasses = new SourcePrinter();
 	protected SourcePrinter PrinterForStateMachineVariableDeclaration = new SourcePrinter();
@@ -76,8 +76,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected boolean currentMethodIsStatic = false; 
 	//keep track of current method or constructor's statements, this statements may used in freeguithread visitor
 	protected List<Statement> currentMethodOrConstructorStmts = null;
-	//keep track of current method return type
-	protected Type currentMethodType = null;
 
 	//keep track of current type of declaration of variables 2014.7.14
 	protected Type currentVarDeclarationType = null;
@@ -92,14 +90,18 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	
 	private SymbolTable symbolTable = null;
 	
+	public PyjamaToJavaVisitor() {
+		this.symbolTable = null;
+	}
+	
 	public PyjamaToJavaVisitor(SymbolTable symbolTable) {
 		this.symbolTable = symbolTable;
 	}
 	
-	public PyjamaToJavaVisitor(SymbolTable symbolTable, boolean stateMachineVisitingMode) {
-		this.symbolTable = symbolTable;
-		this.stateMachineVisitingMode = true;
-	}
+//	public PyjamaToJavaVisitor(SymbolTable symbolTable, boolean stateMachineVisitingMode) {
+//		this.symbolTable = symbolTable;
+//		this.stateMachineVisitingMode = true;
+//	}
 	
 	public SymbolTable getSymbolTable() {
 		return symbolTable;
@@ -125,18 +127,13 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     		uniqueOpenMPRegionID = OpenMPStatementIDPairing.get(n);
     	}
 		
-		ParallelRegionClassBuilder currentPRClass = new ParallelRegionClassBuilder(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
+		ParallelRegionClassBuilder currentPRClass = ParallelRegionClassBuilder.create(n, this.currentMethodIsStatic, this, this.currentMethodOrConstructorStmts);
 		currentPRClass.className = prefixTaskNameForParallelRegion + uniqueOpenMPRegionID;
 		
 		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- START */");
 		String numThreadsClause = "";
 
-		//Print Parallel Region Class Code
-		if (this.stateMachineVisitingMode) {
-			//do nothing
-		} else {
-			this.PrinterForAuxiliaryClasses.printLn(currentPRClass.getSource());
-		}
+		this.PrinterForAuxiliaryClasses.printLn(currentPRClass.getSource());
 		
 		String previous_icv = "icv_previous_" + currentPRClass.className;
 		String new_icv = "icv_" + currentPRClass.className;
@@ -375,7 +372,16 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	
 	public void visit(OmpTargetConstruct n, SourcePrinter printer) {
-
+		//return if current visiting is in a state-machine building mode.
+		boolean stateMachineBuildingMode = this.stateMachineVisitingMode.peek();
+		
+		//if current target block contains await, the indicate the compiler, the inside visiting should also visited by a state machine builder.
+		if (n.containAwait()) {
+			this.stateMachineVisitingMode.push(true);
+		} else {
+			this.stateMachineVisitingMode.push(false);
+		}
+		
 	 	//get current OmpTargetConstruct's scope info from symbolTable
     	n.scope = this.symbolTable.getScopeOfNode(n);
     	n.processAllReachableVariablesIfNecessary();
@@ -389,20 +395,13 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	}
 
 		TargetTaskCodeClassBuilder currentTTClass = TargetTaskCodeClassBuilder.create(n, this.currentMethodIsStatic, this,
-														prefixTaskNameForTargetTaskRegion + uniqueTargetBlockID);
+														prefixTaskNameForTargetTaskRegion + uniqueTargetBlockID, n.containAwait());
 		
 		printer.printLn("/*OpenMP Target region (#" + uniqueTargetBlockID + ") -- START */");
-
-		//Print Target Task code Class Code
-		if (this.stateMachineVisitingMode) {
-			//do nothing
-		} else {
-			this.PrinterForAuxiliaryClasses.printLn(currentTTClass.getSource());
-		}
 		
 		String inputlist = "inputlist_" + currentTTClass.className;
 		String outputlist = "outputlist_" + currentTTClass.className;
-		if (this.stateMachineVisitingMode) {
+		if (stateMachineBuildingMode) {
 			/* If current mode is stateMachineVisiting mode, we don't do midway varialble declarations.
 			 * Instead, we declare all the variables as stateMachine class field variables.
 			 * By doing this way, we keep all variable states when control flow quits in midway.
@@ -418,7 +417,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
 		DataClausesHandler.processDataClausesBeforeTTClassInvocation(currentTTClass, printer);
 		
-		if (this.stateMachineVisitingMode) {
+		if (stateMachineBuildingMode) {
 			printer.printLn(currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
 		} else {
 			this.PrinterForStateMachineVariableDeclaration.printLn("private " + currentTTClass.className + " " + currentTTClass.className + "_in;");
@@ -437,7 +436,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		printer.printLn("} else {");
 		printer.indent();
 		//If this is a state machine building mode, we set completion call back function of current target task.
-		if (n.isAwait() && this.stateMachineVisitingMode) {
+		if (n.isAwait() && stateMachineBuildingMode) {
 			printer.printLn(currentTTClass.className + "_in.setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
 		}
 		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
@@ -453,12 +452,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			 * If await is applied, the current thread gives up current function execution, backs when target
 			 * block is finished. For current implementation, we simply adopt an IHP (Irrelevant Handling Processing).
 			 */
-			if (!this.stateMachineVisitingMode) {
+			if (!stateMachineBuildingMode) {
 				/*
 				 * In normal method mode, we simply use IHP, essentially it will do a busy waiting in current implementation.
 				 */
 				printer.printLn("PjRuntime.IrrelevantHandlingProcessing(" + currentTTClass.className + "_in);");
-			} else if (this.stateMachineVisitingMode){
+			} else if (stateMachineBuildingMode){
 				printer.printLn("if (false == PjRuntime.checkFinish(" + currentTTClass.className + "_in))  {");
 				printer.indent();
 				printer.printLn("this.OMP_state++;");
@@ -479,11 +478,16 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			printer.printLn("PjRuntime.storeTargetHandlerByName(" + currentTTClass.className + "_in, \"" + n.getTaskName() + "\");");
 		}
 		
-		if (n.isAwait() && this.stateMachineVisitingMode) {
+		if (n.isAwait() && stateMachineBuildingMode) {
 			printer.printLn("this.OMP_state++;");
 		}
 		printer.printLn("/*OpenMP Target region (#" + uniqueTargetBlockID + ") -- END */");
 		
+		//---Print Auxilary class
+		this.PrinterForAuxiliaryClasses.printLn(currentTTClass.getSource());
+		
+		//---pop visiting mode.
+		this.stateMachineVisitingMode.pop();
 	}
 	    
 	@Override
@@ -1127,7 +1131,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	    	        this.currentMethodOrConstructorStmts = n.getBody().getStmts();
 	        	}
 	        }
-	        this.currentMethodType = n.getType();
+
 	        //Xing added for checking current method is static or not
 	        if (ModifierSet.isStatic(n.getModifiers())) {
 	            this.currentMethodIsStatic = true;
@@ -1140,6 +1144,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	            throw new RuntimeException("Pyjama parsing error: Using the await block within a non-async method(" + n.getBeginLine() + ":" + n.getBeginColumn() + ").");
 	        }
 	        
+	        this.stateMachineVisitingMode.push(false);
+
 	        printTypeParameters(n.getTypeParameters(), printer);
 	        if (n.getTypeParameters() != null) {
 	            printer.print(" ");
@@ -1184,25 +1190,24 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 				printer.printLn();
 				printer.print("}");
 	        }
+	        
+	        this.stateMachineVisitingMode.pop();
 	        /*Xing added to print Auxiliary parallel region classes
 	         *if current method has PR regions or the current method is async.
 	         */
 	        if (n.isAsyncMethod()) {
-				StateMachineClassBuilder stateMachineMethodBuilder = new StateMachineClassBuilder(n, this.currentMethodIsStatic, this, this.PrinterForStateMachineVariableDeclaration.getSource());
-				if (this.stateMachineVisitingMode) {
-					//do nothing, when stateMachineBuilder uses PyjamaToJava visitor.
-				} else {
-					this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
-					this.PrinterForStateMachineVariableDeclaration.clear();
-				}
+	        	this.stateMachineVisitingMode.push(true);
+				StateMachineClassBuilder stateMachineMethodBuilder = new AsyncMethodStateMachineClassBuilder(n, this.currentMethodIsStatic, this, this.PrinterForStateMachineVariableDeclaration.getSource());
+				this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
+				this.PrinterForStateMachineVariableDeclaration.clear();
+				this.stateMachineVisitingMode.pop();
 	        }
 	        
 			printer.printLn(this.PrinterForAuxiliaryClasses.getSource());
 			this.PrinterForAuxiliaryClasses.clear();
 			
-			// reset all flags to default, for next method visiting
+			// reset flag to default, for next method visiting
 			this.currentMethodOrConstructorStmts = null;
-			this.currentMethodType = null;
 			///Xing added end
 			
 	    }
@@ -1782,5 +1787,13 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	public String getSource() {
 		return CodePrinter.getSource();
 	}
+	
+	public String getAuxiliaryClassesSource() {
+		return this.PrinterForAuxiliaryClasses.getSource();
+	}
+	public void appendAuxiliaryClassesSource(String source) {
+		this.PrinterForAuxiliaryClasses.printLn(source);
+	}
+	
 	/********************************************************************************************************************************/
 }
