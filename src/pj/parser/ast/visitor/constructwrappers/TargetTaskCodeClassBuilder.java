@@ -35,6 +35,7 @@ import java.util.List;
 import pj.parser.ast.visitor.AsyncFunctionCallSubstitutionVisitor;
 import pj.parser.ast.visitor.DumpVisitor;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
+import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.body.VariableDeclaratorId;
 import pj.parser.ast.expr.VariableDeclarationExpr;
@@ -50,6 +51,7 @@ import pj.parser.ast.stmt.ExpressionStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.type.ClassOrInterfaceType;
+import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
@@ -113,8 +115,24 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		this.printer.setIndentLevel(level);
 	}
 	
-	public void setFieldDeclarations(String declarations) {
-		this.generatedCodeVarDeclarations = declarations;
+	private void extractExtraFieldDeclarations(SourcePrinter printer) {
+		String declarations = printer.getSource();
+		this.generatedCodeVarDeclarations = this.generatedCodeVarDeclarations.concat(declarations);
+		printer.clear();
+	}
+	
+	private void generateVariableDeclaration() {
+		System.err.println(this.generatedCodeVarDeclarations);
+		printer.printLn(this.generatedCodeVarDeclarations);
+		for(VariableDeclarationExpr varDeclExpr: this.variableDeclarations) {
+			Type type = varDeclExpr.getType();
+			for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {
+		           VariableDeclarator v = i.next();
+		           DumpVisitor codeDumper = new DumpVisitor();
+		           v.accept(codeDumper, null);
+		           printer.printLn("private " + type.toString() + " " + v.getId() + ";");   
+		    }
+		}
 	}
 
 	private Statement getUserCode() {
@@ -241,7 +259,7 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		printer.printLn("return null;");
 		printer.unindent();
 		printer.printLn("}");
-
+		generateVariableDeclaration();
 		printer.unindent();
 		printer.printLn("}");
 	}	
@@ -251,7 +269,6 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		printer.printLn("case 0:");
 		printer.indent();
 		//----------------------------------------------------
-		int stateCounter = 0;
 		Statement body = this.targetConstruct.getBody();
 		if (null == body) {
 			throw new RuntimeException("Pyjama unexpected situation: converting an abstract method to state machine.");
@@ -269,83 +286,22 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		while (iter.hasNext()) {
 			s = iter.next();
 			if (s instanceof OmpAwaitConstruct) {
-
-				ScopeInfo currentOmpAwaitConstructScopeInfo = visitor.getSymbolTable().getScopeOfNode(s);
-				List<OmpAwaitFunctionCallDeclaration> functions = ((OmpAwaitConstruct)s).getAwaitFunctions();
-				AsyncFunctionCallSubstitutionVisitor substitutionVisitor = new AsyncFunctionCallSubstitutionVisitor(currentOmpAwaitConstructScopeInfo, functions);
-				substitutionVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
-				((OmpAwaitConstruct)s).getBody().accept(substitutionVisitor, substitutionVisitor.getPriter());
-				for(AsyncFunctionCallSubstitutionVisitor.SubstitutionInfo substitution: substitutionVisitor.getSubstitutionInfos()) {
-					String stateMachineCall = substitution.resultAwaiter;
-					String methodCall = substitution.methodCall;
-					//Declare this auxiliary awaiter variable as statemachine field variable.
-					LinkedList<VariableDeclarator> declarators = new LinkedList<VariableDeclarator>();
-	                declarators.add(new VariableDeclarator(new VariableDeclaratorId(stateMachineCall)));
-	                this.variableDeclarations.add(new VariableDeclarationExpr(new ClassOrInterfaceType(substitution.returnType), declarators));
-					printer.printLn(stateMachineCall + " = new " + StateMachineClassBuilder.stateMachineIdentifier + methodCall + ";");
-					printer.printLn(stateMachineCall + ".setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
-	                printer.printLn("PjRuntime.runTaskDirectly(" + stateMachineCall + ");");
-					printer.printLn("if (false == PjRuntime.checkFinish(" +stateMachineCall + "))  {");
-					printer.indent();
-					printer.printLn("this.OMP_state++;");
-					printer.printLn("return null;");
-					printer.unindent();
-					printer.printLn("} else {");
-					printer.indent();
-					printer.printLn("this.OMP_state++;");
-					printer.unindent();
-					printer.printLn("}");
-					stateCounter++;
-					printer.unindent();
-					printer.printLn("case " + stateCounter + ":");
-					printer.indent();
-				}
-				this.variableDeclarations.addAll(substitutionVisitor.getVariableDeclarations());
-				printer.printLn(substitutionVisitor.getSource());
-				//System.err.println("encoutering await block:"+s.toString());
+				this.visitOmpAwaitConstruct((OmpAwaitConstruct)s);
 				continue;
 			}
 			if (s instanceof OmpTargetConstruct) {
-				PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(this.visitor.getSymbolTable());
-				yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
-                s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
-                printer.printLn(yetAnotherPjVisitor.getSource());
-                visitor.appendAuxiliaryClassesSource(yetAnotherPjVisitor.getAuxiliaryClassesSource());
-				if (((OmpTargetConstruct)s).isAwait()) {
-					//if current statement is an await target construct, then, this statement is a separator
-					stateCounter++;
-					printer.unindent();
-					printer.printLn("case " + stateCounter + ":");
-					printer.indent();
-					DataClausesHandler.processDataClausesAfterTTClassInvocation(TargetTaskCodeClassBuilder.create((OmpTargetConstruct)s), printer);
-				}
+				this.visitOmpTargetConstruct((OmpTargetConstruct)s);
 				continue;
 			}
 			if (s instanceof ExpressionStmt && (((ExpressionStmt) s).getExpression() instanceof VariableDeclarationExpr)) {
-				/*
-				 * We find all VariableDeclarationExpr in this method,
-				 * and declare all variables in state machine class as
-				 * field member. The midway variable declaration becomes
-				 * variable value assignment.   --Xing 2016.5.3
-				 */
 				VariableDeclarationExpr varDeclExpr = (VariableDeclarationExpr) ((ExpressionStmt) s).getExpression();
-				this.variableDeclarations.add(varDeclExpr);
-				for (Iterator<VariableDeclarator> i = varDeclExpr.getVars().iterator(); i.hasNext();) {
-					VariableDeclarator v = i.next();
-					if (v.getInit() != null) {
-			        	DumpVisitor codeDumper = new DumpVisitor();
-					 	v.accept(codeDumper, null);
-					 	printer.printLn(codeDumper.getSource() + ";");
-			        } else {
-			        	//If the variable declaration is no initialized value, simply ignore that.
-			        }   
-				}
+				this.visitVariableDeclarationExpr(varDeclExpr);
 				continue;
 			}
-			/*DEFAULT
+			/* DEFAULT
 			 * Simply using PyjamaToJavaVisitor to visit other ExpressionStmts.
 			 */
-			PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(this.visitor.getSymbolTable());
+			PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), this.visitor.getVisitingModeTrack());
 			yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
 	        s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
 	        printer.printLn(yetAnotherPjVisitor.getSource()); 
@@ -358,5 +314,76 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		printer.unindent();
 		printer.printLn("}");
 	}
+	private void visitOmpAwaitConstruct(OmpAwaitConstruct n) {
+		ScopeInfo currentOmpAwaitConstructScopeInfo = visitor.getSymbolTable().getScopeOfNode(n);
+		List<OmpAwaitFunctionCallDeclaration> functions = n.getAwaitFunctions();
+		AsyncFunctionCallSubstitutionVisitor substitutionVisitor = new AsyncFunctionCallSubstitutionVisitor(currentOmpAwaitConstructScopeInfo, functions);
+		substitutionVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
+		n.getBody().accept(substitutionVisitor, substitutionVisitor.getPriter());
+		for(AsyncFunctionCallSubstitutionVisitor.SubstitutionInfo substitution: substitutionVisitor.getSubstitutionInfos()) {
+			String stateMachineCall = substitution.resultAwaiter;
+			String methodCall = substitution.methodCall;
+			//Declare this auxiliary awaiter variable as statemachine field variable.
+			LinkedList<VariableDeclarator> declarators = new LinkedList<VariableDeclarator>();
+            declarators.add(new VariableDeclarator(new VariableDeclaratorId(stateMachineCall)));
+            this.variableDeclarations.add(new VariableDeclarationExpr(new ClassOrInterfaceType(substitution.returnType), declarators));
+			printer.printLn(stateMachineCall + " = new " + stateMachineIdentifier + methodCall + ";");
+			printer.printLn(stateMachineCall + ".setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
+            printer.printLn("PjRuntime.runTaskDirectly(" + stateMachineCall + ");");
+			printer.printLn("if (false == PjRuntime.checkFinish(" +stateMachineCall + "))  {");
+			printer.indent();
+			printer.printLn("this.OMP_state++;");
+			printer.printLn("return null;");
+			printer.unindent();
+			printer.printLn("} else {");
+			printer.indent();
+			printer.printLn("this.OMP_state++;");
+			printer.unindent();
+			printer.printLn("}");
+			stateCounter++;
+			printer.unindent();
+			printer.printLn("case " + stateCounter + ":");
+			printer.indent();
+		}
+		this.variableDeclarations.addAll(substitutionVisitor.getVariableDeclarations());
+		printer.printLn(substitutionVisitor.getSource());
+		//System.err.println("encoutering await block:"+s.toString());
+	}
 	
+	private void visitOmpTargetConstruct(OmpTargetConstruct n) {
+		//Use another Pyjama visitor, using statemachine visiting mode
+		PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), this.visitor.getVisitingModeTrack());
+		yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
+        n.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
+        this.extractExtraFieldDeclarations(yetAnotherPjVisitor.getPrinterForAsyncTargetTaskStateMachineBuilder());
+        printer.printLn(yetAnotherPjVisitor.getSource());
+		if (n.isAwait()) {
+			//if current statement is an await target construct, then, this statement is a separator
+			stateCounter++;
+			printer.unindent();
+			printer.printLn("case " + stateCounter + ":");
+			printer.indent();
+			DataClausesHandler.processDataClausesAfterTTClassInvocation(TargetTaskCodeClassBuilder.create(n), printer);
+		}
+	}
+	
+	private void visitVariableDeclarationExpr(VariableDeclarationExpr n) {
+		/*
+		 * We find all VariableDeclarationExpr in this method,
+		 * and declare all variables in state machine class as
+		 * field member. The midway variable declaration becomes
+		 * variable value assignment.   --Xing 2016.5.3
+		 */
+		this.variableDeclarations.add(n);
+		for (Iterator<VariableDeclarator> i = n.getVars().iterator(); i.hasNext();) {
+			VariableDeclarator v = i.next();
+			if (v.getInit() != null) {
+	        	DumpVisitor codeDumper = new DumpVisitor();
+			 	v.accept(codeDumper, null);
+			 	printer.printLn(codeDumper.getSource() + ";");
+	        } else {
+	        	//If the variable declaration is no initialized value, simply ignore that.
+	        }   
+		}
+	}
 }

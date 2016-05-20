@@ -132,7 +132,7 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 			/* DEFAULT
 			 * Simply using PyjamaToJavaVisitor to visit other ExpressionStmts.
 			 */
-			PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable());
+			PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), this.visitor.getVisitingModeTrack());
 			yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
 	        s.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
 	        printer.printLn(yetAnotherPjVisitor.getSource()); 
@@ -184,7 +184,7 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 	
 	private void visitOmpTargetConstruct(OmpTargetConstruct n) {
 		//Use another Pyjama visitor, using statemachine visiting mode
-		PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable());
+		PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), this.visitor.getVisitingModeTrack());
 		yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
         n.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
         printer.printLn(yetAnotherPjVisitor.getSource());

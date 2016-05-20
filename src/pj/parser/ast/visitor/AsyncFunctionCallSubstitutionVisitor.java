@@ -75,7 +75,7 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 	}
 
 	public AsyncFunctionCallSubstitutionVisitor(ScopeInfo scope, List<OmpAwaitFunctionCallDeclaration> functionList) {
-		super();
+		super(null, null);
 		this.scope = scope;
 		this.declaredFunctions = functionList;
 	}

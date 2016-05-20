@@ -16,7 +16,7 @@ public abstract class StateMachineClassBuilder extends ConstructWrapper{
 	//This list contains all the variables should be declared as field variables in this state machine class.
 	protected LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
 	
-	protected String generatedCodeVarDeclarations;
+	protected String generatedCodeVarDeclarations = "";
 
 	public PyjamaToJavaVisitor visitor;
 	

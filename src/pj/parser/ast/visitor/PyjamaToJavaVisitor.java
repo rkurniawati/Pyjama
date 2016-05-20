@@ -66,11 +66,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	//this hashmap stores the virtual targets with their name_as names. A name may pair multiple target blocks.
 	static HashMap<String, HashSet<TargetTaskCodeClassBuilder>> nameAsTargetBlocks = new HashMap<String, HashSet<TargetTaskCodeClassBuilder>>();
 	
-	protected static Stack<Boolean> stateMachineVisitingMode = new Stack<Boolean>();
+	protected Stack<Boolean> stateMachineVisitingMode = new Stack<Boolean>();
 	
 	protected SourcePrinter CodePrinter = new SourcePrinter();
 	protected SourcePrinter PrinterForAuxiliaryClasses = new SourcePrinter();
-	protected SourcePrinter PrinterForStateMachineVariableDeclaration = new SourcePrinter();
+	protected SourcePrinter PrinterForAsyncMethodStateMachineBuilder = new SourcePrinter();
+	protected SourcePrinter PrinterForAsyncTargetTaskStateMachineBuilder = new SourcePrinter();
 
 	//keep track of current method whether is static, used for the generate of parallel region class, and work share method
 	protected boolean currentMethodIsStatic = false; 
@@ -90,21 +91,21 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	
 	private SymbolTable symbolTable = null;
 	
-	public PyjamaToJavaVisitor() {
-		this.symbolTable = null;
-	}
-	
 	public PyjamaToJavaVisitor(SymbolTable symbolTable) {
 		this.symbolTable = symbolTable;
 	}
 	
-//	public PyjamaToJavaVisitor(SymbolTable symbolTable, boolean stateMachineVisitingMode) {
-//		this.symbolTable = symbolTable;
-//		this.stateMachineVisitingMode = true;
-//	}
+	public PyjamaToJavaVisitor(SymbolTable symbolTable, Stack<Boolean> visitingMode) {
+		this.symbolTable = symbolTable;
+		this.stateMachineVisitingMode = visitingMode;
+	}
 	
 	public SymbolTable getSymbolTable() {
 		return symbolTable;
+	}
+	
+	public Stack<Boolean> getVisitingModeTrack() {
+		return this.stateMachineVisitingMode;
 	}
 	
 	//OpenMP add BEGIN*******************************************************************************OpenMP add BEGIN//
@@ -131,7 +132,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		currentPRClass.className = prefixTaskNameForParallelRegion + uniqueOpenMPRegionID;
 		
 		printer.printLn("/*OpenMP Parallel region (#" + uniqueOpenMPRegionID + ") -- START */");
-		String numThreadsClause = "";
 
 		this.PrinterForAuxiliaryClasses.printLn(currentPRClass.getSource());
 		
@@ -142,13 +142,18 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		String outputlist = "outputlist_" + currentPRClass.className;
 		printer.printLn("InternalControlVariables " + previous_icv + " = PjRuntime.getCurrentThreadICV();");
 		printer.printLn("InternalControlVariables " + new_icv + " = PjRuntime.inheritICV(" + previous_icv + ");");
-		printer.printLn("int " + thread_number + " = " + new_icv + ".nthreads_var.get("+ new_icv + ".levels_var);");
+		if (null != n.getNumThreadsExpression()) {
+			String numThreadsClause = n.getNumThreadsExpression().getNumExpression().toString();
+			printer.printLn("int " + thread_number + " = " + numThreadsClause + ";");
+		} else {
+			printer.printLn("int " + thread_number + " = " + new_icv + ".nthreads_var.get("+ new_icv + ".levels_var);");
+		}
 		printer.printLn("ConcurrentHashMap<String, Object> " + inputlist + " = new ConcurrentHashMap<String,Object>();");
 		printer.printLn("ConcurrentHashMap<String, Object> " + outputlist + " = new ConcurrentHashMap<String,Object>();");
 		
 		DataClausesHandler.processDataClausesBeforePRClassInvocation(currentPRClass, printer);
 		
-		printer.printLn(currentPRClass.className + " " + currentPRClass.className + "_in = new "+ currentPRClass.className + "(" + thread_number +numThreadsClause+ "," + new_icv + "," + inputlist + "," + outputlist + ");");
+		printer.printLn(currentPRClass.className + " " + currentPRClass.className + "_in = new "+ currentPRClass.className + "(" + thread_number + "," + new_icv + "," + inputlist + "," + outputlist + ");");
 		printer.printLn(currentPRClass.className + "_in" + ".runParallelCode();");
 		
 		
@@ -409,20 +414,23 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			printer.printLn(inputlist + " = new ConcurrentHashMap<String,Object>();");
 			printer.printLn(outputlist + " = new ConcurrentHashMap<String,Object>();");
 		} else {
-			this.PrinterForStateMachineVariableDeclaration.printLn("private ConcurrentHashMap<String, Object> " + inputlist + ";");
-			this.PrinterForStateMachineVariableDeclaration.printLn("private ConcurrentHashMap<String, Object> " + outputlist + ";");
 			printer.printLn("ConcurrentHashMap<String, Object> " + inputlist + " = new ConcurrentHashMap<String,Object>();");
 			printer.printLn("ConcurrentHashMap<String, Object> " + outputlist + " = new ConcurrentHashMap<String,Object>();");
 		}
+		this.PrinterForAsyncMethodStateMachineBuilder.printLn("private ConcurrentHashMap<String, Object> " + inputlist + ";");
+		this.PrinterForAsyncMethodStateMachineBuilder.printLn("private ConcurrentHashMap<String, Object> " + outputlist + ";");
+		this.PrinterForAsyncTargetTaskStateMachineBuilder.printLn("private ConcurrentHashMap<String, Object> " + inputlist + ";");
+		this.PrinterForAsyncTargetTaskStateMachineBuilder.printLn("private ConcurrentHashMap<String, Object> " + outputlist + ";");
 
 		DataClausesHandler.processDataClausesBeforeTTClassInvocation(currentTTClass, printer);
 		
 		if (stateMachineBuildingMode) {
 			printer.printLn(currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
-		} else {
-			this.PrinterForStateMachineVariableDeclaration.printLn("private " + currentTTClass.className + " " + currentTTClass.className + "_in;");
+		} else {			
 			printer.printLn(currentTTClass.className + " " + currentTTClass.className + "_in = new "+ currentTTClass.className + "(" + inputlist + "," + outputlist + ");");
 		}
+		this.PrinterForAsyncMethodStateMachineBuilder.printLn("private " + currentTTClass.className + " " + currentTTClass.className + "_in;");
+		this.PrinterForAsyncTargetTaskStateMachineBuilder.printLn("private " + currentTTClass.className + " " + currentTTClass.className + "_in;");
 		
 		printer.printLn("if (PjRuntime.currentThreadIsTheTarget(\"" + n.getTargetName() + "\")) {");
 		printer.indent();
@@ -1197,9 +1205,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	         */
 	        if (n.isAsyncMethod()) {
 	        	this.stateMachineVisitingMode.push(true);
-				StateMachineClassBuilder stateMachineMethodBuilder = new AsyncMethodStateMachineClassBuilder(n, this.currentMethodIsStatic, this, this.PrinterForStateMachineVariableDeclaration.getSource());
+				StateMachineClassBuilder stateMachineMethodBuilder = new AsyncMethodStateMachineClassBuilder(n, this.currentMethodIsStatic, this, this.PrinterForAsyncMethodStateMachineBuilder.getSource());
 				this.PrinterForAuxiliaryClasses.printLn(stateMachineMethodBuilder.getSource());
-				this.PrinterForStateMachineVariableDeclaration.clear();
+				this.PrinterForAsyncMethodStateMachineBuilder.clear();
 				this.stateMachineVisitingMode.pop();
 	        }
 	        
@@ -1793,6 +1801,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	public void appendAuxiliaryClassesSource(String source) {
 		this.PrinterForAuxiliaryClasses.printLn(source);
+	}
+	public SourcePrinter getPrinterForAsyncTargetTaskStateMachineBuilder() {
+		return this.PrinterForAsyncTargetTaskStateMachineBuilder;
 	}
 	
 	/********************************************************************************************************************************/
