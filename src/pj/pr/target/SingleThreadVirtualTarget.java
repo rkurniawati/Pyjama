@@ -52,9 +52,5 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 	public Thread getThread() {
 		return this.thread;
 	}
-	
-	public String targetName() {
-		return this.targetName;
-	}
 
 }

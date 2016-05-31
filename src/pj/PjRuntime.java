@@ -260,7 +260,7 @@ public class PjRuntime {
 	
 	public static VirtualTarget getVirtualTargetOfCurrentThread() {
 		for (VirtualTarget target: targetExecutorMap.values()) {
-			if (currentThreadIsTheTarget(target.getName())) {
+			if (currentThreadIsTheTarget(target.targetName())) {
 				return target;
 			}
 		}
@@ -289,6 +289,23 @@ public class PjRuntime {
 		return currentThreadIsSingleThreadTarget(targetName);
 	}
 	
+	public static String getCurrentVirtualTargetName() {
+		if (Thread.currentThread() instanceof TargetWorkerThread) {
+			return ((TargetWorkerThread)Thread.currentThread()).targetName();
+		}
+		for (VirtualTarget target: targetExecutorMap.values()) {
+			if (target instanceof SingleThreadVirtualTarget) {
+				if (((SingleThreadVirtualTarget)target).getThread() == Thread.currentThread()) {
+					return ((SingleThreadVirtualTarget)target).targetName();
+				}
+			} else {
+				continue;
+			}
+		}
+		throw new RuntimeException("Pyjama cannot distinguish current virtual target name!");
+	}
+	
+	@Deprecated
 	public static void IrrelevantHandlingProcessing(TargetTask<?> currentWaitingTask) {
 		//Test if current thread is a Pyjama worker thread, the worker thread process next target task in working queue.
 		if (Thread.currentThread() instanceof TargetWorkerThread) {

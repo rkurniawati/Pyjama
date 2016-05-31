@@ -428,4 +428,8 @@ public class Pyjama {
 		PjRuntime.createVirtualTarget(targetName, workerLimit);
 	}
 	
+	public static String omp_get_target_name() {
+		return PjRuntime.getCurrentVirtualTargetName();
+	}
+	
 }
