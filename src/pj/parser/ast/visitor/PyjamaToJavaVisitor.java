@@ -74,7 +74,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	protected SourcePrinter PrinterForAsyncTargetTaskStateMachineBuilder = new SourcePrinter();
 
 	//keep track of current method whether is static, used for the generate of parallel region class, and work share method
-	protected boolean currentMethodIsStatic = false; 
+	public boolean currentMethodIsStatic = false; 
 	//keep track of current method or constructor's statements, this statements may used in freeguithread visitor
 	protected List<Statement> currentMethodOrConstructorStmts = null;
 

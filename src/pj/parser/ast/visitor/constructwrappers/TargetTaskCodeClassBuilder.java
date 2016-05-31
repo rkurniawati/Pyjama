@@ -70,6 +70,11 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 	 */
 	private boolean hasPrinted = false;
 	
+	/*
+	 * This printer prints other TargetTaskCodeClass built for the inner task blocks.
+	 */
+	private SourcePrinter PrinterForNestedAuxiliaryClasses = new SourcePrinter();
+	
 	public OmpTargetConstruct targetConstruct;
 	
 	private List<OmpDataClause> dataClauseList;
@@ -105,6 +110,7 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		this.dataClauseList = targetConstruct.getDataClauseList();
 		if (isStatic) {
 			this.staticPrefix = "static ";
+			this.currentClassIsStatic = true;
 		}
 		this.visitor = visitor;
 		this.className = className;
@@ -122,7 +128,6 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 	}
 	
 	private void generateVariableDeclaration() {
-		System.err.println(this.generatedCodeVarDeclarations);
 		printer.printLn(this.generatedCodeVarDeclarations);
 		for(VariableDeclarationExpr varDeclExpr: this.variableDeclarations) {
 			Type type = varDeclExpr.getType();
@@ -262,6 +267,9 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		generateVariableDeclaration();
 		printer.unindent();
 		printer.printLn("}");
+		
+		//---print other auxilary classes generated before
+		printer.printLn(this.PrinterForNestedAuxiliaryClasses.getSource());
 	}	
 	
 	protected void generateStates() {
@@ -353,8 +361,10 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 	private void visitOmpTargetConstruct(OmpTargetConstruct n) {
 		//Use another Pyjama visitor, using statemachine visiting mode
 		PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), this.visitor.getVisitingModeTrack());
+		yetAnotherPjVisitor.currentMethodIsStatic = this.currentClassIsStatic;
 		yetAnotherPjVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
         n.accept(yetAnotherPjVisitor, yetAnotherPjVisitor.getPriter());
+        this.PrinterForNestedAuxiliaryClasses.printLn(yetAnotherPjVisitor.getAuxiliaryClassesSource());
         this.extractExtraFieldDeclarations(yetAnotherPjVisitor.getPrinterForAsyncTargetTaskStateMachineBuilder());
         printer.printLn(yetAnotherPjVisitor.getSource());
 		if (n.isAwait()) {

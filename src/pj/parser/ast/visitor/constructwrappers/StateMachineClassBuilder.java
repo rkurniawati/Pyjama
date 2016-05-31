@@ -11,6 +11,8 @@ public abstract class StateMachineClassBuilder extends ConstructWrapper{
 
 	protected String staticPrefix = "";
 	
+	protected boolean currentClassIsStatic = false;
+	
 	protected SourcePrinter printer = new SourcePrinter();
 	
 	//This list contains all the variables should be declared as field variables in this state machine class.
