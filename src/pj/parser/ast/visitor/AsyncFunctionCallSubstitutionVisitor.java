@@ -121,7 +121,7 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 	private String getMethodExprFullName(MethodCallExpr method) {
 		String methodFullname;
 		if (method.getScope() != null) {
-			methodFullname = method.getScope().toString() + method.getName();
+			methodFullname = method.getScope().toString() + "." + method.getName();
 		} else {
 			methodFullname = method.getName();
 		}
