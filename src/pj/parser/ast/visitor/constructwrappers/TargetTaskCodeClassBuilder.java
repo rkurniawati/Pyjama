@@ -261,6 +261,7 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		printer.printLn("/****User Code END***/");
 		//END get construct user code
 		printer.printLn("updateOutputListForSharedVars();");
+		printer.printLn("this.setFinish();");
 		printer.printLn("return null;");
 		printer.unindent();
 		printer.printLn("}");
@@ -355,7 +356,6 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		}
 		this.variableDeclarations.addAll(substitutionVisitor.getVariableDeclarations());
 		printer.printLn(substitutionVisitor.getSource());
-		//System.err.println("encoutering await block:"+s.toString());
 	}
 	
 	private void visitOmpTargetConstruct(OmpTargetConstruct n) {

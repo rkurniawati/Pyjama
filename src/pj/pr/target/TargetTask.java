@@ -56,6 +56,10 @@ public abstract class TargetTask<T> implements Callable<T>{
 		return null;
 	}
 	
+	public void setResult(T result) {
+		this.result = result;
+	}
+	
 	public T getResult(){
 		return this.result;
 	}
@@ -66,31 +70,24 @@ public abstract class TargetTask<T> implements Callable<T>{
 	
 	public void setFinish() {
 		this.isFinished = true;
-	}
-
-	public void setOnCompleteCall(TargetTask<?> finishtask, VirtualTarget whocall) {
-		this.callWhenFinish = new CallbackInfo(finishtask, whocall);
-		if (this.isFinished) {
+		if (null != this.callWhenFinish) {
 			CallbackInfo callNow = this.callWhenFinish;
 			this.callWhenFinish = null;
 			callNow.trigger();
 		}
 	}
+
+	public void setOnCompleteCall(TargetTask<?> finishtask, VirtualTarget whocall) {
+		this.callWhenFinish = new CallbackInfo(finishtask, whocall);
+	}
 	
 	public void run(){
 		try {
 			this.call();
-			this.isFinished = true;
-			if (null != this.callWhenFinish) {
-				CallbackInfo callNow = this.callWhenFinish;
-				this.callWhenFinish = null;
-				callNow.trigger();
-			}
 		} catch (Exception e) {
 			//TODO: Pyjama support for the Exception handling in the midway of target block 
 			e.printStackTrace();
 		}
-
 	}
 	
 }

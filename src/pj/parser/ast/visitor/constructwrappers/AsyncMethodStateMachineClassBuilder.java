@@ -36,6 +36,7 @@ import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.ExpressionStmt;
+import pj.parser.ast.stmt.ReturnStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.type.ClassOrInterfaceType;
@@ -122,6 +123,10 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 			}
 			if (s instanceof OmpTargetConstruct) {
 				this.visitOmpTargetConstruct((OmpTargetConstruct)s);
+				continue;
+			}
+			if (s instanceof ReturnStmt) {
+				this.visitReturnStmt((ReturnStmt)s);
 				continue;
 			}
 			if (s instanceof ExpressionStmt && (((ExpressionStmt) s).getExpression() instanceof VariableDeclarationExpr)) {
@@ -216,6 +221,14 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 	        	//If the variable declaration is no initialized value, simply ignore that.
 	        }   
 		}
+	}
+	
+	private void visitReturnStmt(ReturnStmt n) {
+		//If we encounter the return statement, store the return value to this.result, then return null;
+		String returnType = this.method.getType().toString();
+		printer.printLn("this.setResult((" + returnType + ")" + n.getExpr() + ");");
+		printer.printLn("this.setFinish();");
+		printer.printLn("return null;");
 	}
 	
 	private void generateVariableDeclaration() {
