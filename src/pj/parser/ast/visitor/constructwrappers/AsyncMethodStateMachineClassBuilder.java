@@ -25,23 +25,17 @@ package pj.parser.ast.visitor.constructwrappers;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import pj.parser.ast.body.MethodDeclaration;
 import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
-import pj.parser.ast.body.VariableDeclaratorId;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAwaitConstruct;
-import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.ExpressionStmt;
 import pj.parser.ast.stmt.ReturnStmt;
 import pj.parser.ast.stmt.Statement;
-import pj.parser.ast.symbolscope.ScopeInfo;
-import pj.parser.ast.type.ClassOrInterfaceType;
 import pj.parser.ast.type.Type;
-import pj.parser.ast.visitor.AsyncFunctionCallSubstitutionVisitor;
 import pj.parser.ast.visitor.DumpVisitor;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
@@ -151,43 +145,6 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 		printer.printLn("}");
 	}
 	
-	private void visitOmpAwaitConstruct(OmpAwaitConstruct n) {
-		ScopeInfo currentOmpAwaitConstructScopeInfo = visitor.getSymbolTable().getScopeOfNode(n);
-		List<OmpAwaitFunctionCallDeclaration> functions = n.getAwaitFunctions();
-		AsyncFunctionCallSubstitutionVisitor substitutionVisitor = new AsyncFunctionCallSubstitutionVisitor(currentOmpAwaitConstructScopeInfo, functions);
-		substitutionVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
-		n.getBody().accept(substitutionVisitor, substitutionVisitor.getPriter());
-		for(AsyncFunctionCallSubstitutionVisitor.SubstitutionInfo substitution: substitutionVisitor.getSubstitutionInfos()) {
-			String stateMachineCall = substitution.resultAwaiter;
-			String methodScope = substitution.methodScope;
-			String methodCall = substitution.methodCall;
-			//Declare this auxiliary awaiter variable as statemachine field variable.
-			LinkedList<VariableDeclarator> declarators = new LinkedList<VariableDeclarator>();
-            declarators.add(new VariableDeclarator(new VariableDeclaratorId(stateMachineCall)));
-            this.variableDeclarations.add(new VariableDeclarationExpr(new ClassOrInterfaceType(substitution.returnType), declarators));
-			printer.printLn(stateMachineCall + " = " + methodScope + "new " + stateMachineIdentifier + methodCall + ";");
-			printer.printLn(stateMachineCall + ".setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
-            printer.printLn("PjRuntime.runTaskDirectly(" + stateMachineCall + ");");
-			printer.printLn("if (false == PjRuntime.checkFinish(" +stateMachineCall + "))  {");
-			printer.indent();
-			printer.printLn("this.OMP_state++;");
-			printer.printLn("return null;");
-			printer.unindent();
-			printer.printLn("} else {");
-			printer.indent();
-			printer.printLn("this.OMP_state++;");
-			printer.unindent();
-			printer.printLn("}");
-			stateCounter++;
-			printer.unindent();
-			printer.printLn("case " + stateCounter + ":");
-			printer.indent();
-		}
-		this.variableDeclarations.addAll(substitutionVisitor.getVariableDeclarations());
-		printer.printLn(substitutionVisitor.getSource());
-		//System.err.println("encoutering await block:"+s.toString());
-	}
-	
 	private void visitOmpTargetConstruct(OmpTargetConstruct n) {
 		//Use another Pyjama visitor, using statemachine visiting mode
 		PyjamaToJavaVisitor yetAnotherPjVisitor = new PyjamaToJavaVisitor(visitor.getSymbolTable(), this.visitor.getVisitingModeTrack());
@@ -203,27 +160,7 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 			DataClausesHandler.processDataClausesAfterTTClassInvocation(TargetTaskCodeClassBuilder.create(n), printer);
 		}
 	}
-	
-	private void visitVariableDeclarationExpr(VariableDeclarationExpr n) {
-		/*
-		 * We find all VariableDeclarationExpr in this method,
-		 * and declare all variables in state machine class as
-		 * field member. The midway variable declaration becomes
-		 * variable value assignment.   --Xing 2016.5.3
-		 */
-		this.variableDeclarations.add(n);
-		for (Iterator<VariableDeclarator> i = n.getVars().iterator(); i.hasNext();) {
-			VariableDeclarator v = i.next();
-			if (v.getInit() != null) {
-	        	DumpVisitor codeDumper = new DumpVisitor();
-			 	v.accept(codeDumper, null);
-			 	printer.printLn(codeDumper.getSource() + ";");
-	        } else {
-	        	//If the variable declaration is no initialized value, simply ignore that.
-	        }   
-		}
-	}
-	
+		
 	private void visitReturnStmt(ReturnStmt n) {
 		//If we encounter the return statement, store the return value to this.result, then return null;
 		String returnType = this.method.getType().toString();
