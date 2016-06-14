@@ -159,12 +159,13 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 		n.getBody().accept(substitutionVisitor, substitutionVisitor.getPriter());
 		for(AsyncFunctionCallSubstitutionVisitor.SubstitutionInfo substitution: substitutionVisitor.getSubstitutionInfos()) {
 			String stateMachineCall = substitution.resultAwaiter;
+			String methodScope = substitution.methodScope;
 			String methodCall = substitution.methodCall;
 			//Declare this auxiliary awaiter variable as statemachine field variable.
 			LinkedList<VariableDeclarator> declarators = new LinkedList<VariableDeclarator>();
             declarators.add(new VariableDeclarator(new VariableDeclaratorId(stateMachineCall)));
             this.variableDeclarations.add(new VariableDeclarationExpr(new ClassOrInterfaceType(substitution.returnType), declarators));
-			printer.printLn(stateMachineCall + " = new " + stateMachineIdentifier + methodCall + ";");
+			printer.printLn(stateMachineCall + " = " + methodScope + "new " + stateMachineIdentifier + methodCall + ";");
 			printer.printLn(stateMachineCall + ".setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
             printer.printLn("PjRuntime.runTaskDirectly(" + stateMachineCall + ");");
 			printer.printLn("if (false == PjRuntime.checkFinish(" +stateMachineCall + "))  {");

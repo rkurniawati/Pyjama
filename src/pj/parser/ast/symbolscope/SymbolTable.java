@@ -73,7 +73,7 @@ public class SymbolTable {
 	public ScopeInfo getScopeOfNode(Node node) {
 		ScopeInfo scope = this.allScopes.get(node);
 		if (scope == null) {
-			throw new SymbolException("Cannot find scope related to this node");
+			throw new SymbolException("Cannot find scope related to this node:" + node);
 		} else {
 			return scope;
 		}

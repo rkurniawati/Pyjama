@@ -318,7 +318,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
         }
     }
 
-    private void printArguments(List<Expression> args, Object arg) {
+    public void printArguments(List<Expression> args, Object arg) {
         printer.print("(");
         if (args != null) {
             for (Iterator<Expression> i = args.iterator(); i.hasNext();) {

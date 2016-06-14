@@ -56,6 +56,7 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 	private LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
 	
 	public class SubstitutionInfo {
+		public String methodScope;
 		public String methodCall;
 		public String resultAwaiter;
 		public String returnType;
@@ -66,8 +67,9 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 				return false;
 			}
 		}
-		public SubstitutionInfo(String methodName, String variableName, String returnType) {
-			this.methodCall = methodName;
+		public SubstitutionInfo(String scope, String methodCall, String variableName, String returnType) {
+			this.methodScope = scope;
+			this.methodCall = methodCall;
 			this.resultAwaiter = variableName;
 			this.returnType = returnType;
 			
@@ -83,10 +85,11 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 	@Override
 	public void visit(MethodCallExpr n, SourcePrinter printer) {
 		OmpAwaitFunctionCallDeclaration matchedAsyncFunctionDeclaration = isDeclaredAsyncMethod(n);
-		String methodCall = dumpMethodCallToString(n);
+		String methodCall = ((MethodCallExpr)n).getName() + this.getMethodCallParameters((MethodCallExpr)n);
+		String methodScope = getMethodExprScope((MethodCallExpr)n);
 		if (null != matchedAsyncFunctionDeclaration) {
 			String substitutionVariable = prefixAwaitFunctionResult + n.getName() + (awaitFunctionResultUniqueID++);
-			SubstitutionInfo substitutionInfo = new SubstitutionInfo(methodCall, substitutionVariable, 
+			SubstitutionInfo substitutionInfo = new SubstitutionInfo(methodScope, methodCall, substitutionVariable, 
 					StateMachineClassBuilder.stateMachineIdentifier + n.getName());
 			this.methodCallSubstitutions.add(substitutionInfo);
 			if (substitutionInfo.returnVoid()) {
@@ -128,9 +131,17 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 		return methodFullname;
 	}
 	
-	private String dumpMethodCallToString(MethodCallExpr methodExpr) {
+	private String getMethodExprScope(MethodCallExpr method) {
+		if (null == method.getScope()) {
+			return "";
+		} else {
+			return method.getScope().toString()+".";
+		}
+	}
+	
+	private String getMethodCallParameters(MethodCallExpr methodExpr) {
 		DumpVisitor dump = new DumpVisitor();
-		methodExpr.accept(dump, null);
+		dump.printArguments(methodExpr.getArgs(), null);
         return dump.getSource();
 	}
 	
