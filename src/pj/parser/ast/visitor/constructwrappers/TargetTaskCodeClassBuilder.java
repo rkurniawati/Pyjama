@@ -52,9 +52,6 @@ import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 	
 	private static HashMap<OmpTargetConstruct, TargetTaskCodeClassBuilder> pairs = new HashMap<OmpTargetConstruct, TargetTaskCodeClassBuilder>();
-
-	//This list contains all the variables should be declared as field variables in this state machine class.
-	private LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
 	
 	public String className = "";
 	

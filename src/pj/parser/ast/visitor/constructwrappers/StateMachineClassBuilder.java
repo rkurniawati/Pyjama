@@ -80,7 +80,7 @@ public abstract class StateMachineClassBuilder extends ConstructWrapper{
 			printer.printLn("case " + stateCounter + ":");
 			printer.indent();
 		}
-		this.variableDeclarations.addAll(substitutionVisitor.getVariableDeclarations());
+		variableDeclarations.addAll(substitutionVisitor.getVariableDeclarations());
 		printer.printLn(substitutionVisitor.getSource());
 	}
 	
