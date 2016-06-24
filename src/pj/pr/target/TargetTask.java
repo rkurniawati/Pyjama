@@ -62,6 +62,15 @@ public abstract class TargetTask<T> implements Callable<T>{
 	}
 	
 	public T getResult(){
+		if (null != this.thrown) {
+			if (thrown instanceof RuntimeException) {
+				throw (RuntimeException)thrown;
+			} else if (thrown instanceof Error) {
+				throw (Error)thrown;
+			} else {
+				//TODO: throw checked exception.
+			}
+		}
 		return this.result;
 	}
 	
@@ -79,7 +88,7 @@ public abstract class TargetTask<T> implements Callable<T>{
 	
 	public void setFinish() {
 		this.isFinished = true;
-		if ((null == this.thrown) && (null != this.callWhenFinish)) {
+		if (null != this.callWhenFinish) {
 			CallbackInfo callNow = this.callWhenFinish;
 			this.callWhenFinish = null;
 			callNow.trigger();

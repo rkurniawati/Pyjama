@@ -157,6 +157,20 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 			printer.unindent();
 			printer.printLn("case " + stateCounter + ":");
 			printer.indent();
+			printer.printLn("Throwable OMP_asyncThrow = _OMP_TargetTaskRegion_0_in.getException();");
+			printer.printLn("if (null != OMP_asyncThrow) {");
+			printer.indent();
+			printer.printLn("if (OMP_asyncThrow instanceof Error) {");
+			printer.indent();
+			printer.printLn("throw (Error)OMP_asyncThrow;");
+			printer.unindent();
+			printer.printLn("} else if (OMP_asyncThrow instanceof RuntimeException) {");
+			printer.indent();
+			printer.printLn("throw (RuntimeException)OMP_asyncThrow;");
+			printer.unindent();
+			printer.printLn("}");
+			printer.unindent();
+			printer.printLn("}");
 			DataClausesHandler.processDataClausesAfterTTClassInvocation(TargetTaskCodeClassBuilder.create(n), printer);
 		}
 	}
