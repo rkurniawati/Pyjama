@@ -38,17 +38,7 @@ public class TargetWorkerThread extends Thread {
         this.firstTask = null;
         while (task != null || (task = executor.getTask()) != null) {
         	try {
-        		Throwable thrown = null;
-                try {
-                	task.run();
-                } catch (RuntimeException x) {
-                	thrown = x; throw x;
-                } catch (Error x) {
-                	thrown = x; throw x;
-                } catch (Throwable x) {
-                	thrown = x; 
-                	throw new Error(x);
-                }
+                task.run();
         	} finally {
         		task = null;
             }
@@ -63,6 +53,7 @@ public class TargetWorkerThread extends Thread {
 		return this.executor.getTargetName();
 	}
 	
+	@Deprecated
 	public void IrrelevantHandlingProcessing(TargetTask<?> waitingTask) {
 		/*
 		 * This function is used when current execution of the task is depending on
@@ -73,17 +64,7 @@ public class TargetWorkerThread extends Thread {
 			TargetTask<?> anotherTask = executor.getTask();
 			if (anotherTask != null) {
 				try {
-	        		Throwable thrown = null;
-	                try {
-	                	anotherTask.run();
-	                } catch (RuntimeException x) {
-	                	thrown = x; throw x;
-	                } catch (Error x) {
-	                	thrown = x; throw x;
-	                } catch (Throwable x) {
-	                	thrown = x; 
-	                	throw new Error(x);
-	                }
+	                anotherTask.run();
 	        	} finally {
 	        		anotherTask = null;
 	            }

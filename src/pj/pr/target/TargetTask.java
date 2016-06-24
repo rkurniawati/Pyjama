@@ -28,6 +28,7 @@ public abstract class TargetTask<T> implements Callable<T>{
 	private VirtualTarget caller = null;
 	private CallbackInfo callWhenFinish;
 	private volatile boolean isFinished = false;
+	private Throwable thrown;
 	private T result;
 	
 	class CallbackInfo {
@@ -63,6 +64,14 @@ public abstract class TargetTask<T> implements Callable<T>{
 	public T getResult(){
 		return this.result;
 	}
+	
+	public Throwable getException() {
+		return this.thrown;
+	}
+	
+	public void setException(Throwable thrown) {
+		this.thrown = thrown;
+	}
 		
 	public boolean isFinished() {
 		return this.isFinished;
@@ -70,7 +79,7 @@ public abstract class TargetTask<T> implements Callable<T>{
 	
 	public void setFinish() {
 		this.isFinished = true;
-		if (null != this.callWhenFinish) {
+		if ((null == this.thrown) && (null != this.callWhenFinish)) {
 			CallbackInfo callNow = this.callWhenFinish;
 			this.callWhenFinish = null;
 			callNow.trigger();
@@ -85,8 +94,8 @@ public abstract class TargetTask<T> implements Callable<T>{
 		try {
 			this.call();
 		} catch (Exception e) {
-			//TODO: Pyjama support for the Exception handling in the midway of target block 
-			e.printStackTrace();
+			this.thrown = e;
+			this.setFinish();
 		}
 	}
 	
