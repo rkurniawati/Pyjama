@@ -326,21 +326,23 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
         this.extractExtraFieldDeclarations(yetAnotherPjVisitor.getPrinterForAsyncTargetTaskStateMachineBuilder());
         printer.printLn(yetAnotherPjVisitor.getSource());
 		if (n.isAwait()) {
+			String targetClassInstanceName = TargetTaskCodeClassBuilder.create(n).className;
+			String throwName = "OMP_asyncThrow_" + targetClassInstanceName;
 			//if current statement is an await target construct, then, this statement is a separator
 			stateCounter++;
 			printer.unindent();
 			printer.printLn("case " + stateCounter + ":");
 			printer.indent();
-			printer.printLn("Throwable OMP_asyncThrow = _OMP_TargetTaskRegion_0_in.getException();");
-			printer.printLn("if (null != OMP_asyncThrow) {");
+			printer.printLn("Throwable " + throwName + " = " + targetClassInstanceName + "_in.getException();");
+			printer.printLn("if (null != " + throwName + ") {");
 			printer.indent();
-			printer.printLn("if (OMP_asyncThrow instanceof Error) {");
+			printer.printLn("if (" + throwName + " instanceof Error) {");
 			printer.indent();
-			printer.printLn("throw (Error)OMP_asyncThrow;");
+			printer.printLn("throw (Error)" + throwName + ";");
 			printer.unindent();
-			printer.printLn("} else if (OMP_asyncThrow instanceof RuntimeException) {");
+			printer.printLn("} else if (" + throwName +" instanceof RuntimeException) {");
 			printer.indent();
-			printer.printLn("throw (RuntimeException)OMP_asyncThrow;");
+			printer.printLn("throw (RuntimeException)" + throwName + ";");
 			printer.unindent();
 			printer.printLn("}");
 			printer.unindent();

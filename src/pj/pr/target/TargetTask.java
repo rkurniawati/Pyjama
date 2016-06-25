@@ -28,7 +28,7 @@ public abstract class TargetTask<T> implements Callable<T>{
 	private VirtualTarget caller = null;
 	private CallbackInfo callWhenFinish;
 	private volatile boolean isFinished = false;
-	private Throwable thrown;
+	private Throwable thrown = null;
 	private T result;
 	
 	class CallbackInfo {
@@ -39,6 +39,7 @@ public abstract class TargetTask<T> implements Callable<T>{
 			this.caller = e;
 		}
 		void trigger() {
+			System.err.println("submit call" + caller);
 			this.caller.submit(callback);
 		}
 	}
@@ -68,7 +69,8 @@ public abstract class TargetTask<T> implements Callable<T>{
 			} else if (thrown instanceof Error) {
 				throw (Error)thrown;
 			} else {
-				//TODO: throw checked exception.
+				//TODO
+				System.err.println("Pyjama throws checket exception:\n" + thrown.getMessage());
 			}
 		}
 		return this.result;
