@@ -522,6 +522,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	public void visit(OmpAwaitFunctionCallDeclaration n, SourcePrinter printer) {
 		throw new RuntimeException("OmpAwaitFunctionCallDeclaration should not be visited by PyjamaToJavaVisitor.");
 	}
+	
 	//OpenMP add END*********************************************************************************OpenMP add END//
 	   public void visit(CompilationUnit n, SourcePrinter printer) {
 		   //print the compiler information at the beginning of the file.

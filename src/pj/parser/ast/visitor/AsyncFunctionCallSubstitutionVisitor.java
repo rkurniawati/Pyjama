@@ -88,7 +88,7 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 		String methodCall = ((MethodCallExpr)n).getName() + this.getMethodCallParameters((MethodCallExpr)n);
 		String methodScope = getMethodExprScope((MethodCallExpr)n);
 		if (null != matchedAsyncFunctionDeclaration) {
-			String substitutionVariable = prefixAwaitFunctionResult + n.getName() + (awaitFunctionResultUniqueID++);
+			String substitutionVariable = prefixAwaitFunctionResult + n.getName() + "_" + (awaitFunctionResultUniqueID++);
 			SubstitutionInfo substitutionInfo = new SubstitutionInfo(methodScope, methodCall, substitutionVariable, 
 					StateMachineClassBuilder.stateMachineIdentifier + n.getName());
 			this.methodCallSubstitutions.add(substitutionInfo);

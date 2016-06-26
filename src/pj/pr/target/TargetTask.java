@@ -39,7 +39,6 @@ public abstract class TargetTask<T> implements Callable<T>{
 			this.caller = e;
 		}
 		void trigger() {
-			System.err.println("submit call" + caller);
 			this.caller.submit(callback);
 		}
 	}
@@ -70,7 +69,8 @@ public abstract class TargetTask<T> implements Callable<T>{
 				throw (Error)thrown;
 			} else {
 				//TODO
-				System.err.println("Pyjama throws checket exception:\n" + thrown.getMessage());
+				System.err.println("Pyjama throws checked exception:\n" + thrown.getMessage());
+				thrown.printStackTrace();
 			}
 		}
 		return this.result;
@@ -105,7 +105,7 @@ public abstract class TargetTask<T> implements Callable<T>{
 		try {
 			this.call();
 		} catch (Exception e) {
-			this.thrown = e;
+			this.thrown = new Throwable(e);
 			this.setFinish();
 		}
 	}
