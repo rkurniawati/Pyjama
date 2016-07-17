@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.omp.OmpDataClause;
+import pj.parser.ast.omp.OmpLastprivateDataClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
@@ -114,16 +115,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	public int getEndLine() {
 		return parallelConstruct.getEndLine();
 	}
-	
-
-	public String get_inputlist() {
-		return "inputlist_" + this.className;
-	}
-	
-	public String get_outputlist() {
-		return "outputlist_" + this.className;
-	}
-	
+		
 	public void setPrinterIndentLevel(int level) {
 		this.printer.setIndentLevel(level);
 	}
@@ -150,24 +142,27 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.indent();
 		printer.printLn("private int OMP_threadNumber = 1;");
 		printer.printLn("private InternalControlVariables icv;");
-		printer.printLn("private ConcurrentHashMap<String, Object> OMP_inputList = new ConcurrentHashMap<String, Object>();");
-		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList = new ConcurrentHashMap<String, Object>();");
 		printer.printLn("private ReentrantLock OMP_lock;");
+		printer.printLn("private Object OMP_reduction_lock = new Object();");
 		printer.printLn("private ParIterator<?> OMP__ParIteratorCreator;");
 		printer.printLn("public AtomicReference<Throwable> OMP_CurrentParallelRegionExceptionSlot = new AtomicReference<Throwable>(null);");
 		printer.printLn();
-		//#BEGIN shared variables defined here
-		printer.printLn("//#BEGIN shared variables defined here");
-		for(OmpDataClause sharedClause: this.dataClauseList) {
-			if (sharedClause instanceof OmpSharedDataClause) {
-				((OmpSharedDataClause) sharedClause).printSharedVariableDefination(parallelConstruct, printer);
-			} else {
-				continue;
+		//#BEGIN variables defined here
+		printer.printLn("//#BEGIN shared, private, lastprivate, reduction variables defined here");
+		for(OmpDataClause clause: this.dataClauseList) {
+			if (clause instanceof OmpSharedDataClause) {
+				clause.printVariableDefination(parallelConstruct, printer, null);
+			} else if (clause instanceof OmpPrivateDataClause) {
+				clause.printVariableDefination(parallelConstruct, printer, DataClausesHandler.PRIVATE_VARIABLE_DECLARATION_PREFIX);
+			} else if (clause instanceof OmpLastprivateDataClause) {
+				clause.printVariableDefination(parallelConstruct, printer, DataClausesHandler.LASTPRIVATE_VARIABLE_DECLARATION_PREFIX);
+			} else if (clause instanceof OmpReductionDataClause) {
+				clause.printVariableDefination(parallelConstruct, printer, DataClausesHandler.REDUCTION_VARIABLE_DECLARATION_PREFIX);
 			}
 		}
-		printer.printLn("//#END shared variables defined here");
-		//#END shared variables defined here
-		printer.printLn("public " + this.className + "(int thread_num, InternalControlVariables icv, ConcurrentHashMap<String, Object> inputlist, ConcurrentHashMap<String, Object> outputlist) {");
+		printer.printLn("//#END shared, private, lastprivate, reduction variables defined here");
+		//#END variables defined here
+		printer.printLn("public " + this.className + "(int thread_num, InternalControlVariables icv) {");
 		printer.indent();
 		printer.printLn("this.icv = icv;");
 		printer.printLn("if ((false == Pyjama.omp_get_nested()) && (Pyjama.omp_get_level() > 0)) {");
@@ -179,73 +174,32 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("this.OMP_threadNumber = thread_num;");
 		printer.unindent();
 		printer.printLn("}");
-		printer.printLn("this.OMP_inputList = inputlist;");
-		printer.printLn("this.OMP_outputList = outputlist;");
 		printer.printLn("icv.currentParallelRegionThreadNumber = this.OMP_threadNumber;");
 		printer.printLn("icv.OMP_CurrentParallelRegionBarrier = new PjCyclicBarrier(this.OMP_threadNumber);");
-		//#BEGIN shared variables initialised here
-		printer.printLn("//#BEGIN shared variables initialised here");
-		for(OmpDataClause sharedClause: this.dataClauseList) {
-			if (sharedClause instanceof OmpSharedDataClause) {
-				((OmpSharedDataClause) sharedClause).printSharedVariableInitialisation(parallelConstruct, printer);
-			} else {
-				continue;
-			}
-		}
-		printer.printLn("//#END shared variables initialised here");
-		//#END shared variables initialised here
 		printer.unindent();
 		printer.printLn("}");
 		printer.printLn();
-		printer.printLn("private void updateOutputListForSharedVars() {");
-		printer.indent();
-		//BEGIN put shared variables lastprivate(if any, though no available) to outputlist
-		printer.printLn("//BEGIN update outputlist");
-		DataClausesHandler.updateOutputlistForSharedVariablesInPRClass(this, printer);
-		printer.printLn("//END update outputlist");
-		//END put shared variables lastprivate(if any, though no available) to outputlist
-		printer.unindent();
-		printer.printLn("}");
 		printer.printLn("class MyCallable implements Callable<Void> {");
 		printer.indent();
 		printer.printLn("private int alias_id;");
-		printer.printLn("private ConcurrentHashMap<String, Object> OMP_inputList;");
-		printer.printLn("private ConcurrentHashMap<String, Object> OMP_outputList;");
 		
 		//#BEGIN firstprivate reduction variables defined for each thread here
-		printer.printLn("//#BEGIN private/firstprivate reduction variables defined here");
+		printer.printLn("//#BEGIN private/firstprivate reduction variables defined and initialised here");
 		for(OmpDataClause clause: this.dataClauseList) {
 			if (clause instanceof OmpPrivateDataClause) {
-				((OmpPrivateDataClause) clause).printPrivateVariableDefination(parallelConstruct, printer);
+				clause.printVariableDefinationAndInitialisation(parallelConstruct, printer, null, DataClausesHandler.PRIVATE_VARIABLE_DECLARATION_PREFIX);
+			} else if (clause instanceof OmpLastprivateDataClause) {
+				clause.printVariableDefinationAndInitialisation(parallelConstruct, printer, null, DataClausesHandler.LASTPRIVATE_VARIABLE_DECLARATION_PREFIX);
 			} else if (clause instanceof OmpReductionDataClause) {
-				((OmpReductionDataClause) clause).printReductionVariableDefination(parallelConstruct, printer);
-			} else {
-				continue;
+				clause.printVariableDefinationAndInitialisation(parallelConstruct, printer, null, DataClausesHandler.REDUCTION_VARIABLE_DECLARATION_PREFIX);
 			}
 		}
-		printer.printLn("//#END private/firstprivate reduction variables  defined here");
+		printer.printLn("//#END private/firstprivate reduction variables defined and initialised here");
 		//#END firstprivate reduction variables defined for each thread here
 		
-		printer.printLn("MyCallable(int id, ConcurrentHashMap<String,Object> inputlist, ConcurrentHashMap<String,Object> outputlist){");
+		printer.printLn("MyCallable(int id){");
 		printer.indent();
-		printer.printLn("this.alias_id = id;");
-		printer.printLn("this.OMP_inputList = inputlist;");
-		printer.printLn("this.OMP_outputList = outputlist;");
-		
-		//#BEGIN firstprivate reduction variables initialised for each thread here
-		printer.printLn("//#BEGIN firstprivate reduction variables initialised here");
-		for(OmpDataClause clause: this.dataClauseList) {
-			if (clause instanceof OmpPrivateDataClause) {
-				((OmpPrivateDataClause) clause).printPrivateVariableInitialisation(parallelConstruct, printer);
-			} else if (clause instanceof OmpReductionDataClause) {
-				((OmpReductionDataClause) clause).printReductionVariableInitialisation(parallelConstruct, printer);
-			} else {
-				continue;
-			}
-		}
-		printer.printLn("//#END firstprivate reduction variables initialised here");
-		//#END firstprivate reduction variables initialised for each thread here
-		
+		printer.printLn("this.alias_id = id;");		
 		printer.unindent();
 		printer.printLn("}");
 		printer.printLn();
@@ -277,7 +231,6 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("}");
 		printer.printLn("if (0 == this.alias_id) {");
 		printer.indent();
-		printer.printLn("updateOutputListForSharedVars();");
 		if (this.parallelConstruct.isFreegui()) {
 		    /*
 		     * if current parallel region has freegui attribute, master
@@ -312,7 +265,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		if (this.parallelConstruct.isFreegui()) {
 			printer.printLn("for (int i = 0; i <= this.OMP_threadNumber-1; i++) {");
 			printer.indent();
-			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
+			printer.printLn("Callable<ConcurrentHashMap<String,Object>> slaveThread = new MyCallable(i);");
 			printer.printLn("PjRuntime.submit(i, slaveThread, icv);");
 			printer.unindent();
 			printer.printLn("}");
@@ -324,11 +277,11 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		else {
 			printer.printLn("for (int i = 1; i <= this.OMP_threadNumber-1; i++) {");
 			printer.indent();
-			printer.printLn("Callable<Void> slaveThread = new MyCallable(i, OMP_inputList, OMP_outputList);");
+			printer.printLn("Callable<Void> slaveThread = new MyCallable(i);");
 			printer.printLn("PjRuntime.submit(i, slaveThread, icv);");
 			printer.unindent();
 			printer.printLn("}");
-			printer.printLn("Callable<Void> masterThread = new MyCallable(0, OMP_inputList, OMP_outputList);");
+			printer.printLn("Callable<Void> masterThread = new MyCallable(0);");
 			printer.printLn("PjRuntime.getCurrentThreadICV().currentThreadAliasID = 0;");
 			printer.printLn("try {");
 			printer.indent();

@@ -68,7 +68,6 @@ public abstract class TargetTask<T> implements Callable<T>{
 			} else if (thrown instanceof Error) {
 				throw (Error)thrown;
 			} else {
-				//TODO
 				System.err.println("Pyjama throws checked exception:\n" + thrown.getMessage());
 				thrown.printStackTrace();
 			}

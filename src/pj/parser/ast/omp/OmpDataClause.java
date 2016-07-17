@@ -27,6 +27,7 @@ import java.util.Set;
 import pj.parser.ast.Node;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.visitor.GenericVisitor;
+import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.VoidVisitor;
 
 public abstract class OmpDataClause extends Node{
@@ -50,6 +51,9 @@ public abstract class OmpDataClause extends Node{
 	}
 	
 	public abstract Set<Expression> getArgumentSet();
+	
+	public abstract void printVariableDefination(OpenMPStatement n, SourcePrinter printer, String prefix);
+	public abstract void printVariableDefinationAndInitialisation(OpenMPStatement n, SourcePrinter printer, String left_prefix, String right_prefix);
 	
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {

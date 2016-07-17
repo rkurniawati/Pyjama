@@ -27,6 +27,7 @@ import java.util.Set;
 
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.visitor.GenericVisitor;
+import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.VoidVisitor;
 
 public class OmpCopyprivateDataClause extends OmpDataClause{
@@ -65,6 +66,19 @@ public class OmpCopyprivateDataClause extends OmpDataClause{
 	@Override
 	public <A> void accept(VoidVisitor<A> v, A arg) {
 		v.visit(this, arg);	
+	}
+
+	@Override
+	public void printVariableDefination(OpenMPStatement n, SourcePrinter printer, String prefix) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printVariableDefinationAndInitialisation(OpenMPStatement n, SourcePrinter printer, String left_prefix,
+			String right_prefix) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

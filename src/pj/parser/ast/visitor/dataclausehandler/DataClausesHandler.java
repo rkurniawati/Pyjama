@@ -36,8 +36,6 @@ import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
 import pj.parser.ast.omp.OmpReductionOperator;
-import pj.parser.ast.omp.OmpSharedDataClause;
-import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.symbolscope.ScopeInfo;
@@ -62,12 +60,19 @@ public class DataClausesHandler {
 	private static final String STR_UNSUPPORTED_ON_PYJAMA = "Unsupported: The following is not supported on current version of Pyjama:";
 	
 	/*
-	 * Prefix for worksharing private variables renaming, added by Xing in 2014.8.3
+	 * Prefix for worksharing private variables renaming, added by Xing on 2014.8.3
 	 */
 	private static final String WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX = "OMP_WoRkShArInG_PRIVATE_";
+	/*
+	 * Prefix for private(firstprivate), reduction, lastprivate variable declaration, add by Xing on 2016.7.16
+	 */
+	public static final String PRIVATE_VARIABLE_DECLARATION_PREFIX = "OMP_PRIVATE_";
+	public static final String LASTPRIVATE_VARIABLE_DECLARATION_PREFIX = "OMP_LASTPRIVATE_";
+	public static final String REDUCTION_VARIABLE_DECLARATION_PREFIX = "OMP_REDUCTION_";
 	
 	public static void processDataClausesBeforePRClassInvocation(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
 		List<OmpDataClause> dataClauseList = parallelWrapper.parallelConstruct.getDataClauseList();
+		String classInstanceName = parallelWrapper.className + "_in";
 		if (null == dataClauseList) {
 			return;
 		}
@@ -77,37 +82,33 @@ public class DataClausesHandler {
 			case Shared:
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
-					printer.printLn(parallelWrapper.get_inputlist() + ".put(\"" + varName + "\"," + varName + ");");
-					//e.g. inputlist.put("sp", sp);
+					printer.printLn(classInstanceName + "." + varName + " = " + varName + ";");
+					//e.g. ParallelRegion_0_in.sp = sp;
 				}
 				break;
 			case Private:
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
-					printer.printLn(parallelWrapper.get_inputlist() + ".put(\"" + varName + "\"," + varName + ");");
-					//e.g. inputlist.put("sp", sp);
+					printer.printLn(classInstanceName + "." + PRIVATE_VARIABLE_DECLARATION_PREFIX + varName + " = " + varName + ";");
+					//e.g. ParallelRegion_0_in.OMP_PR_PRIVATE_sp = sp;
 				}
 				break;
 			case Lastprivate:
-				for(Expression varExpression: dataClause.getArgumentSet()) {
-					String varName = varExpression.toString();
-					printer.printLn(parallelWrapper.get_outputlist() + ".put(\"" + varName + "\"," + varName + ");");
-					//e.g. outputlist.put("sp", sp);
-				}
+				/*
+				 * lastprivate variables needn't do anything before invocation
+				 */
 				break;
 			case Reduction:
 				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
 					String varName = varExpression.toString();
-					printer.printLn(parallelWrapper.get_inputlist() + ".put(\"" + varName + "\"," + varName + ");");
-					printer.printLn(parallelWrapper.get_outputlist() + ".put(\"" + varName + "\"," + varName + ");");
-					//e.g. inputlist.put("sp",sp);
-					//e.g. outputlist.put("sp", sp);
+					printer.printLn(classInstanceName + "." + REDUCTION_VARIABLE_DECLARATION_PREFIX + varName + " = " + varName + ";");
+					//e.g. ParallelRegion_0_in.sp = sp;
 				}
 				break;
 			case Copyprivate:
 				throw new RuntimeException(STR_UNSUPPORTED_ON_PYJAMA + "copyprivate clause");
 			case Default:
-				// donothing
+				// do nothing.
 				break;
 			default:
 				throw new RuntimeException("Find unexpected Data clause:" + dataClause.DataClauseType().toString());	
@@ -118,6 +119,7 @@ public class DataClausesHandler {
 	public static void processDataClausesAfterPRClassInvocation(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
 		OmpParallelConstruct parallelConstruct = parallelWrapper.parallelConstruct;
 		List<OmpDataClause> dataClauseList = parallelConstruct.getDataClauseList();
+		String classInstanceName = parallelWrapper.className + "_in";
 		if (null == dataClauseList) {
 			return;
 		}
@@ -126,21 +128,10 @@ public class DataClausesHandler {
 			switch (dataClause.DataClauseType()) {
 			
 			case Shared:
-				HashMap<String, String> sharedArgs = ((OmpSharedDataClause)dataClause).getArgsTypes(parallelConstruct);
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
-					String varType = sharedArgs.get(varName);
-					if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-						printer.printLn(varName + " = " + "(" + DataClauseHandlerUtils.autoBox(varType) + ")" 
-								+ parallelWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
-						//e.g. i = (Integer)outputList.get("i");
-					}
-					else {
-						printer.printLn(varName + " = " + "(" + varType + ")" 
-								+ parallelWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
-						//e.g. sp = (Point)outputList.get("sp");
-						//e.g. sp1 = (String)outputList.get("sp1");
-					}
+					printer.printLn(varName + " = " + classInstanceName + "." + varName + ";");
+					//e.g. sp = ParallelRegion_0_in.sp;
 				}
 				break;
 				
@@ -151,47 +142,24 @@ public class DataClausesHandler {
 				break;
 				
 			case Lastprivate:
-				HashMap<String, String> lastprivateArgs = ((OmpLastprivateDataClause)dataClause).getArgsTypes(parallelConstruct);
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
-					String varType = lastprivateArgs.get(varName);
-					if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-						printer.printLn(varName + " = " + "(" + DataClauseHandlerUtils.autoBox(varType) + ")" 
-								+ parallelWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
-						//e.g. i = (Integer)outputList.get("i");
-					}
-					else {
-						printer.printLn(varName + " = " + "(" + varType + ")" 
-								+ parallelWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
-						//e.g. sp = (Point)outputList.get("sp");
-						//e.g. sp1 = (String)outputList.get("sp1");
-					}
+					printer.printLn(varName + " = " + classInstanceName + "." + LASTPRIVATE_VARIABLE_DECLARATION_PREFIX + varName + ";");
 				}
 				break;
 				
 			case Reduction:
-				HashMap<String, String> reductionArgs = ((OmpReductionDataClause)dataClause).getArgsTypes(parallelConstruct);
 				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
 					String varName = varExpression.toString();
-					String varType = reductionArgs.get(varName);
-					if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-						printer.printLn(varName + " = " + "(" + DataClauseHandlerUtils.autoBox(varType) + ")" 
-								+ parallelWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
-						//e.g. i = (Integer)outputList.get("i");
-					}
-					else {
-						printer.printLn(varName + " = " + "(" + varType + ")" 
-								+ parallelWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
-						//e.g. sp = (Point)outputList.get("sp");
-						//e.g. sp1 = (String)outputList.get("sp1");
-					}
+					printer.printLn(varName + " = " + classInstanceName + "." + REDUCTION_VARIABLE_DECLARATION_PREFIX + varName + ";");
+					//e.g. sp = ParallelRegion_0_in.sp;
 				}
 				break;
 				
 			case Copyprivate:
 				throw new RuntimeException(STR_UNSUPPORTED_ON_PYJAMA + "copyprivate clause");
 			case Default:
-				// donothing
+				// do nothing.
 				break;
 			default:
 				throw new RuntimeException("Find unexpected Data clause");	
@@ -201,6 +169,7 @@ public class DataClausesHandler {
 	
 	public static void processDataClausesBeforeTTClassInvocation(TargetTaskCodeClassBuilder targetWrapper, SourcePrinter printer) {
 		List<OmpDataClause> dataClauseList = targetWrapper.targetConstruct.getDataClauseList();
+		String classInstanceName = targetWrapper.className + "_in";
 		if (null == dataClauseList) {
 			return;
 		}
@@ -210,15 +179,15 @@ public class DataClausesHandler {
 			case Shared:
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
-					printer.printLn(targetWrapper.get_inputlist() + ".put(\"" + varName + "\"," + varName + ");");
-					//e.g. inputlist.put("sp", sp);
+					printer.printLn(classInstanceName + "." + varName + " = " + varName + ";");
+					//e.g. TargetRegion_0_in.sp = sp;
 				}
 				break;
 			case Private:
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
-					printer.printLn(targetWrapper.get_inputlist() + ".put(\"" + varName + "\"," + varName + ");");
-					//e.g. inputlist.put("sp", sp);
+					printer.printLn(classInstanceName + "." + varName + " = " + varName + ";");
+					//e.g. TargetRegion_0_in.sp = sp;
 				}
 				break;
 			default:
@@ -228,31 +197,19 @@ public class DataClausesHandler {
 	}
 	
 	public static void processDataClausesAfterTTClassInvocation(TargetTaskCodeClassBuilder targetWrapper, SourcePrinter printer) {
-		OmpTargetConstruct targetConstruct = targetWrapper.targetConstruct;
-		List<OmpDataClause> dataClauseList = targetConstruct.getDataClauseList();
+		List<OmpDataClause> dataClauseList = targetWrapper.targetConstruct.getDataClauseList();
+		String classInstanceName = targetWrapper.className + "_in";
 		if (null == dataClauseList) {
 			return;
 		}
 		
 		for (OmpDataClause dataClause: dataClauseList) {
 			switch (dataClause.DataClauseType()) {
-			
 			case Shared:
-				HashMap<String, String> sharedArgs = ((OmpSharedDataClause)dataClause).getArgsTypes(targetConstruct);
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
-					String varType = sharedArgs.get(varName);
-					if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-						printer.printLn(varName + " = " + "(" + DataClauseHandlerUtils.autoBox(varType) + ")" 
-								+ targetWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
-						//e.g. i = (Integer)outputList.get("i");
-					}
-					else {
-						printer.printLn(varName + " = " + "(" + varType + ")" 
-								+ targetWrapper.get_outputlist() +".get(" + "\"" + varName + "\");");
-						//e.g. sp = (Point)outputList.get("sp");
-						//e.g. sp1 = (String)outputList.get("sp1");
-					}
+					printer.printLn(varName + " = " + classInstanceName + "." + varName + ";");
+					//e.g. sp = ParallelRegion_0_in.sp;
 				}
 				break;
 				
@@ -262,63 +219,11 @@ public class DataClausesHandler {
 				 */
 				break;
 			default:
-				throw new RuntimeException("Find unexpected Data clause");	
+				throw new RuntimeException("Find unexpected Data clause:" + dataClause);	
 			}
 		}
 	}
-	
-	public static void updateOutputlistForSharedVariablesInPRClass(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
-		List<OmpDataClause> dataClauseList = parallelWrapper.parallelConstruct.getDataClauseList();
-		if (null == dataClauseList) {
-			return;
-		} else {
-			for (OmpDataClause dataClause: dataClauseList) {
-				if (dataClause instanceof OmpSharedDataClause) {
-					for(Expression varExpression: dataClause.getArgumentSet()) {
-						String varName = varExpression.toString();
-						printer.printLn("OMP_outputList.put(\"" + varName + "\"," + varName + ");");
-						//e.g. this.outputList.put("sp", sp);
-					}
-				}
-			}
-		}
-	}
-	
-	public static void updateOutputlistForSharedVariablesInTTClass(TargetTaskCodeClassBuilder targetWrapper, SourcePrinter printer) {
-		List<OmpDataClause> dataClauseList = targetWrapper.targetConstruct.getDataClauseList();
-		if (null == dataClauseList) {
-			return;
-		} else {
-			for (OmpDataClause dataClause: dataClauseList) {
-				if (dataClause instanceof OmpSharedDataClause) {
-					for(Expression varExpression: dataClause.getArgumentSet()) {
-						String varName = varExpression.toString();
-						printer.printLn("OMP_outputList.put(\"" + varName + "\"," + varName + ");");
-						//e.g. this.outputList.put("sp", sp);
-					}
-				}
-			}
-		}
-	}
-	
-//	public static void reduceProcessForReductionVariablesInPRClass(ParallelRegionClassBuilder parallelWrapper, SourcePrinter printer) {
-//		OmpParallelConstruct parallelConstruct = parallelWrapper.parallelConstruct;
-//		List<OmpDataClause> dataClauseList = parallelWrapper.parallelConstruct.getDataClauseList();
-//		if (null == dataClauseList) {
-//			return;
-//		} else {
-//			for (OmpDataClause dataClause: dataClauseList) {
-//				if (dataClause instanceof OmpReductionDataClause) {
-//					HashMap<String, String> sharedArgs = ((OmpReductionDataClause)dataClause).getArgsTypes(parallelConstruct);
-//					for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
-//						String varName = varExpression.toString();
-//						String operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varName).toString();
-//					}
-//				}
-//			}
-//		}
-//	}
-	
+		
 	public static HashMap<String, String> collectVariableNamesInWorksharingDataClauses(WorkShareBlockBuilder worksharingWrapper) {
 		HashMap<String, String> privateVariableSet = new HashMap<String, String>();
 		OmpForConstruct forConstruct = worksharingWrapper.getForConstruct();
@@ -475,33 +380,27 @@ public class DataClausesHandler {
 		
 		for (OmpDataClause dataClause: dataClauseList) {
 			if (OmpDataClause.Type.Reduction == dataClause.DataClauseType()) {
-				HashMap<String, String> reductionArgs = ((OmpReductionDataClause)dataClause).getArgsTypes(wrapper.parallelConstruct);
 				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
 					String varName = varExpression.toString();
-					String varType = reductionArgs.get(varName).toString();
 					OmpReductionOperator operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varExpression);
 					String reductionOpr = operator.getOperatorString();
 					if (DataClauseHandlerUtils.isPrimitiveReductionOperator(reductionOpr)) {
 						/*
 						 * primitive type reduction operation
 						 */
-						printer.print("synchronized(OMP_outputList){ ");
-						printer.print("OMP_outputList.put(" + "\"" + varName + "\", "
-									+ "((" + DataClauseHandlerUtils.autoBox(varType) + ")OMP_outputList.get(\"" 
-									+ varName + "\")" + reductionOpr + varName + "));");
+						printer.print("synchronized(OMP_reduction_lock){ ");
+						printer.print(REDUCTION_VARIABLE_DECLARATION_PREFIX + varName + " " + reductionOpr + "= " + varName + ";");
 						printer.printLn(" }");
-						//e.g. OMP_outputList.put("s", ((int)this.outputList.get("s") + s));
+						//e.g. this.outputList.s + s;
 					}
 					else {
 						/*
 						 * user defined reduction operation
 						 */
-						printer.print("synchronized(OMP_outputList){ ");
-						printer.print("OMP_outputList.put(" + "\"" + varName + "\", "
-								+ reductionOpr +"((" + varType + ")OMP_outputList.get(\"" 
-								+ varName + "\")," + varName + "));");
+						printer.print("synchronized(OMP_reduction_lock){ ");
+						printer.print(reductionOpr + "(" + REDUCTION_VARIABLE_DECLARATION_PREFIX + varName + "," + varName + ");");
 						printer.printLn(" }");
-						//e.g. OMP_outputList.put("val", reductionxing((int)OMP_outputList.get("val"),val));
+						//e.g. reductionxing(this.val,val);
 					}		
 				}
 			}

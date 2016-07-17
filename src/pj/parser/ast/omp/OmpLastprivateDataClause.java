@@ -28,7 +28,6 @@ import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.VoidVisitor;
-import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,19 +62,31 @@ public class OmpLastprivateDataClause extends OmpDataClause{
 		this.argumentSet.add(argument);
 	}
 	
-	public void printLastprivateVariableDefinationAndInitialisation(OpenMPStatement n, SourcePrinter printer) {
+	@Override
+	public void printVariableDefination(OpenMPStatement n, SourcePrinter printer, String prefix) {
+		if (null == prefix) {
+			prefix = "";
+		}
 		HashMap<String, String> args = this.getArgsTypes(n);
 		for (String varName: args.keySet()) {
 			String varType = args.get(varName);
-			printer.print(varType + " " + varName);
-			if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-				printer.printLn(" = " + DataClauseHandlerUtils.getDefaultValuesForPrimitiveType(varType) + ";");
-			}
-			else {
-				printer.printLn(" = null;");
-			}
-			//e.g. Point p=null;
-			//e.g. int i=0;
+			printer.printLn("public " + varType + " " + prefix + varName + ";");
+		}
+		
+	}
+	
+	@Override
+	public void printVariableDefinationAndInitialisation(OpenMPStatement n, SourcePrinter printer, String left_prefix, String right_prefix) {
+		if (null == left_prefix) {
+			left_prefix = "";
+		}
+		if (null == right_prefix) {
+			right_prefix = "";
+		}
+		HashMap<String, String> args = this.getArgsTypes(n);
+		for (String varName: args.keySet()) {
+			String varType = args.get(varName);
+			printer.printLn("public " + varType + " " + left_prefix + varName + " = " + right_prefix + varName + ";");
 		}
 	}
 	

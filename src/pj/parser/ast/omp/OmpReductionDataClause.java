@@ -33,7 +33,7 @@ import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.VoidVisitor;
-import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
+
 
 public class OmpReductionDataClause extends OmpDataClause{
 
@@ -63,41 +63,34 @@ public class OmpReductionDataClause extends OmpDataClause{
 		this.argumentMap.put(argument, operator);
 	}
 	
-	public void printReductionVariableDefination(OpenMPStatement n, SourcePrinter printer) {
+	@Override
+	public void printVariableDefination(OpenMPStatement n, SourcePrinter printer, String prefix) {
+		if (null == prefix) {
+			prefix = "";
+		}
 		HashMap<String, String> args = this.getArgsTypes(n);
 		for (String varName: args.keySet()) {
 			String varType = args.get(varName);
-			printer.print(varType + " " + varName);
-			if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-				printer.printLn(" = " + DataClauseHandlerUtils.getDefaultValuesForPrimitiveType(varType) + ";");
-			}
-			else {
-				printer.printLn(" = null;");
-			}
-			//e.g. Point p=null;
-			//e.g. int i=0;
+			printer.printLn("public " + varType + " " + prefix + varName + ";");
 		}
+		
 	}
 	
-	public void printReductionVariableInitialisation(OpenMPStatement n, SourcePrinter printer) {
+	@Override
+	public void printVariableDefinationAndInitialisation(OpenMPStatement n, SourcePrinter printer, String left_prefix, String right_prefix) {
+		if (null == left_prefix) {
+			left_prefix = "";
+		}
+		if (null == right_prefix) {
+			right_prefix = "";
+		}
 		HashMap<String, String> args = this.getArgsTypes(n);
 		for (String varName: args.keySet()) {
 			String varType = args.get(varName);
-			if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-				printer.printLn(varName + " = " + "(" + DataClauseHandlerUtils.autoBox(varType) + ")" 
-						+ "OMP_inputList.get(" + "\"" + varName + "\");");
-				//e.g. i = (Integer)this.inputlist.get("i");
-				//directly cast object type to primitive type is unsupported in java1.6
-			}
-			else {
-				printer.printLn(varName + " = " + "(" + varType + ")" 
-						+ "OMP_inputList.get(" + "\"" + varName + "\");");
-				//e.g. sp = (Point)this.inputList.get("sp");
-				//e.g. sp1 = (String)this.inputList.get("sp1");
-			}
+			printer.printLn("public " + varType + " " + left_prefix + varName + " = " + right_prefix + varName + ";");
 		}
 	}
-	
+		
 	public HashMap<String, String> getArgsTypes(OpenMPStatement n) {
 		HashMap<String, String> varTypes = new HashMap<String, String>();
 		ScopeInfo scope = n.scope;
@@ -135,7 +128,5 @@ public class OmpReductionDataClause extends OmpDataClause{
 	public <A> void accept(VoidVisitor<A> v, A arg) {
 		v.visit(this, arg);	
 	}
-
-
 
 }
