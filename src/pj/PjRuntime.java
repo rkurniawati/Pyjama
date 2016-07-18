@@ -37,6 +37,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class PjRuntime {
 	
+	private static Pyjama.Platform platform;
+	
 	private static InternalControlVariables initial_icv = new InternalControlVariables();
 	
 //	private static boolean isInitialized = false;
@@ -352,5 +354,13 @@ public class PjRuntime {
 			} 
 			targetSet.add(task);
 		}
+	}
+	
+	public static void setPlatform(Pyjama.Platform p) {
+		platform = p;
+	}
+	
+	public static Pyjama.Platform getPlatform() {
+		return platform;
 	}
  }

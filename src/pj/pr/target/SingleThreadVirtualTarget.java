@@ -22,7 +22,11 @@
 
 package pj.pr.target;
 
-import javax.swing.SwingUtilities;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import pj.PjRuntime;
 
 public class SingleThreadVirtualTarget extends VirtualTarget{
 	private Thread thread;
@@ -33,7 +37,6 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 	}
 	@Override
 	public void submit(final TargetTask<?> task) {
-		// TODO need further implementation
 		/*
 		 * We suppose this singleThreadVirtualTarget is swing edt,
 		 * so using SwingUtilities.invokeLater to put this task at
@@ -46,11 +49,60 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 				task.run();
 			}
 		};
-		SwingUtilities.invokeLater(taskCode);
+		switch(PjRuntime.getPlatform()) {
+		case Swing:
+			postToSwingEDT(taskCode);
+			break;
+		case Android:
+			postToAndroidEDT(taskCode);
+			break;
+		case JavaFX:
+			postToJavaFxEDT(taskCode);
+			break;
+		default:
+			throw new RuntimeException("Unsupported platform for EDT task posting.");
+		}
 	}
 	
 	public Thread getThread() {
 		return this.thread;
+	}
+	
+	private void postToSwingEDT(Runnable taskCode) {
+		try {
+			Class<?> cls = Class.forName("javax.swing.SwingUtilities");
+			Method postMethod = cls.getDeclaredMethod("invokeLater", java.lang.Runnable.class);
+			postMethod.invoke(null, taskCode);
+		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException("Cannot find proper posting method for Swing framework");
+		}
+		System.err.println("success post task to swing edt");
+	}
+	
+	private void postToAndroidEDT(Runnable taskCode) {
+		try {
+			Class<?> looperClass = Class.forName("android.os.Looper");
+			Object mainLooper = looperClass.getDeclaredMethod("getMainLooper").invoke(null);
+			Class<?> handlerClass = Class.forName("android.os.Handler");
+			Constructor<?> handlerConstructor = handlerClass.getConstructor(looperClass.getClass());
+			Object handlerInstance = handlerConstructor.newInstance(mainLooper);
+			Method postMethod = handlerClass.getDeclaredMethod("post", java.lang.Runnable.class);
+			postMethod.invoke(handlerInstance, taskCode);
+		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
+			throw new RuntimeException("Cannot find proper posting method for Android framework");
+		}
+		System.err.println("success post task to Android edt");
+	}
+	
+	private void postToJavaFxEDT(Runnable taskCode) {
+		try {
+			Class<?> cls = Class.forName("javafx.application.Platform");
+			Method postMethod = cls.getDeclaredMethod("runLater", java.lang.Runnable.class);
+			postMethod.invoke(null, taskCode);
+		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException("Cannot find proper posting method for JavaFX framework");
+		}
+		System.err.println("success post task to JavaFX edt");
 	}
 
 }

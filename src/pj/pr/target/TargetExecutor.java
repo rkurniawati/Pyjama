@@ -23,14 +23,14 @@
 package pj.pr.target;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 public class TargetExecutor extends VirtualTarget{
 
 	private final int maxWorkerCount;
-	private final ConcurrentLinkedDeque<TargetWorkerThread> workers = new ConcurrentLinkedDeque<TargetWorkerThread>();
+	private final ConcurrentLinkedQueue<TargetWorkerThread> workers = new ConcurrentLinkedQueue<TargetWorkerThread>();
 	private BlockingQueue<TargetTask<?>> taskQueue = new LinkedBlockingDeque<TargetTask<?>>();
 	
 	public TargetExecutor(String name) {

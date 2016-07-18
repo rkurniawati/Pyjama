@@ -36,6 +36,7 @@ import pj.pr.*;
  */
 public class Pyjama {
 
+	public enum Platform {Swing, Android, JavaFX};
 	/**XING EERs (Execution Environment Routines) definition BEGIN*/
 //	omp_set_num_threads
 //	omp_get_num_threads
@@ -430,6 +431,24 @@ public class Pyjama {
 	
 	public static String omp_get_target_name() {
 		return PjRuntime.getCurrentVirtualTargetName();
+	}
+	
+	public static void omp_set_platform(Platform platform) {
+		PjRuntime.setPlatform(platform);
+	}
+	
+	public static String omp_get_platform() {
+		Platform platform = PjRuntime.getPlatform();
+		switch(platform) {
+		case Swing:
+			return "Swing";
+		case Android:
+			return "Android";
+		case JavaFX:
+			return "JavaFX";
+		default:
+			throw new RuntimeException("omp_get_platform cannot get define platform!");
+		}
 	}
 	
 }
