@@ -74,7 +74,7 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 			Method postMethod = cls.getDeclaredMethod("invokeLater", java.lang.Runnable.class);
 			postMethod.invoke(null, taskCode);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException("Pyjama: Cannot find proper posting method for Swing framework");
+			throw new RuntimeException("Pyjama: Cannot find proper posting method for Swing framework" + e.toString());
 		}
 	}
 	
@@ -83,12 +83,12 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 			Class<?> looperClass = Class.forName("android.os.Looper");
 			Object mainLooper = looperClass.getDeclaredMethod("getMainLooper").invoke(null);
 			Class<?> handlerClass = Class.forName("android.os.Handler");
-			Constructor<?> handlerConstructor = handlerClass.getConstructor(looperClass.getClass());
+			Constructor<?> handlerConstructor = handlerClass.getConstructor(looperClass);
 			Object handlerInstance = handlerConstructor.newInstance(mainLooper);
 			Method postMethod = handlerClass.getDeclaredMethod("post", java.lang.Runnable.class);
 			postMethod.invoke(handlerInstance, taskCode);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
-			throw new RuntimeException("Pyjama: Cannot find proper posting method for Android framework");
+			throw new RuntimeException("Pyjama: Cannot find proper posting method for Android framework:" + e.toString());
 		}
 	}
 	
@@ -98,7 +98,7 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 			Method postMethod = cls.getDeclaredMethod("runLater", java.lang.Runnable.class);
 			postMethod.invoke(null, taskCode);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException("Pyjama: Cannot find proper posting method for JavaFX framework");
+			throw new RuntimeException("Pyjama: Cannot find proper posting method for JavaFX framework" + e.toString());
 		}
 	}
 

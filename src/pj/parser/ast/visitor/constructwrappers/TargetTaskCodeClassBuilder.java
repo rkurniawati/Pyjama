@@ -289,6 +289,4 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 			DataClausesHandler.processDataClausesAfterTTClassInvocation(TargetTaskCodeClassBuilder.create(n), printer);
 		}
 	}
-	
-
 }
