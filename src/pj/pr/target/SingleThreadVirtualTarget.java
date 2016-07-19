@@ -74,9 +74,8 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 			Method postMethod = cls.getDeclaredMethod("invokeLater", java.lang.Runnable.class);
 			postMethod.invoke(null, taskCode);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException("Cannot find proper posting method for Swing framework");
+			throw new RuntimeException("Pyjama: Cannot find proper posting method for Swing framework");
 		}
-		System.err.println("success post task to swing edt");
 	}
 	
 	private void postToAndroidEDT(Runnable taskCode) {
@@ -89,9 +88,8 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 			Method postMethod = handlerClass.getDeclaredMethod("post", java.lang.Runnable.class);
 			postMethod.invoke(handlerInstance, taskCode);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
-			throw new RuntimeException("Cannot find proper posting method for Android framework");
+			throw new RuntimeException("Pyjama: Cannot find proper posting method for Android framework");
 		}
-		System.err.println("success post task to Android edt");
 	}
 	
 	private void postToJavaFxEDT(Runnable taskCode) {
@@ -100,9 +98,8 @@ public class SingleThreadVirtualTarget extends VirtualTarget{
 			Method postMethod = cls.getDeclaredMethod("runLater", java.lang.Runnable.class);
 			postMethod.invoke(null, taskCode);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException("Cannot find proper posting method for JavaFX framework");
+			throw new RuntimeException("Pyjama: Cannot find proper posting method for JavaFX framework");
 		}
-		System.err.println("success post task to JavaFX edt");
 	}
 
 }

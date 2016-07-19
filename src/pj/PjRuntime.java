@@ -208,7 +208,7 @@ public class PjRuntime {
 	}
 	
 	/*
-	 * Following methods are used for Pyjama's asycTask approach(//#omp target virtual)
+	 * Following methods are used for Pyjama's asyncTask approach(//#omp target virtual)
 	 */
 	public static void registerSingleThreadVirtualTarget(Thread thread, String targetName) {
 		VirtualTarget virtualTarget = targetExecutorMap.get(targetName);
@@ -216,7 +216,7 @@ public class PjRuntime {
 			virtualTarget = new SingleThreadVirtualTarget(targetName, thread);
 			targetExecutorMap.put(targetName, virtualTarget);
 		} else {
-			throw new RuntimeException("Virtual target " + targetName + " has been registered before");
+			//If already registered, do nothing.
 		}
 	}
 	
@@ -285,6 +285,8 @@ public class PjRuntime {
 		if (Thread.currentThread() instanceof TargetWorkerThread) {
 			if (((TargetWorkerThread)(Thread.currentThread())).targetName().equals(targetName)) {
 				return true;
+			} else {
+				return false;
 			}
 		}
 		//Test if current thread is a registered Single Thread Virtual Target
