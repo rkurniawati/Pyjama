@@ -28,5 +28,19 @@ public class OmpParallelRegionGlobalCancellationException extends RuntimeExcepti
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private RuntimeException registeredException;
+	
+	public OmpParallelRegionGlobalCancellationException(RuntimeException e) {
+		this.registeredException = e;
+	}
+	
+	public OmpParallelRegionGlobalCancellationException() {
+		this.registeredException = null;
+	}
+	
+	public RuntimeException getThrow() {
+		return this.registeredException;
+	}
 
 }

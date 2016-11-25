@@ -46,6 +46,7 @@ import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
+import pj.pr.exceptions.OmpParallelRegionGlobalCancellationException;
 
 public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	
@@ -223,11 +224,17 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.unindent();
 		printer.printLn("} catch (OmpParallelRegionLocalCancellationException e) {");
 		printer.printLn(" 	PjRuntime.decreaseBarrierCount();");
+		printer.printLn("   if (null != e.getThrow()) {throw e.getThrow();}");
 		printer.printLn("} catch (Exception e) {");
 		printer.printLn("    PjRuntime.decreaseBarrierCount();");
-		printer.printLn("	PjExecutor.cancelCurrentThreadGroup();");
-		printer.printLn("OMP_CurrentParallelRegionExceptionSlot.compareAndSet(null, e);");
-		printer.unindent();
+		printer.printLn("    PjExecutor.cancelCurrentThreadGroup();");
+		printer.printLn("    Exception OMP_e = e;");
+		printer.printLn("    if (e instanceof OmpParallelRegionGlobalCancellationException){");
+		printer.printLn("      	 if (null != OMP_e) {");
+		printer.printLn("            OMP_e = ((OmpParallelRegionGlobalCancellationException)e).getThrow();");
+		printer.printLn("        }");
+		printer.printLn("    }");
+		printer.printLn("    OMP_CurrentParallelRegionExceptionSlot.compareAndSet(null, OMP_e);");
 		printer.printLn("}");
 		printer.printLn("if (0 == this.alias_id) {");
 		printer.indent();

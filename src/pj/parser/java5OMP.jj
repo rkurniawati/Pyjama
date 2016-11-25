@@ -313,7 +313,10 @@ TOKEN :
 | < SWITCH: "switch" >
 | < SYNCHRONIZED: "synchronized" >
 | < THIS: "this" >
-| < THROW: "throw" >
+//used for Pyjama cancel directive
+| < THROW: "throw" > 
+//used for Pyjama to neglect exception in a parallel region
+| < NEGLECT: "neglect_exception" > 
 | < THROWS: "throws" >
 | < TRANSIENT: "transient" >
 | < TRUE: "true" >
@@ -3446,6 +3449,7 @@ OmpCancelDirective OmpCancelDirective():
 	OmpCancelDirective.ThreadAffiliate affiliate = null;
 	Expression ifStmt = null;
 	NameExpr tag = null;
+	NameExpr exception = null;
 }
 {
 	<CANCEL> {line=token.beginLine; column=token.beginColumn;}
@@ -3459,7 +3463,8 @@ OmpCancelDirective OmpCancelDirective():
  	)
 	(<IF>	"(" ifStmt = Expression() ")")?
 	(<TAG>  "(" tag = Name() ")")?
-	{return new OmpCancelDirective(line, column, token.endLine, token.endColumn, region, affiliate, ifStmt, tag);}
+	(<THROW>  "(" exception = Name() ")")?
+	{return new OmpCancelDirective(line, column, token.endLine, token.endColumn, region, affiliate, ifStmt, tag, exception);}
 }
 
 //§§Followings are Pyjama extionsion of OpenMP for asynchronous execution of task, using virtual target; Xing Fan added at 2015.6.16

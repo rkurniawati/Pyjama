@@ -355,16 +355,32 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	public void visit(OmpCancelDirective n, SourcePrinter printer) {
 		if (n.getRegion() == OmpCancelDirective.Region.Parallel) {
 			if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Global) {
-				printer.printLn("throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException();");
+				printer.print("throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException(");
+				if (null != n.getException()) {
+					printer.print(n.getException());
+				}
+				printer.printLn(");");
 			} else if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Local) {
-				printer.printLn("throw new pj.pr.exceptions.OmpParallelRegionLocalCancellationException();");
+				printer.printLn("throw new pj.pr.exceptions.OmpParallelRegionLocalCancellationException(");
+				if (null != n.getException()) {
+					printer.print(n.getException());
+				}
+				printer.printLn(");");
 			}
 
 		} else if (n.getRegion() == OmpCancelDirective.Region.For || n.getRegion() == OmpCancelDirective.Region.Sections){
 			if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Global) {
-				printer.printLn("throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException();");
+				printer.printLn("throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException(");
+				if (null != n.getException()) {
+					printer.print(n.getException());
+				}
+				printer.printLn(");");
 			} else if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Local) {
-				printer.printLn("throw new pj.pr.exceptions.OmpWorksharingLocalCancellationException();");
+				printer.printLn("throw new pj.pr.exceptions.OmpWorksharingLocalCancellationException(");
+				if (null != n.getException()) {
+					printer.print(n.getException());
+				}
+				printer.printLn(");");
 			}
 		} else if (n.getRegion() == OmpCancelDirective.Region.Taskgroup) {
 			throw new RuntimeException("Pyjama does not support omp task yet!");
@@ -1732,7 +1748,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.printLn("import java.util.concurrent.atomic.AtomicReference;");
     	printer.printLn("import java.util.concurrent.locks.ReentrantLock;");
     	printer.printLn("import java.lang.reflect.InvocationTargetException;");
-    	printer.printLn("import pj.pr.exceptions.OmpParallelRegionLocalCancellationException;");
+    	printer.printLn("import pj.pr.exceptions.*;");
     	
     	return printer.getSource();
     }
