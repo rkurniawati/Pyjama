@@ -75,7 +75,7 @@ public class OmpSingleConstruct extends OpenMPStatement{
 	
 	public OmpForConstruct normalisation() {
 		ForStmt forStmt = generateForLoop();
-		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, this.dataClauseList, null, this.nowait, false);
+		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, this.dataClauseList, null, null, this.nowait, false);
 		return forConstruct;
 	}
 	

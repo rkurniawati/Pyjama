@@ -46,6 +46,7 @@ public class OmpSectionsConstruct extends OpenMPStatement{
 
 	private List<OmpSectionConstruct> sectionList;
 	private List<OmpDataClause> dataClauseList;
+	private OmpNeglectExceptionClause neglectException = null;
 	
 	private boolean nowait;
 
@@ -53,11 +54,13 @@ public class OmpSectionsConstruct extends OpenMPStatement{
 	public OmpSectionsConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
 			List<OmpSectionConstruct> sectionList,  
 			List<OmpDataClause> dataClausesList, 
+			OmpNeglectExceptionClause neglectException,
 			boolean nowait
 			){
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.sectionList = sectionList;
 		this.dataClauseList = dataClausesList;
+		this.neglectException = neglectException;
 		this.nowait = nowait;
 
 	}
@@ -65,10 +68,12 @@ public class OmpSectionsConstruct extends OpenMPStatement{
 	public OmpSectionsConstruct( 
 			List<OmpSectionConstruct> sectionList,  
 			List<OmpDataClause> dataClausesList, 
+			OmpNeglectExceptionClause neglectException,
 			boolean nowait
 			){
 		this.sectionList = sectionList;
 		this.dataClauseList = dataClausesList;
+		this.neglectException = neglectException;
 		this.nowait = nowait;
 	}
 	
@@ -78,6 +83,9 @@ public class OmpSectionsConstruct extends OpenMPStatement{
 	public List<OmpDataClause> getDataClauseList() {
 		return this.dataClauseList;
 	}
+	public OmpNeglectExceptionClause getNeglectException() {
+		return neglectException;
+	}
 		
 	public boolean isNowait() {
 		return this.nowait;
@@ -86,7 +94,7 @@ public class OmpSectionsConstruct extends OpenMPStatement{
 	public OmpForConstruct normalisation() {
 		ForStmt forStmt = generateForLoop();
 		OmpScheduleClause scheduleClause = new OmpScheduleClause(OmpScheduleClause.Type.Dynamic, new IntegerLiteralExpr("1"));
-		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, this.dataClauseList, scheduleClause, this.nowait, false);
+		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, this.dataClauseList, scheduleClause, this.neglectException, this.nowait, false);
 		return forConstruct;
 	}
 	

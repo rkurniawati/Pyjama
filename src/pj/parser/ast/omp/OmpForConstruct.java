@@ -32,6 +32,7 @@ public class OmpForConstruct extends OpenMPStatement{
 
 	private OmpScheduleClause scheduleClause = null;
 	private Statement forStmt = null;
+	private OmpNeglectExceptionClause neglectException = null;
 	private List<OmpDataClause> dataClauseList;
 	
 	private boolean nowait;
@@ -41,6 +42,7 @@ public class OmpForConstruct extends OpenMPStatement{
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpScheduleClause scheduleClause,
+			OmpNeglectExceptionClause neglectException,
 			boolean nowait,
 			boolean ordered
 			){
@@ -48,6 +50,7 @@ public class OmpForConstruct extends OpenMPStatement{
 		this.forStmt = statement;
 		this.dataClauseList = dataClausesList;
 		this.scheduleClause = scheduleClause;
+		this.neglectException = neglectException;
 		this.nowait = nowait;
 		this.ordered = ordered;
 	}
@@ -56,12 +59,14 @@ public class OmpForConstruct extends OpenMPStatement{
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpScheduleClause scheduleClause,
+			OmpNeglectExceptionClause neglectException,
 			boolean nowait,
 			boolean ordered
 			){
 		this.forStmt = statement;
 		this.dataClauseList = dataClausesList;
 		this.scheduleClause = scheduleClause;
+		this.neglectException = neglectException;
 		this.nowait = nowait;
 		this.ordered = ordered;
 	}
@@ -75,6 +80,10 @@ public class OmpForConstruct extends OpenMPStatement{
 	
 	public OmpScheduleClause getScheduleClause() {
 		return this.scheduleClause;
+	}
+	
+	public OmpNeglectExceptionClause getNeglectException() {
+		return neglectException;
 	}
 	
 	public boolean isNowait() {

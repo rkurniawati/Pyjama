@@ -34,6 +34,7 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 
 	private OmpIfClause ifExpr = null;
 	private OmpNumthreadsClause numThreads = null;
+	private OmpNeglectExceptionClause neglectException = null;
 	private Statement forStmt = null;
 	private List<OmpDataClause> dataClauseList;
 	private OmpScheduleClause scheduleClause = null;
@@ -45,6 +46,7 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 			OmpScheduleClause scheduleClause,
 			OmpIfClause ifExpr,
 			OmpNumthreadsClause numThreads,
+			OmpNeglectExceptionClause neglectException,
 			boolean ordered){
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.forStmt = statement;
@@ -52,6 +54,7 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 		this.scheduleClause = scheduleClause;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
+		this.neglectException = neglectException;
 		this.ordered = ordered;
 	}
 	
@@ -61,12 +64,14 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 			OmpScheduleClause scheduleClause,
 			OmpIfClause ifExpr,
 			OmpNumthreadsClause numThreads,
+			OmpNeglectExceptionClause neglectException,
 			boolean ordered){
 		this.forStmt = statement;
 		this.dataClauseList = dataClausesList;
 		this.scheduleClause = scheduleClause;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
+		this.neglectException = neglectException;
 		this.ordered = ordered;
 	}
 	
@@ -81,6 +86,9 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 	}
 	public OmpIfClause getIfClause() {
 		return ifExpr;
+	}
+	public OmpNeglectExceptionClause getNeglectException() {
+		return neglectException;
 	}
 
 	public OmpNumthreadsClause getNumThreadsExpression() {
@@ -122,8 +130,8 @@ public class OmpParallelForConstruct extends OpenMPStatement{
 			}
 		}
 		
-		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, forDataClauseList, this.scheduleClause, false, this.ordered);
-		OmpParallelConstruct normalised = new OmpParallelConstruct(forConstruct, parallelDataClauseList, this.ifExpr, this.numThreads);
+		OmpForConstruct forConstruct = new OmpForConstruct(forStmt, forDataClauseList, this.scheduleClause, null, false, this.ordered);
+		OmpParallelConstruct normalised = new OmpParallelConstruct(forConstruct, parallelDataClauseList, this.ifExpr, this.numThreads, this.neglectException);
 		return normalised;
 	}
 	

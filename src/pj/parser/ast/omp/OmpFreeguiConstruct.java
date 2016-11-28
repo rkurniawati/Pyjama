@@ -83,7 +83,7 @@ public class OmpFreeguiConstruct extends OpenMPStatement{
 			defaultSharedClause.setPolicy(OmpDefaultDataClause.Policy.Shared);
 			parallelDataClauseList.add(defaultSharedClause);
 			OmpNumthreadsClause numThreads = new OmpNumthreadsClause(new NameExpr("1")); 
-			normalised = new OmpParallelConstruct(this.body, parallelDataClauseList, null, numThreads);
+			normalised = new OmpParallelConstruct(this.body, parallelDataClauseList, null, numThreads, null);
 		} else {
 			/*
 			 * transform //#omp freeguithread parallel {for/sections}

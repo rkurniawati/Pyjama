@@ -37,6 +37,7 @@ public class OmpParallelConstruct extends OpenMPStatement {
 
 	private OmpIfClause ifExpr = null;
 	private OmpNumthreadsClause numThreads = null;
+	private OmpNeglectExceptionClause neglectException = null;
 	private Statement body = null;
 	private List<OmpDataClause> dataClauseList;
 	
@@ -49,23 +50,27 @@ public class OmpParallelConstruct extends OpenMPStatement {
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
-			OmpNumthreadsClause numThreads) {
+			OmpNumthreadsClause numThreads,
+			OmpNeglectExceptionClause neglectException) {
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.body = statement;
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
+		this.neglectException = neglectException;
 	}
 	
 	public OmpParallelConstruct(
 			Statement statement,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
-			OmpNumthreadsClause numThreads){
+			OmpNumthreadsClause numThreads,
+			OmpNeglectExceptionClause neglectException){
 		this.body = statement;
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
+		this.neglectException = neglectException;
 	}
 	
 	public Statement getBody() {
@@ -76,6 +81,9 @@ public class OmpParallelConstruct extends OpenMPStatement {
 	}
 	public OmpIfClause getIfClause() {
 		return ifExpr;
+	}
+	public OmpNeglectExceptionClause getNeglectException() {
+		return neglectException;
 	}
 
 	public OmpNumthreadsClause getNumThreadsExpression() {

@@ -313,7 +313,10 @@ TOKEN :
 | < SWITCH: "switch" >
 | < SYNCHRONIZED: "synchronized" >
 | < THIS: "this" >
-| < THROW: "throw" >
+//used for Pyjama cancel directive
+| < THROW: "throw" > 
+//used for Pyjama to neglect exception in a parallel region
+| < NEGLECT: "neglect_exception" > 
 | < THROWS: "throws" >
 | < TRANSIENT: "transient" >
 | < TRUE: "true" >
@@ -3133,6 +3136,7 @@ OmpParallelConstruct OmpParallelConstruct():
 	int defaultDataClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
+	OmpNeglectExceptionClause exceptionClause = null;
 	int line;
 	int column;
 }
@@ -3140,6 +3144,7 @@ OmpParallelConstruct OmpParallelConstruct():
 	<PARALLEL> {line=token.beginLine; column=token.beginColumn;}
 	(	numThreads = OmpNumthreadsClause() 	{if((++numThreadsClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one num_threads() clause finded");}
 	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one if() clause finded");}
+	|	exceptionClause = OmpNeglectExceptionClause() {}
 	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
@@ -3147,7 +3152,7 @@ OmpParallelConstruct OmpParallelConstruct():
 	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
 	)*
 	body = Statement()
-	{ return new OmpParallelConstruct(line, column, token.endLine, token.endColumn, body, dataClauseList, ifExpr, numThreads); }
+	{ return new OmpParallelConstruct(line, column, token.endLine, token.endColumn, body, dataClauseList, ifExpr, numThreads, exceptionClause); }
 }
 
 OmpParallelForConstruct OmpParallelForConstruct():
@@ -3161,6 +3166,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	int schduleClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
+	OmpNeglectExceptionClause exceptionClause = null;
 	OmpScheduleClause scheduleClause = null; 
 	boolean ordered = false;
 	int line;
@@ -3170,6 +3176,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	<PARALLEL> {line=token.beginLine; column=token.beginColumn;} <FOR>
 	(	numThreads = OmpNumthreadsClause()	{if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
 	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	exceptionClause = OmpNeglectExceptionClause() {}
 	|	<ORDERED>			 	{ordered = true;}
 	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
@@ -3179,7 +3186,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	|	scheduleClause = OmpScheduleClause() 	{if((++schduleClauseCount)>1) throw new RuntimeException("Pyjama Parsing Error: More than one schedule clause");}
 	)*
 	forBody = ForStatement()
-	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, scheduleClause, ifExpr, numThreads, ordered); }
+	{ return new OmpParallelForConstruct(line, column, token.endLine, token.endColumn, forBody, dataClauseList, scheduleClause, ifExpr, numThreads, exceptionClause, ordered); }
 }
 
 OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
@@ -3194,6 +3201,7 @@ OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 	int defaultDataClauseCount = 0;
 	OmpNumthreadsClause numThreads = null;
 	OmpIfClause ifExpr = null; 
+	OmpNeglectExceptionClause exceptionClause = null;
 	int line;
 	int column;
 }
@@ -3201,6 +3209,7 @@ OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 	<PARALLEL> {line=token.beginLine; column=token.beginColumn;} <SECTIONS>
 	(	numThreads = OmpNumthreadsClause()	{if((++numThreadsClauseCount)>1) throw new RuntimeException("more than one num_threads() clause");}
 	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	exceptionClause = OmpNeglectExceptionClause() {}
 	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
@@ -3212,7 +3221,7 @@ OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 		<OPENMP_PRAGMA> sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
 	)*
 	"}"
-	{ return new OmpParallelSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, ifExpr, numThreads); }
+	{ return new OmpParallelSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, ifExpr, numThreads, exceptionClause); }
 }
 
 OmpForConstruct OmpForConstruct():
@@ -3222,6 +3231,7 @@ OmpForConstruct OmpForConstruct():
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
 	int schduleClauseCount = 0;
 	OmpScheduleClause scheduleClause = null;
+	OmpNeglectExceptionClause exceptionClause = null;
 	int line;
 	int column;
 	boolean nowait = false;
@@ -3237,9 +3247,10 @@ OmpForConstruct OmpForConstruct():
 	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpDefaultDataClause() 	{throw new ParseException("Pyjama Parsing Error: default clause cannot appear in for directive");}
 	|	scheduleClause = OmpScheduleClause() 	{if((++schduleClauseCount)>1) throw new RuntimeException("Pyjama Parsing Error: More than one schedule clause");}
+	|	exceptionClause = OmpNeglectExceptionClause() {}
 	)*
  	forStmt = ForStatement()
-  	{ return new OmpForConstruct(line, column, token.endLine, token.endColumn, forStmt, dataClauseList, scheduleClause, nowait, ordered); }
+  	{ return new OmpForConstruct(line, column, token.endLine, token.endColumn, forStmt, dataClauseList, scheduleClause, exceptionClause, nowait, ordered); }
 }
 
 OmpSectionsConstruct OmpSectionsConstruct():
@@ -3248,6 +3259,7 @@ OmpSectionsConstruct OmpSectionsConstruct():
 	ArrayList<OmpSectionConstruct> sectionList = new ArrayList<OmpSectionConstruct>();
 	OmpDataClause dataClause = null;
 	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
+	OmpNeglectExceptionClause exceptionClause = null;
 	int line;
 	int column;
 	boolean nowait = false;
@@ -3260,13 +3272,14 @@ OmpSectionsConstruct OmpSectionsConstruct():
 	|	dataClause = OmpLastprivateDataClause() {dataClauseList.add(dataClause);}
 	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpDefaultDataClause() 	{throw new ParseException("Pyjama Parsing Error: default clause cannot appear in sections directive");}
+	|	exceptionClause = OmpNeglectExceptionClause() {}
 	)*
  	"{"	
 	(
 		<OPENMP_PRAGMA> sectionBlock = OmpSectionConstruct() {sectionList.add(sectionBlock);}
 	)+
 	"}"
-  	{ return new OmpSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, nowait); }
+  	{ return new OmpSectionsConstruct(line, column, token.endLine, token.endColumn, sectionList, dataClauseList, exceptionClause, nowait); }
 }
 
 OmpParallelConstruct OmpFreeguiConstruct():
@@ -3445,7 +3458,7 @@ OmpCancelDirective OmpCancelDirective():
 	OmpCancelDirective.Region region = null;
 	OmpCancelDirective.ThreadAffiliate affiliate = null;
 	Expression ifStmt = null;
-	NameExpr tag = null;
+	NameExpr exception = null;
 }
 {
 	<CANCEL> {line=token.beginLine; column=token.beginColumn;}
@@ -3458,8 +3471,8 @@ OmpCancelDirective OmpCancelDirective():
  	|	<GLOBAL>	{ affiliate = OmpCancelDirective.ThreadAffiliate.Global; }
  	)
 	(<IF>	"(" ifStmt = Expression() ")")?
-	(<TAG>  "(" tag = Name() ")")?
-	{return new OmpCancelDirective(line, column, token.endLine, token.endColumn, region, affiliate, ifStmt, tag);}
+	(<THROW>  "(" exception = Name() ")")?
+	{return new OmpCancelDirective(line, column, token.endLine, token.endColumn, region, affiliate, ifStmt, exception);}
 }
 
 //§§Followings are Pyjama extionsion of OpenMP for asynchronous execution of task, using virtual target; Xing Fan added at 2015.6.16
@@ -3699,3 +3712,15 @@ OmpReductionOperator OmpReductionOperator():
 	)
 	{return op;}
 } 
+
+OmpNeglectExceptionClause OmpNeglectExceptionClause():
+{
+	OmpNeglectExceptionClause ret = new OmpNeglectExceptionClause();
+	Expression excpetionName;
+}
+{	<NEGLECT> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
+	excpetionName = Name() {ret.addException(excpetionName);}
+	( "," excpetionName = Name() {ret.addException(excpetionName);} )*
+	")"
+	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
+}

@@ -33,6 +33,7 @@ public class OmpParallelSectionsConstruct extends OpenMPStatement{
 
 	private OmpIfClause ifExpr = null;
 	private OmpNumthreadsClause numThreads = null;
+	private OmpNeglectExceptionClause neglectException = null;
 	private List<OmpSectionConstruct> sectionList;
 	private List<OmpDataClause> dataClauseList;
 	
@@ -40,23 +41,27 @@ public class OmpParallelSectionsConstruct extends OpenMPStatement{
 			List<OmpSectionConstruct> sectionList,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
-			OmpNumthreadsClause numThreads){
+			OmpNumthreadsClause numThreads,
+			OmpNeglectExceptionClause neglectException){
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.sectionList = sectionList;
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
+		this.neglectException = neglectException;
 	}
 	
 	public OmpParallelSectionsConstruct(
 			List<OmpSectionConstruct> sectionList,  
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
-			OmpNumthreadsClause numThreads){
+			OmpNumthreadsClause numThreads,
+			OmpNeglectExceptionClause neglectException){
 		this.sectionList = sectionList;
 		this.dataClauseList = dataClausesList;
 		this.ifExpr = ifExpr;
 		this.numThreads = numThreads;
+		this.neglectException = neglectException;
 	}
 	
 	public List<OmpSectionConstruct> getSectionList() {
@@ -67,6 +72,9 @@ public class OmpParallelSectionsConstruct extends OpenMPStatement{
 	}
 	public OmpIfClause getIfClause() {
 		return ifExpr;
+	}
+	public OmpNeglectExceptionClause getNeglectException() {
+		return neglectException;
 	}
 
 	public OmpNumthreadsClause getNumThreadsExpression() {
@@ -108,9 +116,9 @@ public class OmpParallelSectionsConstruct extends OpenMPStatement{
 			}
 		}
 
-		OmpSectionsConstruct sectionsConstruct = new OmpSectionsConstruct(this.sectionList, sectionDataClauseList, false);
+		OmpSectionsConstruct sectionsConstruct = new OmpSectionsConstruct(this.sectionList, sectionDataClauseList, null, false);
 		OmpForConstruct forConstruct = sectionsConstruct.normalisation();
-		OmpParallelConstruct normalised = new OmpParallelConstruct(forConstruct, parallelDataClauseList, this.ifExpr, this.numThreads);
+		OmpParallelConstruct normalised = new OmpParallelConstruct(forConstruct, parallelDataClauseList, this.ifExpr, this.numThreads, this.neglectException);
 		return normalised;
 	}
 	
