@@ -370,7 +370,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 
 		} else if (n.getRegion() == OmpCancelDirective.Region.For || n.getRegion() == OmpCancelDirective.Region.Sections){
 			if (n.getThreadAffiliate() == OmpCancelDirective.ThreadAffiliate.Global) {
-				printer.printLn("throw new pj.pr.exceptions.OmpParallelRegionGlobalCancellationException(");
+				printer.printLn("throw new pj.pr.exceptions.OmpWorksharingGlobalCancellationException(");
 				if (null != n.getException()) {
 					printer.print(n.getException());
 				}

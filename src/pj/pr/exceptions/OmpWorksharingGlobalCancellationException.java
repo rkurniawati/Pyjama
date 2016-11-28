@@ -28,5 +28,19 @@ public class OmpWorksharingGlobalCancellationException extends RuntimeException{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private RuntimeException registeredException;
+	
+	public OmpWorksharingGlobalCancellationException(RuntimeException e) {
+		this.registeredException = e;
+	}
+	
+	public OmpWorksharingGlobalCancellationException() {
+		this.registeredException = null;
+	}
+	
+	public RuntimeException getThrow() {
+		return this.registeredException;
+	}
 
 }

@@ -63,8 +63,6 @@ import pj.parser.ast.visitor.SymbolSubstitutionVisitor;
 import pj.parser.ast.visitor.dataclausehandler.DataClauseHandlerUtils;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
-
-
 public class WorkShareBlockBuilder extends ConstructWrapper{
 	
 	enum LoopType {Numerical, Iterator};
@@ -611,7 +609,20 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		printer.indent();
 		generateLoop();
 		printer.unindent();
-		printer.printLn("} catch (pj.pr.exceptions.OmpWorksharingLocalCancellationException wse){");
+		printer.printLn("} catch (pj.pr.exceptions.OmpWorksharingLocalCancellationException e){");
+		//TODO: work redistribution
+		printer.printLn("    //TODO: work redistribution");
+		printer.printLn("    Exception OMP_registered_e = e.getThrow();");
+		printer.printLn("    if (null != OMP_registered_e) {");
+		printer.printLn("        throw OMP_registered_e;");
+		printer.printLn("    }");
+		printer.printLn("} catch (pj.pr.exceptions.OmpWorksharingGlobalCancellationException e){");
+		printer.printLn("    //just escape from the work sharing region and wait other thread in next barrier");
+		printer.printLn("    PjExecutor.cancelCurrentWorksharing();");
+		printer.printLn("    Exception OMP_registered_e = e.getThrow();");
+		printer.printLn("    if (null != OMP_registered_e) {");
+		printer.printLn("        throw OMP_registered_e;");
+		printer.printLn("    }");
 		printer.printLn("} catch (Exception e){throw e;}");
 		printer.printLn("//BEGIN  reduction");
 		printer.printLn("PjRuntime.reductionLockForWorksharing.lock();");

@@ -24,7 +24,6 @@ package pj.pr;
 
 import pj.PjRuntime;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class PjExecutor {
 	
@@ -37,9 +36,17 @@ public class PjExecutor {
 		InternalControlVariables icv = PjRuntime.threadICVMap.get(Thread.currentThread().getId());
 		if (null == icv.OMP_CurrentParallelRegionCancellationFlag) {
 			throw new RuntimeException("Pyjama: Cannot find cancellation flag in current parallel region");
-		}
-		else {
+		} else {
 			icv.OMP_CurrentParallelRegionCancellationFlag.set(true);
+		}
+	}
+	
+	public static void cancelCurrentWorksharing() {
+		InternalControlVariables icv = PjRuntime.threadICVMap.get(Thread.currentThread().getId());
+		if (null == icv.OMP_CurrentWorksharingRegionCancellationFlag) {
+			throw new RuntimeException("Pyjama: Cannot find cancellation flag in current parallel region");
+		} else {
+			icv.OMP_CurrentWorksharingRegionCancellationFlag.set(true);
 		}
 	}
 }
