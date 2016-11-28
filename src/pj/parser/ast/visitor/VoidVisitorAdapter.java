@@ -120,6 +120,7 @@ import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpIfClause;
 import pj.parser.ast.omp.OmpLastprivateDataClause;
 import pj.parser.ast.omp.OmpMasterConstruct;
+import pj.parser.ast.omp.OmpNeglectExceptionClause;
 import pj.parser.ast.omp.OmpNumthreadsClause;
 import pj.parser.ast.omp.OmpOrderedConstruct;
 import pj.parser.ast.omp.OmpParallelConstruct;
@@ -975,5 +976,8 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
     
 	public void visit(OmpAwaitFunctionCallDeclaration n, A arg) {
 	}
+	
+    public void visit(OmpNeglectExceptionClause n, A arg) {   	
+    }
     
 }

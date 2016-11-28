@@ -1797,6 +1797,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	public SourcePrinter getPrinterForAsyncTargetTaskStateMachineBuilder() {
 		return this.PrinterForAsyncTargetTaskStateMachineBuilder;
 	}
+
+	@Override
+	public void visit(OmpNeglectExceptionClause n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/********************************************************************************************************************************/
 }

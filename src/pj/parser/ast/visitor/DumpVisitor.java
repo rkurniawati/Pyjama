@@ -119,6 +119,7 @@ import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpIfClause;
 import pj.parser.ast.omp.OmpLastprivateDataClause;
 import pj.parser.ast.omp.OmpMasterConstruct;
+import pj.parser.ast.omp.OmpNeglectExceptionClause;
 import pj.parser.ast.omp.OmpNumthreadsClause;
 import pj.parser.ast.omp.OmpOrderedConstruct;
 import pj.parser.ast.omp.OmpParallelConstruct;
@@ -1696,9 +1697,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		if (n.getIfStmt() != null) {
 			printer.print(n.getIfStmt().toString());
 		}
-		if (n.getTag() != null) {
-			printer.print(n.getTag());
-		}
+
 		printer.printLn();
 		printer.printLn();
 	}
@@ -1765,6 +1764,22 @@ public final class DumpVisitor implements VoidVisitor<Object> {
         if (n.getParameters() != null) {
             for (Iterator<Parameter> i = n.getParameters().iterator(); i.hasNext();) {
                 Parameter p = i.next();
+                p.accept(this, arg);
+                if (i.hasNext()) {
+                    printer.print(", ");
+                }
+            }
+        }
+        printer.print(")");
+	}
+
+	@Override
+	public void visit(OmpNeglectExceptionClause n, Object arg) {
+		printer.print(" ");
+		printer.print("neglect_exception(");
+		if (n.getExceptionSet() != null) {
+            for (Iterator<Expression> i = n.getExceptionSet().iterator(); i.hasNext();) {
+                Expression p = i.next();
                 p.accept(this, arg);
                 if (i.hasNext()) {
                     printer.print(", ");

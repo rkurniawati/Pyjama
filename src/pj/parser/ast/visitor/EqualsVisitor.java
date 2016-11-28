@@ -96,6 +96,7 @@ import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpIfClause;
 import pj.parser.ast.omp.OmpLastprivateDataClause;
 import pj.parser.ast.omp.OmpMasterConstruct;
+import pj.parser.ast.omp.OmpNeglectExceptionClause;
 import pj.parser.ast.omp.OmpNumthreadsClause;
 import pj.parser.ast.omp.OmpOrderedConstruct;
 import pj.parser.ast.omp.OmpParallelConstruct;
@@ -1583,6 +1584,12 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Node> {
 
 	@Override
 	public Boolean visit(OmpAwaitFunctionCallDeclaration n, Node arg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean visit(OmpNeglectExceptionClause n, Node arg) {
 		// TODO Auto-generated method stub
 		return null;
 	}

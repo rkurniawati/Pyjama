@@ -3448,7 +3448,6 @@ OmpCancelDirective OmpCancelDirective():
 	OmpCancelDirective.Region region = null;
 	OmpCancelDirective.ThreadAffiliate affiliate = null;
 	Expression ifStmt = null;
-	NameExpr tag = null;
 	NameExpr exception = null;
 }
 {
@@ -3462,9 +3461,8 @@ OmpCancelDirective OmpCancelDirective():
  	|	<GLOBAL>	{ affiliate = OmpCancelDirective.ThreadAffiliate.Global; }
  	)
 	(<IF>	"(" ifStmt = Expression() ")")?
-	(<TAG>  "(" tag = Name() ")")?
 	(<THROW>  "(" exception = Name() ")")?
-	{return new OmpCancelDirective(line, column, token.endLine, token.endColumn, region, affiliate, ifStmt, tag, exception);}
+	{return new OmpCancelDirective(line, column, token.endLine, token.endColumn, region, affiliate, ifStmt, exception);}
 }
 
 //§§Followings are Pyjama extionsion of OpenMP for asynchronous execution of task, using virtual target; Xing Fan added at 2015.6.16
@@ -3704,3 +3702,15 @@ OmpReductionOperator OmpReductionOperator():
 	)
 	{return op;}
 } 
+
+OmpNeglectExceptionClause OmpNeglectExceptionClause():
+{
+	OmpNeglectExceptionClause ret = new OmpNeglectExceptionClause();
+	Expression excpetionName;
+}
+{	<NEGLECT> {ret.setBeginLine(token.beginLine); ret.setBeginColumn(token.beginColumn);} "("
+	excpetionName = Name() {ret.addException(excpetionName);}
+	( "," expr = Name() {ret.addException(excpetionName);} )*
+	")"
+	{ret.setEndLine(token.endLine); ret.setEndColumn(token.endColumn); return ret;}
+}

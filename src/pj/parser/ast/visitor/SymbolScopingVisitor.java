@@ -41,6 +41,7 @@ import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpGuiConstruct;
+import pj.parser.ast.omp.OmpNeglectExceptionClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.CatchClause;
@@ -462,6 +463,11 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
             n.getBody().accept(this, arg);
         }
         this.symbolTable.exitScope();
+		return null;
+	}
+
+	@Override
+	public String visit(OmpNeglectExceptionClause n, Object arg) {
 		return null;
 	}
 
