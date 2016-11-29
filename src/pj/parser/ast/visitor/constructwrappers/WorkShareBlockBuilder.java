@@ -38,6 +38,7 @@ package pj.parser.ast.visitor.constructwrappers;
  */
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,7 @@ import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpForConstruct;
+import pj.parser.ast.omp.OmpNeglectExceptionClause;
 import pj.parser.ast.omp.OmpScheduleClause;
 import pj.parser.ast.stmt.ForStmt;
 import pj.parser.ast.stmt.ForeachStmt;
@@ -623,6 +625,18 @@ public class WorkShareBlockBuilder extends ConstructWrapper{
 		printer.printLn("    if (null != OMP_registered_e) {");
 		printer.printLn("        throw OMP_registered_e;");
 		printer.printLn("    }");
+		//catch neglect_exceptions
+		if (null != this.ompForConstruct.getNeglectException()) {
+			OmpNeglectExceptionClause exceptionClause= this.ompForConstruct.getNeglectException();
+			Set<Expression> exceptions = exceptionClause.getExceptionSet();
+			if (null != exceptions) {
+				for (Expression exception : exceptions) {
+					printer.printLn("//neglect exception:"+exception.toString());
+					printer.printLn("} catch (" + exception.toString() + " e) {");
+					printer.printLn(" 	PjRuntime.decreaseBarrierCount();");
+				}
+			}
+		}
 		printer.printLn("} catch (Exception e){throw e;}");
 		printer.printLn("//BEGIN  reduction");
 		printer.printLn("PjRuntime.reductionLockForWorksharing.lock();");

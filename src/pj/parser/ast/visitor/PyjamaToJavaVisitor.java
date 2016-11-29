@@ -343,12 +343,16 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		throw new RuntimeException("OpenMPStatement: This abstract class should not appear.");	
 	}
 	
-
+	public void visit(OmpNeglectExceptionClause n, SourcePrinter arg) {
+		throw new RuntimeException("neglect_exception Clause should not be visited by PyjamaToJavaVisitor.");
+	}
+	
 
 	public void visit(OmpCancellationPointDirective n, SourcePrinter printer) {
 		if (n.getRegion() == OmpCancellationPointDirective.Region.Parallel) {
 			printer.printLn("PjRuntime.checkParallelCancellationPoint();");
 		} else {	
+			//TODO: add for and sections
 		}
 	}
 
@@ -1796,12 +1800,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	public SourcePrinter getPrinterForAsyncTargetTaskStateMachineBuilder() {
 		return this.PrinterForAsyncTargetTaskStateMachineBuilder;
-	}
-
-	@Override
-	public void visit(OmpNeglectExceptionClause n, SourcePrinter arg) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	/********************************************************************************************************************************/

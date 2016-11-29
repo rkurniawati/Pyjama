@@ -36,9 +36,13 @@ package pj.parser.ast.visitor.constructwrappers;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
+import pj.parser.ast.expr.Expression;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpLastprivateDataClause;
+import pj.parser.ast.omp.OmpNeglectExceptionClause;
 import pj.parser.ast.omp.OmpParallelConstruct;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpReductionDataClause;
@@ -223,8 +227,8 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		//BEGIN Master thread updateOutputList
 		printer.unindent();
 		printer.printLn("} catch (OmpParallelRegionLocalCancellationException e) {");
-		printer.printLn(" 	PjRuntime.decreaseBarrierCount();");
-		printer.printLn("   if (null != e.getThrow()) {throw e.getThrow();}");
+		printer.printLn("    PjRuntime.decreaseBarrierCount();");
+		printer.printLn("    if (null != e.getThrow()) {throw e.getThrow();}");
 		printer.printLn("} catch (OmpParallelRegionGlobalCancellationException e) {");
 		printer.printLn("    PjRuntime.decreaseBarrierCount();");
 		printer.printLn("    PjExecutor.cancelCurrentThreadGroup();");
@@ -232,6 +236,18 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		printer.printLn("    if (null != OMP_registered_e) {");
 		printer.printLn("        OMP_CurrentParallelRegionExceptionSlot.compareAndSet(null, OMP_registered_e);");
 		printer.printLn("    }");
+		//catch neglect_exceptions
+		if (null != this.parallelConstruct.getNeglectException()) {
+			OmpNeglectExceptionClause exceptionClause= this.parallelConstruct.getNeglectException();
+			Set<Expression> exceptions = exceptionClause.getExceptionSet();
+			if (null != exceptions) {
+				for (Expression exception : exceptions) {
+					printer.printLn("//neglect exception:"+exception.toString());
+					printer.printLn("} catch (" + exception.toString() + " e) {");
+					printer.printLn(" 	PjRuntime.decreaseBarrierCount();");
+				}
+			}
+		}
 		printer.printLn("} catch (Exception e) {");
 		printer.printLn("    PjRuntime.decreaseBarrierCount();");
 		printer.printLn("    PjExecutor.cancelCurrentThreadGroup();");
