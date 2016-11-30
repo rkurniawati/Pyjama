@@ -50,7 +50,6 @@ import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
-import pj.pr.exceptions.OmpParallelRegionGlobalCancellationException;
 
 public class ParallelRegionClassBuilder extends ConstructWrapper  {
 	

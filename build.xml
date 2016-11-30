@@ -2,7 +2,7 @@
 <project name="Pyjama" xmlns:ivy="antlib:org.apache.ivy.ant" default="main" basedir=".">
 
 	<!-- Version convention: [release].[add new features].[bug fixed] -->
-	<property name="version" value="1.5.5b"/>
+	<property name="version" value="1.6.0"/>
 	<property name="ant.build.javac.source" value="1.7"/>
 	<property name="ant.build.javac.target" value="1.7"/>
 	<!-- =================================
@@ -70,7 +70,7 @@
 
 	</target>
 
-	<!-- Output is XML, could also be plain	
+
 	<target name="test" depends="compile" description="Run the JUnit Tests.">
 		<junit printsummary="yes" fork="true" haltonfailure="yes">
 			<classpath refid="junit.class.path" />
@@ -82,7 +82,6 @@
 			</batchtest>
 		</junit>
 	</target>
-	-->
 
 	<target name="build" depends="compile" description="Build .jar file without any dependencies.">
 		<jar destfile="${target.release.dir}/${target.name}.jar">

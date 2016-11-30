@@ -24,17 +24,14 @@ package pj;
 
 import java.io.*;
 
-//import pt.compiler.ParaTaskParser;
 import pj.parser.ASTParser;
 import pj.parser.ast.CompilationUnit;
 import pj.parser.ast.symbolscope.SymbolTable;
-import pj.parser.ast.visitor.DumpVisitor;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SymbolScopingVisitor;
-
- 
+import pj.CompileChecker.CompileOption;
 /**
- * We define the main parser for Desktop Pyjama here.
+ * We define the main compiler for Pyjama here.
  * An use class should invoke the static method parse() 
  * on an input .pj file.
  * 
@@ -47,15 +44,8 @@ import pj.parser.ast.visitor.SymbolScopingVisitor;
  * @author Xing Fan
  *
  */
-public class PyjamaToJavaParser {
 
-	/*
-	 * set to true, to print debug messages
-	 * @see showErr(), showMsg()
-	 */
-	private static boolean mDebug = true;
-	
-	static int count = 0;
+public class PyjamaToJavaCompiler extends Compiler{
 	
 	/**
 	 * This is main public utility to parse Pyjama code. It accepts the .pj file as input
@@ -63,8 +53,10 @@ public class PyjamaToJavaParser {
 	 * @param file The input .pj file to be processed
 	 * @throws Exception parse exceptions
 	 */
-	public static void parse(File file) throws Exception {
+	public static File parse(String sourceFileName, String targetDirectory, CompileOption option) throws Exception {
 		
+		File file = new File(sourceFileName);
+				
 		showMsg("Pyjama Compiler Version: " + Version.compilerVersion);
 		showMsg("-----------------------------------------------------");
 		showMsg(Version.getCompileDate() + "\t" + Version.getCompileTime());
@@ -73,13 +65,28 @@ public class PyjamaToJavaParser {
 		showMsg("-----------------------------------------------------");
 		
 
-		//check if the input file is a valid Pyjama extension
-		if(false == validateFile(file.getName())){
-			showMsg("Invalid file type");
-			showMsg("Processing discontinued");
-			showMsg("-----------------------------------------------------");
-			return;
+		//check if the input file is a valid file extension
+		switch (option) {
+		case P2C:
+		case P2J:
+			if(false == validatePjFile(file.getName())){
+				showErr("Invalid file type, expect .pj file");
+				showErr("Processing discontinued");
+				showErr("-----------------------------------------------------");
+				return null;
+			}
+			break;
+		case J2C:
+		case J2J:
+			if(false == validateJavaFile(file.getName())){
+				showErr("Invalid file type, expect .java file");
+				showErr("Processing discontinued");
+				showErr("-----------------------------------------------------");
+				return null;
+			}
+			break;
 		}
+
 		InputStream is = new FileInputStream(file);
 
 		showMsg("Processing 1st Phase: Parse and Normalisation");
@@ -98,59 +105,14 @@ public class PyjamaToJavaParser {
 		
 		showMsg("Processing 4th Phase: Generating java code");
 		String targetCode = pyjamaVisitor.getSource();
-		File javaCodeFile = new File(file.getParent(), file.getName().substring(0,file.getName().lastIndexOf("."))+".java"); 
-		writeToFile(javaCodeFile, targetCode);
+		String targetFileName = targetDirectory+ "/" + file.getName().substring(0,file.getName().lastIndexOf("."))+".java";
+		File targetFile = new File(file.getParent(), targetFileName); 
+		//Clean up the file, in case it exists and is not empty.
+		clearTheFile(targetFile);
+		writeToFile(targetFile, targetCode);
 		showMsg("-----------------------------------------------------");
-		showMsg("Processing Done");
+		showMsg("Processing Done, paralleled Java code generated.");
+		return targetFile;
 	}
-	
-    /*
-     * Utility method to push the contents of string to a file stream
-     * @param file Input file name
-     * @param contents Buffer contents to be pushed
-     */
-    private static void writeToFile(File file, String contents) {
-        try {
-        	Writer output = null;
-            output = new BufferedWriter(new FileWriter(file));
-			output.write(contents);
-	        output.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
-
-	/*
-	 * Utility method which ensures the correct file type
-	 * @param fileName input file name
-	 * @return
-	 */
-	private static boolean validateFile(String fileName){
-		return 
-				fileName.endsWith(FileExtension.getPyjamaFileExtension());
-	}
-	
-	/*
-	 * Utility method to print debug message
-	 * @param msg Debug Message String
-	 * @note Should use this method instead of System.out/err calls, so that
-	 * @note we can switch off/on the debug messages.
-	 */
-	private static void showMsg(String msg){
-		if(true == mDebug){
-			System.out.println(msg);
-		}
-	}
-
-	/*
-	 * Utility method to print debug error
-	 * @param msg Debug Error String
-	 * @note Should use this method instead of System.out/err calls, so that
-	 * @note we can switch off/on the debug messages.
-	 */
-	private void showErr(String err){
-		if(true == mDebug){
-			System.err.println(err);
-		}
-	}
+		
 }

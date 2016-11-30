@@ -21,34 +21,152 @@
  */
 
 import java.io.File;
-import pj.PyjamaToJavaParser;
+import java.util.List;
+
+import org.apache.commons.cli.*;
+import pj.CompileChecker.CompileOption;
+import pj.JavaCompiler;
+import pj.PyjamaToJavaCompiler;
 
 public class Generate {
 	
+	private static Options options;
+	
+	private static CompileOption compileFlag = CompileOption.J2C;
+	
+	private static List<String> sourceFileNames;
+	
+	private static String targetFileDirectory = "./";
+	
 	public static void main(String[] args) {
 		
-		if (args.length < 1)
-			usage();
+		optionSetup();	
+		parseCommandline(args);
+		compile();
+	
+	}
+	
+	private static void optionSetup() {
+		options = new Options();
+	    Option outputPath = new Option("d", "directory", true, "output file directory");
+	    outputPath.setRequired(false);
+	    outputPath.setArgs(1);
+	    outputPath.setArgName("PATH");
+	    options.addOption(outputPath);
+	     
+        Option j2c = new Option("j2c", "javatoclass", false, "(default)compile .java file to paralleled .class file");
+        j2c.setRequired(false);
+        options.addOption(j2c);
+        
+        Option j2j = new Option("j2j", "javatojava", false, "compile .java file to paralleled .java file");
+        j2j.setRequired(false);
+        options.addOption(j2j);
+        
+        Option p2c = new Option("p2c", "pjtoclass", false, "compile .pj file to paralleled .class file");
+        p2c.setRequired(false);
+        options.addOption(p2c);
+        
+        Option p2j = new Option("p2j", "pjtojava", false, "compile .pj file to paralleled .java file");
+        p2j.setRequired(false);
+        options.addOption(p2j);
+	}
+	
+	private static void parseCommandline(String[] args) {
+		CommandLineParser parser = new DefaultParser();
+		HelpFormatter formatter = new HelpFormatter();
+		CommandLine cmd = null;
+		int compileOptSetTimes = 0;
 		
-		File start = new File(args[0]); 
-		String envFlag = (args.length > 1 && args[1].equalsIgnoreCase("A"))? "A":"D";
+	    try {
+	    	 cmd = parser.parse(options, args);
+	     } catch (ParseException e) {
+	    	 System.out.println(e.getMessage());
+	    	 formatter.printHelp("Pyjama:", options);
+	    	 System.exit(1);
+	     }
+	    
+	    //Parse the compilation option
+		if(cmd.hasOption("j2c")){
+			compileFlag = CompileOption.J2C;
+			compileOptSetTimes++;
+		} else if(cmd.hasOption("j2j")){
+			compileFlag = CompileOption.J2J;
+			compileOptSetTimes++;
+		} else if(cmd.hasOption("p2j")){
+			compileFlag = CompileOption.P2J;
+			compileOptSetTimes++;
+		} else if(cmd.hasOption("p2c")){
+			compileFlag = CompileOption.P2C;
+			compileOptSetTimes++;
+		}
 		
-		try {
-			if (envFlag.equalsIgnoreCase("A")) {
-				//PyjamaToAndroidParser.parse(start);
-			}else {
-				PyjamaToJavaParser.parse(start); 
+		//Parse the source files		
+		sourceFileNames = cmd.getArgList();
+		
+		//Parse the target file directory
+		if(cmd.hasOption("d")) {
+			targetFileDirectory = cmd.getOptionValue("d");
+		}
+		
+		if(compileOptSetTimes > 1) {
+			System.err.println("Error: More than one compile options are set.");
+			System.exit(1);
+		}
+		
+		if(sourceFileNames.isEmpty()) {
+			System.err.println("Error: no input files.");
+			System.exit(1);
+		}
+	}
+	
+	private static void compile() {
+		switch (compileFlag) {
+		case J2C:
+			for(String sourceFile: sourceFileNames) {
+				try {
+					File javaFile = PyjamaToJavaCompiler.parse(sourceFile, targetFileDirectory, compileFlag);
+					JavaCompiler.parse(javaFile, targetFileDirectory);
+				} catch (Exception e) {
+					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
+					e.printStackTrace();
+				}
 			}
-		} catch(Exception e) { 			
-			System.err.println("*** Failed to process: "+start.getName()+" ****"); 
-			e.printStackTrace(); 		
-		} 	
+			break;
+		case J2J:
+			for(String sourceFile: sourceFileNames) {
+				try {
+					PyjamaToJavaCompiler.parse(sourceFile, targetFileDirectory, compileFlag);
+				} catch (Exception e) {
+					System.err.println("*** Failed to process: " + sourceFile +" ****"); 
+					e.printStackTrace();
+				}
+			}
+			break;
+		case P2J:
+			for(String sourceFile: sourceFileNames) {
+				try {
+					PyjamaToJavaCompiler.parse(sourceFile, targetFileDirectory, compileFlag);
+				} catch (Exception e) {
+					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
+					e.printStackTrace();
+				}
+			}
+			break;
+		case P2C:
+			for(String sourceFile: sourceFileNames) {
+				try {
+					File javaFile = PyjamaToJavaCompiler.parse(sourceFile, targetFileDirectory, compileFlag);
+					JavaCompiler.parse(javaFile, targetFileDirectory);
+				} catch (Exception e) {
+					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
+					e.printStackTrace();
+				}
+			}
+			break;
+		default:
+				throw new RuntimeException("This cannot happen!");
+			
+		}
 	}
 
-	private static void usage() {
-		System.out.println("Usage to generate a file MyClass.java from MyClass.pj: ");
-		System.out.println("  > java -cp pyjama.jar:. Generate MyClass.pj (A)");
-		System.out.println("  > the second parameter means: compiled with Desktop env(default) OR compiled with Android env");
-		System.exit(0);
-	}
 }

@@ -27,14 +27,17 @@ package pj;
  * for Pyjama compiler code units
  * 
  * @author vikassingh
+ * @author Xing Fan
  */
-public class FileExtension {
+public class CompileChecker {
+	
+	public enum CompileOption {J2C, J2J, P2J, P2C};
 	
 	/*
 	 * we have a singleton class, should not be
 	 * instantiated
 	 */
-	private FileExtension(){
+	private CompileChecker(){
 		// nothing to do, cannot be instantiated
 	}
 	
@@ -43,7 +46,16 @@ public class FileExtension {
 	 */
 	private final static String PYJAMA_FILE_EXTENSION = ".pj";
 	
+	/*
+	 * The Java file extension
+	 */
+	private final static String JAVA_FILE_EXTENSION = ".java";
+	
 	public static String getPyjamaFileExtension(){
 		return PYJAMA_FILE_EXTENSION;
+	}
+	
+	public static String getJavaFileExtension(){
+		return JAVA_FILE_EXTENSION;
 	}
 }

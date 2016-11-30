@@ -351,8 +351,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	public void visit(OmpCancellationPointDirective n, SourcePrinter printer) {
 		if (n.getRegion() == OmpCancellationPointDirective.Region.Parallel) {
 			printer.printLn("PjRuntime.checkParallelCancellationPoint();");
-		} else {	
-			//TODO: add for and sections
+		} else if (n.getRegion() == OmpCancellationPointDirective.Region.For) {	
+			printer.printLn("PjRuntime.checkWorksharingCancellationPoint();");
+		} else if (n.getRegion() == OmpCancellationPointDirective.Region.Sections) {
+			printer.printLn("PjRuntime.checkWorksharingCancellationPoint();");
+		} else if (n.getRegion() == OmpCancellationPointDirective.Region.Taskgroup) {
+			throw new RuntimeException("Pyjama does not support omp task yet!");
 		}
 	}
 
