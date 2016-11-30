@@ -31,16 +31,13 @@ import java.io.InputStreamReader;
 public class JavaCompiler extends Compiler{
 	
 	public static void parse(File file, String targetDirectory) throws Exception {	
-		showMsg("Javac Compiler Version: ");
+		showMsg("Javac Compiler Version:");
 		showMsg(getJavacVersion());
 		showMsg("-----------------------------------------------------");
-		showMsg(Version.getCompileDate() + "\t" + Version.getCompileTime());
-		showMsg("-----------------------------------------------------");
-		showMsg("Processing file: " + file.toString());
+		showMsg("Javac is processing file: " + file.toString());
 		showMsg("-----------------------------------------------------");
 		runJavac(file, targetDirectory);
-		showMsg("-----------------------------------------------------");
-		showMsg("Processing Done, paralleled class file generated.");
+		showMsg("Processing Done. Paralleled .class file generated.");
 	}
 	
 	private static String getJavacVersion() {
@@ -48,16 +45,18 @@ public class JavaCompiler extends Compiler{
 		ProcessBuilder pb = new ProcessBuilder(javacVersionCommand);
 		try {
 			Process process = pb.start();
+			process.waitFor();
 			InputStream is = process.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader br = new BufferedReader(isr);
 			String line;
 			StringBuffer sb = new StringBuffer();
 			while ((line = br.readLine()) != null) {
+				System.out.println("dd:"+line);
 				sb.append(line);
 		    }
 			return sb.toString();
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 		System.err.println("cannot run javac properly");
@@ -75,8 +74,9 @@ public class JavaCompiler extends Compiler{
 		String[] javacCommand = {"javac", "-d", targetDirectory+"/", sourceFileName};
 		ProcessBuilder pb = new ProcessBuilder(javacCommand);
 		try {
-			pb.wait();
-		} catch (InterruptedException e) {
+			Process process = pb.start();
+			process.waitFor();
+		} catch (InterruptedException | IOException e) {
 			System.err.println("Error: cannot run javac properly");
 			System.exit(1);
 		}
