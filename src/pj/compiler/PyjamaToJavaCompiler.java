@@ -20,16 +20,18 @@
  * along with Pyjama. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pj;
+package pj.compiler;
+
 
 import java.io.*;
 
+import pj.Version;
 import pj.parser.ASTParser;
 import pj.parser.ast.CompilationUnit;
 import pj.parser.ast.symbolscope.SymbolTable;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SymbolScopingVisitor;
-import pj.CompileChecker.CompileOption;
+import pj.compiler.CompileChecker.CompileOption;
 /**
  * We define the main compiler for Pyjama here.
  * An use class should invoke the static method parse() 
@@ -53,7 +55,7 @@ public class PyjamaToJavaCompiler extends Compiler{
 	 * @param file The input .pj file to be processed
 	 * @throws Exception parse exceptions
 	 */
-	public static File parse(String sourceFileName, String targetDirectory, CompileOption option) throws Exception {
+	public static File compile(String sourceFileName, String targetDirectory, CompileOption option) throws Exception {
 		
 		File file = new File(sourceFileName);
 				

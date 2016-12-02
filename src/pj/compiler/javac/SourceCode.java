@@ -19,43 +19,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Pyjama. If not, see <http://www.gnu.org/licenses/>.
  */
+package pj.compiler.javac;
 
-package pj;
+import javax.tools.SimpleJavaFileObject;
+import java.io.IOException;
+import java.net.URI;
 
-/**
- * This class specifies the extension type
- * for Pyjama compiler code units
- * 
- * @author vikassingh
- * @author Xing Fan
- */
-public class CompileChecker {
-	
-	public enum CompileOption {J2C, J2J, P2J, P2C};
-	
-	/*
-	 * we have a singleton class, should not be
-	 * instantiated
-	 */
-	private CompileChecker(){
-		// nothing to do, cannot be instantiated
-	}
-	
-	/*
-	 * The Pyjama file extension
-	 */
-	private final static String PYJAMA_FILE_EXTENSION = ".pj";
-	
-	/*
-	 * The Java file extension
-	 */
-	private final static String JAVA_FILE_EXTENSION = ".java";
-	
-	public static String getPyjamaFileExtension(){
-		return PYJAMA_FILE_EXTENSION;
-	}
-	
-	public static String getJavaFileExtension(){
-		return JAVA_FILE_EXTENSION;
-	}
+
+public class SourceCode extends SimpleJavaFileObject {
+    private String contents = null;
+
+    public SourceCode(String className, String contents) throws Exception {
+        super(URI.create("string:///" + className.replace('.', '/') + Kind.SOURCE.extension), Kind.SOURCE);
+        this.contents = contents;
+    }
+
+    public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
+        return contents;
+    }
 }

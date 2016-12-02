@@ -24,9 +24,9 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.commons.cli.*;
-import pj.CompileChecker.CompileOption;
-import pj.JavaCompiler;
-import pj.PyjamaToJavaCompiler;
+import pj.compiler.CompileChecker.CompileOption;
+import pj.compiler.JavaToClassCompiler;
+import pj.compiler.PyjamaToJavaCompiler;
 
 public class Generate {
 	
@@ -124,8 +124,8 @@ public class Generate {
 		case J2C:
 			for(String sourceFile: sourceFileNames) {
 				try {
-					File javaFile = PyjamaToJavaCompiler.parse(sourceFile, targetFileDirectory, compileFlag);
-					JavaCompiler.parse(javaFile, targetFileDirectory);
+					File javaFile = PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
+					JavaToClassCompiler.compile(javaFile, targetFileDirectory);
 				} catch (Exception e) {
 					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
 					e.printStackTrace();
@@ -135,7 +135,7 @@ public class Generate {
 		case J2J:
 			for(String sourceFile: sourceFileNames) {
 				try {
-					PyjamaToJavaCompiler.parse(sourceFile, targetFileDirectory, compileFlag);
+					PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
 				} catch (Exception e) {
 					System.err.println("*** Failed to process: " + sourceFile +" ****"); 
 					e.printStackTrace();
@@ -145,7 +145,7 @@ public class Generate {
 		case P2J:
 			for(String sourceFile: sourceFileNames) {
 				try {
-					PyjamaToJavaCompiler.parse(sourceFile, targetFileDirectory, compileFlag);
+					PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
 				} catch (Exception e) {
 					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
 					e.printStackTrace();
@@ -155,8 +155,8 @@ public class Generate {
 		case P2C:
 			for(String sourceFile: sourceFileNames) {
 				try {
-					File javaFile = PyjamaToJavaCompiler.parse(sourceFile, targetFileDirectory, compileFlag);
-					JavaCompiler.parse(javaFile, targetFileDirectory);
+					File javaFile = PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
+					JavaToClassCompiler.compile(javaFile, targetFileDirectory);
 				} catch (Exception e) {
 					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
 					e.printStackTrace();

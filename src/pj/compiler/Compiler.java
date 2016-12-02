@@ -20,7 +20,7 @@
  * along with Pyjama. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pj;
+package pj.compiler;
 
 import java.io.BufferedWriter;
 import java.io.File;
