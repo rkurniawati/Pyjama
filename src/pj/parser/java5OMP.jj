@@ -347,7 +347,6 @@ TOKEN :
 | < SINGLE: "single" >
 | < MASTER: "master" >
 | < CRITICAL: "critical" >
-| < ATOMIC: "atomic" >
 | < FLUSH: "flush" >
 | < BARRIER: "barrier" >
 | < NOWAIT: "nowait" >
@@ -363,11 +362,13 @@ TOKEN :
 | < LOCAL: "local" >
 | < GLOBAL: "global" >
 | < TAG: "tag" >
+| < ATOMIC: "atomic" >
 //§§ Pyjama Depricated; Xing Fan added at 2014.9.25
 //| < COPYIN: "copyin" >
 //| < THREADPRIVATE: "threadprivate" >
 //| < INTERRUPT: "interrupt" >
 //| < IOTASK: "iotask" >
+
 }
 
 /* LITERALS */

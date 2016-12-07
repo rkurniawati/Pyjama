@@ -48,17 +48,30 @@ public class Generate {
 	
 	private static void optionSetup() {
 		options = new Options();
+		
+	    Option help = new Option("h", "help", false, "print usage of Pyjama compiler");
+	    help.setRequired(false);
+	    options.addOption(help);
+	    
+	    Option classpath = new Option("cp", "classpath", true, "Specify where to find user class files and annotation processors");
+	    classpath.setRequired(false);
+	    classpath.setArgs(1);
+	    classpath.setArgName("PATH");
+	    options.addOption(classpath);
+	    		
 	    Option outputPath = new Option("d", "directory", true, "output file directory");
 	    outputPath.setRequired(false);
 	    outputPath.setArgs(1);
-	    outputPath.setArgName("PATH");
+	    outputPath.setArgName("DIR");
 	    options.addOption(outputPath);
 	     
         Option j2c = new Option("j2c", "javatoclass", false, "(default)compile .java file to paralleled .class file");
         j2c.setRequired(false);
         options.addOption(j2c);
         
-        Option j2j = new Option("j2j", "javatojava", false, "compile .java file to paralleled .java file");
+        Option j2j = new Option("j2j", "javatojava", false, "compile .java file to paralleled .java file. "
+        		+ "Remember new parallel java file will overwrite old sequential java file, "
+        		+ "if there is no target directory is specified.");
         j2j.setRequired(false);
         options.addOption(j2j);
         
@@ -103,6 +116,10 @@ public class Generate {
 		//Parse the source files		
 		sourceFileNames = cmd.getArgList();
 		
+		if(cmd.hasOption("h")) {
+			formatter.printHelp("Pyjama", options);
+		}
+		
 		//Parse the target file directory
 		if(cmd.hasOption("d")) {
 			targetFileDirectory = cmd.getOptionValue("d");
@@ -115,7 +132,7 @@ public class Generate {
 		
 		if(sourceFileNames.isEmpty()) {
 			System.err.println("Error: no input files.");
-			System.exit(1);
+			formatter.printHelp("Pyjama", options);
 		}
 	}
 	
@@ -125,7 +142,9 @@ public class Generate {
 			for(String sourceFile: sourceFileNames) {
 				try {
 					File javaFile = PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
-					JavaToClassCompiler.compile(javaFile, targetFileDirectory);
+					if (null != javaFile) {
+						JavaToClassCompiler.compile(javaFile, targetFileDirectory);
+					}
 				} catch (Exception e) {
 					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
 					e.printStackTrace();
@@ -156,7 +175,9 @@ public class Generate {
 			for(String sourceFile: sourceFileNames) {
 				try {
 					File javaFile = PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
-					JavaToClassCompiler.compile(javaFile, targetFileDirectory);
+					if (null != javaFile) {
+						JavaToClassCompiler.compile(javaFile, targetFileDirectory);
+					}
 				} catch (Exception e) {
 					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
 					e.printStackTrace();
