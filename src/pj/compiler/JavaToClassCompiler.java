@@ -42,7 +42,8 @@ public class JavaToClassCompiler extends Compiler{
 		showMsg("Javac is processing file: " + file.toString());
 		showMsg("-----------------------------------------------------");
 		JavaC.compile(className, sourceCodeInText, null, targetDirectory);
-		showMsg("Processing Done. Paralleled .class file generated.");
+		showMsg("Paralleled .class file is generated.");
+		showMsg("Processing Done.");
 	}
 	
 	private static String readFile(String path) throws IOException {

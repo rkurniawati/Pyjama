@@ -113,7 +113,8 @@ public class PyjamaToJavaCompiler extends Compiler{
 		clearTheFile(targetFile);
 		writeToFile(targetFile, targetCode);
 		showMsg("-----------------------------------------------------");
-		showMsg("Processing Done, paralleled Java code generated.");
+		showMsg("Paralleled .java code is generated.");
+		showMsg("Processing Done."); 
 		return targetFile;
 	}
 		
