@@ -128,6 +128,8 @@ import pj.parser.ast.omp.OmpSectionsConstruct;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpSingleConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
+import pj.parser.ast.omp.OmpTaskConstruct;
+import pj.parser.ast.omp.OmpTaskwaitDirective;
 import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
@@ -399,5 +401,9 @@ public interface GenericVisitor<R, A> {
     public R visit(OmpAwaitFunctionCallDeclaration n, A arg);
     
     public R visit(OmpNeglectExceptionClause n, A arg);
+    
+    public R visit(OmpTaskConstruct n, A arg);
+    
+    public R visit(OmpTaskwaitDirective n, A arg);
         
 }

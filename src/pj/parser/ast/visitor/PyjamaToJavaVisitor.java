@@ -251,6 +251,20 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.unindent();
     	printer.printLn("}");
     }
+    
+
+	@Override
+	public void visit(OmpTaskConstruct n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(OmpTaskwaitDirective n, SourcePrinter arg) {
+		// TODO Auto-generated method stub
+		
+	}
+	
     public void visit(OmpBarrierDirective n, SourcePrinter printer){
     	printer.printLn("PjRuntime.setBarrier();");
     }
@@ -1805,6 +1819,5 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	public SourcePrinter getPrinterForAsyncTargetTaskStateMachineBuilder() {
 		return this.PrinterForAsyncTargetTaskStateMachineBuilder;
 	}
-	
 	/********************************************************************************************************************************/
 }

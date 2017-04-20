@@ -135,6 +135,8 @@ import pj.parser.ast.omp.OmpSectionsConstruct;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpSingleConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
+import pj.parser.ast.omp.OmpTaskConstruct;
+import pj.parser.ast.omp.OmpTaskwaitDirective;
 import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
 import pj.parser.ast.stmt.BlockStmt;
@@ -978,6 +980,12 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
 	}
 	
     public void visit(OmpNeglectExceptionClause n, A arg) {   	
+    }
+    
+    public void visit(OmpTaskConstruct n, A arg) {
+    }
+    
+    public void visit(OmpTaskwaitDirective n, A arg) {
     }
     
 }

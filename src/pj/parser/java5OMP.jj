@@ -358,7 +358,9 @@ TOKEN :
 | < COPYPRIVATE: "copyprivate" >
 | < CANCELLATION_POINT: "cancellation point" >
 | < CANCEL: "cancel" >
+| < TASK: "task" >
 | < TASKGROUP: "taskgroup" >
+| < TASKWAIT: "taskwait" >
 | < LOCAL: "local" >
 | < GLOBAL: "global" >
 | < TAG: "tag" >
@@ -3115,6 +3117,8 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpMasterConstruct()
 	|	ret = OmpCriticalConstruct()
 	|	ret = OmpAtomicConstruct()
+	|	ret = OmpTaskConstruct()
+	|	ret = OmpTaskwaitDirective()
 	|	ret = OmpBarrierDirective()
 	|	ret = OmpFlushDirective()
 	|	ret = OmpOrderedConstruct()
@@ -3143,14 +3147,14 @@ OmpParallelConstruct OmpParallelConstruct():
 }
 {
 	<PARALLEL> {line=token.beginLine; column=token.beginColumn;}
-	(	numThreads = OmpNumthreadsClause() 	{if((++numThreadsClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one num_threads() clause finded");}
-	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one if() clause finded");}
+	(	numThreads = OmpNumthreadsClause() 	{if((++numThreadsClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one num_threads() clause found");}
+	|	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one if() clause found");}
 	|	exceptionClause = OmpNeglectExceptionClause() {}
 	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
 	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
-	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
+	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause found");}
 	)*
 	body = Statement()
 	{ return new OmpParallelConstruct(line, column, token.endLine, token.endColumn, body, dataClauseList, ifExpr, numThreads, exceptionClause); }
@@ -3183,7 +3187,7 @@ OmpParallelForConstruct OmpParallelForConstruct():
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
 	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
-	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
+	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause found");}
 	|	scheduleClause = OmpScheduleClause() 	{if((++schduleClauseCount)>1) throw new RuntimeException("Pyjama Parsing Error: More than one schedule clause");}
 	)*
 	forBody = ForStatement()
@@ -3215,7 +3219,7 @@ OmpParallelSectionsConstruct OmpParallelSectionsConstruct():
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in parallel directive");}
 	|	dataClause = OmpReductionDataClause() 	{dataClauseList.add(dataClause);}
-	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
+	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause found");}
 	)*
 	"{"	
 	(
@@ -3400,6 +3404,39 @@ OmpAtomicConstruct OmpAtomicConstruct():
 	{return new OmpAtomicConstruct(line, column, token.endLine, token.endColumn, stmt);}
 }
 
+OmpTaskConstruct OmpTaskConstruct():
+{
+	Statement stmt = null;
+	OmpDataClause dataClause = null;
+	List<OmpDataClause> dataClauseList = new ArrayList<OmpDataClause>();
+	OmpIfClause ifExpr = null;
+	int IfClauseCount = 0;
+	int defaultDataClauseCount = 0;
+	int line;
+	int column;
+}
+{
+	<TASK> {line=token.beginLine; column=token.beginColumn;}
+	(	ifExpr = OmpIfClause()			{if((++IfClauseCount)>1) throw new RuntimeException("more than one if() clause");}
+	|	dataClause = OmpPrivateDataClause() 	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
+	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in task directive");}
+	|	dataClause = OmpReductionDataClause() 	{throw new ParseException("Pyjama Parsing Error: Reduction data clause cannot appear in task directive");}
+	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause found");}
+	)*
+	stmt = Statement()
+	{return new OmpTaskConstruct(line, column, token.endLine, token.endColumn, stmt, dataClauseList, ifExpr);}
+}
+
+OmpTaskwaitDirective OmpTaskwaitDirective():
+{
+	int line;
+	int column;
+}
+{
+	<TASKWAIT> {line=token.beginLine; column=token.beginColumn;}
+	{return new OmpTaskwaitDirective(line, column, token.endLine, token.endColumn);}
+}
 
 
 OmpBarrierDirective OmpBarrierDirective():
@@ -3502,7 +3539,7 @@ OmpTargetConstruct OmpTargetConstruct():
 	|	dataClause = OmpSharedDataClause()  	{dataClauseList.add(dataClause);}
 	|	dataClause = OmpLastprivateDataClause() {throw new ParseException("Pyjama Parsing Error: Lastprivate data clause cannot appear in omp target directive");}
 	|	dataClause = OmpReductionDataClause() 	{throw new ParseException("Pyjama Parsing Error: Reduction data clause cannot appear in omp target directive");}
-	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause finded");}
+	|	dataClause = OmpDefaultDataClause() 	{if((++defaultDataClauseCount)>1) throw new ParseException("Pyjama Parsing Error: More than one default clause found");}
 	| 	<NOWAIT>{ waitType = OmpTargetConstruct.ExecutionType.NoWait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
 	| 	<AWAIT> { waitType = OmpTargetConstruct.ExecutionType.Await; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
 	| 	<NAMEAS> "(" taskName = Name() ")"

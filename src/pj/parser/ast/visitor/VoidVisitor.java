@@ -365,5 +365,9 @@ public interface VoidVisitor<A> {
     public void visit(OmpAwaitFunctionCallDeclaration n, A arg);
     
     public void visit(OmpNeglectExceptionClause n, A arg);
+    
+    public void visit(OmpTaskConstruct n, A arg);
+    
+    public void visit(OmpTaskwaitDirective n, A arg);
             
 }

@@ -111,6 +111,8 @@ import pj.parser.ast.omp.OmpSectionsConstruct;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpSingleConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
+import pj.parser.ast.omp.OmpTaskConstruct;
+import pj.parser.ast.omp.OmpTaskwaitDirective;
 import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
@@ -1590,6 +1592,18 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Node> {
 
 	@Override
 	public Boolean visit(OmpNeglectExceptionClause n, Node arg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean visit(OmpTaskConstruct n, Node arg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean visit(OmpTaskwaitDirective n, Node arg) {
 		// TODO Auto-generated method stub
 		return null;
 	}

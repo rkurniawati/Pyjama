@@ -20,28 +20,28 @@
  * along with Pyjama. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pj.parser.ast.visitor;
+package pj.parser.ast.omp;
 
-import java.util.HashMap;
-import pj.parser.ast.expr.NameExpr;
-import pj.parser.ast.omp.OmpTaskConstruct;
-import pj.parser.ast.omp.OmpTaskwaitDirective;
+import pj.parser.ast.visitor.GenericVisitor;
+import pj.parser.ast.visitor.VoidVisitor;
 
-
-public class SymbolSubstitutionVisitor extends VoidVisitorAdapter<Object>{
+public class OmpTaskwaitDirective extends OpenMPStatement{
 	
-	private HashMap<String, String> symbolSubstitutionDictionary;
+	public OmpTaskwaitDirective() {
+	}
 	
-	public SymbolSubstitutionVisitor(HashMap<String, String> dictionary) {
-		this.symbolSubstitutionDictionary = dictionary;
+	public OmpTaskwaitDirective(int beginLine, int beginColumn, int endLine, int endColumn) {
+		super(beginLine, beginColumn, endLine, endColumn);
 	}
 	
 	@Override
-	public void visit(NameExpr n, Object arg) {
-		String symbolName = n.getName();
-		if (this.symbolSubstitutionDictionary.containsKey(symbolName)) {
-			n.setName(this.symbolSubstitutionDictionary.get(symbolName));
-		}
+	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
+		return v.visit(this, arg);
+	}
+
+	@Override
+	public <A> void accept(VoidVisitor<A> v, A arg) {
+		v.visit(this, arg);	
 	}
 
 }

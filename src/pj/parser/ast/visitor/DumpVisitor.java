@@ -134,6 +134,8 @@ import pj.parser.ast.omp.OmpSectionsConstruct;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpSingleConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
+import pj.parser.ast.omp.OmpTaskConstruct;
+import pj.parser.ast.omp.OmpTaskwaitDirective;
 import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
 import pj.parser.ast.stmt.BlockStmt;
@@ -1787,6 +1789,32 @@ public final class DumpVisitor implements VoidVisitor<Object> {
             }
         }
         printer.print(")");
+	}
+
+	@Override
+	public void visit(OmpTaskConstruct n, Object arg) {
+		printer.print("//#omp task ");
+		if (n.getIfClause() != null) 
+			n.accept(this, arg);
+		if (n.getDataClauseList() != null) {
+			for (OmpDataClause clause: n.getDataClauseList()) {
+				clause.accept(this, arg);
+			}
+		}
+		printer.printLn();
+		printer.printLn("{");
+		printer.indent();
+		n.getBody().accept(this, arg);
+		printer.printLn();
+		printer.unindent();
+		printer.print("}");
+		
+	}
+
+	@Override
+	public void visit(OmpTaskwaitDirective n, Object arg) {
+		printer.print("//#omp barrier ");
+		printer.printLn();
 	}
 
 }

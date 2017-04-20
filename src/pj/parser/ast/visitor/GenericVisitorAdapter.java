@@ -119,6 +119,7 @@ import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpIfClause;
 import pj.parser.ast.omp.OmpLastprivateDataClause;
 import pj.parser.ast.omp.OmpMasterConstruct;
+import pj.parser.ast.omp.OmpNeglectExceptionClause;
 import pj.parser.ast.omp.OmpNumthreadsClause;
 import pj.parser.ast.omp.OmpOrderedConstruct;
 import pj.parser.ast.omp.OmpParallelConstruct;
@@ -133,6 +134,8 @@ import pj.parser.ast.omp.OmpSectionsConstruct;
 import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpSingleConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
+import pj.parser.ast.omp.OmpTaskConstruct;
+import pj.parser.ast.omp.OmpTaskwaitDirective;
 import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
@@ -1094,5 +1097,17 @@ public abstract class GenericVisitorAdapter<R, A> implements GenericVisitor<R, A
 	public R visit(OmpAwaitFunctionCallDeclaration n, A arg) {
 		return null;
 	}
+	
+    public R visit(OmpNeglectExceptionClause n, A arg) {
+    	return null;
+    }
+    
+    public R visit(OmpTaskConstruct n, A arg) {
+    	return null;
+    }
+    
+    public R visit(OmpTaskwaitDirective n, A arg) {
+    	return null;
+    }
 	        		
 }

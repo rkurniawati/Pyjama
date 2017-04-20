@@ -230,6 +230,9 @@ public final class MethodDeclaration extends BodyDeclaration {
 				return true;
 			}
 		} else if (body instanceof BlockStmt) {
+			if (null == ((BlockStmt)body).getStmts()) {
+				return false;
+			}
 			for (Statement s: ((BlockStmt)body).getStmts()) {
 				if (s instanceof OmpAwaitConstruct) {
 					return true;
