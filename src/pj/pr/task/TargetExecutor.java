@@ -20,7 +20,7 @@
  * along with Pyjama. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pj.pr.target;
+package pj.pr.task;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;

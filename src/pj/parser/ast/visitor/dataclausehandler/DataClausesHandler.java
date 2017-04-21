@@ -44,6 +44,7 @@ import pj.parser.ast.visitor.SymbolScopingVisitor;
 import pj.parser.ast.visitor.constructwrappers.GuiCodeClassBuilder;
 import pj.parser.ast.visitor.constructwrappers.ParallelRegionClassBuilder;
 import pj.parser.ast.visitor.constructwrappers.TargetTaskCodeClassBuilder;
+import pj.parser.ast.visitor.constructwrappers.TaskCodeClassBuilder;
 import pj.parser.ast.visitor.constructwrappers.WorkShareBlockBuilder;
 
 public class DataClausesHandler {
@@ -209,7 +210,64 @@ public class DataClausesHandler {
 				for(Expression varExpression: dataClause.getArgumentSet()) {
 					String varName = varExpression.toString();
 					printer.printLn(varName + " = " + classInstanceName + "." + varName + ";");
-					//e.g. sp = ParallelRegion_0_in.sp;
+					//e.g. sp = TargetRegion_0_in.sp;
+				}
+				break;
+				
+			case Private:
+				/*
+				 * private variables needn't do anything after invocation
+				 */
+				break;
+			default:
+				throw new RuntimeException("Find unexpected Data clause:" + dataClause);	
+			}
+		}
+	}
+	
+	public static void processDataClausesBeforeTaskClassInvocation(TaskCodeClassBuilder taskWrapper, SourcePrinter printer) {
+		List<OmpDataClause> dataClauseList = taskWrapper.taskConstruct.getDataClauseList();
+		String classInstanceName = taskWrapper.className + "_in";
+		if (null == dataClauseList) {
+			return;
+		}
+		
+		for (OmpDataClause dataClause: dataClauseList) {
+			switch (dataClause.DataClauseType()) {
+			case Shared:
+				for(Expression varExpression: dataClause.getArgumentSet()) {
+					String varName = varExpression.toString();
+					printer.printLn(classInstanceName + "." + varName + " = " + varName + ";");
+					//e.g. TaskRegion_0_in.sp = sp;
+				}
+				break;
+			case Private:
+				for(Expression varExpression: dataClause.getArgumentSet()) {
+					String varName = varExpression.toString();
+					printer.printLn(classInstanceName + "." + varName + " = " + varName + ";");
+					//e.g. TaskRegion_0_in.sp = sp;
+				}
+				break;
+			default:
+				throw new RuntimeException("Find unexpected Data clause:" + dataClause.DataClauseType().toString());	
+			}
+		}
+	}
+	
+	public static void processDataClausesAfterTaskClassInvocation(TaskCodeClassBuilder taskWrapper, SourcePrinter printer) {
+		List<OmpDataClause> dataClauseList = taskWrapper.taskConstruct.getDataClauseList();
+		String classInstanceName = taskWrapper.className + "_in";
+		if (null == dataClauseList) {
+			return;
+		}
+		
+		for (OmpDataClause dataClause: dataClauseList) {
+			switch (dataClause.DataClauseType()) {
+			case Shared:
+				for(Expression varExpression: dataClause.getArgumentSet()) {
+					String varName = varExpression.toString();
+					printer.printLn(varName + " = " + classInstanceName + "." + varName + ";");
+					//e.g. sp = TaskRegion_0_in.sp;
 				}
 				break;
 				

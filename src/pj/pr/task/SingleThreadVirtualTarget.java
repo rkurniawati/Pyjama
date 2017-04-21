@@ -20,7 +20,7 @@
  * along with Pyjama. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package pj.pr.target;
+package pj.pr.task;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

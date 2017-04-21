@@ -23,11 +23,11 @@
 package pj;
 
 import pj.pr.*;
-import pj.pr.target.SingleThreadVirtualTarget;
-import pj.pr.target.TargetExecutor;
-import pj.pr.target.TargetTask;
-import pj.pr.target.TargetWorkerThread;
-import pj.pr.target.VirtualTarget;
+import pj.pr.task.SingleThreadVirtualTarget;
+import pj.pr.task.TargetExecutor;
+import pj.pr.task.TargetTask;
+import pj.pr.task.TargetWorkerThread;
+import pj.pr.task.VirtualTarget;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.*;
@@ -132,6 +132,15 @@ public class PjRuntime {
 			icv = initial_icv;
 		}
 		return icv;
+	}
+	
+	public static boolean currentThreadInParallelRegion() {
+		InternalControlVariables icv = getCurrentThreadICV();
+		if (-1 == icv.levels_var) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 	
 	public static void checkWorksharingCancellationPoint() {

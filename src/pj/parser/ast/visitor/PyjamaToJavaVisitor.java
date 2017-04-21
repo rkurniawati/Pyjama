@@ -26,6 +26,7 @@
  */
 package pj.parser.ast.visitor;
 
+import pj.PjRuntime;
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
 import pj.parser.ast.expr.*;
@@ -54,10 +55,12 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	
 	static protected int nextOpenMPRegionUniqueID = 0;
 	static protected int nextTargetBlockID = 0;
+	static protected int nextTaskBlockID = 0;
 	static protected int nextWorkShareID = 0;
 	static protected int nextGuiCodeID = 0;
 	protected static final String prefixTaskNameForParallelRegion = "_OMP_ParallelRegion_";
 	protected static final String prefixTaskNameForTargetTaskRegion = "_OMP_TargetTaskRegion_";
+	protected static final String prefixTaskNameForTaskRegion = "_OMP_TaskRegion_";
 	protected static final String prefixTaskNameForWorkShare = "_OMP_WorkShare_";
 	protected static final String prefixTaskNameForGuiCode = "_OMP_GuiCode_";
 	
@@ -192,7 +195,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     		uniqueWorkShareRegionID = OpenMPStatementIDPairing.get(n);
     	}
     	
-		WorkShareBlockBuilder currentWSBlock = new WorkShareBlockBuilder(n, this, uniqueWorkShareRegionID);
+    	WorkShareBlockBuilder currentWSBlock = new WorkShareBlockBuilder(n, this, uniqueWorkShareRegionID);
 		
     	printer.printLn("/*OpenMP Work Share region (#" + uniqueWorkShareRegionID + ") -- START */");
 		
@@ -254,13 +257,40 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     
 
 	@Override
-	public void visit(OmpTaskConstruct n, SourcePrinter arg) {
+	public void visit(OmpTaskConstruct n, SourcePrinter printer) {
 		// TODO Auto-generated method stub
 		
+	 	//get current OmpTaskConstruct's scope info from symbolTable
+    	n.scope = this.symbolTable.getScopeOfNode(n);
+    	n.processAllReachableVariablesIfNecessary();
+    	
+    	int uniqueTaskBlockID = -1;
+    	if (OpenMPStatementIDPairing.get(n) == null) {
+    		uniqueTaskBlockID = nextTaskBlockID++;
+    		OpenMPStatementIDPairing.put(n, uniqueTaskBlockID);
+    	} else {
+    		uniqueTaskBlockID = OpenMPStatementIDPairing.get(n);
+    	}
+    	
+    	TaskCodeClassBuilder currentTClass = TaskCodeClassBuilder.create(n, this.currentMethodIsStatic, this, prefixTaskNameForTaskRegion + uniqueTaskBlockID);
+    	printer.printLn("/*OpenMP Task block (#" + uniqueTaskBlockID + ") -- START */");
+    	printer.printLn(currentTClass.className + " " + currentTClass.className + "_in = new "+ currentTClass.className + "();");
+    	DataClausesHandler.processDataClausesBeforeTaskClassInvocation(currentTClass, printer);
+    	printer.printLn("if (PjRuntime.currentThreadInParallelRegion()) {");
+    	printer.indent();
+    	printer.printLn();
+    	printer.unindent();
+    	printer.printLn("} else {");
+    	printer.printLn("	" + currentTClass.className + "_in.run();");
+    	printer.printLn("}");
+     	DataClausesHandler.processDataClausesAfterTaskClassInvocation(currentTClass, printer);
+    	printer.printLn("/*OpenMP Task block (#" + uniqueTaskBlockID + ") -- END */");
+    	
+    	this.PrinterForAuxiliaryClasses.printLn(currentTClass.getSource());
 	}
 
 	@Override
-	public void visit(OmpTaskwaitDirective n, SourcePrinter arg) {
+	public void visit(OmpTaskwaitDirective n, SourcePrinter printer) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -273,7 +303,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     }
 
     public void visit(OmpFreeguiConstruct n, SourcePrinter printer){
-    	throw new RuntimeException("OmpFreeguiConstruct should be normalised ad OmpParallelConstruct with freegui property");
+    	throw new RuntimeException("OmpFreeguiConstruct should be normalised as OmpParallelConstruct with freegui property");
     }
 
     public void visit(OmpGuiConstruct n, SourcePrinter printer){
@@ -421,16 +451,16 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		}
 		
 	 	//get current OmpTargetConstruct's scope info from symbolTable
-    	n.scope = this.symbolTable.getScopeOfNode(n);
-    	n.processAllReachableVariablesIfNecessary();
+		n.scope = this.symbolTable.getScopeOfNode(n);
+		n.processAllReachableVariablesIfNecessary();
     	    	
 		int uniqueTargetBlockID = -1;
-    	if (OpenMPStatementIDPairing.get(n) == null) {
-    		uniqueTargetBlockID = nextTargetBlockID++;
-    		OpenMPStatementIDPairing.put(n, uniqueTargetBlockID);
-    	} else {
-    		uniqueTargetBlockID = OpenMPStatementIDPairing.get(n);
-    	}
+		if (OpenMPStatementIDPairing.get(n) == null) {
+			uniqueTargetBlockID = nextTargetBlockID++;
+			OpenMPStatementIDPairing.put(n, uniqueTargetBlockID);
+		} else {
+			uniqueTargetBlockID = OpenMPStatementIDPairing.get(n);
+		}
 
 		TargetTaskCodeClassBuilder currentTTClass = TargetTaskCodeClassBuilder.create(n, this.currentMethodIsStatic, this,
 														prefixTaskNameForTargetTaskRegion + uniqueTargetBlockID, n.containAwait());

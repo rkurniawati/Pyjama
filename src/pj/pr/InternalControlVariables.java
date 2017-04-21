@@ -25,7 +25,6 @@ package pj.pr;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 public class InternalControlVariables {
 	/**XING Environment Variables definition BEGIN*/
 	/*describes the OpenMP environment variables that specify the settings of
