@@ -255,8 +255,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.printLn("}");
     }
     
-
-	@Override
 	public void visit(OmpTaskConstruct n, SourcePrinter printer) {
 		// TODO Auto-generated method stub
 		
@@ -276,23 +274,15 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.printLn("/*OpenMP Task block (#" + uniqueTaskBlockID + ") -- START */");
     	printer.printLn(currentTClass.className + " " + currentTClass.className + "_in = new "+ currentTClass.className + "();");
     	DataClausesHandler.processDataClausesBeforeTaskClassInvocation(currentTClass, printer);
-    	printer.printLn("if (PjRuntime.currentThreadInParallelRegion()) {");
-    	printer.indent();
-    	printer.printLn();
-    	printer.unindent();
-    	printer.printLn("} else {");
-    	printer.printLn("	" + currentTClass.className + "_in.run();");
-    	printer.printLn("}");
+    	printer.printLn("PjRuntime.submitOmpTask(" + currentTClass.className + "_in);");
      	DataClausesHandler.processDataClausesAfterTaskClassInvocation(currentTClass, printer);
     	printer.printLn("/*OpenMP Task block (#" + uniqueTaskBlockID + ") -- END */");
     	
     	this.PrinterForAuxiliaryClasses.printLn(currentTClass.getSource());
 	}
 
-	@Override
 	public void visit(OmpTaskwaitDirective n, SourcePrinter printer) {
-		// TODO Auto-generated method stub
-		
+		printer.printLn("PjRuntime.taskWait();");
 	}
 	
     public void visit(OmpBarrierDirective n, SourcePrinter printer){
@@ -491,7 +481,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		if (n.isAwait() && stateMachineBuildingMode) {
 			printer.printLn(currentTTClass.className + "_in.setOnCompleteCall(this, PjRuntime.getVirtualTargetOfCurrentThread());");
 		}
-		printer.printLn("PjRuntime.submitTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
+		printer.printLn("PjRuntime.submitTargetTask(Thread.currentThread(), \"" + n.getTargetName() + "\", " + currentTTClass.className + "_in);");
 
 		if (n.isSync()) {
 			/*

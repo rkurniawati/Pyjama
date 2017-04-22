@@ -222,6 +222,7 @@ public class ParallelRegionClassBuilder extends ConstructWrapper  {
 		DataClausesHandler.reductionForPRClass(this, printer);
 		printer.printLn("//END reduction procedure");
 		//END reduction procedure
+		printer.printLn("PjRuntime.taskWait();");
 		printer.printLn("PjRuntime.setBarrier();");
 		//BEGIN Master thread updateOutputList
 		printer.unindent();

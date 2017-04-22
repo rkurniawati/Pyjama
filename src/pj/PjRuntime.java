@@ -67,34 +67,12 @@ public class PjRuntime {
 	
 	@Deprecated
 	public static synchronized void init(){
-		//GuiThread.init();
-//		while(!isInitialized){
-//			initial_icv = new InternalControlVariables();
-//			PjThreadPoolExecutor = new ThreadPoolExecutor(10, initial_icv.thread_limit_var, 0, TimeUnit.MILLISECONDS,
-//                    new LinkedBlockingQueue<Runnable>());
-//			
-//			//Put initial icv and inital master thread to HashTable
-//			threadICVMap = new HashMap<Long,InternalControlVariables>();
-//			Pyjama.icv = initial_icv;
-//			setCurrentThreadICV(initial_icv);
-//			setEDTThreadICV(initial_icv);
-//			ThreadsBusy = 0;
-//			ActiveParRegions = 0;
-			
-//			System.out.println("Pyjama initialized");
-//			isInitialized = true;
-//		}
+
 	}
 	
-	@Deprecated
-	public static synchronized void shutdown() {
-		PjThreadPoolExecutor.shutdown();
-	}
 
 	public static void submit(int id, Callable<Void> task, InternalControlVariables parent_icv){
-//		PjThreadPoolExecutor.submit(task);
 		PjExecutor.submit(id, task, parent_icv);
-		return;
 	}
 	
 	public static InternalControlVariables inheritICV(InternalControlVariables current_icv){
@@ -243,7 +221,7 @@ public class PjRuntime {
 		}
 	}
 	
-	public static void submitTask(Thread source, String targetName, TargetTask<?> task) {
+	public static void submitTargetTask(Thread source, String targetName, TargetTask<?> task) {
 		VirtualTarget virtualTarget = targetExecutorMap.get(targetName);
 		if (null == virtualTarget) {
 			//System.err.println("Virtual target " + targetName + " is not predefined, create this virtual target on-the-fly");
@@ -251,6 +229,25 @@ public class PjRuntime {
 			targetExecutorMap.put(targetName, virtualTarget);
 		}
 		virtualTarget.submit(task);
+	}
+	
+	public static void submitOmpTask(TargetTask<?> task) {
+		if (PjRuntime.currentThreadInParallelRegion()) {
+			InternalControlVariables icv = getCurrentThreadICV();
+			int threadID = icv.currentThreadAliasID;
+			if (0 == threadID) {
+				icv.OMP_TaskPool.submit(task);
+			} else {
+				//TODO: make more efficient scheduling, otherwise the tasks are not executed unless encountering taskwait.
+			}
+		} else {
+			PjRuntime.runTaskDirectly(task);
+    	}
+	}
+	
+	public static void taskWait() {
+		InternalControlVariables icv = getCurrentThreadICV();
+		icv.OMP_TaskPool.waitTillTaskPoolEmpty();
 	}
 	
 	public static void runTaskDirectly(TargetTask<?> task) {

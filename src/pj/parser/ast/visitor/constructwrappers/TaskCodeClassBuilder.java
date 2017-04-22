@@ -146,7 +146,7 @@ public class TaskCodeClassBuilder extends ConstructWrapper  {
 	protected void generateClass() {
 		printer.printLn();
 		//////////////////////////////////////////////
-		printer.printLn(this.staticPrefix +"class " + this.className + " extends pj.pr.target.TargetTask<Void>{");
+		printer.printLn(this.staticPrefix +"class " + this.className + " extends pj.pr.task.TargetTask<Void>{");
 		printer.indent();
 		printer.printLn();
 		//#BEGIN shared variables defined here

@@ -200,7 +200,7 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 	
 	protected void generateClass() {
 		String returnType = DataClauseHandlerUtils.autoBox(this.method.getType().toString());
-		printer.printLn(this.staticPrefix + "class " + stateMachineIdentifier + this.method.getName() + " extends pj.pr.target.TargetTask<" + returnType + "> {");
+		printer.printLn(this.staticPrefix + "class " + stateMachineIdentifier + this.method.getName() + " extends pj.pr.task.TargetTask<" + returnType + "> {");
 		printer.indent();
 		//printer class constructor, with same method parameter
 		this.generateConstructor();

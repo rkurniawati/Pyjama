@@ -25,6 +25,8 @@ package pj.pr;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import pj.pr.task.TaskPool;
 public class InternalControlVariables {
 	/**XING Environment Variables definition BEGIN*/
 	/*describes the OpenMP environment variables that specify the settings of
@@ -89,6 +91,10 @@ public class InternalControlVariables {
 	public PjCyclicBarrier OMP_CurrentParallelRegionBarrier = null;
 	public AtomicInteger OMP_loopCursor = new AtomicInteger(0);
 	public AtomicInteger OMP_orderCursor = new AtomicInteger(0);
+	
+	/* Xing added this for task directive support 2017.4.22 */
+	// the initialisation of OMP_TaskPool should be done in runtime
+	public TaskPool OMP_TaskPool = new TaskPool();
 
 	public int currentParallelRegionThreadNumber = 1;
 	/*Xing added this for store of current Thread alias id 2014.3.4*/

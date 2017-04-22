@@ -26,6 +26,7 @@ public class TaskPool {
 	public void executeTasks() {
 		TargetTask<?> task = null;
         while ((task = this.getTask()) != null) {
+        	//System.err.println("exec task from thread" + Pyjama.omp_get_thread_num());
         	try {
                 task.run();
         	} finally {
@@ -34,9 +35,11 @@ public class TaskPool {
         }
 	}
 	
-	public boolean waitTillTaskPoolEmpty() {
+	public void waitTillTaskPoolEmpty() {
+		if (taskQueue.isEmpty()) {
+			return;
+		}
 		executeTasks();
-		return taskQueue.isEmpty();
 	}
 	
 	
