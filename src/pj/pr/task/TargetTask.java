@@ -25,6 +25,7 @@ package pj.pr.task;
 import java.util.concurrent.Callable;
 
 public abstract class TargetTask<T> implements Callable<T>{
+		
 	private VirtualTarget caller = null;
 	private CallbackInfo callWhenFinish;
 	private volatile boolean isFinished = false;

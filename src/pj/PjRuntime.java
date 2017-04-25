@@ -40,13 +40,7 @@ public class PjRuntime {
 	private static Pyjama.Platform platform;
 	
 	private static InternalControlVariables initial_icv = new InternalControlVariables();
-	
-//	private static boolean isInitialized = false;
-	
-	private static ThreadPoolExecutor PjThreadPoolExecutor = 
-			new ThreadPoolExecutor(initial_icv.thread_limit_var, initial_icv.thread_limit_var, 0, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<Runnable>());
-	
+		
 	/*Xing added this for store of Thread real id and related icv copy 2014.3.4*/
 	public static ConcurrentHashMap<Long, InternalControlVariables> threadICVMap = new ConcurrentHashMap<Long, InternalControlVariables>();
 
@@ -67,7 +61,6 @@ public class PjRuntime {
 	
 	@Deprecated
 	public static synchronized void init(){
-
 	}
 	
 
@@ -224,7 +217,6 @@ public class PjRuntime {
 	public static void submitTargetTask(Thread source, String targetName, TargetTask<?> task) {
 		VirtualTarget virtualTarget = targetExecutorMap.get(targetName);
 		if (null == virtualTarget) {
-			//System.err.println("Virtual target " + targetName + " is not predefined, create this virtual target on-the-fly");
 			virtualTarget = new TargetExecutor(targetName);
 			targetExecutorMap.put(targetName, virtualTarget);
 		}
@@ -238,7 +230,8 @@ public class PjRuntime {
 			if (0 == threadID) {
 				icv.OMP_TaskPool.submit(task);
 			} else {
-				//TODO: make more efficient scheduling, otherwise the tasks are not executed unless encountering taskwait.
+				//If current thread is a slave thread, this is just a scheduling point. Slave thread simply runa tasks if any.
+				icv.OMP_TaskPool.executeTasks();
 			}
 		} else {
 			PjRuntime.runTaskDirectly(task);
@@ -247,7 +240,8 @@ public class PjRuntime {
 	
 	public static void taskWait() {
 		InternalControlVariables icv = getCurrentThreadICV();
-		icv.OMP_TaskPool.waitTillTaskPoolEmpty();
+		icv.OMP_TaskPool.runTillTaskPoolEmpty();
+		setBarrier();
 	}
 	
 	public static void runTaskDirectly(TargetTask<?> task) {

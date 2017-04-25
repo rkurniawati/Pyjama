@@ -145,6 +145,7 @@ public class InternalControlVariables {
 		this.OMP_CurrentParallelRegionBarrier = icv.OMP_CurrentParallelRegionBarrier;
 		this.OMP_loopCursor = icv.OMP_loopCursor;
 		this.OMP_orderCursor = icv.OMP_orderCursor;
+		this.OMP_TaskPool = icv.OMP_TaskPool;
 		
 	}
 	

@@ -1,11 +1,9 @@
 package pj.pr.task;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class TaskPool {
-	private BlockingQueue<TargetTask<?>> taskQueue = new LinkedBlockingDeque<TargetTask<?>>();
+	private ConcurrentLinkedQueue<TargetTask<?>> taskQueue = new ConcurrentLinkedQueue<TargetTask<?>>();
 	
 	public void submit(TargetTask<?> task) {
 		 if (task == null) {
@@ -15,33 +13,22 @@ public class TaskPool {
 	}
 	
 	private TargetTask<?> getTask() {
-		try {
-			return this.taskQueue.poll(50, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return this.taskQueue.poll();
 	}
 	
 	public void executeTasks() {
 		TargetTask<?> task = null;
         while ((task = this.getTask()) != null) {
-        	//System.err.println("exec task from thread" + Pyjama.omp_get_thread_num());
-        	try {
-                task.run();
-        	} finally {
-        		task = null;
-            }
+        	task.run();	
         }
 	}
 	
-	public void waitTillTaskPoolEmpty() {
+	public void runTillTaskPoolEmpty() {
 		if (taskQueue.isEmpty()) {
 			return;
+		} else {
+			executeTasks();
 		}
-		executeTasks();
 	}
-	
-	
 
 }
