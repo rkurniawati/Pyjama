@@ -358,7 +358,7 @@ public interface VoidVisitor<A> {
     
     public void visit(OmpTargetConstruct n, A arg);
     
-    public void visit(OmpWaitDirective n , A arg);
+    public void visit(OmpTaskcancelDirective n , A arg);
     
     public void visit(OmpAwaitConstruct n, A arg);
     

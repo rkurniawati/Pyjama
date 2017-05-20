@@ -24,11 +24,14 @@ package pj.pr.task;
 
 import java.util.concurrent.Callable;
 
+import pj.pr.exceptions.OmpCancelCurrentTaskException;
+
 public abstract class TargetTask<T> implements Callable<T>{
 		
 	private VirtualTarget caller = null;
 	private CallbackInfo callWhenFinish;
 	private volatile boolean isFinished = false;
+	private volatile boolean cancelFlag = false;
 	private Throwable thrown = null;
 	private T result;
 	
@@ -53,11 +56,7 @@ public abstract class TargetTask<T> implements Callable<T>{
 	public VirtualTarget getCaller() {
 		return this.caller;
 	}
-	
-	public Object getResult(String varName){
-		return null;
-	}
-	
+		
 	public void setResult(T result) {
 		this.result = result;
 	}
@@ -84,30 +83,44 @@ public abstract class TargetTask<T> implements Callable<T>{
 		this.thrown = thrown;
 	}
 		
-	public boolean isFinished() {
-		return this.isFinished;
-	}
-	
-	public void setFinish() {
-		this.isFinished = true;
-		if (null != this.callWhenFinish) {
-			CallbackInfo callNow = this.callWhenFinish;
-			this.callWhenFinish = null;
-			callNow.trigger();
-		}
-	}
-
 	public void setOnCompleteCall(TargetTask<?> finishtask, VirtualTarget whocall) {
 		this.callWhenFinish = new CallbackInfo(finishtask, whocall);
 	}
 	
 	public void run(){
 		try {
-			this.call();
+			if(!isCancelled()) {
+				this.call();
+			}
+		} catch (OmpCancelCurrentTaskException e) {
+			this.isFinished = true;
 		} catch (Exception e) {
 			this.thrown = new Throwable(e);
+		} finally {
 			this.setFinish();
 		}
+	}
+	
+	public void setFinish() {
+		this.isFinished = true;
+		this.notifyAll();
+		if (null != this.callWhenFinish) {
+			CallbackInfo callNow = this.callWhenFinish;
+			this.callWhenFinish = null;
+			callNow.trigger();
+		}
+	}
+	
+	public boolean isFinished() {
+		return this.isFinished;
+	}
+		
+	public void setCancel() {
+		this.cancelFlag = true;
+	}
+	
+	public boolean isCancelled() {
+		return this.cancelFlag;
 	}
 	
 }

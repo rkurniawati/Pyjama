@@ -25,21 +25,29 @@ package pj.parser.ast.omp;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
 
-public class OmpWaitDirective extends OpenMPStatement{
+public class OmpTaskcancelDirective extends OpenMPStatement{
 	
 	private String taskName;
 	
-	public OmpWaitDirective(String tag) {
+	private OmpIfClause ifExpr;
+	
+	public OmpTaskcancelDirective(String tag, OmpIfClause ifexpr) {
 		this.taskName = tag;
+		this.ifExpr = ifexpr;
 	}
 	
-	public OmpWaitDirective(int beginLine, int beginColumn, int endLine, int endColumn, String tag) {
+	public OmpTaskcancelDirective(int beginLine, int beginColumn, int endLine, int endColumn, String tag, OmpIfClause ifexpr) {
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.taskName = tag;
+		this.ifExpr = ifexpr;
 	}
 	
 	public String getTaskName() {
 		return this.taskName;
+	}
+	
+	public OmpIfClause getIfClause() {
+		return this.ifExpr;
 	}
 	
 	@Override

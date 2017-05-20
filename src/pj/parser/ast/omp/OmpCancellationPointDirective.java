@@ -27,7 +27,7 @@ import pj.parser.ast.visitor.VoidVisitor;
 
 public class OmpCancellationPointDirective extends OpenMPStatement{
 	
-	public static enum Region  {Parallel, For, Sections, Taskgroup};
+	public static enum Region {Parallel, For, Sections, Taskgroup, CurrentTask};
 	
 	private Region region;
 	

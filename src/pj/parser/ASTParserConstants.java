@@ -175,27 +175,27 @@ public interface ASTParserConstants {
   /** RegularExpression Id. */
   int NOWAIT = 90;
   /** RegularExpression Id. */
-  int WAIT = 91;
+  int NAMEAS = 91;
   /** RegularExpression Id. */
-  int NAMEAS = 92;
+  int AWAIT = 92;
   /** RegularExpression Id. */
-  int AWAIT = 93;
+  int ASYNC = 93;
   /** RegularExpression Id. */
-  int ASYNC = 94;
+  int NUMTHREADS = 94;
   /** RegularExpression Id. */
-  int NUMTHREADS = 95;
+  int COPYPRIVATE = 95;
   /** RegularExpression Id. */
-  int COPYPRIVATE = 96;
+  int CANCELLATION_POINT = 96;
   /** RegularExpression Id. */
-  int CANCELLATION_POINT = 97;
+  int CANCEL = 97;
   /** RegularExpression Id. */
-  int CANCEL = 98;
+  int TASK = 98;
   /** RegularExpression Id. */
-  int TASK = 99;
+  int TASKGROUP = 99;
   /** RegularExpression Id. */
-  int TASKGROUP = 100;
+  int TASKWAIT = 100;
   /** RegularExpression Id. */
-  int TASKWAIT = 101;
+  int TASKCANCEL = 101;
   /** RegularExpression Id. */
   int LOCAL = 102;
   /** RegularExpression Id. */
@@ -342,9 +342,9 @@ public interface ASTParserConstants {
   String[] tokenImage = {
     "<EOF>",
     "\" \"",
-    "\"\\t\"",
     "\"\\n\"",
     "\"\\r\"",
+    "\"\\t\"",
     "\"\\f\"",
     "<SINGLE_LINE_COMMENT>",
     "<token of kind 7>",
@@ -431,7 +431,6 @@ public interface ASTParserConstants {
     "\"flush\"",
     "\"barrier\"",
     "\"nowait\"",
-    "\"wait\"",
     "\"name_as\"",
     "\"await\"",
     "\"async\"",
@@ -442,6 +441,7 @@ public interface ASTParserConstants {
     "\"task\"",
     "\"taskgroup\"",
     "\"taskwait\"",
+    "\"taskcancel\"",
     "\"local\"",
     "\"global\"",
     "\"tag\"",

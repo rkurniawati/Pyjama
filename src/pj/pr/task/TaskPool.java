@@ -30,5 +30,16 @@ public class TaskPool {
 			executeTasks();
 		}
 	}
+	
+	public void cancelAllTasks() {
+		if (taskQueue.isEmpty()) {
+			return;
+		} else {
+			for (TargetTask<?> task: this.taskQueue) {
+				task.setCancel();
+			}
+			this.taskQueue.clear();
+		}
+	}
 
 }

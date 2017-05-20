@@ -114,8 +114,8 @@ import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpSingleConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.omp.OmpTaskConstruct;
+import pj.parser.ast.omp.OmpTaskcancelDirective;
 import pj.parser.ast.omp.OmpTaskwaitDirective;
-import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
 import pj.parser.ast.stmt.BlockStmt;
@@ -973,7 +973,7 @@ public class VariableNameFindVisitor implements VoidVisitor<Object> {
 	}
 
 	@Override
-	public void visit(OmpWaitDirective n, Object arg) {
+	public void visit(OmpTaskcancelDirective n, Object arg) {
 		// TODO Auto-generated method stub
 		
 	}

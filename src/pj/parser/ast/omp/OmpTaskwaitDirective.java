@@ -27,11 +27,27 @@ import pj.parser.ast.visitor.VoidVisitor;
 
 public class OmpTaskwaitDirective extends OpenMPStatement{
 	
-	public OmpTaskwaitDirective() {
+	private String taskName;
+	
+	private OmpIfClause ifExpr;
+		
+	public OmpTaskwaitDirective(String tag, OmpIfClause ifexpr) {
+		this.taskName = tag;
+		this.ifExpr = ifexpr;
 	}
 	
-	public OmpTaskwaitDirective(int beginLine, int beginColumn, int endLine, int endColumn) {
+	public OmpTaskwaitDirective(int beginLine, int beginColumn, int endLine, int endColumn, String tag, OmpIfClause ifexpr) {
 		super(beginLine, beginColumn, endLine, endColumn);
+		this.taskName = tag;
+		this.ifExpr = ifexpr;
+	}
+	
+	public String getTaskName() {
+		return this.taskName;
+	}
+	
+	public OmpIfClause getIfClause() {
+		return this.ifExpr;
 	}
 	
 	@Override

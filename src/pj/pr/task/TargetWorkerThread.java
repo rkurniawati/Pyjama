@@ -26,6 +26,7 @@ public class TargetWorkerThread extends Thread {
 	
 	private TargetExecutor executor = null;
 	private TargetTask<?> firstTask = null;
+	private volatile TargetTask<?> currentTask = null;
 	
 	public TargetWorkerThread(TargetExecutor executor, TargetTask<?> firstTask) {
 		this.executor = executor;
@@ -34,13 +35,13 @@ public class TargetWorkerThread extends Thread {
 	
 	@Override
 	public void run() {
-		TargetTask<?> task = firstTask;
+		currentTask = firstTask;
         this.firstTask = null;
-        while (task != null || (task = executor.getTask()) != null) {
+        while (currentTask != null || (currentTask = executor.getTask()) != null) {
         	try {
-                task.run();
+        		currentTask.run();
         	} finally {
-        		task = null;
+        		currentTask = null;
             }
         }
         /*
@@ -51,6 +52,10 @@ public class TargetWorkerThread extends Thread {
 	
 	public String targetName() {
 		return this.executor.getTargetName();
+	}
+	
+	public TargetTask<?> getCurrentTask() {
+		return this.currentTask;
 	}
 	
 	@Deprecated

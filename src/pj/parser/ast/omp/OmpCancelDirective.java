@@ -34,10 +34,10 @@ public class OmpCancelDirective extends OpenMPStatement{
 	
 	private Region region;
 	private ThreadAffiliate threadAffiliate;
-	private Expression ifStmt;
+	private OmpIfClause ifStmt;
 	private String exceptionToThrow;
 	
-	public OmpCancelDirective(Region r, ThreadAffiliate ta, Expression ifS, NameExpr e) {
+	public OmpCancelDirective(Region r, ThreadAffiliate ta, OmpIfClause ifS, NameExpr e) {
 		this.region = r;
 		this.threadAffiliate = ta;
 		this.ifStmt = ifS;
@@ -45,7 +45,7 @@ public class OmpCancelDirective extends OpenMPStatement{
 	}
 	
 	public OmpCancelDirective(int beginLine, int beginColumn, int endLine, int endColumn,
-			Region r, ThreadAffiliate ta, Expression ifS, NameExpr e) {
+			Region r, ThreadAffiliate ta, OmpIfClause ifS, NameExpr e) {
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.region = r;
 		this.threadAffiliate = ta;
@@ -61,7 +61,7 @@ public class OmpCancelDirective extends OpenMPStatement{
 		return this.threadAffiliate;
 	}
 	
-	public Expression getIfStmt() {
+	public OmpIfClause getIfStmt() {
 		return this.ifStmt;
 	}
 		

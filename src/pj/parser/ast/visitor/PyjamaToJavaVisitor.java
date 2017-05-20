@@ -26,7 +26,6 @@
  */
 package pj.parser.ast.visitor;
 
-import pj.PjRuntime;
 import pj.parser.ast.*;
 import pj.parser.ast.body.*;
 import pj.parser.ast.expr.*;
@@ -256,7 +255,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     }
     
 	public void visit(OmpTaskConstruct n, SourcePrinter printer) {
-		// TODO Auto-generated method stub
 		
 	 	//get current OmpTaskConstruct's scope info from symbolTable
     	n.scope = this.symbolTable.getScopeOfNode(n);
@@ -279,10 +277,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
     	printer.printLn("/*OpenMP Task block (#" + uniqueTaskBlockID + ") -- END */");
     	
     	this.PrinterForAuxiliaryClasses.printLn(currentTClass.getSource());
-	}
-
-	public void visit(OmpTaskwaitDirective n, SourcePrinter printer) {
-		printer.printLn("PjRuntime.taskWait();");
 	}
 	
     public void visit(OmpBarrierDirective n, SourcePrinter printer){
@@ -391,6 +385,9 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			printer.printLn("PjRuntime.checkWorksharingCancellationPoint();");
 		} else if (n.getRegion() == OmpCancellationPointDirective.Region.Taskgroup) {
 			throw new RuntimeException("Pyjama does not support omp task yet!");
+		} else if (n.getRegion() == OmpCancellationPointDirective.Region.CurrentTask) {
+			//omp cancellation point task
+			printer.printLn("PjRuntime.stopCurrentTask()");
 		}
 	}
 
@@ -531,13 +528,49 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		//---pop visiting mode.
 		this.stateMachineVisitingMode.pop();
 	}
+	
+	public void visit(OmpTaskwaitDirective n, SourcePrinter printer) {
+		if (null != n.getIfClause()) {
+			printer.print("if(");
+			n.getIfClause().getIfExpression().accept(this, printer);
+			printer.printLn("){");
+			printer.indent();
+		}
+		if (null == n.getTaskName()) {
+			//If taskwait directive is not followed with a task name, this is wait for the tasks in the default parallel region.
+			printer.printLn("PjRuntime.taskWait();");
+		} else {
+			//If taskwait directive is followed with a task name, only wait tasks with this specific name, these tasks must be virtual task.
+			printer.printLn("PjRuntime.waitTargetBlocksWithTaskNameUntilFinish(\"" + n.getTaskName() + "\");");
+			Set<TargetTaskCodeClassBuilder> targetBuilders = getTargetClassBuilders(n.getTaskName());
+			for (TargetTaskCodeClassBuilder targetBuilder: targetBuilders) {
+				DataClausesHandler.processDataClausesAfterTTClassInvocation(targetBuilder, printer);
+			}
+		}
+		if (null != n.getIfClause()) {
+			printer.unindent();
+			printer.printLn("}");
+		}
+	}
 	    
 	@Override
-	public void visit(OmpWaitDirective n, SourcePrinter printer) {
-		printer.printLn("PjRuntime.waitTargetBlocksWithTaskNameUntilFinish(\"" + n.getTaskName() + "\");");
-		Set<TargetTaskCodeClassBuilder> targetBuilders = getTargetClassBuilders(n.getTaskName());
-		for (TargetTaskCodeClassBuilder targetBuilder: targetBuilders) {
-			DataClausesHandler.processDataClausesAfterTTClassInvocation(targetBuilder, printer);
+	public void visit(OmpTaskcancelDirective n, SourcePrinter printer) {
+		if (null != n.getIfClause()) {
+			printer.print("if(");
+			n.getIfClause().getIfExpression().accept(this, printer);
+			printer.printLn("){");
+			printer.indent();
+		}
+		if (null == n.getTaskName()) {
+			//If taskwait directive is not followed with a task name, this is wait for the tasks in the default parallel region.
+			printer.printLn("PjRuntime.taskWait();");
+		} else {
+			//If taskwait directive is followed with a task name, only wait tasks with this specific name, these tasks must be virtual task.
+			printer.printLn("PjRuntime.setCancellationFlagToTaskName(\""+ n.getTaskName() + "\");");
+		}
+		if (null != n.getIfClause()) {
+			printer.unindent();
+			printer.printLn("}");
 		}
 	}
 	

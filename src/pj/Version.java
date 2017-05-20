@@ -50,7 +50,7 @@ public class Version {
 	/*
 	 * we use a dependency string, should be updated timely
 	 */
-	public static final String compilerVersion = "v2.1.1";
+	public static final String compilerVersion = "v2.2.0";
 	
 	public static String getCompileDate(){
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");

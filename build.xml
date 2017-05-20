@@ -2,7 +2,7 @@
 <project name="Pyjama" xmlns:ivy="antlib:org.apache.ivy.ant" default="main" basedir=".">
 
 	<!-- Version convention: [release].[add new features].[bug fixed] -->
-	<property name="version" value="2.1.1"/>
+	<property name="version" value="2.2.0"/>
 	<property name="ant.build.javac.source" value="1.7"/>
 	<property name="ant.build.javac.target" value="1.7"/>
 	<!-- =================================

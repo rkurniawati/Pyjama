@@ -104,7 +104,6 @@ import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
 import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
-import pj.parser.ast.omp.OmpWaitDirective;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -135,6 +134,7 @@ import pj.parser.ast.omp.OmpSharedDataClause;
 import pj.parser.ast.omp.OmpSingleConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.omp.OmpTaskConstruct;
+import pj.parser.ast.omp.OmpTaskcancelDirective;
 import pj.parser.ast.omp.OmpTaskwaitDirective;
 import pj.parser.ast.omp.OpenMPStatement;
 import pj.parser.ast.stmt.AssertStmt;
@@ -1742,11 +1742,17 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 	}
 	
 	@Override
-	public void visit(OmpWaitDirective n, Object arg) {
-		printer.print("//omp wait");
-		printer.print("(");
-		printer.print(n.getTaskName());
-		printer.printLn(")");
+	public void visit(OmpTaskcancelDirective n, Object arg) {
+		printer.print("//omp taskcancel");
+		if (n.getTaskName() != null) {
+			printer.print("(");
+			printer.print(n.getTaskName());
+			printer.printLn(")");
+		}
+		if (n.getIfClause() != null) {
+			n.getIfClause().accept(this, arg);
+		}
+
 	}
 
 	@Override
@@ -1813,8 +1819,15 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 
 	@Override
 	public void visit(OmpTaskwaitDirective n, Object arg) {
-		printer.print("//#omp barrier ");
-		printer.printLn();
+		printer.print("//#omp taskwait ");
+		if (n.getTaskName() != null) {
+			printer.print("(");
+			printer.print(n.getTaskName());
+			printer.printLn(")");
+		}
+		if (n.getIfClause() != null) {
+			n.getIfClause().accept(this, arg);
+		}
 	}
 
 }

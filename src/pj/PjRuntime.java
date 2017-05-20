@@ -23,6 +23,7 @@
 package pj;
 
 import pj.pr.*;
+import pj.pr.exceptions.OmpCancelCurrentTaskException;
 import pj.pr.task.SingleThreadVirtualTarget;
 import pj.pr.task.TargetExecutor;
 import pj.pr.task.TargetTask;
@@ -244,6 +245,26 @@ public class PjRuntime {
 		setBarrier();
 	}
 	
+	public static void taskCancel() {
+		InternalControlVariables icv = getCurrentThreadICV();
+		icv.OMP_TaskPool.cancelAllTasks();	
+	}
+	
+	public static void stopCurrentTask() {
+		TargetTask<?> currentTask = getCurrentTask();
+		if (null != currentTask) {
+			throw new OmpCancelCurrentTaskException();
+		}
+	}
+	
+	public static TargetTask<?> getCurrentTask() {
+		Thread currentThread = Thread.currentThread();
+		if (currentThread instanceof TargetWorkerThread) {
+			return ((TargetWorkerThread)currentThread).getCurrentTask();
+		}
+		return null;
+	}
+	
 	public static void runTaskDirectly(TargetTask<?> task) {
 		task.run();
 	}
@@ -255,8 +276,14 @@ public class PjRuntime {
 		return false;
 	}
 	
-	public static void waitTaskTillFinish(TargetTask<?> task) {
+	public static void waitTaskTillFinish(TargetTask<?> task) {		
 		while(!task.isFinished()) {
+			try {
+				//wait until the task is set to finished, and will notify current thread.
+				task.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -308,27 +335,18 @@ public class PjRuntime {
 		}
 		throw new RuntimeException("Pyjama cannot distinguish current virtual target name!");
 	}
-	
-	@Deprecated
-	public static void IrrelevantHandlingProcessing(TargetTask<?> currentWaitingTask) {
-		//Test if current thread is a Pyjama worker thread, the worker thread process next target task in working queue.
-		if (Thread.currentThread() instanceof TargetWorkerThread) {
-			TargetWorkerThread thread = (TargetWorkerThread)Thread.currentThread();
-			thread.IrrelevantHandlingProcessing(currentWaitingTask);
+		
+	public static void setCancellationFlagToTaskName(String taskName) {
+		HashSet<TargetTask<?>> targetSet = null;
+		synchronized(targetTaskNameDictionary) {
+			targetSet = targetTaskNameDictionary.get(taskName.hashCode());
+		} 
+		if(null == targetSet) {
+			throw new RuntimeException("Fatal Error(//#omp taskcancel): Pyjama cannot find the target task name:" + taskName);
 		}
-		//Else the current thread should be a non-Pyjama thread, which means we cannot directly control its event-loop.
-		//By default, if current thread is gui target, we do PjDispatchNextEvent() by modifying rt.jar
-		if (currentThreadIsSingleThreadTarget("gui")) {
-			while (!currentWaitingTask.isFinished()) {
-				//busy waiting
-			}
+		for(TargetTask<?> task: targetSet) {
+			task.setCancel();
 		}
-		//By default, if current thread is web target, we do PjRunNextJob() by modifying Jetty's QueuedThreadPool
-		if (currentThreadIsSingleThreadTarget("web")) {
-			while (!currentWaitingTask.isFinished()) {
-				//busy waiting
-			}
-		}				
 	}
 	
 	public static void waitTargetBlocksWithTaskNameUntilFinish(String taskName) {
