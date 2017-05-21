@@ -23,10 +23,11 @@
 package pj.pr.task;
 
 import java.util.concurrent.Callable;
-
 import pj.pr.exceptions.OmpCancelCurrentTaskException;
 
 public abstract class TargetTask<T> implements Callable<T>{
+	
+	public Object synchronizationGuard = new Object();
 		
 	private VirtualTarget caller = null;
 	private CallbackInfo callWhenFinish;
@@ -103,7 +104,9 @@ public abstract class TargetTask<T> implements Callable<T>{
 	
 	public void setFinish() {
 		this.isFinished = true;
-		this.notifyAll();
+		synchronized(this.synchronizationGuard) {
+			this.synchronizationGuard.notifyAll();
+		}
 		if (null != this.callWhenFinish) {
 			CallbackInfo callNow = this.callWhenFinish;
 			this.callWhenFinish = null;

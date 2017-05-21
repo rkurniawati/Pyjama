@@ -387,7 +387,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 			throw new RuntimeException("Pyjama does not support omp task yet!");
 		} else if (n.getRegion() == OmpCancellationPointDirective.Region.CurrentTask) {
 			//omp cancellation point task
-			printer.printLn("PjRuntime.stopCurrentTask()");
+			printer.printLn("PjRuntime.checkTaskCancellation();");
 		}
 	}
 
@@ -563,7 +563,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		}
 		if (null == n.getTaskName()) {
 			//If taskwait directive is not followed with a task name, this is wait for the tasks in the default parallel region.
-			printer.printLn("PjRuntime.taskWait();");
+			printer.printLn("PjRuntime.taskCancel();");
 		} else {
 			//If taskwait directive is followed with a task name, only wait tasks with this specific name, these tasks must be virtual task.
 			printer.printLn("PjRuntime.setCancellationFlagToTaskName(\""+ n.getTaskName() + "\");");

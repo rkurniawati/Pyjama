@@ -250,9 +250,9 @@ public class PjRuntime {
 		icv.OMP_TaskPool.cancelAllTasks();	
 	}
 	
-	public static void stopCurrentTask() {
+	public static void checkTaskCancellation() {
 		TargetTask<?> currentTask = getCurrentTask();
-		if (null != currentTask) {
+		if ((null != currentTask) && (currentTask.isCancelled())) {
 			throw new OmpCancelCurrentTaskException();
 		}
 	}
@@ -280,7 +280,9 @@ public class PjRuntime {
 		while(!task.isFinished()) {
 			try {
 				//wait until the task is set to finished, and will notify current thread.
-				task.wait();
+				synchronized(task.synchronizationGuard) {
+					task.synchronizationGuard.wait();
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
