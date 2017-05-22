@@ -32,7 +32,7 @@ import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.Expression;
 import pj.parser.ast.expr.MethodCallExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
+import pj.parser.ast.omp.OmpFunctionCallDeclaration;
 import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.symbolscope.Symbol;
 import pj.parser.ast.type.Type;
@@ -50,7 +50,7 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 	private ScopeInfo scope;
 	//This map contains all the method calls should be substituted by itermediate result variables.
 	private List<SubstitutionInfo> methodCallSubstitutions = new LinkedList<SubstitutionInfo>();
-	private List<OmpAwaitFunctionCallDeclaration> declaredFunctions;
+	private List<OmpFunctionCallDeclaration> declaredFunctions;
 	
 	//This list contains all the variables should be declared as field variables in this state machine class.
 	private LinkedList<VariableDeclarationExpr> variableDeclarations = new LinkedList<VariableDeclarationExpr>();
@@ -76,7 +76,7 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 		}
 	}
 
-	public AsyncFunctionCallSubstitutionVisitor(ScopeInfo scope, List<OmpAwaitFunctionCallDeclaration> functionList) {
+	public AsyncFunctionCallSubstitutionVisitor(ScopeInfo scope, List<OmpFunctionCallDeclaration> functionList) {
 		super(null, null);
 		this.scope = scope;
 		this.declaredFunctions = functionList;
@@ -84,7 +84,7 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 	
 	@Override
 	public void visit(MethodCallExpr n, SourcePrinter printer) {
-		OmpAwaitFunctionCallDeclaration matchedAsyncFunctionDeclaration = isDeclaredAsyncMethod(n);
+		OmpFunctionCallDeclaration matchedAsyncFunctionDeclaration = isDeclaredAsyncMethod(n);
 		String methodCall = ((MethodCallExpr)n).getName() + this.getMethodCallParameters((MethodCallExpr)n);
 		String methodScope = getMethodExprScope((MethodCallExpr)n);
 		if (null != matchedAsyncFunctionDeclaration) {
@@ -148,10 +148,10 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 	/*
 	 * Check if this method call is declared as an async call, if yes, return the async call declaration.
 	 */
-	private OmpAwaitFunctionCallDeclaration isDeclaredAsyncMethod(MethodCallExpr method) {
+	private OmpFunctionCallDeclaration isDeclaredAsyncMethod(MethodCallExpr method) {
 		String methodFullname = getMethodExprFullName(method);
 		//System.out.println("check method full name is:" + methodFullname);
-		for (OmpAwaitFunctionCallDeclaration asyncFunction: this.declaredFunctions) {
+		for (OmpFunctionCallDeclaration asyncFunction: this.declaredFunctions) {
 			if (asyncFunction.getName().equals(methodFullname) 
 				&&	parametersMatch(method, asyncFunction)) {
 				return asyncFunction;
@@ -160,7 +160,7 @@ public class AsyncFunctionCallSubstitutionVisitor extends PyjamaToJavaVisitor{
 		return null;
 	}
 	
-	private boolean parametersMatch(MethodCallExpr method, OmpAwaitFunctionCallDeclaration asyncFunction) {
+	private boolean parametersMatch(MethodCallExpr method, OmpFunctionCallDeclaration asyncFunction) {
 		List<Parameter> asyncParameters = asyncFunction.getParameters();
 		List<Expression> methodParameters = method.getArgs();
 		

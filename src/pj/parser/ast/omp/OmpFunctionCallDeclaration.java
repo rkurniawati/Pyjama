@@ -30,19 +30,19 @@ import pj.parser.ast.type.Type;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
 
-public class OmpAwaitFunctionCallDeclaration extends Node{
+public class OmpFunctionCallDeclaration extends Node{
 	
 	private Type type;
 	private String name;
 	private List<Parameter> parameters;
 	
-	public OmpAwaitFunctionCallDeclaration(Type type, String name, List<Parameter> parameters) {
+	public OmpFunctionCallDeclaration(Type type, String name, List<Parameter> parameters) {
 		this.type = type;
 		this.name = name;
 		this.parameters = parameters;
 	}
 	
-	public OmpAwaitFunctionCallDeclaration(int beginLine, int beginColumn, int endLine, int endColumn, Type type, String name, List<Parameter> parameters) {
+	public OmpFunctionCallDeclaration(int beginLine, int beginColumn, int endLine, int endColumn, Type type, String name, List<Parameter> parameters) {
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.type = type;
 		this.name = name;
@@ -59,8 +59,12 @@ public class OmpAwaitFunctionCallDeclaration extends Node{
 
 	public List<Parameter> getParameters() {
 	    return parameters;
-	}	
-
+	}
+	
+	public String getFunctionCallString() {
+		return null;
+	}
+	
 	@Override
 	public <R, A> R accept(GenericVisitor<R, A> v, A arg) {
 		return v.visit(this, arg);

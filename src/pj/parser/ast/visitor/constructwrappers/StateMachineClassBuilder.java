@@ -8,7 +8,7 @@ import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.body.VariableDeclaratorId;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAwaitConstruct;
-import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
+import pj.parser.ast.omp.OmpFunctionCallDeclaration;
 import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.type.ClassOrInterfaceType;
 import pj.parser.ast.visitor.AsyncFunctionCallSubstitutionVisitor;
@@ -50,7 +50,7 @@ public abstract class StateMachineClassBuilder extends ConstructWrapper{
 	
 	protected void visitOmpAwaitConstruct(OmpAwaitConstruct n) {
 		ScopeInfo currentOmpAwaitConstructScopeInfo = visitor.getSymbolTable().getScopeOfNode(n);
-		List<OmpAwaitFunctionCallDeclaration> functions = n.getAwaitFunctions();
+		List<OmpFunctionCallDeclaration> functions = n.getAwaitFunctions();
 		AsyncFunctionCallSubstitutionVisitor substitutionVisitor = new AsyncFunctionCallSubstitutionVisitor(currentOmpAwaitConstructScopeInfo, functions);
 		substitutionVisitor.getPriter().setIndentLevel(printer.getIndentLevel());
 		n.getBody().accept(substitutionVisitor, substitutionVisitor.getPriter());

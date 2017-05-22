@@ -183,6 +183,8 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		printer.printLn("public Void call() {");
 		printer.indent();
 		//BEGIN get construct user code
+		printer.printLn("try {");
+		printer.indent();
 		printer.printLn("/****User Code BEGIN***/");
 		if (this.stateMachineVisitingMode) {
 			this.generateStates();
@@ -192,6 +194,15 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		printer.printLn();
 		printer.printLn("/****User Code END***/");
 		//END get construct user code
+		printer.unindent();
+		printer.printLn("} catch(pj.pr.exceptions.OmpCancelCurrentTaskException e) {");
+		if (null != this.targetConstruct.getOnCancelCallbackFunction()) {
+			printer.indent();
+			String callbackFunction = this.targetConstruct.getOnCancelCallbackFunction();
+			printer.printLn(callbackFunction+";");
+			printer.unindent();
+		}
+		printer.printLn("}");
 		printer.printLn("this.setFinish();");
 		printer.printLn("return null;");
 		printer.unindent();

@@ -103,7 +103,6 @@ import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
 import pj.parser.ast.omp.OmpAwaitConstruct;
-import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -114,6 +113,7 @@ import pj.parser.ast.omp.OmpDefaultDataClause;
 import pj.parser.ast.omp.OmpFlushDirective;
 import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpFreeguiConstruct;
+import pj.parser.ast.omp.OmpFunctionCallDeclaration;
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpIfClause;
 import pj.parser.ast.omp.OmpLastprivateDataClause;
@@ -1668,6 +1668,8 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 				printer.print("sections ");
 			case Taskgroup:
 				printer.print("taskgroup ");
+			case CurrentTask:
+				printer.print("task ");
 			}
 		}
 		printer.printLn();
@@ -1732,6 +1734,10 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 			}
 		}
 		
+		if (n.getOnCancelCallbackFunction() != null) {
+			n.accept(this, arg);
+		}
+		
 		printer.printLn();
 		printer.printLn("{");
 		printer.indent();
@@ -1763,7 +1769,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 	}
 
 	@Override
-	public void visit(OmpAwaitFunctionCallDeclaration n, Object arg) {
+	public void visit(OmpFunctionCallDeclaration n, Object arg) {
 		n.getType().accept(this, arg);
         printer.print(" ");
         printer.print(n.getName());

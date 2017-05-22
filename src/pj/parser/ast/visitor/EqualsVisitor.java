@@ -81,7 +81,6 @@ import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
 import pj.parser.ast.omp.OmpAwaitConstruct;
-import pj.parser.ast.omp.OmpAwaitFunctionCallDeclaration;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -92,6 +91,7 @@ import pj.parser.ast.omp.OmpDefaultDataClause;
 import pj.parser.ast.omp.OmpFlushDirective;
 import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpFreeguiConstruct;
+import pj.parser.ast.omp.OmpFunctionCallDeclaration;
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpIfClause;
 import pj.parser.ast.omp.OmpLastprivateDataClause;
@@ -1585,7 +1585,7 @@ public class EqualsVisitor implements GenericVisitor<Boolean, Node> {
 	}
 
 	@Override
-	public Boolean visit(OmpAwaitFunctionCallDeclaration n, Node arg) {
+	public Boolean visit(OmpFunctionCallDeclaration n, Node arg) {
 		// TODO Auto-generated method stub
 		return null;
 	}

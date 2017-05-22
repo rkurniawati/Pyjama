@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import pj.parser.ast.expr.Expression;
+import pj.parser.ast.expr.MethodCallExpr;
 import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.Statement;
@@ -43,6 +44,7 @@ public class OmpTargetConstruct extends OpenMPStatement{
 	private boolean virtualTarget = true;
 	private String targetName;
 	private String taskName;
+	private MethodCallExpr onCancelCallbackFunction;
 	
 	//this symbol is true when default(shared) data clause happens. Default is none.
 	private boolean defaultShared = false;
@@ -54,7 +56,8 @@ public class OmpTargetConstruct extends OpenMPStatement{
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
 			ExecutionType executionType,
-			NameExpr taskName){
+			NameExpr taskName,
+			MethodCallExpr onCancelCallback){
 		this.body = statement;
 		this.virtualTarget = isVirtual;
 		this.targetName = targetName.toString();
@@ -64,6 +67,7 @@ public class OmpTargetConstruct extends OpenMPStatement{
 		if (null != taskName) {
 			this.taskName = taskName.toString();
 		}
+		this.onCancelCallbackFunction = onCancelCallback;
 	}
 	
 	public OmpTargetConstruct(int beginLine, int beginColumn, int endLine, int endColumn, 
@@ -73,7 +77,8 @@ public class OmpTargetConstruct extends OpenMPStatement{
 			List<OmpDataClause> dataClausesList, 
 			OmpIfClause ifExpr,
 			ExecutionType executionType,
-			NameExpr taskName){
+			NameExpr taskName,
+			MethodCallExpr onCancelCallback){
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.body = statement;
 		this.virtualTarget = isVirtual;
@@ -84,6 +89,7 @@ public class OmpTargetConstruct extends OpenMPStatement{
 		if (null != taskName) {
 			this.taskName = taskName.toString();
 		}
+		this.onCancelCallbackFunction = onCancelCallback;
 	}
 	
 	public Statement getBody() {
@@ -96,6 +102,13 @@ public class OmpTargetConstruct extends OpenMPStatement{
 	
 	public String getTaskName() {
 		return this.taskName;
+	}
+		
+	public String getOnCancelCallbackFunction() {
+		if (null != this.onCancelCallbackFunction) {
+			return this.onCancelCallbackFunction.toString();
+		}
+		return "";
 	}
 	
 	public boolean isVirtual() {

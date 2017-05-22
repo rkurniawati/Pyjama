@@ -93,8 +93,6 @@ public abstract class TargetTask<T> implements Callable<T>{
 			if(!isCancelled()) {
 				this.call();
 			}
-		} catch (OmpCancelCurrentTaskException e) {
-			this.isFinished = true;
 		} catch (Exception e) {
 			this.thrown = new Throwable(e);
 		} finally {

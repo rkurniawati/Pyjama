@@ -357,6 +357,7 @@ TOKEN :
 | < COPYPRIVATE: "copyprivate" >
 | < CANCELLATION_POINT: "cancellation point" >
 | < CANCEL: "cancel" >
+| < ON_CANCEL: "on_cancel">
 | < TASK: "task" >
 | < TASKGROUP: "taskgroup" >
 | < TASKWAIT: "taskwait" >
@@ -3541,6 +3542,7 @@ OmpTargetConstruct OmpTargetConstruct():
 	int waitTypeClauseCount = 0;
 	int IfClauseCount = 0;
 	int defaultDataClauseCount = 0;
+	int onCancelCallbackCount = 0;
 	//waitType: we set the default is wait, which means encoutering thread blocks until the target code is finished. //Xing Fan at 2015.12.1
 	OmpTargetConstruct.ExecutionType waitType = OmpTargetConstruct.ExecutionType.Wait; 
 	OmpDataClause dataClause = null;
@@ -3549,6 +3551,7 @@ OmpTargetConstruct OmpTargetConstruct():
 	boolean isVirtual = true;
 	NameExpr targetName = null;
 	NameExpr taskName = null;
+	MethodCallExpr onCancelCallback = null;
 	Statement body = null;
 }
 {	
@@ -3564,9 +3567,10 @@ OmpTargetConstruct OmpTargetConstruct():
 	| 	<AWAIT> { waitType = OmpTargetConstruct.ExecutionType.Await; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
 	| 	<NAMEAS> "(" taskName = Name() ")"
 			{ waitType = OmpTargetConstruct.ExecutionType.NoWait; if((++waitTypeClauseCount)>1) throw new RuntimeException("more than one wait clause");}
+	|	<ON_CANCEL> "(" onCancelCallback = OmpMethodCall() ")" { if((++onCancelCallbackCount)>1) throw new RuntimeException("more than one on_cancel clause");}
 	)*
 	body = Statement()
-	{ return new OmpTargetConstruct(line, column, token.endLine, token.endColumn, body, isVirtual, targetName, dataClauseList, ifExpr, waitType, taskName); }
+	{ return new OmpTargetConstruct(line, column, token.endLine, token.endColumn, body, isVirtual, targetName, dataClauseList, ifExpr, waitType, taskName, onCancelCallback); }
 }
 
 //§§Followings are Pyjama extionsion of OpenMP for asynchronous function call; Xing Fan added at 2015.4.22
@@ -3574,21 +3578,21 @@ OmpAwaitConstruct OmpAwaitConstruct():
 {
 	int line;
 	int column;
-	OmpAwaitFunctionCallDeclaration functionDeclaration = null;
+	OmpFunctionCallDeclaration functionDeclaration = null;
 	Statement body = null;
-	ArrayList<OmpAwaitFunctionCallDeclaration> functionList = new ArrayList<OmpAwaitFunctionCallDeclaration>();
+	ArrayList<OmpFunctionCallDeclaration> functionList = new ArrayList<OmpFunctionCallDeclaration>();
 }
 {
 	<AWAIT> {line=token.beginLine; column=token.beginColumn;}
 	"("
-	functionDeclaration = OmpAwaitFunctionCallDeclaration() {functionList.add(functionDeclaration);}
-	( "," functionDeclaration = OmpAwaitFunctionCallDeclaration() {functionList.add(functionDeclaration);} )*
+	functionDeclaration = OmpFunctionCallDeclaration() {functionList.add(functionDeclaration);}
+	( "," functionDeclaration = OmpFunctionCallDeclaration() {functionList.add(functionDeclaration);} )*
 	")"
 	body = Statement()
 	{return new OmpAwaitConstruct(line, column, token.endLine, token.endColumn, functionList, body);}
 }
 
-OmpAwaitFunctionCallDeclaration OmpAwaitFunctionCallDeclaration():
+OmpFunctionCallDeclaration OmpFunctionCallDeclaration():
 {
 	Type type;
 	String name;
@@ -3601,7 +3605,21 @@ OmpAwaitFunctionCallDeclaration OmpAwaitFunctionCallDeclaration():
   <IDENTIFIER> { name = token.image; }
   ( "." <IDENTIFIER> {name += ("." + token.image);} )*
   parameters = FormalParameters() 
-  { return new OmpAwaitFunctionCallDeclaration(line, column, token.endLine, token.endColumn, type, name, parameters); }
+  { return new OmpFunctionCallDeclaration(line, column, token.endLine, token.endColumn, type, name, parameters); }
+}
+
+MethodCallExpr OmpMethodCall():
+{
+	String name;
+	List args;
+	int line = token.beginLine;
+	int column = token.beginColumn;
+}
+{
+  <IDENTIFIER> { name = token.image; line=token.beginLine; column=token.beginColumn;}
+  ( "." <IDENTIFIER> {name += ("." + token.image);} )*
+  args = Arguments() 
+  { return new MethodCallExpr(line, column, token.endLine, token.endColumn, null, null, name, args); }
 }
 
 //§§Support OpenMP Clause Statement; Xing Fan added at 2014.9.25

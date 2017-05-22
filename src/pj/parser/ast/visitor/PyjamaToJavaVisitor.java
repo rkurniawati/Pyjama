@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Stack;
 
 public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
@@ -542,10 +541,6 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 		} else {
 			//If taskwait directive is followed with a task name, only wait tasks with this specific name, these tasks must be virtual task.
 			printer.printLn("PjRuntime.waitTargetBlocksWithTaskNameUntilFinish(\"" + n.getTaskName() + "\");");
-			Set<TargetTaskCodeClassBuilder> targetBuilders = getTargetClassBuilders(n.getTaskName());
-			for (TargetTaskCodeClassBuilder targetBuilder: targetBuilders) {
-				DataClausesHandler.processDataClausesAfterTTClassInvocation(targetBuilder, printer);
-			}
 		}
 		if (null != n.getIfClause()) {
 			printer.unindent();
@@ -586,8 +581,8 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	
 	@Override
-	public void visit(OmpAwaitFunctionCallDeclaration n, SourcePrinter printer) {
-		throw new RuntimeException("OmpAwaitFunctionCallDeclaration should not be visited by PyjamaToJavaVisitor.");
+	public void visit(OmpFunctionCallDeclaration n, SourcePrinter printer) {
+		throw new RuntimeException("OmpFunctionCallDeclaration should not be visited by PyjamaToJavaVisitor.");
 	}
 	
 	//OpenMP add END*********************************************************************************OpenMP add END//
