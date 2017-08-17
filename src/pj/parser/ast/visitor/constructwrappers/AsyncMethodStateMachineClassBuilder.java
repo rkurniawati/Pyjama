@@ -29,7 +29,7 @@ import pj.parser.ast.body.MethodDeclaration;
 import pj.parser.ast.body.Parameter;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAsyncCallConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.ExpressionStmt;
@@ -111,8 +111,8 @@ public class AsyncMethodStateMachineClassBuilder extends StateMachineClassBuilde
 		Statement s;
 		while (iter.hasNext()) {
 			s = iter.next();
-			if (s instanceof OmpAwaitConstruct) {
-				this.visitOmpAwaitConstruct((OmpAwaitConstruct)s);
+			if (s instanceof OmpAsyncCallConstruct) {
+				this.visitOmpAsyncCallConstruct((OmpAsyncCallConstruct)s);
 				continue;
 			}
 			if (s instanceof OmpTargetConstruct) {

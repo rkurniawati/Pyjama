@@ -38,7 +38,7 @@ import pj.parser.ast.expr.MethodCallExpr;
 import pj.parser.ast.expr.NameExpr;
 import pj.parser.ast.expr.ObjectCreationExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAsyncCallConstruct;
 import pj.parser.ast.omp.OmpForConstruct;
 import pj.parser.ast.omp.OmpGuiConstruct;
 import pj.parser.ast.omp.OmpNeglectExceptionClause;
@@ -459,8 +459,8 @@ public class SymbolScopingVisitor extends GenericVisitorAdapter<String,Object>{
         return null;
 	}
 
-	public String visit(OmpAwaitConstruct n, Object arg) {
-		this.symbolTable.enterNewScope(n, "OmpAwait", ScopeInfo.Type.OpenMPConstructScope);
+	public String visit(OmpAsyncCallConstruct n, Object arg) {
+		this.symbolTable.enterNewScope(n, "OmpAsyncCall", ScopeInfo.Type.OpenMPConstructScope);
 		if (n.getBody() != null) {
             n.getBody().accept(this, arg);
         }

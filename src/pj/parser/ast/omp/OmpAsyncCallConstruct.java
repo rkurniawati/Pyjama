@@ -28,18 +28,18 @@ import pj.parser.ast.stmt.Statement;
 import pj.parser.ast.visitor.GenericVisitor;
 import pj.parser.ast.visitor.VoidVisitor;
 
-public class OmpAwaitConstruct extends OpenMPStatement{
+public class OmpAsyncCallConstruct extends OpenMPStatement{
 
 	private Statement statement;
 	
 	private List<OmpFunctionCallDeclaration> functionList;
 
-	public OmpAwaitConstruct(List<OmpFunctionCallDeclaration> functionList, Statement statement) {
+	public OmpAsyncCallConstruct(List<OmpFunctionCallDeclaration> functionList, Statement statement) {
 		this.functionList = functionList;
 		this.statement = statement;
 	}
 	
-	public OmpAwaitConstruct(int beginLine, int beginColumn, int endLine, int endColumn, List<OmpFunctionCallDeclaration> functionList, Statement statement) {
+	public OmpAsyncCallConstruct(int beginLine, int beginColumn, int endLine, int endColumn, List<OmpFunctionCallDeclaration> functionList, Statement statement) {
 		super(beginLine, beginColumn, endLine, endColumn);
 		this.functionList = functionList;
 		this.statement = statement;

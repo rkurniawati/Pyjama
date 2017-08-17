@@ -7,7 +7,7 @@ import java.util.List;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.body.VariableDeclaratorId;
 import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAsyncCallConstruct;
 import pj.parser.ast.omp.OmpFunctionCallDeclaration;
 import pj.parser.ast.symbolscope.ScopeInfo;
 import pj.parser.ast.type.ClassOrInterfaceType;
@@ -48,7 +48,7 @@ public abstract class StateMachineClassBuilder extends ConstructWrapper{
 		return printer.getSource();
 	}
 	
-	protected void visitOmpAwaitConstruct(OmpAwaitConstruct n) {
+	protected void visitOmpAsyncCallConstruct(OmpAsyncCallConstruct n) {
 		ScopeInfo currentOmpAwaitConstructScopeInfo = visitor.getSymbolTable().getScopeOfNode(n);
 		List<OmpFunctionCallDeclaration> functions = n.getAwaitFunctions();
 		AsyncFunctionCallSubstitutionVisitor substitutionVisitor = new AsyncFunctionCallSubstitutionVisitor(currentOmpAwaitConstructScopeInfo, functions);

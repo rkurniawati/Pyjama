@@ -97,7 +97,7 @@ import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
-import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAsyncCallConstruct;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -396,7 +396,7 @@ public interface GenericVisitor<R, A> {
     
     public R visit(OmpTaskcancelDirective n , A arg);
     
-    public R visit(OmpAwaitConstruct n, A arg);
+    public R visit(OmpAsyncCallConstruct n, A arg);
     
     public R visit(OmpFunctionCallDeclaration n, A arg);
     

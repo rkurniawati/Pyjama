@@ -570,7 +570,7 @@ public class PyjamaToJavaVisitor implements VoidVisitor<SourcePrinter> {
 	}
 	
 	@Override
-	public void visit(OmpAwaitConstruct n, SourcePrinter printer) {
+	public void visit(OmpAsyncCallConstruct n, SourcePrinter printer) {
 		/* For an async function, the prototype of this function still call the await block synchronously;
 		 * So, directly visit this block. The states are used in state machine class.
 		 */

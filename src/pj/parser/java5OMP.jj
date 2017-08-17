@@ -353,7 +353,8 @@ TOKEN :
 | < NAMEAS: "name_as" >
 | < AWAIT: "await" >
 | < ASYNC: "async" >
-| < NUMTHREADS: "num_threads">
+| < ASYNC_CALL: "async_call" >
+| < NUMTHREADS: "num_threads" >
 | < COPYPRIVATE: "copyprivate" >
 | < CANCELLATION_POINT: "cancellation point" >
 | < CANCEL: "cancel" >
@@ -3127,7 +3128,7 @@ OpenMPStatement OpenMPStatement():
 	|	ret = OmpCancellationPointDirective()
 	|	ret = OmpCancelDirective()
 	|	ret = OmpTargetConstruct()
-	|	ret = OmpAwaitConstruct()
+	|	ret = OmpAsyncCallConstruct()
 	)
 	{return ret;}
 }
@@ -3574,7 +3575,7 @@ OmpTargetConstruct OmpTargetConstruct():
 }
 
 //§§Followings are Pyjama extionsion of OpenMP for asynchronous function call; Xing Fan added at 2015.4.22
-OmpAwaitConstruct OmpAwaitConstruct():
+OmpAsyncCallConstruct OmpAsyncCallConstruct():
 {
 	int line;
 	int column;
@@ -3583,13 +3584,13 @@ OmpAwaitConstruct OmpAwaitConstruct():
 	ArrayList<OmpFunctionCallDeclaration> functionList = new ArrayList<OmpFunctionCallDeclaration>();
 }
 {
-	<AWAIT> {line=token.beginLine; column=token.beginColumn;}
+	<ASYNC_CALL> {line=token.beginLine; column=token.beginColumn;}
 	"("
 	functionDeclaration = OmpFunctionCallDeclaration() {functionList.add(functionDeclaration);}
 	( "," functionDeclaration = OmpFunctionCallDeclaration() {functionList.add(functionDeclaration);} )*
 	")"
 	body = Statement()
-	{return new OmpAwaitConstruct(line, column, token.endLine, token.endColumn, functionList, body);}
+	{return new OmpAsyncCallConstruct(line, column, token.endLine, token.endColumn, functionList, body);}
 }
 
 OmpFunctionCallDeclaration OmpFunctionCallDeclaration():

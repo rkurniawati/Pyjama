@@ -46,7 +46,7 @@ package pj.parser.ast.body;
 import pj.parser.ast.TypeParameter;
 import pj.parser.ast.expr.AnnotationExpr;
 import pj.parser.ast.expr.NameExpr;
-import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAsyncCallConstruct;
 import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.stmt.BlockStmt;
 import pj.parser.ast.stmt.Statement;
@@ -234,7 +234,7 @@ public final class MethodDeclaration extends BodyDeclaration {
 				return false;
 			}
 			for (Statement s: ((BlockStmt)body).getStmts()) {
-				if (s instanceof OmpAwaitConstruct) {
+				if (s instanceof OmpAsyncCallConstruct) {
 					return true;
 				} else if (s instanceof OmpTargetConstruct) {
 					if (((OmpTargetConstruct)s).isAwait()) {

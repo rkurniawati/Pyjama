@@ -29,25 +29,14 @@ package pj.parser.ast.visitor.constructwrappers;
  */
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import pj.parser.ast.visitor.DumpVisitor;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
-import pj.parser.ast.body.VariableDeclarator;
-import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.omp.OmpAwaitConstruct;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpSharedDataClause;
-import pj.parser.ast.omp.OmpTargetConstruct;
 import pj.parser.ast.omp.OmpTaskConstruct;
-import pj.parser.ast.stmt.BlockStmt;
-import pj.parser.ast.stmt.ExpressionStmt;
 import pj.parser.ast.stmt.Statement;
-import pj.parser.ast.type.Type;
-import pj.parser.ast.visitor.dataclausehandler.DataClausesHandler;
 
 public class TaskCodeClassBuilder extends ConstructWrapper  {
 	

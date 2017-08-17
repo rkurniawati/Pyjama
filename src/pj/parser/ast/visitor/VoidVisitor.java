@@ -360,7 +360,7 @@ public interface VoidVisitor<A> {
     
     public void visit(OmpTaskcancelDirective n , A arg);
     
-    public void visit(OmpAwaitConstruct n, A arg);
+    public void visit(OmpAsyncCallConstruct n, A arg);
     
     public void visit(OmpFunctionCallDeclaration n, A arg);
     

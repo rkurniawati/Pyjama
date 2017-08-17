@@ -274,10 +274,10 @@ public class Pyjama {
 	/**
 	 * OpenMP 2.5 - like runtime routine to set a nested region
 	 */
-	public static void omp_set_nested()
+	public static void omp_set_nested(boolean nested)
 	{
 		InternalControlVariables icv = PjRuntime.getCurrentThreadICV();
-		icv.nest_var = true;
+		icv.nest_var = nested;
 	}
 	
 	/**

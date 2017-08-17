@@ -168,7 +168,7 @@ public class OmpTargetConstruct extends OpenMPStatement{
 			}
 		} else if (body instanceof BlockStmt) {
 			for (Statement s: ((BlockStmt)body).getStmts()) {
-				if (s instanceof OmpAwaitConstruct) {
+				if (s instanceof OmpAsyncCallConstruct) {
 					return true;
 				} else if (s instanceof OmpTargetConstruct) {
 					if (((OmpTargetConstruct)s).isAwait()) {

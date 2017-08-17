@@ -103,7 +103,7 @@ import pj.parser.ast.expr.ThisExpr;
 import pj.parser.ast.expr.UnaryExpr;
 import pj.parser.ast.expr.VariableDeclarationExpr;
 import pj.parser.ast.omp.OmpAtomicConstruct;
-import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAsyncCallConstruct;
 import pj.parser.ast.omp.OmpBarrierDirective;
 import pj.parser.ast.omp.OmpCancelDirective;
 import pj.parser.ast.omp.OmpCancellationPointDirective;
@@ -972,7 +972,7 @@ public abstract class VoidVisitorAdapter<A> implements VoidVisitor<A> {
     public void visit(OmpTaskcancelDirective n, A arg) {
     }
     
-    public void visit(OmpAwaitConstruct n, A arg) {
+    public void visit(OmpAsyncCallConstruct n, A arg) {
     	n.getBody().accept(this, arg);
     }
     

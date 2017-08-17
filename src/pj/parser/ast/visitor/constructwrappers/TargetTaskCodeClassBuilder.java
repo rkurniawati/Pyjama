@@ -37,7 +37,7 @@ import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SourcePrinter;
 import pj.parser.ast.body.VariableDeclarator;
 import pj.parser.ast.expr.VariableDeclarationExpr;
-import pj.parser.ast.omp.OmpAwaitConstruct;
+import pj.parser.ast.omp.OmpAsyncCallConstruct;
 import pj.parser.ast.omp.OmpDataClause;
 import pj.parser.ast.omp.OmpPrivateDataClause;
 import pj.parser.ast.omp.OmpSharedDataClause;
@@ -236,8 +236,8 @@ public class TargetTaskCodeClassBuilder extends StateMachineClassBuilder  {
 		Statement s;
 		while (iter.hasNext()) {
 			s = iter.next();
-			if (s instanceof OmpAwaitConstruct) {
-				this.visitOmpAwaitConstruct((OmpAwaitConstruct)s);
+			if (s instanceof OmpAsyncCallConstruct) {
+				this.visitOmpAsyncCallConstruct((OmpAsyncCallConstruct)s);
 				continue;
 			}
 			if (s instanceof OmpTargetConstruct) {
