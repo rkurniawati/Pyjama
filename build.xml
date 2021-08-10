@@ -147,7 +147,7 @@
     </target>
 
     <!-- Change this version number for getting newer version of ivy -->
-	<property name="ivy.install.version" value="2.3.0" />
+	<property name="ivy.install.version" value="2.5.0" />
     <condition property="ivy.home" value="${env.IVY_HOME}">
       <isset property="env.IVY_HOME" />
     </condition>
@@ -159,7 +159,8 @@
 
         <mkdir dir="${ivy.jar.dir}"/>
         <!-- download Ivy from web site so that it can be used even without any special installation -->
-        <get src="http://repo2.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
+		<!-- https://repo1.maven.org/maven2/org/apache/ivy/ivy/2.5.0/ -->
+        <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
              dest="${ivy.jar.file}" usetimestamp="true"/>
     </target>
 
