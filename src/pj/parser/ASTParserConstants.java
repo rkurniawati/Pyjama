@@ -334,6 +334,9 @@ public interface ASTParserConstants {
   int RSIGNEDSHIFT = 169;
   /** RegularExpression Id. */
   int GT = 170;
+  
+  int MIN = 172;
+  int MAX = 173;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -516,6 +519,8 @@ public interface ASTParserConstants {
     "\">>\"",
     "\">\"",
     "\"\\u001a\"",
+    "\"min\"",
+    "\"max\""
   };
 
 }

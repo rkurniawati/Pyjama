@@ -5705,6 +5705,14 @@ public final class ASTParser implements ASTParserConstants {
       jj_consume_token(SC_OR);
                  op = new OmpReductionOperator(OmpReductionOperator.Operator.LogOR);
       break;
+    case MIN:
+    	jj_consume_token(MIN);
+    	op = new OmpReductionOperator(OmpReductionOperator.Operator.Min);
+    	break;
+    case MAX:
+    	jj_consume_token(MAX);
+    	op = new OmpReductionOperator(OmpReductionOperator.Operator.Max);
+    	break;
     case IDENTIFIER:
       userDefined = Name();
                                  op = new OmpReductionOperator(userDefined);
@@ -6485,6 +6493,10 @@ public final class ASTParser implements ASTParserConstants {
   private boolean jj_3R_564() {
     Token xsp;
     xsp = jj_scanpos;
+    if(jj_scan_token(MIN)){
+    jj_scanpos = xsp;
+    if(jj_scan_token(MAX)){
+    jj_scanpos = xsp;
     if (jj_3R_576()) {
     jj_scanpos = xsp;
     if (jj_3R_577()) {
@@ -6510,6 +6522,8 @@ public final class ASTParser implements ASTParserConstants {
     }
     }
     }
+    }
+  	}
     return false;
   }
 

@@ -329,6 +329,7 @@ public class DataClausesHandler {
 	 */
 	public static void redeclarePrivateVariablesForWorksharingBlock(WorkShareBlockBuilder worksharingWrapper, SourcePrinter printer) {
 
+
 		OmpForConstruct forConstruct = worksharingWrapper.getForConstruct();
 		final String RENAMING_PREFIX  = WORKSHARING_PRIVATE_VARIABLE_RENAMING_PREFIX+ Integer.toString(worksharingWrapper.getID());
 		List<OmpDataClause> dataClauseList = forConstruct.getDataClauseList();
@@ -375,13 +376,13 @@ public class DataClausesHandler {
 				break;
 				
 			case Reduction:
-				HashMap<String, String> reductionArgs = ((OmpReductionDataClause)dataClause).getArgsTypes(forConstruct);
+				HashMap<Expression, String> reductionArgs = ((OmpReductionDataClause)dataClause).getArgsTypes(forConstruct);
 				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
 					String varName = varExpression.toString();
-					String varType = reductionArgs.get(varName);
+					String varType = reductionArgs.get(varExpression);
 					worksharingWrapper.varSubstitutionSet.put(varName, RENAMING_PREFIX + varName);
 					if (DataClauseHandlerUtils.isPrimitiveType(varType)) {
-						printer.printLn(varType+ " " + RENAMING_PREFIX + varName + " = " + varName + ";");
+						printer.printLn(varType+ " " + RENAMING_PREFIX + varName + " = " + ((OmpReductionDataClause)dataClause).getArgumentMap().get(varExpression).getOperatorIdentity(varType) + ";");
 						//e.g. int OMP_WoRkShArInG_PRIVATE_a = a;
 					}
 					else {
@@ -441,25 +442,26 @@ public class DataClausesHandler {
 				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
 					String varName = varExpression.toString();
 					OmpReductionOperator operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varExpression);
-					String reductionOpr = operator.getOperatorString();
-					if (DataClauseHandlerUtils.isPrimitiveReductionOperator(reductionOpr)) {
+					
+					//String reductionOpr = operator.getOperatorString();
+					//if (DataClauseHandlerUtils.isPrimitiveReductionOperator(reductionOpr)) {
 						/*
 						 * primitive type reduction operation
 						 */
 						printer.print("synchronized(OMP_reduction_lock){ ");
-						printer.print(REDUCTION_VARIABLE_DECLARATION_PREFIX + varName + " " + reductionOpr + "= " + varName + ";");
+						printer.print(REDUCTION_VARIABLE_DECLARATION_PREFIX + varName + "= "+operator.getOperatorReductionString(REDUCTION_VARIABLE_DECLARATION_PREFIX+varName, varName)+";");
 						printer.printLn(" }");
 						//e.g. this.outputList.s + s;
-					}
-					else {
+					//}
+					//else {
 						/*
 						 * user defined reduction operation
 						 */
-						printer.print("synchronized(OMP_reduction_lock){ ");
-						printer.print(reductionOpr + "(" + REDUCTION_VARIABLE_DECLARATION_PREFIX + varName + "," + varName + ");");
-						printer.printLn(" }");
+						//printer.print("synchronized(OMP_reduction_lock){ ");
+						//printer.print(reductionOpr + "(" + REDUCTION_VARIABLE_DECLARATION_PREFIX + varName + "," + varName + ");");
+						//printer.printLn(" }");
 						//e.g. reductionxing(this.val,val);
-					}		
+					//}		
 				}
 			}
 		}
@@ -480,22 +482,22 @@ public class DataClausesHandler {
 				for(Expression varExpression: ((OmpReductionDataClause)dataClause).getArgumentMap().keySet()) {
 					String varName = varExpression.toString();
 					OmpReductionOperator operator = ((OmpReductionDataClause)dataClause).getArgumentMap().get(varExpression);
-					String reductionOpr = operator.getOperatorString();
-					if (DataClauseHandlerUtils.isPrimitiveReductionOperator(reductionOpr)) {
+					//String reductionOpr = operator.getOperatorString();
+					//if (DataClauseHandlerUtils.isPrimitiveReductionOperator(reductionOpr)) {
 						/*
 						 * primitive type reduction operation
 						 */
-						printer.printLn(varName + "=" + varName + reductionOpr + RENAMING_PREFIX + varName + ";");
+						printer.printLn(varName + "=" + operator.getOperatorReductionString(varName,RENAMING_PREFIX + varName) + ";");
 						//e.g. i = i + OMP_WoRkShArInG_PRIVATE_i;
-					}
-					else {
+					//}
+					//else {
 						/*
 						 * user defined reduction operation
 						 */
-						String userDefinedReduction = reductionOpr;
-						printer.printLn(varName + "=" + userDefinedReduction + "(" + varName + ", " + RENAMING_PREFIX + varName + ");");
+						//String userDefinedReduction = reductionOpr;
+						//printer.printLn(varName + "=" + userDefinedReduction + "(" + varName + ", " + RENAMING_PREFIX + varName + ");");
 						//e.g. point = reductionFunction(point, OMP_WoRkShArInG_PRIVATE_point);
-					}		
+					//}		
 					
 				}
 				break;

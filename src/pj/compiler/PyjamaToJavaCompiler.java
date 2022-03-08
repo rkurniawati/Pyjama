@@ -22,100 +22,163 @@
 
 package pj.compiler;
 
-
 import java.io.*;
 
 import pj.Version;
 import pj.parser.ASTParser;
+import pj.parser.ParseException;
 import pj.parser.ast.CompilationUnit;
 import pj.parser.ast.symbolscope.SymbolTable;
 import pj.parser.ast.visitor.PyjamaToJavaVisitor;
 import pj.parser.ast.visitor.SymbolScopingVisitor;
 import pj.compiler.CompileChecker.CompileOption;
+
 /**
- * We define the main compiler for Pyjama here.
- * An use class should invoke the static method parse() 
- * on an input .pj file.
+ * We define the main compiler for Pyjama here. An use class should invoke the
+ * static method parse() on an input .pj file.
  * 
- * The parser logic revolves around forming as AST from the
- * input .pj file, using the Pyjama parser and lexical analyser.
- * Once the AST is former, it is normalised and then translated
- * using the visitor pattern.
+ * The parser logic revolves around forming as AST from the input .pj file,
+ * using the Pyjama parser and lexical analyser. Once the AST is former, it is
+ * normalised and then translated using the visitor pattern.
  * 
  * @author vikassingh
  * @author Xing Fan
  *
  */
 
-public class PyjamaToJavaCompiler extends Compiler{
-	
+public class PyjamaToJavaCompiler extends Compiler
+{
+
 	/**
-	 * This is main public utility to parse Pyjama code. It accepts the .pj file as input
-	 * and produces the multi-threaded Java version  
-	 * @param file The input .pj file to be processed
-	 * @throws Exception parse exceptions
+	 * This is main public utility to parse Pyjama code. It accepts the .pj file
+	 * as input and produces the multi-threaded Java version
+	 * 
+	 * @param file
+	 *            The input .pj file to be processed
+	 * @throws Exception
+	 *             parse exceptions
 	 */
-	public static File compile(String sourceFileName, String targetDirectory, CompileOption option) throws Exception {
-		
+	public static void compile(String sourceFileName, String targetDirectory, CompileOption option)
+	{
+
 		File file = new File(sourceFileName);
-				
 		showMsg("Pyjama Compiler Version: " + Version.compilerVersion);
 		showMsg("-----------------------------------------------------");
 		showMsg(Version.getCompileDate() + "\t" + Version.getCompileTime());
 		showMsg("-----------------------------------------------------");
 		showMsg("Processing file: " + file.toString());
 		showMsg("-----------------------------------------------------");
-		
 
-		//check if the input file is a valid file extension
-		switch (option) {
+		// check if the input file is a valid file extension
+		switch (option)
+		{
 		case P2C:
 		case P2J:
-			if(false == validatePjFile(file.getName())){
+			if (false == validatePjFile(file.getName()))
+			{
 				showErr("Invalid file type, expect .pj file");
 				showErr("Processing discontinued");
 				showErr("-----------------------------------------------------");
-				return null;
+				return;
 			}
 			break;
 		case J2C:
 		case J2J:
-			if(false == validateJavaFile(file.getName())){
+			if (false == validateJavaFile(file.getName()))
+			{
 				showErr("Invalid file type, expect .java file");
 				showErr("Processing discontinued");
 				showErr("-----------------------------------------------------");
-				return null;
+				return;
 			}
 			break;
 		}
 
-		InputStream is = new FileInputStream(file);
+		InputStream is = null;
+		try
+		{
+			is = new FileInputStream(file);
+		}
+		catch (FileNotFoundException e1)
+		{
+			System.err.println("File \"" + sourceFileName + "\" not found.");
+			return;
+		}
+
+		String className = file.getName().substring(0, file.getName().lastIndexOf("."));
+		if (option == CompileOption.P2C || option == CompileOption.J2C)
+			try
+			{
+				JavaToClassCompiler.compile(className, JavaToClassCompiler.readFile(sourceFileName), null);
+			}
+			catch (Exception e1)
+			{
+				return;
+			}
 
 		showMsg("Processing 1st Phase: Parse and Normalisation");
 		// we form the initial AST here, with normalisation when necessary
-		CompilationUnit ast = ASTParser.parse(is);
-		
+		CompilationUnit ast;
+		try
+		{
+			ast = ASTParser.parse(is);
+		}
+		catch (ParseException e)
+		{
+			// TODO Auto-generated catch block
+			showMsg(e.getMessage());
+			return;
+		}
+
 		showMsg("Processing 2nd Phase: Symbol scoping visiting");
 		SymbolScopingVisitor symbolVisitor = new SymbolScopingVisitor();
 		ast.accept(symbolVisitor, null);
 		//symbolVisitor.printSymbolTable(); //log info print
 		SymbolTable symbolTable = symbolVisitor.getSymbolTable();
-		
+
 		showMsg("Processing 3rd Phase: Pyjama code translation visiting");
 		PyjamaToJavaVisitor pyjamaVisitor = new PyjamaToJavaVisitor(symbolTable);
-		ast.accept(pyjamaVisitor, null);
-		
+		try
+		{
+			ast.accept(pyjamaVisitor, null);
+		}
+		catch(Exception e)
+		{
+			showMsg(e.getMessage());
+			return;
+		}
+
 		showMsg("Processing 4th Phase: Generating java code");
 		String targetCode = pyjamaVisitor.getSource();
-		String targetFileName = targetDirectory+ "/" + file.getName().substring(0,file.getName().lastIndexOf("."))+".java";
-		File targetFile = new File(file.getParent(), targetFileName); 
-		//Clean up the file, in case it exists and is not empty.
-		clearTheFile(targetFile);
-		writeToFile(targetFile, targetCode);
-		showMsg("-----------------------------------------------------");
-		showMsg("Paralleled .java code is generated.");
-		showMsg("Processing Done."); 
-		return targetFile;
+		if (option == CompileOption.P2J || option == CompileOption.J2J)
+		{
+			String targetFileName = targetDirectory + "/" + file.getName().substring(0, file.getName().lastIndexOf("."))
+					+ ".java";
+			File targetFile = new File(file.getParent(), targetFileName);
+			// Clean up the file, in case it exists and is not empty.
+			clearTheFile(targetFile);
+			writeToFile(targetFile, targetCode);
+			showMsg("-----------------------------------------------------");
+			showMsg("Paralleled .java code is generated.");
+			showMsg("Processing Done.");
+		}
+		else
+		{
+			try
+			{
+				JavaToClassCompiler.compile(className, targetCode, targetDirectory);
+				showMsg("Paralleled .class file is generated.");
+				showMsg("Processing Done.");
+			}
+			catch (Exception e)
+			{
+				showMsg(e.getMessage());
+				return;
+			}
+
+		}
+
+		return;
 	}
-		
+
 }

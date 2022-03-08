@@ -1577,7 +1577,7 @@ public final class DumpVisitor implements VoidVisitor<Object> {
 		if (null != n.getUserDefinedReduction()) {
 			printer.print(n.getUserDefinedReduction().toString());
 		} else {
-			printer.print(n.getOperatorString());
+			printer.print(n.getOperatorReductionString("",""));
 		}
 	}
 

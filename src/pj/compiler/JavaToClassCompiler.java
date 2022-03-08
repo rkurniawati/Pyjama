@@ -28,25 +28,18 @@ import java.nio.file.Paths;
 
 import pj.compiler.javac.JavaC;
 
-public class JavaToClassCompiler extends Compiler{
-	
+public class JavaToClassCompiler extends Compiler
+{
 
-	public static void compile(File file, String targetDirectory) throws Exception {
-		
-		String className = file.getName().substring(0,file.getName().lastIndexOf("."));
-		
-		String sourceCodeInText = null;
-		
-		sourceCodeInText = readFile(file.getCanonicalPath());
-		
-		showMsg("Javac is processing file: " + file.toString());
-		showMsg("-----------------------------------------------------");
+	public static void compile(String className, String sourceCodeInText, String targetDirectory) throws Exception
+	{
+
 		JavaC.compile(className, sourceCodeInText, null, targetDirectory);
-		showMsg("Paralleled .class file is generated.");
-		showMsg("Processing Done.");
+
 	}
-	
-	private static String readFile(String path) throws IOException {
+
+	public static String readFile(String path) throws IOException
+	{
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded);
 	}

@@ -23,62 +23,119 @@ package pj.compiler.javac;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
+import javax.tools.FileObject;
+import javax.tools.ForwardingJavaFileManager;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import javax.tools.JavaFileObject.Kind;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+public class JavaC
+{
 
-public class JavaC {
-    
 	private static javax.tools.JavaCompiler javac;
 	private static StandardJavaFileManager fileManager;
 	private static DiagnosticCollector<JavaFileObject> diagnostics;
 	private static ArrayList<String> options;
-	
-	static {
+
+	static
+	{
 		javac = ToolProvider.getSystemJavaCompiler();
-        if (javac == null) {
-            throw new RuntimeException("Pyjama: Could not get Java compiler. Please ensure that JDK is installed instead of JRE.");
-        }
-        diagnostics = new DiagnosticCollector<>();
-        fileManager = javac.getStandardFileManager(diagnostics, null, null);
-        options = new ArrayList<>();
+		if (javac == null)
+		{
+			throw new RuntimeException(
+					"Pyjama: Could not get Java compiler. Please ensure that JDK is installed instead of JRE.");
+		}
+		diagnostics = new DiagnosticCollector<>();
+		fileManager = javac.getStandardFileManager(diagnostics, null, null);
+		options = new ArrayList<>();
 
 	}
 
-    public static void compile(String className, String sourceCodeInText, String classpath, String targetPath) throws Exception {
-        SourceCode sourceCode = new SourceCode(className, sourceCodeInText);
-        //CompiledCode compiledCode = new CompiledCode(className);
-        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
-        
-        Iterable<? extends JavaFileObject> compilationUnits = Arrays.asList(sourceCode);
-        
-        if (classpath != null) {
-        	options.add("-classpath");
-        	options.add(classpath);
-        }
-        if (targetPath != null) {
-        	options.add("-d");
-        	options.add(targetPath);
-    	}
-        
-        try {
-            JavaCompiler.CompilationTask task = javac.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
-            boolean success = task.call();
-            if (!success) {
-            	for (Diagnostic<? extends JavaFileObject> err : diagnostics.getDiagnostics()) {
-            		err.toString();
-            	}
-            }
-        } finally {
-        	 fileManager.close();
-        }
-    
-   
+	public static void compile(String className, String sourceCodeInText, String classpath, String targetPath)
+			throws Exception
+	{
+		
+		// CompiledCode compiledCode = new CompiledCode(className);
+		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 
-    }
+		
+
+		JavaFileManager fileManagerToUse = javac.getStandardFileManager(diagnostics, null, null);
+
+		if (classpath != null)
+		{
+			options.add("-classpath");
+			options.add(classpath);
+		}
+		
+		if (targetPath != null)
+		{
+			options.add("-d");
+			options.add(targetPath);
+			
+		}
+		else
+		{
+			fileManagerToUse = new VoidFileManager(fileManager);
+			sourceCodeInText = "import pj.Pyjama;\n"+sourceCodeInText;
+		}
+		
+		SourceCode sourceCode = new SourceCode(className, sourceCodeInText);
+		Iterable<? extends JavaFileObject> compilationUnits = Arrays.asList(sourceCode);
+
+		try
+		{
+			JavaCompiler.CompilationTask task = javac.getTask(null, fileManagerToUse, diagnostics, options, null,
+					compilationUnits);
+			boolean success = task.call();
+			if (!success)
+			{
+				for (Diagnostic<? extends JavaFileObject> err : diagnostics.getDiagnostics())
+				{
+					System.err.println(err);
+				}
+				throw new Exception("");
+			}
+		}
+		finally
+		{
+			fileManagerToUse.close();
+		}
+
+	}
+
+	private static class VoidFileManager extends ForwardingJavaFileManager<StandardJavaFileManager>
+	{
+
+		protected VoidFileManager(StandardJavaFileManager fileManager)
+		{
+			super(fileManager);
+		}
+
+		@Override
+		public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling)
+		{
+			JavaFileObject jfo = null;
+			try
+			{ 
+				jfo =new CompiledCode(className);
+			}
+			catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return jfo;
+		}
+
+	}
+
+
+	
 }

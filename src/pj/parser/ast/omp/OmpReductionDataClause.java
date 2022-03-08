@@ -68,9 +68,10 @@ public class OmpReductionDataClause extends OmpDataClause{
 		if (null == prefix) {
 			prefix = "";
 		}
-		HashMap<String, String> args = this.getArgsTypes(n);
-		for (String varName: args.keySet()) {
-			String varType = args.get(varName);
+		HashMap<Expression, String> args = this.getArgsTypes(n);
+		for (Expression v: args.keySet()) {
+			String varName = v.toString();
+			String varType = args.get(v);
 			printer.printLn("public " + varType + " " + prefix + varName + ";");
 		}
 		
@@ -84,15 +85,16 @@ public class OmpReductionDataClause extends OmpDataClause{
 		if (null == right_prefix) {
 			right_prefix = "";
 		}
-		HashMap<String, String> args = this.getArgsTypes(n);
-		for (String varName: args.keySet()) {
-			String varType = args.get(varName);
-			printer.printLn("public " + varType + " " + left_prefix + varName + " = " + right_prefix + varName + ";");
+		HashMap<Expression, String> args = this.getArgsTypes(n);
+		for (Expression v: args.keySet()) {
+			String varName = v.toString();
+			String varType = args.get(v);
+			printer.printLn("public " + varType + " " + left_prefix + varName + " = "+this.argumentMap.get(v).getOperatorIdentity(varType)+";");
 		}
 	}
 		
-	public HashMap<String, String> getArgsTypes(OpenMPStatement n) {
-		HashMap<String, String> varTypes = new HashMap<String, String>();
+	public HashMap<Expression, String> getArgsTypes(OpenMPStatement n) {
+		HashMap<Expression, String> varTypes = new HashMap<Expression, String>();
 		ScopeInfo scope = n.scope;
 		LinkedList<Symbol> symbols = scope.getAllReachableSymbols();
 		for (Expression v: this.argumentMap.keySet()) {
@@ -101,7 +103,7 @@ public class OmpReductionDataClause extends OmpDataClause{
 			for (Symbol s: symbols) {
 				if (s.isVariableNameAs(varName)) {
 					String varType = s.getSymbolDataType().toString();
-					varTypes.put(varName, varType);
+					varTypes.put(v, varType);
 					findVarName = true;
 					break;
 				}

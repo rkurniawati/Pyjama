@@ -137,57 +137,8 @@ public class Generate {
 	}
 	
 	private static void compile() {
-		switch (compileFlag) {
-		case J2C:
-			for(String sourceFile: sourceFileNames) {
-				try {
-					File javaFile = PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
-					if (null != javaFile) {
-						JavaToClassCompiler.compile(javaFile, targetFileDirectory);
-					}
-				} catch (Exception e) {
-					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
-					e.printStackTrace();
-				}
-			}
-			break;
-		case J2J:
-			for(String sourceFile: sourceFileNames) {
-				try {
-					PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
-				} catch (Exception e) {
-					System.err.println("*** Failed to process: " + sourceFile +" ****"); 
-					e.printStackTrace();
-				}
-			}
-			break;
-		case P2J:
-			for(String sourceFile: sourceFileNames) {
-				try {
-					PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
-				} catch (Exception e) {
-					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
-					e.printStackTrace();
-				}
-			}
-			break;
-		case P2C:
-			for(String sourceFile: sourceFileNames) {
-				try {
-					File javaFile = PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
-					if (null != javaFile) {
-						JavaToClassCompiler.compile(javaFile, targetFileDirectory);
-					}
-				} catch (Exception e) {
-					System.err.println("*** Failed to process: " + sourceFile + " ****"); 
-					e.printStackTrace();
-				}
-			}
-			break;
-		default:
-				throw new RuntimeException("This cannot happen!");
-			
-		}
+		for(String sourceFile: sourceFileNames)
+			PyjamaToJavaCompiler.compile(sourceFile, targetFileDirectory, compileFlag);
 	}
 
 }

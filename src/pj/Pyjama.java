@@ -400,7 +400,7 @@ public class Pyjama {
 	/**XING TRs (Time Routines) definition BEGIN*/
 	public static double omp_get_wtime()
 	{
-		return System.nanoTime(); 
+		return System.nanoTime()/1e9;
 	}
 
 	/**
